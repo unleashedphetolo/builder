@@ -1,4 +1,4 @@
-export const SCHOOL_THEMES = {
+export const THEMES = {
   modernBlue: {
     primary: "#1E3A8A",
     secondary: "#3B82F6",
@@ -18,3 +18,15 @@ export const SCHOOL_THEMES = {
     font: "Inter"
   }
 };
+
+
+// export const THEMES = {
+//   modernBlue: {
+//     primary: "#1E3A8A",
+//     bg: "#F9FAFB"
+//   },
+//   dark: {
+//     primary: "#111827",
+//     bg: "#0F172A"
+//   }
+// };

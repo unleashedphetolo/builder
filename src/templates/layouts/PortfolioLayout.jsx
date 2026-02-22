@@ -1,6 +1,6 @@
 import Section from "../../components/Section";
 
-export default function BusinessLayout({ sections }) {
+export default function PortfolioLayout({ sections }) {
   return (
     <div>
       {sections.map((s) => (
