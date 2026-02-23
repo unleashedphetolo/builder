@@ -1,35 +1,48 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-function App() {
-  const [count, setCount] = useState(0)
+import Builder from "./builder/Builder";
+
+import SchoolLayout from "./templates/layouts/SchoolLayout";
+import BusinessLayout from "./templates/layouts/BusinessLayout";
+import PortfolioLayout from "./templates/layouts/PortfolioLayout";
+
+// Temporary pages
+const Home = () => <div style={{ padding: 40 }}>Home Page</div>;
+const WhoWeAre = () => <div style={{ padding: 40 }}>Who We Are</div>;
+
+export default function App() {
+  const layout = "school"; // 🔥 later from Supabase
+
+  const getLayout = (children) => {
+    switch (layout) {
+      case "business":
+        return <BusinessLayout>{children}</BusinessLayout>;
+      case "portfolio":
+        return <PortfolioLayout>{children}</PortfolioLayout>;
+      default:
+        return <SchoolLayout>{children}</SchoolLayout>;
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <BrowserRouter>
+     <Routes>
 
-export default App
+  {/* 🔥 Builder becomes default */}
+  <Route path="/" element={<Builder />} />
+
+  {/* Public site */}
+  <Route
+    path="/site/*"
+    element={getLayout(
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about/who-we-are" element={<WhoWeAre />} />
+      </Routes>
+    )}
+  />
+
+</Routes>
+    </BrowserRouter>
+  );
+}

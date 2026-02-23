@@ -1,0 +1,183 @@
+/* ===== RESET (IMPORTANT) ===== */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* prevents double scroll */
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* ===== MAIN LAYOUT ===== */
+.builder-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #e2e8f0;
+}
+
+/* ===== NAVBAR ===== */
+.builder-navbar {
+  height: 60px; /* FIXED HEIGHT */
+  min-height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #0f172a;
+  color: white;
+  padding: 0 20px;
+  border-bottom: 1px solid #020617;
+  z-index: 100;
+}
+
+.builder-navbar .left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hamburger {
+  font-size: 20px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.btn {
+  padding: 6px 12px;
+  margin-left: 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.btn.primary {
+  background: #22c55e;
+  color: white;
+}
+
+/* ===== BODY ===== */
+.builder-body {
+  flex: 1;
+  display: flex;
+  height: calc(100% - 60px); /* FULL HEIGHT FIX */
+  overflow: hidden;
+}
+
+/* ===== SIDEBAR ===== */
+.builder-sidebar {
+  width: 240px;
+  min-width: 240px;
+  background: #020617;
+  color: white;
+  padding: 15px;
+  overflow-y: auto;
+  border-right: 1px solid #0f172a;
+}
+
+/* SCROLL FIX */
+.builder-sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.builder-sidebar::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+/* LIST */
+.builder-sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.section-item {
+  background: #1e293b;
+  padding: 10px;
+  margin: 6px 0;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+
+.section-item:hover {
+  background: #334155;
+}
+
+/* ===== CANVAS ===== */
+.builder-canvas {
+  flex: 1;
+  height: 100%;
+  background: #f1f5f9;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+/* WEBSITE PREVIEW */
+.canvas-inner {
+  width: 100%;
+  max-width: 1200px;
+  min-height: 100%;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+
+/* PLACEHOLDER */
+.placeholder-content {
+  padding: 40px;
+  text-align: center;
+}
+
+/* HOVER EDIT EFFECT (WIX FEEL) */
+.canvas-inner *:hover {
+  outline: 2px dashed #3b82f6;
+  cursor: pointer;
+}
+
+/* ===== RIGHT PANEL ===== */
+.builder-right {
+  width: 280px;
+  min-width: 280px;
+  background: #f8fafc;
+  padding: 15px;
+  border-left: 1px solid #ddd;
+  overflow-y: auto;
+}
+
+/* SCROLL FIX */
+.builder-right::-webkit-scrollbar {
+  width: 5px;
+}
+
+.builder-right::-webkit-scrollbar-thumb {
+  background: #cbd5f5;
+}
+
+/* INPUTS */
+.builder-right input,
+.builder-right textarea {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+}
+
+/* FOCUS */
+.builder-right input:focus,
+.builder-right textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+}

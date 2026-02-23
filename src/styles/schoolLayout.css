@@ -1,0 +1,47 @@
+.school-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #0a1f44;
+  color: white;
+  padding: 15px 30px;
+}
+
+.school-navbar nav a {
+  color: white;
+  margin: 0 10px;
+  text-decoration: none;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background: white;
+  color: black;
+  padding: 10px;
+  top: 30px;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.hero {
+  background: linear-gradient(to right, #0a1f44, #123b8a);
+  color: white;
+  padding: 60px;
+  text-align: center;
+}
+
+.school-footer {
+  background: #0a1f44;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}

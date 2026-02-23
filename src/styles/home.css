@@ -1,0 +1,45 @@
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.notice-board {
+  background: #fff;
+  padding: 20px;
+  border-left: 5px solid #0b3d91;
+}
+
+.slide {
+  font-size: 18px;
+  animation: fade 1s ease;
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.overview {
+  background: white;
+  padding: 20px;
+}
+
+.stats {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.stats div {
+  background: #eef3ff;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  width: 120px;
+}
+
+.fame {
+  background: white;
+  padding: 20px;
+}
