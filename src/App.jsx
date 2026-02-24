@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { supabase } from "./supabase/Client";
 
 import Builder from "./builder/Builder";
 
@@ -11,9 +13,27 @@ const Home = () => <div style={{ padding: 40 }}>Home Page</div>;
 const WhoWeAre = () => <div style={{ padding: 40 }}>Who We Are</div>;
 
 export default function App() {
-  const layout = "school"; // 🔥 later from Supabase
+  const [layout, setLayout] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const getLayout = (children) => {
+  useEffect(() => {
+    async function loadTemplate() {
+      const { data, error } = await supabase
+        .from("site_settings")
+        .select("template")
+        .single();
+
+      if (!error && data?.template) {
+        setLayout(data.template);
+      }
+
+      setLoading(false);
+    }
+
+    loadTemplate();
+  }, []);
+
+  const renderLayout = (children) => {
     switch (layout) {
       case "business":
         return <BusinessLayout>{children}</BusinessLayout>;
@@ -24,25 +44,27 @@ export default function App() {
     }
   };
 
+  if (loading) return null; // or loader spinner
+
   return (
     <BrowserRouter>
-     <Routes>
-
-  {/* 🔥 Builder becomes default */}
-  <Route path="/" element={<Builder />} />
-
-  {/* Public site */}
-  <Route
-    path="/site/*"
-    element={getLayout(
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about/who-we-are" element={<WhoWeAre />} />
-      </Routes>
-    )}
-  />
 
-</Routes>
+        {/* 🔥 Builder */}
+        <Route path="/" element={<Builder />} />
+
+        {/* 🔥 Public Website */}
+        <Route
+          path="/site"
+          element={renderLayout(<Home />)}
+        />
+
+        <Route
+          path="/site/about/who-we-are"
+          element={renderLayout(<WhoWeAre />)}
+        />
+
+      </Routes>
     </BrowserRouter>
   );
 }

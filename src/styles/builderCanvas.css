@@ -41,3 +41,87 @@
   cursor: pointer;
   transition: 0.2s ease;
 }
+
+/* origin */
+.builder-canvas.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+}
+
+.canvas-loader {
+  font-size: 18px;
+  color: #64748b;
+}
+
+.editable-section {
+  position: relative;
+}
+
+.hover-overlay {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  opacity: 0;
+  transition: 0.2s ease;
+}
+
+.editable-section:hover .hover-overlay {
+  opacity: 1;
+}
+
+.device-switch {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.device-switch button {
+  padding: 6px 6px;
+  border: 8px solid #e2e8f0;
+  background: white;
+  cursor: pointer;
+}
+
+.canvas-inner.desktop {
+  width: 100%;
+}
+
+.canvas-inner.tablet {
+  width: 768px;
+  margin: auto;
+}
+
+.canvas-inner.mobile {
+  width: 375px;
+  margin: auto;
+}
+
+.editable-section {
+  position: relative;
+  padding: 40px;
+  border: 1px dashed transparent;
+  transition: 0.2s;
+}
+
+.editable-section:hover {
+  border-color: #6366f1;
+}
+
+.hover-overlay {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 12px;
+  background: #6366f1;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  opacity: 0;
+}
+
+.editable-section:hover .hover-overlay {
+  opacity: 1;
+}

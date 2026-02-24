@@ -59,3 +59,40 @@
 .panel-btn:hover {
   background: #1d4ed8;
 }
+
+/* origin */
+.builder-right {
+  width: 280px;
+  background: white;
+  border-left: 1px solid #e5e7eb;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.builder-right h4 {
+  margin-bottom: 10px;
+}
+
+.builder-right input,
+.builder-right textarea {
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  width: 100%;
+}
+
+.builder-right textarea {
+  min-height: 70px;
+}
+
+.delete-btn {
+  margin-top: 20px;
+  padding: 8px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}

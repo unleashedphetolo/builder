@@ -1,63 +1,148 @@
-/* ===== TOP NAVBAR ===== */
-
 .builder-navbar {
-  height: 60px;
-  background: #1e293b;
-  color: #fff;
+  height: 70px;
+  background: white;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
-  border-bottom: 1px solid #0f172a;
+  padding: 0 25px;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  position: relative;
+  z-index: 100;
 }
 
 /* LEFT */
-.navbar-left {
+
+.left {
   display: flex;
   align-items: center;
   gap: 15px;
 }
 
-.menu-btn {
-  font-size: 22px;
+.hamburger {
+  background: none;
+  border: none;
+  font-size: 20px;
   cursor: pointer;
 }
 
-.logo {
-  font-size: 18px;
-  font-weight: 600;
-}
+/* BRAND */
 
-/* CENTER */
-.navbar-center {
-  font-size: 14px;
-  opacity: 0.8;
-}
-
-/* RIGHT */
-.navbar-right {
+.brand {
   display: flex;
+  align-items: center;
   gap: 10px;
 }
 
-.nav-btn {
-  padding: 6px 12px;
-  border: none;
-  background: #334155;
-  color: #fff;
-  border-radius: 6px;
+.logo {
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo img {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+}
+.brand-text h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.brand-text span {
+  font-size: 11px;
+  color: #64748b;
+}
+
+/* CENTER */
+
+.page-indicator {
+  font-weight: 500;
+  color: #334155;
+}
+
+/* RIGHT */
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* SAVE STATUS */
+
+.save-status {
+  font-size: 12px;
+  color: #10b981;
+}
+
+/* BUTTONS */
+
+.btn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: white;
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: 0.2s;
 }
 
-.nav-btn:hover {
-  background: #475569;
+.btn:hover {
+  background: #f1f5f9;
 }
 
-.nav-btn.primary {
-  background: #2563eb;
+.btn.primary {
+  background: #6366f1;
+  color: white;
+  border: none;
 }
 
-.nav-btn.primary:hover {
-  background: #1d4ed8;
+.btn.primary:hover {
+  background: #4f46e5;
+}
+
+.btn.ghost {
+  background: transparent;
+  border: none;
+  color: #6366f1;
+}
+
+/* PUBLISH MODAL */
+
+.publish-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.publish-box {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  width: 350px;
+  text-align: center;
+}
+
+.publish-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
 }
