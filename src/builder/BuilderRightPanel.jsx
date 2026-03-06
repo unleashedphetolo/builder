@@ -7,67 +7,49 @@ export default function BuilderRightPanel({
 }) {
   if (!selectedSection) {
     return (
-      <aside className="builder-right">
-        <p>Select a section to edit</p>
-      </aside>
+      <div className="builder-rightpanel">
+        <h3>Properties</h3>
+        <p className="muted">Select a section to edit its content and styling.</p>
+      </div>
     );
   }
 
+  const title = selectedSection.content?.title || "";
+  const subtitle = selectedSection.content?.subtitle || "";
+
   return (
-    <aside className="builder-right">
-      <h4>Section Properties</h4>
+    <div className="builder-rightpanel">
+      <h3>Properties</h3>
+      <div className="panel-group">
+        <label>Section Type</label>
+        <div className="pill">{selectedSection.type}</div>
+      </div>
 
-      <label>Section ID</label>
-      <input value={selectedSection.id} readOnly />
-      <label>Upload Logo</label>
-      <input
-        type="file"
-        accept="image/*"
-        onChange={(e) => {
-          const file = e.target.files[0];
-          if (!file) return;
+      <div className="panel-group">
+        <label>Title</label>
+        <input
+          value={title}
+          onChange={(e) => updateSection("content.title", e.target.value)}
+          placeholder="Title"
+        />
+      </div>
 
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            updateSection("logoUrl", reader.result);
-          };
-          reader.readAsDataURL(file);
-        }}
-      />
-      <label>Title</label>
-      <input
-        value={selectedSection.content?.title || ""}
-        onChange={(e) => updateSection("title", e.target.value)}
-      />
+      <div className="panel-group">
+        <label>Subtitle</label>
+        <textarea
+          value={subtitle}
+          onChange={(e) => updateSection("content.subtitle", e.target.value)}
+          placeholder="Subtitle"
+          rows={4}
+        />
+      </div>
 
-      <label>Description</label>
-      <textarea
-        value={selectedSection.content?.text || ""}
-        onChange={(e) => updateSection("text", e.target.value)}
-      />
-
-      <label>Background Color</label>
-      <input
-        type="color"
-        value={selectedSection.styles?.background || "#ffffff"}
-        onChange={(e) => updateSection("background", e.target.value)}
-      />
-
-      <label>Padding</label>
-      <input
-        type="range"
-        min="0"
-        max="100"
-        value={selectedSection.styles?.padding || 40}
-        onChange={(e) => updateSection("padding", e.target.value)}
-      />
-
-      <button
-        className="delete-btn"
-        onClick={() => deleteSection(selectedSection.id)}
-      >
-        Delete Section
-      </button>
-    </aside>
+      <div className="panel-group danger">
+        <button className="danger-btn" onClick={() => deleteSection(selectedSection.id)}>
+          Delete section
+        </button>
+        <p className="muted">If you hide the button in UI, RLS still protects other orgs.</p>
+      </div>
+    </div>
   );
 }

@@ -2,22 +2,29 @@ import { useState } from "react";
 import "../styles/builderNavbar.css";
 import logo from "../assets/logo.gif";
 
+const DASHBOARD_URL =
+  import.meta.env.VITE_DASHBOARD_URL || "http://localhost:3000/dashboard";
 
 export default function BuilderNavbar({
   toggleSidebar,
   onPreview,
   onPublish,
   onChangeTemplate,
-  saveStatus = "Saved"
+  onExport,
+  onDownloadHtml,
+
+  saveStatus = "Saved",
 }) {
   const [showPublishConfirm, setShowPublishConfirm] = useState(false);
 
+  const goToDashboard = () => {
+    window.location.href = DASHBOARD_URL;
+  };
+
   return (
     <header className="builder-navbar">
-
       {/* LEFT — Branding */}
       <div className="left">
-
         <button onClick={toggleSidebar} className="hamburger">
           ☰
         </button>
@@ -25,13 +32,12 @@ export default function BuilderNavbar({
         <div className="brand">
           <div className="logo">
             <img src={logo} alt="Ulterspace logo" />
-            </div>
+          </div>
           <div className="brand-text">
             <h3>Ulterspace</h3>
             <span>Build Beyond Limits</span>
           </div>
         </div>
-
       </div>
 
       {/* CENTER — Page Indicator */}
@@ -41,10 +47,15 @@ export default function BuilderNavbar({
 
       {/* RIGHT — Actions */}
       <div className="right">
+        <span className="save-status">{saveStatus}</span>
 
-        <span className="save-status">
-          {saveStatus}
-        </span>
+        {/* <button className="btn ghost" onClick={goToDashboard}>
+          Back to Dashboard
+        </button> */}
+
+        <button className="btn ghost" onClick={goToDashboard}>
+          ← Dashboard
+        </button>
 
         <button className="btn ghost" onClick={onChangeTemplate}>
           Change Template
@@ -53,6 +64,13 @@ export default function BuilderNavbar({
         <button className="btn" onClick={onPreview}>
           Preview
         </button>
+        <button className="btn" onClick={onExport}>
+          Export ZIP
+        </button>
+
+        <button className="btn secondary" onClick={onDownloadHtml}>
+          Download 1-File
+        </button>
 
         <button
           className="btn primary"
@@ -60,7 +78,6 @@ export default function BuilderNavbar({
         >
           Publish
         </button>
-
       </div>
 
       {/* Publish Confirmation Modal */}
@@ -91,7 +108,6 @@ export default function BuilderNavbar({
           </div>
         </div>
       )}
-
     </header>
   );
 }

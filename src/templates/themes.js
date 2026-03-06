@@ -18,15 +18,3 @@ export const THEMES = {
     font: "Inter"
   }
 };
-
-
-// export const THEMES = {
-//   modernBlue: {
-//     primary: "#1E3A8A",
-//     bg: "#F9FAFB"
-//   },
-//   dark: {
-//     primary: "#111827",
-//     bg: "#0F172A"
-//   }
-// };

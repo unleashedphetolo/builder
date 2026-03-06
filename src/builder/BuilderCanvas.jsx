@@ -1,89 +1,74 @@
-import { useEffect, useState } from "react";
-import { supabase } from "../supabase/Client";
+import { useMemo, useState } from "react";
 import {
   DndContext,
-  closestCenter
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
 } from "@dnd-kit/core";
 import {
   SortableContext,
   useSortable,
-  verticalListSortingStrategy
+  verticalListSortingStrategy,
+  arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
+import "../styles/builderCanvas.css";
 import SchoolLayout from "../templates/layouts/SchoolLayout";
 import BusinessLayout from "../templates/layouts/BusinessLayout";
 import PortfolioLayout from "../templates/layouts/PortfolioLayout";
 
-import "../styles/builderCanvas.css";
+import { persistSectionOrder } from "./siteService";
 
-export default function BuilderCanvas({ layout }) {
-  const [sections, setSections] = useState([]);
+export default function BuilderCanvas({
+  siteId,
+  layoutKey,
+  page,
+  sections,
+  setSections,
+  selectedSection,
+  onSelectSection,
+  onUpdateInline,
+  siteSettings,
+  navItems,
+}) {
   const [device, setDevice] = useState("desktop");
 
-  // 🔥 Load sections
-  useEffect(() => {
-    async function loadSections() {
-      const { data } = await supabase
-        .from("sections")
-        .select("*")
-        .order("position", { ascending: true });
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+  );
 
-      setSections(data || []);
-    }
-
-    loadSections();
-  }, []);
-
-  // 🔥 Save content inline
-  const saveContent = async (id, newContent) => {
-    await supabase
-      .from("sections")
-      .update({ content: newContent })
-      .eq("id", id);
-  };
-
-  // 🔥 Drag handler
-  const handleDragEnd = async (event) => {
-    const { active, over } = event;
-
-    if (!over || active.id === over.id) return;
-
-    const oldIndex = sections.findIndex(s => s.id === active.id);
-    const newIndex = sections.findIndex(s => s.id === over.id);
-
-    const updated = [...sections];
-    const [moved] = updated.splice(oldIndex, 1);
-    updated.splice(newIndex, 0, moved);
-
-    setSections(updated);
-
-    // update DB positions
-    await Promise.all(
-      updated.map((section, index) =>
-        supabase
-          .from("sections")
-          .update({ position: index })
-          .eq("id", section.id)
-      )
-    );
-  };
+  const ids = useMemo(() => sections.map((s) => s.id), [sections]);
 
   const renderLayout = (children) => {
-    switch (layout) {
+    switch (layoutKey) {
       case "business":
-        return <BusinessLayout>{children}</BusinessLayout>;
+        return <BusinessLayout settings={siteSettings} navItems={navItems}>{children}</BusinessLayout>;
       case "portfolio":
-        return <PortfolioLayout>{children}</PortfolioLayout>;
+        return <PortfolioLayout settings={siteSettings} navItems={navItems}>{children}</PortfolioLayout>;
       default:
-        return <SchoolLayout>{children}</SchoolLayout>;
+        return <SchoolLayout settings={siteSettings} navItems={navItems}>{children}</SchoolLayout>;
     }
+  };
+
+  const handleDragEnd = async (event) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = sections.findIndex((s) => s.id === active.id);
+    const newIndex = sections.findIndex((s) => s.id === over.id);
+    const updated = arrayMove(sections, oldIndex, newIndex).map((s, idx) => ({
+      ...s,
+      position: idx,
+    }));
+
+    setSections(updated);
+    await persistSectionOrder(updated);
   };
 
   return (
     <div className="builder-canvas">
-
-      {/* 🔥 Device Switch */}
       <div className="device-switch">
         <button onClick={() => setDevice("desktop")}>Desktop</button>
         <button onClick={() => setDevice("tablet")}>Tablet</button>
@@ -91,72 +76,74 @@ export default function BuilderCanvas({ layout }) {
       </div>
 
       <div className={`canvas-inner ${device}`}>
-
         {renderLayout(
-          <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-            <SortableContext
-              items={sections.map(s => s.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              {sections.map(section => (
-                <SortableSection
-                  key={section.id}
-                  section={section}
-                  saveContent={saveContent}
-                />
-              ))}
-            </SortableContext>
-          </DndContext>
-        )}
+          <div style={{ width: "100%" }}>
+            <div style={{ padding: "10px 12px", opacity: 0.8 }}>
+              <strong>{page?.title || "Page"}</strong>
+            </div>
 
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext items={ids} strategy={verticalListSortingStrategy}>
+                {sections.map((section) => (
+                  <SortableSection
+                    key={section.id}
+                    section={section}
+                    active={selectedSection?.id === section.id}
+                    onSelect={() => onSelectSection(section)}
+                    onUpdateInline={onUpdateInline}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-function SortableSection({ section, saveContent }) {
+function SortableSection({ section, active, onSelect, onUpdateInline }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: section.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition
+    transition,
+    outline: active ? "2px solid rgba(59,130,246,0.9)" : "none",
   };
+
+  const title = section.content?.title ?? "Section title";
+  const subtitle = section.content?.subtitle ?? "Section subtitle";
 
   return (
     <div
       ref={setNodeRef}
       style={style}
       className="editable-section"
-      {...attributes}
-      {...listeners}
+      onClick={onSelect}
     >
-      <div className="hover-overlay">Drag</div>
+      <div className="hover-overlay" {...attributes} {...listeners}>
+        Drag
+      </div>
 
       <h2
         contentEditable
         suppressContentEditableWarning
-        onBlur={(e) =>
-          saveContent(section.id, {
-            ...section.content,
-            title: e.target.innerText
-          })
-        }
+        onBlur={(e) => onUpdateInline("content.title", e.target.innerText)}
       >
-        {section.content?.title}
+        {title}
       </h2>
 
       <p
         contentEditable
         suppressContentEditableWarning
-        onBlur={(e) =>
-          saveContent(section.id, {
-            ...section.content,
-            subtitle: e.target.innerText
-          })
-        }
+        onBlur={(e) => onUpdateInline("content.subtitle", e.target.innerText)}
       >
-        {section.content?.subtitle}
+        {subtitle}
       </p>
     </div>
   );

@@ -1,70 +1,77 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { supabase } from "./supabase/Client";
+import { HashRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { supabase } from "./supabase/client";
 
 import Builder from "./builder/Builder";
+import SitePage from "./site/SitePage";
 
-import SchoolLayout from "./templates/layouts/SchoolLayout";
-import BusinessLayout from "./templates/layouts/BusinessLayout";
-import PortfolioLayout from "./templates/layouts/PortfolioLayout";
 
-// Temporary pages
-const Home = () => <div style={{ padding: 40 }}>Home Page</div>;
-const WhoWeAre = () => <div style={{ padding: 40 }}>Who We Are</div>;
+function readTokens() {
+  const url = new URL(window.location.href);
 
-export default function App() {
-  const [layout, setLayout] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // 1) normal query
+  let access_token = url.searchParams.get("access_token");
+  let refresh_token = url.searchParams.get("refresh_token");
 
+  // 2) tokens inside hash query (recommended)
+  // Example: http://localhost:5174/#/builder/ORG?access_token=...&refresh_token=...
+  if ((!access_token || !refresh_token) && window.location.hash.includes("?")) {
+    const hashQuery = window.location.hash.split("?")[1] || "";
+    const params = new URLSearchParams(hashQuery);
+    access_token = access_token || params.get("access_token");
+    refresh_token = refresh_token || params.get("refresh_token");
+  }
+
+  return { access_token, refresh_token };
+}
+
+function SessionHydrator({ children }) {
   useEffect(() => {
-    async function loadTemplate() {
-      const { data, error } = await supabase
-        .from("site_settings")
-        .select("template")
-        .single();
+    (async () => {
+      const { access_token, refresh_token } = readTokens();
 
-      if (!error && data?.template) {
-        setLayout(data.template);
+      if (access_token && refresh_token) {
+        await supabase.auth.setSession({ access_token, refresh_token });
+
+        // clean tokens from BOTH search and hash
+        const cleanUrl = new URL(window.location.href);
+        cleanUrl.searchParams.delete("access_token");
+        cleanUrl.searchParams.delete("refresh_token");
+
+        if (window.location.hash.includes("?")) {
+          cleanUrl.hash = window.location.hash.split("?")[0];
+        }
+
+        window.history.replaceState({}, "", cleanUrl.toString());
       }
-
-      setLoading(false);
-    }
-
-    loadTemplate();
+    })();
   }, []);
 
-  const renderLayout = (children) => {
-    switch (layout) {
-      case "business":
-        return <BusinessLayout>{children}</BusinessLayout>;
-      case "portfolio":
-        return <PortfolioLayout>{children}</PortfolioLayout>;
-      default:
-        return <SchoolLayout>{children}</SchoolLayout>;
-    }
-  };
+  return children;
+}
 
-  if (loading) return null; // or loader spinner
+function BuilderWrapper() {
+  const { orgId } = useParams();
+  return <Builder orgId={orgId} />;
+}
 
+export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
+    <HashRouter>
+      <SessionHydrator>
+        <Routes>
+          {/* Builder */}
+          <Route path="/" element={<Builder />} />
+          <Route path="/builder/:orgId" element={<BuilderWrapper />} />
 
-        {/* 🔥 Builder */}
-        <Route path="/" element={<Builder />} />
+          {/* Public Website (DB-driven) */}
+          <Route path="/site/:siteId" element={<SitePage />} />
+          <Route path="/site/:siteId/:slug" element={<SitePage />} />
 
-        {/* 🔥 Public Website */}
-        <Route
-          path="/site"
-          element={renderLayout(<Home />)}
-        />
-
-        <Route
-          path="/site/about/who-we-are"
-          element={renderLayout(<WhoWeAre />)}
-        />
-
-      </Routes>
-    </BrowserRouter>
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </SessionHydrator>
+    </HashRouter>
   );
 }
