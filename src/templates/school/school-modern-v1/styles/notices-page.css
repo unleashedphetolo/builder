@@ -1,0 +1,304 @@
+.notices-page {
+  padding: 28px 0 50px;
+  color: #0f172a;
+  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+}
+
+.np-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-end;
+  margin-bottom: 18px;
+}
+
+.np-title {
+  font-size: 34px;
+  margin: 0;
+  font-weight: 900;
+  color: #2a1b6b;
+}
+
+.np-subtitle {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 14.5px;
+}
+
+.np-search input {
+  width: min(460px, 90vw);
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  outline: none;
+  background: #ffffff;
+  transition: box-shadow 140ms ease, border-color 140ms ease;
+}
+
+.np-search input:focus {
+  border-color: rgba(11, 59, 143, 0.55);
+  box-shadow: 0 12px 22px rgba(11, 59, 143, 0.12);
+}
+
+.np-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.np-card-head {
+  padding: 14px 18px;
+  background: linear-gradient(180deg, #f8fafc, #ffffff);
+  border-bottom: 1px solid #eef2f7;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.np-count {
+  color: #334155;
+  font-size: 14px;
+}
+
+.np-badge {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #0b3b8f;
+  background: rgba(11, 59, 143, 0.08);
+  padding: 8px 10px;
+  border-radius: 999px;
+}
+
+.np-table-wrap {
+  overflow: auto;
+}
+
+.np-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+}
+
+.np-table thead {
+  background: #0f172a;
+  color: #ffffff;
+}
+
+.np-table th {
+  text-align: left;
+  padding: 14px 18px;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.np-table td {
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  font-size: 14.5px;
+  color: #1f2937;
+}
+
+.np-table tbody tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+.td-title {
+  font-weight: 800;
+  color: #2a1b6b;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 12px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.12);
+  color: #166534;
+  border: 1px solid rgba(34, 197, 94, 0.22);
+}
+
+.np-empty {
+  text-align: center;
+  padding: 22px 18px;
+  color: #64748b;
+}
+
+.np-footer {
+  padding: 14px 18px;
+  border-top: 1px solid #eef2f7;
+  background: #ffffff;
+}
+
+.np-note {
+  font-size: 13px;
+  color: #64748b;
+}
+
+@media (max-width: 900px) {
+  .np-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .np-title {
+    font-size: 26px;
+  }
+
+  .np-table {
+    min-width: 640px;
+  }
+}
+
+/* Small stacked date+time */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stack-main {
+  font-weight: 800;
+  color: #0f172a;
+  font-size: 13.5px;
+}
+
+.stack-sub {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* Status variants (optional) */
+.status-pill.active {
+  background: rgba(34, 197, 94, 0.12);
+  color: #166534;
+  border: 1px solid rgba(34, 197, 94, 0.22);
+}
+
+.status-pill.closed,
+.status-pill.expired {
+  background: rgba(239, 68, 68, 0.10);
+  color: #7f1d1d;
+  border: 1px solid rgba(239, 68, 68, 0.22);
+}
+
+/* New styling */
+/* =========================
+   Extra Responsive Add-ons
+   (Do not change existing styles)
+   ========================= */
+
+/* Tablet */
+@media (max-width: 768px) {
+  .notices-page {
+    padding: 22px 0 44px;
+  }
+
+  .np-title {
+    font-size: 24px;
+  }
+
+  .np-subtitle {
+    font-size: 14px;
+  }
+
+  .np-card-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .np-badge {
+    padding: 7px 10px;
+  }
+
+  .np-table {
+    min-width: 620px; /* keep scroll usable */
+  }
+
+  .np-table th,
+  .np-table td {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 520px) {
+  .notices-page {
+    padding: 18px 0 40px;
+  }
+
+  .np-title {
+    font-size: 22px;
+    line-height: 1.15;
+  }
+
+  .np-subtitle {
+    font-size: 13.5px;
+    line-height: 1.45;
+  }
+
+  .np-search input {
+    width: 100%;
+    padding: 11px 12px;
+    border-radius: 12px;
+  }
+
+  .np-count {
+    font-size: 13px;
+  }
+
+  .np-badge {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+  }
+
+  .np-table {
+    min-width: 560px; /* allow horizontal scroll */
+  }
+
+  .np-table th,
+  .np-table td {
+    padding: 11px 12px;
+    font-size: 13.6px;
+  }
+
+  .status-pill {
+    padding: 7px 9px;
+    font-size: 11px;
+  }
+
+  .np-footer {
+    padding: 12px 14px;
+  }
+
+  .np-note {
+    font-size: 12.5px;
+  }
+
+  .stack-main {
+    font-size: 13px;
+  }
+
+  .stack-sub {
+    font-size: 11.5px;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 380px) {
+  .np-title {
+    font-size: 20px;
+  }
+
+  .np-table {
+    min-width: 520px;
+  }
+}

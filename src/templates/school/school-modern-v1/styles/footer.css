@@ -1,0 +1,206 @@
+/* container utility (adjust to your project's container) */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* Footer base */
+.site-footer {
+  background: linear-gradient(180deg, #f7f9fd 0%, #ffffff 100%);
+  color: #2a2a2a;
+  border-top: 1px solid rgba(42,27,107,0.06);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* Top area: brand + links */
+.footer-top {
+  display: flex;
+  gap: 28px;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-top: 20px;
+  padding-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+/* Brand block */
+.brand {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  min-width: 260px;
+  flex: 1 1 320px;
+}
+
+.logoz {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(42,27,107,0.06);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -12px;
+}
+.logo-image {
+    height: 60px;
+    margin-right: 0.75rem;
+    border-radius: 8px;
+    transition: transform 0.3s ease, filter 0.3s ease;
+  }
+.brand-text .school-name {
+  font-weight: 700;
+  color: #2a1b6b;
+  font-size: 1.05rem;
+  letter-spacing: 0.2px;
+}
+
+.brand-text .slogan {
+  font-size: 0.85rem;
+  color: #6b6b7a;
+  margin-top: 4px;
+}
+
+.brand-text .contact {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.small {
+  font-size: 0.85rem;
+  color: #6b6b7a;
+}
+
+.contact small {
+  text-decoration: none;
+}
+
+/* Link groups */
+.footer-links {
+  display: flex;
+  gap: 18px;
+  flex: 2 1 560px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.link-group {
+  min-width: 160px;
+}
+
+.link-group h4 {
+  margin: 0 0 8px 0;
+  font-size: 0.95rem;
+  color: #2a1b6b;
+  font-weight: 700;
+}
+
+.link-group ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.link-group li {
+  margin: 6px 0;
+}
+
+.link-group a {
+  color: #4b4b5b;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 160ms ease;
+  display: inline-block;
+  padding: 2px 0;
+  border-radius: 4px;
+}
+
+.link-group a:hover,
+.link-group a:focus {
+  color: #2a1b6b;
+  transform: translateX(4px);
+  outline: none;
+}
+
+/* Bottom row */
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0 28px 0;
+  border-top: 1px solid rgba(42,27,107,0.03);
+  flex-wrap: wrap;
+}
+
+/* Social */
+.social {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.social .sep { margin: 0 8px; color: #ccc; }
+
+.social-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-radius: 8px;
+  padding: 2px;
+  color: #2a1b6b;
+  text-decoration: none;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+  transition: all 180ms ease;
+}
+.social-btn svg {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+.social-btn:hover {
+  transform: translateY(-4px) scale(1.05);
+  background: #f0effa;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+}
+
+.social-btn:focus {
+  transform: translateY(-4px);
+  background: rgba(42,27,107,0.06);
+  outline: none;
+}
+.powered-by {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #000000;
+  margin-top: 10px;
+}
+.ulterspace-link {
+  display: flex;
+  align-items: center;
+  color: #0da8d3;
+  text-decoration: none;
+  gap: 6px;
+  font-weight: bold;
+}
+.ulterspace-logo {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  border-radius: 5px;
+  vertical-align: middle;
+}
+
+/* Responsive */
+@media (max-width: 880px) {
+  .footer-top { gap: 18px; }
+  .footer-links { justify-content: flex-start; }
+  .brand { flex: 1 1 100%; }
+  .footer-bottom { flex-direction: column; align-items: flex-start; }
+}

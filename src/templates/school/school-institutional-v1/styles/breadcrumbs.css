@@ -1,0 +1,62 @@
+/* =========================
+   Breadcrumbs (Institutional)
+   File: src/styles/breadcrumbs.css
+   ========================= */
+
+.bc {
+  margin: 14px 0 18px;
+  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+}
+
+.bc-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 10px 12px;
+  list-style: none;
+
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,0.06);
+  background: linear-gradient(180deg, #ffffff, #f8fafc);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.06);
+}
+
+.bc-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.bc-link {
+  color: #0b3b8f;
+  text-decoration: none;
+  font-weight: 900;
+}
+
+.bc-link:hover {
+  text-decoration: underline;
+}
+
+.bc-sep {
+  color: #94a3b8;
+  font-weight: 900;
+}
+
+.bc-current {
+  color: #0f172a;
+  font-weight: 900;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+  .bc-list {
+    padding: 9px 10px;
+    border-radius: 12px;
+  }
+  .bc-item {
+    font-size: 12.5px;
+  }
+}

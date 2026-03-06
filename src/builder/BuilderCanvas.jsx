@@ -15,9 +15,9 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 import "../styles/builderCanvas.css";
-import SchoolLayout from "../templates/layouts/SchoolLayout";
-import BusinessLayout from "../templates/layouts/BusinessLayout";
-import PortfolioLayout from "../templates/layouts/PortfolioLayout";
+import SchoolLayout from "../layouts/SchoolLayout";
+import BusinessLayout from "../layouts/BusinessLayout";
+import PortfolioLayout from "../layouts/PortfolioLayout";
 
 import { persistSectionOrder } from "./siteService";
 

@@ -1,0 +1,121 @@
+.wall-container {
+  padding: 60px 20px;
+  background: #f7f8fc;
+}
+
+.wall-title {
+  text-align: center;
+  font-size: 36px;
+  font-weight: 800;
+  color: #2a1b6b;
+}
+
+.wall-subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 45px;
+}
+
+.wall-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+.honour-card {
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+  transition: 0.3s ease;
+}
+
+.honour-card:hover {
+  transform: translateY(-8px);
+}
+
+.honour-cover {
+  position: relative;
+  height: 190px;
+  cursor: pointer;
+}
+
+.honour-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: linear-gradient(135deg, #6a5acd, #4b3cbf);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.honour-body {
+  padding: 20px;
+}
+
+.honour-body h4 {
+  font-size: 21px;
+  color: #2a1b6b;
+  margin-bottom: 8px;
+}
+
+.honour-body p {
+  color: #555;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.honour-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.honour-gallery img {
+  width: 70px;
+  height: 70px;
+  border-radius: 12px;
+  object-fit: cover;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.honour-gallery img:hover {
+  transform: scale(1.1);
+}
+
+/* Image Preview Modal */
+.image-preview {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.image-preview img {
+  max-width: 90%;
+  max-height: 85%;
+  border-radius: 14px;
+}
+
+.image-preview .close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 32px;
+  color: #fff;
+  cursor: pointer;
+}

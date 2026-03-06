@@ -1,0 +1,237 @@
+.stationary-page{
+  padding-top:28px;
+  padding-bottom:40px;
+  font-family:"Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  color:#0f172a;
+}
+
+.stationary-head{
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  align-items:flex-end;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+
+.stationary-sub{
+  margin:6px 0 0;
+  color:#64748b;
+  font-size:14.5px;
+  line-height:1.6;
+  max-width:900px;
+}
+
+.stationary-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.stationary-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 14px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#2a1b6b,#0b3b8f);
+  color:#fff;
+  font-weight:900;
+  text-decoration:none;
+  border:1px solid rgba(255,255,255,0.15);
+  box-shadow:0 10px 22px rgba(0,0,0,0.12);
+  transition:transform 140ms ease, box-shadow 140ms ease;
+  white-space:nowrap;
+}
+.stationary-btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 16px 30px rgba(0,0,0,0.16);
+}
+
+.stationary-tools{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  align-items:flex-end;
+  margin-bottom:14px;
+}
+
+.stationary-filter,
+.stationary-search{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  min-width:240px;
+  flex:1;
+}
+
+.st-label{
+  font-weight:900;
+  font-size:13px;
+  color:#0f172a;
+}
+
+.stationary-filter select,
+.stationary-search input{
+  width:100%;
+  padding:12px 12px;
+  border-radius:12px;
+  border:1px solid #e5e7eb;
+  outline:none;
+  background:#fff;
+  transition:box-shadow 140ms ease, border-color 140ms ease;
+  font-family:inherit;
+  font-size:14px;
+  color:#0f172a;
+}
+
+.stationary-filter select:focus,
+.stationary-search input:focus{
+  border-color:rgba(11,59,143,0.45);
+  box-shadow:0 0 0 4px rgba(11,59,143,0.12);
+}
+
+.stationary-table-wrap{
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  border-radius:14px;
+}
+
+.stationary-table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:760px;
+}
+
+.stationary-table thead{
+  background:#0f172a;
+  color:#fff;
+}
+
+.stationary-table th{
+  text-align:left;
+  padding:14px 14px;
+  font-size:13px;
+  font-weight:900;
+  letter-spacing:0.02em;
+}
+
+.stationary-table td{
+  padding:14px 14px;
+  border-bottom:1px solid rgba(0,0,0,0.06);
+  color:#334155;
+  font-size:13.8px;
+  vertical-align:top;
+}
+
+.stationary-table tbody tr:nth-child(even){
+  background:#f8fafc;
+}
+
+.st-grade{
+  font-weight:900;
+  color:#2a1b6b;
+  white-space:nowrap;
+}
+
+.st-subject{
+  font-weight:800;
+  color:#0f172a;
+  white-space:nowrap;
+}
+
+.st-items{
+  color:#475569;
+  line-height:1.6;
+}
+
+.st-empty{
+  text-align:center;
+  padding:18px 14px;
+  color:#64748b;
+  font-weight:800;
+}
+
+.stationary-note{
+  margin-top:12px;
+  color:#64748b;
+  font-size:13px;
+  line-height:1.6;
+}
+
+/* =========================
+   Responsive: keep design, improve layout
+   ========================= */
+
+@media (max-width: 900px){
+  .stationary-head{
+    align-items:flex-start;
+  }
+  .stationary-btn{
+    width:100%;
+  }
+}
+
+/* MOBILE: convert table rows into stacked cards (no horizontal scroll) */
+@media (max-width: 680px){
+  .stationary-table-wrap{
+    overflow:visible;
+  }
+
+  .stationary-table{
+    min-width:0;
+  }
+
+  .stationary-table thead{
+    display:none;
+  }
+
+  .stationary-table,
+  .stationary-table tbody,
+  .stationary-table tr,
+  .stationary-table td{
+    display:block;
+    width:100%;
+  }
+
+  .stationary-table tr{
+    background:#fff;
+    border:1px solid rgba(0,0,0,0.06);
+    border-radius:14px;
+    padding:12px;
+    margin-bottom:12px;
+    box-shadow:0 12px 26px rgba(0,0,0,0.06);
+  }
+
+  .stationary-table td{
+    border:none;
+    padding:10px 10px;
+  }
+
+  .stationary-table td::before{
+    content: attr(data-label);
+    display:block;
+    font-size:12px;
+    font-weight:900;
+    color:#64748b;
+    margin-bottom:4px;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+  }
+
+  .st-grade,
+  .st-subject{
+    white-space:normal;
+  }
+}
+
+/* Smallest devices */
+@media (max-width: 420px){
+  .stationary-page{
+    padding-top:20px;
+    padding-bottom:34px;
+  }
+  .stationary-sub{
+    font-size:14px;
+  }
+}

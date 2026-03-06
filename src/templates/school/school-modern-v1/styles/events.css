@@ -1,0 +1,282 @@
+/* Container layout to match screenshot proportions */
+.school-calendar-section {
+  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial;
+  padding: 28px 40px;
+  background: #ffffff;
+  color: #222;
+}
+
+/* Top heading row (left title + small nav control) */
+.calendar-heading-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.page-title {
+  font-size: 34px;
+  color: #2a1b6b;
+  margin: 0;
+  font-weight: 800;
+}
+
+.calendar-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.nav-btn,
+.today-btn {
+  background: #344050;
+  color: #fff;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.today-btn {
+  background: #7d8894;
+}
+
+/* Grid: left calendar + right events */
+.calendar-inner-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 32px;
+  align-items: start;
+}
+
+/* Left column placeholder (kept visually similar to screenshot) */
+.calendar-left {
+  background: transparent;
+}
+
+.month-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #2a1b6b;
+  margin-bottom: 12px;
+}
+
+/* simple placeholder for calendar area to match proportions */
+.calendar-placeholder {
+  height: 520px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #ffffff 0%, #fafbfe 100%);
+  border: 1px solid rgba(0,0,0,0.04);
+}
+
+/* Right column - events area */
+.events-right {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Top header of events */
+.events-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.events-tag {
+  font-size: 12px;
+  color: #2a1b6b;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.events-title {
+  margin: 6px 0 4px;
+  color: #2a1b6b;
+  font-size: 36px;
+  line-height: 1.05;
+  font-weight: 800;
+}
+
+.events-sub {
+  margin: 0;
+  color: #666;
+  font-size: 15px;
+}
+
+.view-all-btn {
+  background: #2a1b6b;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Table container with shadow and rounded corners */
+.events-table-wrap {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.06);
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.06);
+  max-height: 480px; /* match image vertical height */
+  position: relative;
+}
+
+/* Table itself */
+.events-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px; /* keep columns from collapsing */
+}
+
+/* Header row: black bar like screenshot */
+.events-table thead {
+  background: #000;
+  color: #fff;
+}
+
+.events-table thead th {
+  padding: 14px 18px;
+  font-size: 15px;
+  text-align: left;
+  font-weight: 800;
+}
+
+/* Body rows */
+.events-table tbody tr {
+  vertical-align: middle;
+}
+
+/* Alternate row background */
+.events-table tbody tr.even {
+  background: #f2f2f2;
+}
+
+.events-table td {
+  padding: 18px 14px;
+  border-bottom: 1px solid rgba(0,0,0,0.03);
+  font-size: 15px;
+  color: #333;
+}
+
+/* Date badge left column */
+.date-badge {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #eef0f6; /* light circular background */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+}
+
+.date-day {
+  font-size: 20px;
+  line-height: 1;
+  color: #2a1b6b; /* purple text like screenshot */
+  display: block;
+  margin: 0;
+}
+
+.date-month {
+  font-size: 11px;
+  color: #2a1b6b;
+  text-transform: uppercase;
+}
+
+/* Event name bold purple */
+.event-name {
+  color: #2a1b6b;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+/* Time + location */
+.td-time .clock,
+.td-location .pin {
+  margin-right: 8px;
+}
+
+.td-time,
+.td-location {
+  color: #444;
+  font-size: 14px;
+}
+
+/* Details arrow on far right */
+.td-details {
+  text-align: center;
+  color: #1a73e8;
+  font-weight: 800;
+  font-size: 20px;
+  width: 48px;
+}
+
+/* Hover effect: subtle row highlight */
+.events-table tbody tr:hover {
+  background: #f7f9fc;
+}
+
+/* Custom scrollbar (right side of events-table-wrap) */
+.events-table-wrap::-webkit-scrollbar {
+  width: 12px;
+}
+
+.events-table-wrap::-webkit-scrollbar-track {
+  background: #f4f6fb;
+}
+
+.events-table-wrap::-webkit-scrollbar-thumb {
+  background: #cfcfe0;
+  border-radius: 8px;
+  border: 3px solid #f4f6fb;
+}
+
+/* Make table body scrollable while keeping thead sticky */
+.events-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
+/* Ensure tbody scroll inside wrapper */
+.events-table tbody {
+  display: block;
+  max-height: 420px;
+  overflow: auto;
+  width: 100%;
+}
+
+.events-table thead,
+.events-table tbody tr {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1100px) {
+  .calendar-inner-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .events-table {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .events-title { font-size: 26px; }
+  .page-title { font-size: 22px; }
+  .date-badge { width:48px; height:48px; }
+  .date-day { font-size:18px; }
+}

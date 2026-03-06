@@ -1,0 +1,102 @@
+.sponsors-section {
+  margin-top: -40px;
+  background: #f8fafc;
+}
+
+.sponsors-intro {
+  text-align: center;
+  max-width: 700px;
+  margin: 10px auto 40px;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.sponsors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 30px;
+  align-items: center;
+}
+
+.sponsor-card {
+  text-decoration: none;
+  color: inherit;
+  text-align: center;
+  padding: 18px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  transition: all 0.25s ease;
+}
+
+.sponsor-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.sponsor-card img {
+  max-width: 110px;
+  margin-bottom: 10px;
+}
+
+.sponsor-card {
+  text-align: center;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.sponsor-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+.sponsor-card img {
+  max-width: 120px;
+  height: 60px;
+  margin-bottom: 12px;
+}
+
+.sponsor-card p {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* Sponsors grid */
+.sponsors-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* desktop example */
+  gap: 14px;
+}
+
+/* ✅ Mobile: 2 columns */
+@media (max-width: 640px) {
+  .sponsors-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  /* optional: make cards tighter */
+  .sponsor-card {
+    padding: 10px;
+    height: 150px;
+  }
+
+  /* optional: smaller logo */
+  .sponsor-logo {
+    height: 46px;
+  }
+
+  .sponsor-card img {
+    max-width: 120px;
+    height: 60px;
+    margin-bottom: 12px;
+  }
+
+  .sponsor-name {
+    font-size: 12.5px;
+  }
+}

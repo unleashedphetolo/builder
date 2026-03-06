@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "../supabase/client";
 
-import SchoolLayout from "../templates/layouts/SchoolLayout";
-import BusinessLayout from "../templates/layouts/BusinessLayout";
-import PortfolioLayout from "../templates/layouts/PortfolioLayout";
+import SchoolLayout from "../layouts/SchoolLayout";
+import BusinessLayout from "../layouts/BusinessLayout";
+import PortfolioLayout from "../layouts/PortfolioLayout";
 
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1600&q=60";

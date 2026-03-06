@@ -1,0 +1,191 @@
+/* =========================
+   Notice Board (Responsive + Institutional)
+   File: src/styles/notice.css
+   ========================= */
+
+.notice-wrapper {
+  margin-top: 0;
+  position: relative;
+  z-index: 1000;
+}
+
+/* Board container */
+.notice-board {
+  background: #0b0b0f; /* softer than pure black */
+  color: #fff;
+  border-radius: 16px;
+  padding: 26px 28px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  margin-top: -60px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+}
+
+/* Header */
+.notice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.notice-header h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+/* View All link styled as button */
+.view-all {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px 12px;
+  border-radius: 10px;
+
+  font-size: 0.9rem;
+  font-weight: 800;
+
+  color: #ffffff;
+  text-decoration: none;
+
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+
+  transition: transform 140ms ease, background 140ms ease, box-shadow 140ms ease;
+  white-space: nowrap;
+}
+
+.view-all:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.35);
+}
+
+/* Scroll container */
+.notice-scroll {
+  max-height: 230px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Notice list */
+.notice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* tighter, cleaner */
+}
+
+/* Rows */
+.notice-row {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  align-items: center;
+  gap: 10px;
+
+  padding: 12px 12px;
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  transition: background 140ms ease, transform 140ms ease;
+}
+
+.notice-row:hover {
+  background: rgba(255, 255, 255, 0.07);
+  transform: translateY(-1px);
+}
+
+/* Date */
+.notice-date {
+  font-size: 0.86rem;
+  color: rgba(255, 255, 255, 0.72);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Title */
+.notice-title {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.3;
+}
+
+/* Optional meta under title (if you use it) */
+.notice-meta {
+  grid-column: 2 / -1;
+  font-size: 0.86rem;
+  color: rgba(255, 255, 255, 0.72);
+  opacity: 0.95;
+}
+
+/* =========================
+   Responsive
+   ========================= */
+
+@media (max-width: 900px) {
+  .notice-board {
+    padding: 22px 20px;
+    margin-top: -46px;
+  }
+
+  .notice-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .notice-row {
+    grid-template-columns: 220px 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .notice-board {
+    padding: 18px 16px;
+    border-radius: 14px;
+    margin-top: -34px;
+  }
+
+  .notice-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .notice-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .notice-date {
+    white-space: normal;
+    font-size: 0.85rem;
+  }
+
+  .notice-title {
+    font-size: 0.98rem;
+  }
+
+  .notice-meta {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 420px) {
+  .notice-header h2 {
+    font-size: 1.12rem;
+  }
+
+  .view-all {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .notice-scroll {
+    max-height: 210px;
+  }
+}

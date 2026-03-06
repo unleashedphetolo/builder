@@ -1,0 +1,81 @@
+.about {
+  padding: 0px 0;
+  background: #f7f9fb;
+}
+
+/* Horizontal layout */
+.about-horizontal {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  align-items: stretch;
+}
+
+/* Cards */
+.about-card {
+  background: #ffffff;
+  padding: 30px 28px 34px;
+  border-radius: 14px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
+  border-top: 4px solid #2a1b6b;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.about-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 38px rgba(0, 0, 0, 0.09);
+}
+
+/* Label */
+.about-label {
+  font-size: 0.7rem;
+  letter-spacing: 1.2px;
+  font-weight: 700;
+  color: #8a8fa3;
+  text-transform: uppercase;
+}
+
+/* Heading */
+.about-card h3 {
+  margin: 8px 0 14px;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #2a1b6b;
+}
+
+/* Text */
+.about-card p {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #444;
+}
+
+/* Values */
+.values-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 16px;
+}
+
+.values-list li {
+  font-size: 0.9rem;
+  color: #333;
+  padding-left: 14px;
+  position: relative;
+}
+
+.values-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #2a1b6b;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .about-horizontal {
+    grid-template-columns: 1fr;
+  }
+}
