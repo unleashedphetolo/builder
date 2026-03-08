@@ -1,27 +1,58 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "../../styles/hero.css";
-import { Link } from "react-router-dom";
-import { useTenant } from "../../../../../site/TenantContext";
-import { mergeHeroSlides } from "../../../../../site/contentDefaults";
 
-export default function Hero() {
-  const { settings } = useTenant();
+function normalizeHeroSlides(heroSlides = []) {
+  const fallback = [
+    {
+      id: "default-1",
+      type: "image",
+      src: "/images/hero1.jpg",
+      alt: "School hero",
+      title: "Welcome to Our School",
+      subtitle: "Building bright futures through excellence in education.",
+    },
+  ];
 
-  const slides = useMemo(() => mergeHeroSlides(settings?.hero_slides), [settings?.hero_slides]);
+  if (!Array.isArray(heroSlides) || heroSlides.length === 0) {
+    return fallback;
+  }
+
+  return heroSlides.map((slide, index) => ({
+    id: slide?.id || `slide-${index + 1}`,
+    type: slide?.type || "image",
+    src: slide?.src || slide?.image || "/images/hero1.jpg",
+    poster: slide?.poster || "",
+    alt: slide?.alt || "School hero",
+    title: slide?.title || "",
+    subtitle: slide?.subtitle || "",
+  }));
+}
+
+function buildSiteHref(siteId, path = "") {
+  const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
+  return `/#/site/${siteId || ""}${clean}`;
+}
+
+export default function Hero({ settings = {} }) {
+  const slides = useMemo(
+    () => normalizeHeroSlides(settings?.hero_slides),
+    [settings?.hero_slides]
+  );
 
   const [index, setIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const autoplayRef = useRef(null);
 
-  // Reset index if slides change
+  const siteId = settings?.site_id || "";
+
   useEffect(() => {
-    if (!slides?.length) return;
+    if (!slides.length) return;
     if (index >= slides.length) setIndex(0);
   }, [slides, index]);
 
   useEffect(() => {
-    if (!slides?.length) return;
+    if (!slides.length) return;
 
     if (isPaused || isVideoPlaying) {
       clearInterval(autoplayRef.current);
@@ -50,7 +81,7 @@ export default function Hero() {
     setIsVideoPlaying(false);
   };
 
-  if (!slides?.length) return null;
+  if (!slides.length) return null;
 
   const active = slides[index];
 
@@ -85,20 +116,31 @@ export default function Hero() {
             <p>{active?.subtitle || ""}</p>
 
             <div className="hero-actions">
-              <Link className="hero-btn primary" to="/admissions">
+              <a className="hero-btn primary" href={buildSiteHref(siteId, "/admissions")}>
                 Admissions
-              </Link>
-              <Link className="hero-btn secondary" to="/contact">
+              </a>
+              <a className="hero-btn secondary" href={buildSiteHref(siteId, "/contact")}>
                 Contact
-              </Link>
+              </a>
             </div>
           </div>
         </div>
 
-        <button className="hero-nav prev" onClick={prevSlide} aria-label="Previous slide">
+        <button
+          className="hero-nav prev"
+          onClick={prevSlide}
+          aria-label="Previous slide"
+          type="button"
+        >
           ‹
         </button>
-        <button className="hero-nav next" onClick={nextSlide} aria-label="Next slide">
+
+        <button
+          className="hero-nav next"
+          onClick={nextSlide}
+          aria-label="Next slide"
+          type="button"
+        >
           ›
         </button>
 
@@ -109,6 +151,7 @@ export default function Hero() {
               className={`hero-dot ${i === index ? "active" : ""}`}
               onClick={() => goToSlide(i)}
               aria-label={`Go to slide ${i + 1}`}
+              type="button"
             />
           ))}
         </div>

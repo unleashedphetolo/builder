@@ -1,4 +1,3 @@
-// WallOfFame.js
 import React, { useState } from "react";
 import "../../styles/wall.css";
 
@@ -11,8 +10,8 @@ const HONOREES = [
     cover: "/images/academics/acade13.jpg",
     gallery: [
       "/images/academics/acade10.jpg",
-      "/images/academics/acade12.jpg"
-    ]
+      "/images/academics/acade12.jpg",
+    ],
   },
   {
     id: 2,
@@ -22,8 +21,8 @@ const HONOREES = [
     cover: "/images/academics/acade14.jpg",
     gallery: [
       "/images/academics/acade5.jpg",
-      "/images/academics/acade8.jpg"
-    ]
+      "/images/academics/acade8.jpg",
+    ],
   },
   {
     id: 3,
@@ -33,12 +32,12 @@ const HONOREES = [
     cover: "/images/academics/acade4.jpg",
     gallery: [
       "/images/academics/acade3.webp",
-      "/images/academics/acade1.jpg"
-    ]
-  }
+      "/images/academics/acade1.jpg",
+    ],
+  },
 ];
 
-export default function WallOfFame() {
+export default function WallOfFame({ settings = {} }) {
   const [preview, setPreview] = useState(null);
 
   return (
@@ -49,7 +48,7 @@ export default function WallOfFame() {
       </p>
 
       <div className="wall-grid">
-        {HONOREES.map(h => (
+        {HONOREES.map((h) => (
           <div className="honour-card" key={h.id}>
             <div className="honour-cover">
               <img

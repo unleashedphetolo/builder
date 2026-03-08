@@ -11,12 +11,21 @@
   z-index: 100;
 }
 
-/* LEFT */
-
-.left {
+.left,
+.center,
+.right {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
+}
+
+.center {
+  justify-content: center;
+  flex: 1;
+}
+
+.right {
+  justify-content: flex-end;
 }
 
 .hamburger {
@@ -25,8 +34,6 @@
   font-size: 20px;
   cursor: pointer;
 }
-
-/* BRAND */
 
 .brand {
   display: flex;
@@ -46,17 +53,13 @@
   align-items: center;
   justify-content: center;
 }
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
 
 .logo img {
   width: 40px;
   height: 40px;
   border-radius: 10px;
 }
+
 .brand-text h3 {
   margin: 0;
   font-size: 16px;
@@ -68,29 +71,15 @@
   color: #64748b;
 }
 
-/* CENTER */
-
 .page-indicator {
   font-weight: 500;
   color: #334155;
 }
 
-/* RIGHT */
-
-.right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* SAVE STATUS */
-
 .save-status {
   font-size: 12px;
   color: #10b981;
 }
-
-/* BUTTONS */
 
 .btn {
   padding: 6px 14px;
@@ -120,8 +109,6 @@
   border: none;
   color: #6366f1;
 }
-
-/* PUBLISH MODAL */
 
 .publish-modal {
   position: fixed;

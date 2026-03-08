@@ -1,8 +1,7 @@
-import React, { useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useMemo, useRef } from "react";
 import "../../styles/notice.css";
 
-export const NOTICES = [
+const DEFAULT_NOTICES = [
   {
     id: 1,
     title: "Issuing Term 4 Report Cards",
@@ -41,6 +40,11 @@ export const NOTICES = [
   },
 ];
 
+function buildSiteHref(siteId, path = "") {
+  const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
+  return `/#/site/${siteId || ""}${clean}`;
+}
+
 function formatDateTime(iso) {
   if (!iso) return "";
   const d = new Date(iso);
@@ -56,6 +60,7 @@ function formatDateTime(iso) {
 
 function formatRange(startIso, endIso) {
   if (!startIso || !endIso) return "";
+
   const start = new Date(startIso);
   const end = new Date(endIso);
 
@@ -88,29 +93,36 @@ function formatRange(startIso, endIso) {
     minute: "2-digit",
   });
 
-  // Same day: "Tue, 25 Nov 2025 • 10:00 – 12:30"
   if (sameDay) return `${startDate} • ${startTime} – ${endTime}`;
 
-  // Multi-day: "Mon, 10 Nov 2025 08:00 → Fri, 28 Nov 2025 13:30"
   return `${startDate} ${startTime} → ${endDate} ${endTime}`;
 }
 
-export default function NoticeBoard() {
+export default function NoticeBoard({ settings = {}, notices = [] }) {
   const scrollRef = useRef(null);
+  const siteId = settings?.site_id || "";
+
+  const items = useMemo(() => {
+    return Array.isArray(notices) && notices.length > 0 ? notices : DEFAULT_NOTICES;
+  }, [notices]);
 
   useEffect(() => {
     const box = scrollRef.current;
     if (!box) return;
 
     let scroll = 0;
+
     const scrollInterval = setInterval(() => {
       scroll += 0.5;
       box.scrollTop = scroll;
-      if (scroll >= box.scrollHeight / 2) scroll = 0;
+
+      if (scroll >= box.scrollHeight / 2) {
+        scroll = 0;
+      }
     }, 20);
 
     return () => clearInterval(scrollInterval);
-  }, []);
+  }, [items]);
 
   const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
@@ -120,14 +132,18 @@ export default function NoticeBoard() {
         <div className="notice-header">
           <h2>Notice Board</h2>
 
-          <Link to="/site/notices" className="view-all" onClick={scrollTop}>
+          <a
+            href={buildSiteHref(siteId, "/notices")}
+            className="view-all"
+            onClick={scrollTop}
+          >
             View All
-          </Link>
+          </a>
         </div>
 
         <div className="notice-scroll" ref={scrollRef}>
           <div className="notice-list">
-            {[...NOTICES, ...NOTICES].map((item, index) => (
+            {[...items, ...items].map((item, index) => (
               <div key={`${item.id}-${index}`} className="notice-row">
                 <span className="notice-date">
                   Published: {formatDateTime(item.publishedAt)}

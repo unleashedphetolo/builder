@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import BuilderNavbar from "./BuilderNavbar";
 import BuilderSidebar from "./BuilderSidebar";
 import BuilderCanvas from "./BuilderCanvas";
-import BuilderRightPanel from "./BuilderRightPanel";
 import TemplateSelector from "./TemplateSelector";
 import "../styles/builder.css";
 
@@ -12,21 +11,13 @@ import {
   ensureSiteForOrg,
   seedSiteFromTemplate,
   loadSitePages,
-  loadPageSections,
   loadSiteSettings,
   updateSiteSettings,
   loadSiteNav,
-  updateSectionField,
-  deleteSectionById,
-  addSectionToPage,
+  updateSitePage,
+  updatePageContentField,
 } from "./siteService";
 
-/**
- * Builder (GoDaddy/Wix-style)
- * - Select Category (layout_key) -> choose template
- * - Creates a site row (sites) and seeds pages/sections/settings
- * - Edits per page via site_pages + site_sections
- */
 export default function Builder() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -38,8 +29,6 @@ export default function Builder() {
 
   const [pages, setPages] = useState([]);
   const [currentPageId, setCurrentPageId] = useState(null);
-  const [sections, setSections] = useState([]);
-  const [selectedSection, setSelectedSection] = useState(null);
 
   const [siteSettings, setSiteSettings] = useState(null);
   const [navItems, setNavItems] = useState([]);
@@ -48,138 +37,191 @@ export default function Builder() {
 
   const currentPage = useMemo(
     () => pages.find((p) => p.id === currentPageId) || null,
-    [pages, currentPageId]
+    [pages, currentPageId],
   );
 
-  // Boot: ensure we have a site (or prompt template selection)
+  /*
+  =============================
+  Boot builder
+  =============================
+  */
+
   useEffect(() => {
     (async () => {
-      const { data: authData } = await supabase.auth.getUser();
-      const user = authData?.user;
+      const { data } = await supabase.auth.getUser();
+      const user = data?.user;
+
       if (!user) {
         setShowTemplateSelector(true);
         return;
       }
 
-      const ensured = await ensureSiteForOrg({ layoutKey: "school" });
+      const ensured = await ensureSiteForOrg({
+        layoutKey: "school",
+      });
+
       if (!ensured) {
         setShowTemplateSelector(true);
         return;
       }
 
-      // If site exists but is not seeded, prompt template
       if (!ensured.template_key) {
+        setSiteId(ensured.id);
+        setLayoutKey(ensured.layout_key || "school");
+        setTemplateKey(null);
         setShowTemplateSelector(true);
         return;
       }
 
       setSiteId(ensured.id);
-      setLayoutKey(ensured.layout_key);
-      setTemplateKey(ensured.template_key);
+      setLayoutKey(ensured.layout_key || "school");
+      setTemplateKey(ensured.template_key || null);
+      setShowTemplateSelector(false);
     })();
-  }, [])
+  }, []);
 
-  // Load settings + nav when site changes
+  /*
+  =============================
+  Load site settings
+  =============================
+  */
+
   useEffect(() => {
     if (!siteId) return;
+
     (async () => {
       const st = await loadSiteSettings(siteId);
       setSiteSettings(st);
+
       const nav = await loadSiteNav(siteId);
       setNavItems(nav);
     })();
   }, [siteId]);
-;
 
-  // Load pages when site changes
+  /*
+  =============================
+  Load pages
+  =============================
+  */
+
   useEffect(() => {
     if (!siteId) return;
+
     (async () => {
       const p = await loadSitePages(siteId);
       setPages(p);
-      if (p.length) setCurrentPageId((prev) => prev || p[0].id);
+
+      if (p.length) {
+        setCurrentPageId((prev) => prev || p[0].id);
+      }
     })();
   }, [siteId]);
 
-  // Load sections when page changes
-  useEffect(() => {
-    if (!siteId || !currentPageId) return;
-    (async () => {
-      const s = await loadPageSections({ siteId, pageId: currentPageId });
-      setSections(s);
-      setSelectedSection(null);
-    })();
-  }, [siteId, currentPageId]);
+  /*
+  =============================
+  Template selection
+  =============================
+  */
 
   const handleTemplateSelect = async (tpl) => {
     setTemplateError("");
-    // tpl = { layout_key, template_key }
-    const ensured = await ensureSiteForOrg({ layoutKey: tpl.layout_key });
+
+    const layoutKey = tpl?.layout_key || "school";
+    const templateKey = tpl?.template_key;
+
+    if (!templateKey) {
+      setTemplateError("Template key missing.");
+      return;
+    }
+
+    const ensured = await ensureSiteForOrg({
+      layoutKey,
+      templateKey,
+    });
+
     if (!ensured) {
-      setTemplateError("Could not create a site for your organization. Ensure your profile has an organization_id.");
+      setTemplateError(
+        "Could not create site. Check organization_id and RLS policies.",
+      );
       return;
     }
 
     const res = await seedSiteFromTemplate({
       siteId: ensured.id,
-      layoutKey: tpl.layout_key,
-      templateKey: tpl.template_key,
+      layoutKey,
+      templateKey,
     });
 
     if (!res?.ok) {
-      setTemplateError(
-        res?.error?.message ||
-          "Template install failed. Check RLS policies for sites/site_settings/site_pages/site_sections/site_nav_items."
-      );
+      setTemplateError(res?.error?.message || "Template install failed.");
       return;
     }
 
     setSiteId(ensured.id);
-    setLayoutKey(tpl.layout_key);
-    setTemplateKey(tpl.template_key);
+    setLayoutKey(layoutKey);
+    setTemplateKey(templateKey);
     setShowTemplateSelector(false);
 
     const st = await loadSiteSettings(ensured.id);
     setSiteSettings(st);
+
     const nav = await loadSiteNav(ensured.id);
     setNavItems(nav);
+
+    const p = await loadSitePages(ensured.id);
+    setPages(p);
+    setCurrentPageId(p?.[0]?.id || null);
   };
+
+  /*
+  =============================
+  Settings editing
+  =============================
+  */
 
   const onUpdateSettings = async (patch) => {
     if (!siteId) return;
+
     const updated = await updateSiteSettings(siteId, patch);
     if (updated) setSiteSettings(updated);
   };
 
-  const onAddSection = async (type) => {
-    if (!siteId || !currentPageId) return;
-    const created = await addSectionToPage({
-      siteId,
-      pageId: currentPageId,
-      type,
-      position: sections.length,
-    });
-    if (created) setSections((prev) => [...prev, created]);
+  /*
+  =============================
+  Page editing
+  =============================
+  */
+
+  const onUpdatePage = async (patch) => {
+    if (!currentPage) return;
+
+    const updated = await updateSitePage(currentPage.id, patch);
+
+    if (!updated) return;
+
+    setPages((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
   };
 
-  const onUpdateSection = async (field, value) => {
-    if (!selectedSection) return;
-    const updated = await updateSectionField({
-      id: selectedSection.id,
+  const onUpdatePageContent = async (field, value) => {
+    if (!currentPage) return;
+
+    const updated = await updatePageContentField({
+      pageId: currentPage.id,
       field,
       value,
-      current: selectedSection,
+      current: currentPage,
     });
+
     if (!updated) return;
-    setSelectedSection(updated);
-    setSections((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));
+
+    setPages((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
   };
 
-  const onDeleteSection = async (id) => {
-    await deleteSectionById(id);
-    setSections((prev) => prev.filter((s) => s.id !== id));
-    if (selectedSection?.id === id) setSelectedSection(null);
-  };
+  /*
+  =============================
+  UI
+  =============================
+  */
 
   return (
     <div className="builder-container">
@@ -194,8 +236,8 @@ export default function Builder() {
 
       <BuilderNavbar
         toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-        onPreview={() => window.open(`/site/${siteId || ""}`, "_blank")}
-        onPublish={() => console.log("Publish: wire to refresh cache")}
+        onPreview={() => window.open(`/#/site/${siteId || ""}`, "_blank")}
+        onPublish={() => console.log("Publish: connect CDN refresh")}
         onChangeTemplate={() => setShowTemplateSelector(true)}
         saveStatus="All changes saved"
       />
@@ -205,32 +247,16 @@ export default function Builder() {
           <BuilderSidebar
             pages={pages}
             currentPage={currentPageId}
+            currentPageData={currentPage}
             setCurrentPage={setCurrentPageId}
-            addSection={onAddSection}
             siteSettings={siteSettings}
             onUpdateSettings={onUpdateSettings}
+            onUpdatePage={onUpdatePage}
+            onUpdatePageContent={onUpdatePageContent}
           />
         )}
 
-        <BuilderCanvas
-          siteId={siteId}
-          layoutKey={layoutKey}
-          templateKey={templateKey}
-          page={currentPage}
-          sections={sections}
-          setSections={setSections}
-          selectedSection={selectedSection}
-          onSelectSection={setSelectedSection}
-          onUpdateInline={onUpdateSection}
-          siteSettings={siteSettings}
-          navItems={navItems}
-        />
-
-        <BuilderRightPanel
-          selectedSection={selectedSection}
-          updateSection={onUpdateSection}
-          deleteSection={onDeleteSection}
-        />
+        <BuilderCanvas siteId={siteId} page={currentPage} />
       </div>
     </div>
   );

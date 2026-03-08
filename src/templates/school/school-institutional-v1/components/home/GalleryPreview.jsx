@@ -1,9 +1,13 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import "../../styles/gallery.css";
 
-export default function Gallery() {
-  const navigate = useNavigate();
+function buildSiteHref(siteId, path = "") {
+  const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
+  return `/#/site/${siteId || ""}${clean}`;
+}
+
+export default function GalleryPreview({ settings = {} }) {
+  const siteId = settings?.site_id || "";
 
   const items = [
     { id: 1, title: "ACADEMICS", img: "/images/gallery1.jpg", link: "/activities/academics" },
@@ -16,19 +20,16 @@ export default function Gallery() {
     <section className="gallery">
       <div className="gallery-grid">
         {items.map((item) => (
-          <div
+          <a
             className="gallery-card"
             key={item.id}
-            onClick={() => navigate(item.link)}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => e.key === "Enter" && navigate(item.link)}
+            href={buildSiteHref(siteId, item.link)}
           >
             <img src={item.img} alt={item.title} />
             <div className="gallery-overlay">
               <h3>{item.title}</h3>
             </div>
-          </div>
+          </a>
         ))}
       </div>
     </section>

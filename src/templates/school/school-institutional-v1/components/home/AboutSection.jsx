@@ -1,7 +1,7 @@
 import React from "react";
 import "../../styles/about.css";
 
-export default function AboutSection() {
+export default function AboutSection({ settings = {} }) {
   return (
     <section className="about container">
       <div className="about-horizontal">

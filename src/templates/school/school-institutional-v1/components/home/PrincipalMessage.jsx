@@ -1,29 +1,39 @@
-import React from 'react';
-import { useTenant } from "../../../../../site/TenantContext";
+import React from "react";
 import "../../styles/principal.css";
 
-export default function Principal() {
-  const { settings, media } = useTenant();
-  const name = settings?.principal_name || "Principal";
-  const message = settings?.principal_message ||
-    "Welcome to our school. We are committed to academic excellence, strong values, and a safe environment where every learner can thrive.";
+export default function PrincipalMessage({ settings = {} }) {
 
-  const photo =
-    settings?.principal_photo_url ||
-    media?.find((m) => (m.name || "").toLowerCase().includes("principal"))?.url ||
+  const principalName =
+    settings?.principal_name || "Principal";
+
+  const principalMessage =
+    settings?.principal_message ||
+    "Welcome to our school. We are committed to academic excellence, discipline and community values. Our goal is to develop confident learners prepared for the future.";
+
+  const principalImage =
+    settings?.principal_image ||
     "/images/principal.jpg";
 
   return (
-    <section className="principal">
-      <div className="container principal-inner">
-        <div className="principal-text">
-          <h2>From Our Principal</h2>
-          <p>{message}</p>
-          <p className="sign">- {name}</p>
+    <section className="principal-section">
+      <div className="container principal-grid">
+
+        <div className="principal-image">
+          <img src={principalImage} alt="Principal" />
         </div>
-        <div className="principal-photo">
-          <img src={photo} alt="principal" />
+
+        <div className="principal-content">
+          <h2>Principal's Message</h2>
+
+          <p className="principal-text">
+            {principalMessage}
+          </p>
+
+          <p className="principal-name">
+            {principalName}
+          </p>
         </div>
+
       </div>
     </section>
   );

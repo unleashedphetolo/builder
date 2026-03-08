@@ -13,7 +13,7 @@
 /* WEBSITE PREVIEW BOX */
 .canvas-inner {
   width: 100%;
-  max-width: 1200px;
+  max-width: 3200px;
   background: #ffffff;
   border-radius: 10px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
@@ -124,4 +124,24 @@
 
 .editable-section:hover .hover-overlay {
   opacity: 1;
+}
+
+.builder-preview-frame {
+  width: 100%;
+  height: calc(100vh - 140px);
+  border: 0;
+  display: block;
+  background: #fff;
+}
+
+.canvas-inner.desktop .builder-preview-frame {
+  width: 100%;
+}
+
+.canvas-inner.tablet .builder-preview-frame {
+  width: 100%;
+}
+
+.canvas-inner.mobile .builder-preview-frame {
+  width: 100%;
 }

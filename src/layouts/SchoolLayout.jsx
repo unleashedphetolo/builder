@@ -1,180 +1,111 @@
-import React, { useMemo } from "react";
+import React, { Suspense, lazy, useMemo } from "react";
 
-/**
- * SchoolLayout
- * ----------------------------------------------------
- * Chooses the correct school template shell based on:
- *   settings.template_key
- *
- * Supported:
- * - school-institutional-v1
- * - school-modern-v1
- *
- * Falls back safely to institutional.
- *
- * Expected props:
- * - settings
- * - navItems
- * - children
- */
+const schoolTemplates = import.meta.glob("../templates/school/*/App.{js,jsx}");
 
-// ===== Institutional Template Imports =====
-import InstitutionalTopbar from "../templates/school/school-institutional-v1/components/layout/Topbar";
-import InstitutionalNavbar from "../templates/school/school-institutional-v1/components/layout/Navbar";
-import InstitutionalFooter from "../templates/school/school-institutional-v1/components/layout/Footer";
+function resolveTemplateImporter(templateKey) {
+  const candidates = [
+    `../templates/school/${templateKey}/App.jsx`,
+    `../templates/school/${templateKey}/App.js`,
+    "../templates/school/school-institutional-v1/App.jsx",
+    "../templates/school/school-institutional-v1/App.js",
+  ];
 
-// ===== Modern Template Imports =====
-import ModernTopbar from "../templates/school/school-modern-v1/components/layout/Topbar";
-import ModernNavbar from "../templates/school/school-modern-v1/components/layout/Navbar";
-import ModernFooter from "../templates/school/school-modern-v1/components/layout/Footer";
+  for (const key of candidates) {
+    if (schoolTemplates[key]) return schoolTemplates[key];
+  }
 
-// ===== Fallbacks =====
-const DEFAULT_LOGO =
-  "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=300&q=60";
-
-const DEFAULT_SOCIAL_LINKS = {
-  facebook: "https://facebook.com",
-  x: "https://x.com",
-  instagram: "https://instagram.com",
-  youtube: "https://youtube.com",
-  tiktok: "https://tiktok.com",
-  linkedin: "https://linkedin.com",
-  whatsapp: "https://wa.me/",
-};
-
-const DEFAULT_SOCIAL_DISPLAY = {
-  facebook: true,
-  x: true,
-  instagram: true,
-  youtube: true,
-  tiktok: true,
-  linkedin: true,
-  whatsapp: true,
-  topbar: true,
-  footer: true,
-};
-
-const DEFAULT_SETTINGS = {
-  template_key: "school-institutional-v1",
-  site_name: "Your School Name",
-  tagline: "Excellence in Learning",
-  motto: "Discipline • Respect • Success",
-  logo_url: DEFAULT_LOGO,
-  email: "info@yourschool.co.za",
-  phone: "+27 00 000 0000",
-  address_line1: "Your school address",
-  city: "Johannesburg",
-  province: "Gauteng",
-  postal_code: "0000",
-  country: "South Africa",
-  primary_color: "#1e40af",
-  secondary_color: "#0f172a",
-  accent_color: "#f59e0b",
-  font_family: "Inter, sans-serif",
-  social_links: DEFAULT_SOCIAL_LINKS,
-  social_display: DEFAULT_SOCIAL_DISPLAY,
-  footer_text: "© Your School. All rights reserved.",
-  footer_links: [],
-  topbar_links: [],
-};
-
-function normalizeSettings(settings = {}) {
-  return {
-    ...DEFAULT_SETTINGS,
-    ...settings,
-    social_links: {
-      ...DEFAULT_SOCIAL_LINKS,
-      ...(settings?.social_links || {}),
-    },
-    social_display: {
-      ...DEFAULT_SOCIAL_DISPLAY,
-      ...(settings?.social_display || {}),
-    },
-    logo_url: settings?.logo_url || DEFAULT_LOGO,
-  };
+  const firstAvailable = Object.values(schoolTemplates)[0];
+  return firstAvailable || null;
 }
 
 function normalizeNavItems(navItems = []) {
   if (!Array.isArray(navItems)) return [];
-
   return navItems
     .filter((item) => item && item.is_visible !== false)
     .sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
 }
 
-function getTemplateShell(templateKey) {
-  switch (templateKey) {
-    case "school-modern-v1":
-      return {
-        Topbar: ModernTopbar,
-        Navbar: ModernNavbar,
-        Footer: ModernFooter,
-      };
-
-    case "school-institutional-v1":
-    default:
-      return {
-        Topbar: InstitutionalTopbar,
-        Navbar: InstitutionalNavbar,
-        Footer: InstitutionalFooter,
-      };
-  }
+function normalizeSettings(settings = {}) {
+  return {
+    ...(settings || {}),
+    layout_key: "school",
+    template_key: settings?.template_key || "school-institutional-v1",
+    site_id: settings?.site_id || null,
+    social_links: settings?.social_links || {},
+    social_display: settings?.social_display || {},
+    topbar_links: Array.isArray(settings?.topbar_links) ? settings.topbar_links : [],
+    footer_links: Array.isArray(settings?.footer_links) ? settings.footer_links : [],
+    features: settings?.features || {},
+  };
 }
 
-export default function SchoolLayout({ settings, navItems, children }) {
+function MissingTemplate({ templateKey }) {
+  return (
+    <div style={{ padding: 24 }}>
+      <h2 style={{ marginTop: 0 }}>School template not found</h2>
+      <p style={{ color: "#475569" }}>
+        Could not load template: <strong>{templateKey}</strong>
+      </p>
+    </div>
+  );
+}
+
+function TemplateLoader({
+  importer,
+  settings,
+  navItems,
+  page,
+  sections,
+  builderMode,
+  children,
+}) {
+  const Template = useMemo(() => lazy(importer), [importer]);
+
+  return (
+    <Suspense fallback={<div style={{ padding: 24 }}>Loading school template...</div>}>
+      <Template
+        settings={settings}
+        navItems={navItems}
+        page={page}
+        sections={sections}
+        builderMode={builderMode}
+      >
+        {children}
+      </Template>
+    </Suspense>
+  );
+}
+
+export default function SchoolLayout({
+  settings,
+  navItems,
+  page,
+  sections,
+  builderMode = false,
+  children,
+}) {
   const safeSettings = useMemo(() => normalizeSettings(settings), [settings]);
   const safeNavItems = useMemo(() => normalizeNavItems(navItems), [navItems]);
 
-  const templateKey = safeSettings?.template_key || "school-institutional-v1";
-  const { Topbar, Navbar, Footer } = useMemo(
-    () => getTemplateShell(templateKey),
-    [templateKey]
+  const importer = useMemo(
+    () => resolveTemplateImporter(safeSettings.template_key),
+    [safeSettings.template_key]
   );
 
-  const showTopbar = safeSettings?.social_display?.topbar !== false;
-  const showFooter = safeSettings?.social_display?.footer !== false;
+  if (!importer) {
+    return <MissingTemplate templateKey={safeSettings.template_key} />;
+  }
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#f8fafc",
-        color: "#0f172a",
-        fontFamily: safeSettings.font_family || "Inter, sans-serif",
-      }}
+    <TemplateLoader
+      importer={importer}
+      settings={safeSettings}
+      navItems={safeNavItems}
+      page={page}
+      sections={sections}
+      builderMode={builderMode}
     >
-      {showTopbar && (
-        <Topbar
-          settings={safeSettings}
-          socialLinks={safeSettings.social_links}
-          socialDisplay={safeSettings.social_display}
-          topbarLinks={safeSettings.topbar_links || []}
-        />
-      )}
-
-      <Navbar
-        settings={safeSettings}
-        navItems={safeNavItems}
-      />
-
-      <main
-        style={{
-          width: "100%",
-          maxWidth: 1440,
-          margin: "0 auto",
-        }}
-      >
-        {children}
-      </main>
-
-      {showFooter && (
-        <Footer
-          settings={safeSettings}
-          socialLinks={safeSettings.social_links}
-          socialDisplay={safeSettings.social_display}
-          footerLinks={safeSettings.footer_links || []}
-        />
-      )}
-    </div>
+      {children}
+    </TemplateLoader>
   );
 }

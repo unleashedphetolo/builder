@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
 import { IoChevronDown } from "react-icons/io5";
 import "../../styles/navbar.css";
 import logos from "../../assets/sebone.jpeg";
 
 const DEFAULT_FEATURES = {
   about: true,
+  digitalLibrary: true,
   activities: true,
   resources: true,
   news: true,
@@ -13,37 +13,26 @@ const DEFAULT_FEATURES = {
   gallery: true,
   robotics: true,
   contact: true,
-  digitalLibrary: true,
 };
 
-function mergeSchoolFeatures(features) {
-  return {
-    ...DEFAULT_FEATURES,
-    ...(features || {}),
-  };
-}
-
-function getRoutePrefix(settings) {
-  if (settings?.site_id) return `/site/${settings.site_id}`;
-  return "/site";
-}
-
-function buildLink(routePrefix, path) {
-  if (!path) return routePrefix;
-  if (path === "/") return `${routePrefix}/`;
-  return `${routePrefix}${path}`;
+function buildSiteHref(siteId, path = "") {
+  const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
+  return `/#/site/${siteId || ""}${clean}`;
 }
 
 export default function Navbar({ settings = {}, navItems = [] }) {
-  const f = mergeSchoolFeatures(settings?.features);
+  const features = {
+    ...DEFAULT_FEATURES,
+    ...(settings?.features || {}),
+  };
+
   const logoUrl = settings?.logo_url || logos;
   const schoolName = settings?.site_name || "School";
   const tagline = settings?.tagline || "Secondary School";
-  const routePrefix = getRoutePrefix(settings);
+  const siteId = settings?.site_id || "";
 
   const [open, setOpen] = useState(false);
   const [dropdown, setDropdown] = useState(null);
-  const loc = useLocation();
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -52,51 +41,49 @@ export default function Navbar({ settings = {}, navItems = [] }) {
     };
   }, [open]);
 
-  useEffect(() => {
-    setOpen(false);
-    setDropdown(null);
-  }, [loc.pathname]);
-
-  const isActive = (path) => {
-    const fullPath = buildLink(routePrefix, path);
-    return loc.pathname === fullPath;
-  };
+  const visibleNavItems = useMemo(() => {
+    return Array.isArray(navItems)
+      ? navItems
+          .filter((item) => item && item.is_visible !== false && item.location !== "footer")
+          .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+      : [];
+  }, [navItems]);
 
   const menus = useMemo(
     () => ({
       about: [
-        { to: buildLink(routePrefix, "/about"), label: "Who We Are" },
-        { to: buildLink(routePrefix, "/about"), label: "Vision & Mission" },
-        { to: buildLink(routePrefix, "/staff"), label: "Staff Members" },
-        { to: buildLink(routePrefix, "/sgb"), label: "SGB" },
-        { to: buildLink(routePrefix, "/facilities"), label: "Facilities" },
-        { to: buildLink(routePrefix, "/about"), label: "Our History" },
+        { to: buildSiteHref(siteId, "/about/who-we-are"), label: "Who We Are" },
+        { to: buildSiteHref(siteId, "/about/vision-mission"), label: "Vision & Mission" },
+        { to: buildSiteHref(siteId, "/staff"), label: "Staff Members" },
+        { to: buildSiteHref(siteId, "/sgb"), label: "SGB" },
+        { to: buildSiteHref(siteId, "/facilities"), label: "Facilities" },
+        { to: buildSiteHref(siteId, "/about/history"), label: "Our History" },
       ],
       activities: [
-        { to: buildLink(routePrefix, "/activities/academics"), label: "Academics" },
-        { to: buildLink(routePrefix, "/activities/sports"), label: "Sports & Recreation" },
-        { to: buildLink(routePrefix, "/activities/culture"), label: "Culture & Activities" },
-        { to: buildLink(routePrefix, "/activities/facilities"), label: "Campus Facilities" },
+        { to: buildSiteHref(siteId, "/activities/academics"), label: "Academics" },
+        { to: buildSiteHref(siteId, "/activities/sports"), label: "Sports & Recreation" },
+        { to: buildSiteHref(siteId, "/activities/culture"), label: "Culture & Activities" },
+        { to: buildSiteHref(siteId, "/activities/facilities"), label: "Campus Facilities" },
       ],
       resources: [
-        { to: buildLink(routePrefix, "/resources/subject-choices"), label: "Subject Choices" },
-        { to: buildLink(routePrefix, "/resources/term-plan"), label: "Term Plan" },
-        { to: buildLink(routePrefix, "/resources/exam-schedule"), label: "Exam Schedule" },
-        { to: buildLink(routePrefix, "/resources/code-of-conduct"), label: "Code of Conduct" },
-        { to: buildLink(routePrefix, "/resources/stationary-list"), label: "Stationary List" },
-        { to: buildLink(routePrefix, "/calendar"), label: "Calendar" },
+        { to: buildSiteHref(siteId, "/resources/subject-choices"), label: "Subject Choices" },
+        { to: buildSiteHref(siteId, "/resources/term-plan"), label: "Term Plan" },
+        { to: buildSiteHref(siteId, "/resources/exam-schedule"), label: "Exam Schedule" },
+        { to: buildSiteHref(siteId, "/resources/code-of-conduct"), label: "Code of Conduct" },
+        { to: buildSiteHref(siteId, "/resources/stationary-list"), label: "Stationary List" },
+        { to: buildSiteHref(siteId, "/resources/calendar"), label: "Calendar" },
       ],
       news: [
-        { to: buildLink(routePrefix, "/news"), label: "Newsletters" },
-        { to: buildLink(routePrefix, "/schoolcalendar"), label: "School Calendar" },
+        { to: buildSiteHref(siteId, "/news"), label: "Newsletters" },
+        { to: buildSiteHref(siteId, "/schoolcalendar"), label: "School Calendar" },
       ],
       admissions: [
-        { to: buildLink(routePrefix, "/admissions"), label: "How to Apply" },
-        { to: buildLink(routePrefix, "/admissions"), label: "Entry Requirements" },
-        { to: buildLink(routePrefix, "/admissions"), label: "Apply Now" },
+        { to: buildSiteHref(siteId, "/admissions/howtoapply"), label: "How to Apply" },
+        { to: buildSiteHref(siteId, "/admissions/requirements"), label: "Entry Requirements" },
+        { to: buildSiteHref(siteId, "/admissions/apply"), label: "Apply Now" },
       ],
     }),
-    [routePrefix]
+    [siteId]
   );
 
   const toggleDropdown = (key) => {
@@ -116,92 +103,56 @@ export default function Navbar({ settings = {}, navItems = [] }) {
 
       <div className={`drop-menu ${dropdown === id ? "show" : ""}`}>
         {items.map((it) => (
-          <Link key={`${it.to}-${it.label}`} to={it.to}>
+          <a key={`${it.to}-${it.label}`} href={it.to}>
             {it.label}
-          </Link>
+          </a>
         ))}
       </div>
     </div>
   );
 
-  const visibleNavItems = Array.isArray(navItems)
-    ? navItems
-        .filter((item) => item && item.is_visible !== false && item.location !== "footer")
-        .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
-    : [];
-
   return (
     <header className="site-nav">
       <div className="nav-inner">
         <div className="logo-section">
-          <Link to={buildLink(routePrefix, "/")} className="logo-link" aria-label="Go to home">
-            <img src={logoUrl} alt={`${schoolName} logo`} className="logo-image" />
+          <a href={buildSiteHref(siteId, "/")} className="logo-link" aria-label="Go to home">
+            <img src={logoUrl} alt="School logo" className="logo-image" />
             <div className="logo-text">
               <h1 className="brand-name">{schoolName}</h1>
               <p className="slogan">{tagline}</p>
             </div>
-          </Link>
+          </a>
         </div>
 
         <nav className={`nav-links ${open ? "open" : ""}`} aria-label="Main navigation">
           {visibleNavItems.length > 0 ? (
             visibleNavItems.map((item) => (
-              <Link
-                key={item.id}
-                className={isActive(item.href || "/") ? "active" : ""}
-                to={buildLink(routePrefix, item.href || "/")}
-              >
+              <a key={item.id} href={buildSiteHref(siteId, item.href || "/")}>
                 {item.label}
-              </Link>
+              </a>
             ))
           ) : (
             <>
-              <Link className={isActive("/") ? "active" : ""} to={buildLink(routePrefix, "/")}>
-                Home
-              </Link>
-
-              {f.about && <Drop id="about" label="About Us" items={menus.about} />}
-
-              {f.digitalLibrary && (
-                <Link
-                  className={isActive("/digital-library") ? "active" : ""}
-                  to={buildLink(routePrefix, "/digital-library")}
-                >
-                  Digital Library
-                </Link>
+              <a href={buildSiteHref(siteId, "/")}>Home</a>
+              {features.about && <Drop id="about" label="About Us" items={menus.about} />}
+              {features.digitalLibrary && (
+                <a href={buildSiteHref(siteId, "/digital-library")}>Digital Library</a>
               )}
-
-              {f.activities && <Drop id="activities" label="Activities" items={menus.activities} />}
-              {f.resources && <Drop id="resources" label="Resources" items={menus.resources} />}
-              {f.news && <Drop id="news" label="News" items={menus.news} />}
-              {f.admissions && <Drop id="adm" label="Admissions" items={menus.admissions} />}
-
-              {f.gallery && (
-                <Link
-                  className={isActive("/gallery") ? "active" : ""}
-                  to={buildLink(routePrefix, "/gallery")}
-                >
-                  Gallery
-                </Link>
+              {features.activities && (
+                <Drop id="activities" label="Activities" items={menus.activities} />
               )}
-
-              {f.robotics && (
-                <Link
-                  className={isActive("/robotics") ? "active" : ""}
-                  to={buildLink(routePrefix, "/robotics")}
-                >
-                  Robotics Club
-                </Link>
+              {features.resources && (
+                <Drop id="resources" label="Resources" items={menus.resources} />
               )}
-
-              {f.contact && (
-                <Link
-                  className={isActive("/contact") ? "active" : ""}
-                  to={buildLink(routePrefix, "/contact")}
-                >
-                  Contact
-                </Link>
+              {features.news && <Drop id="news" label="News" items={menus.news} />}
+              {features.admissions && (
+                <Drop id="adm" label="Admissions" items={menus.admissions} />
               )}
+              {features.gallery && <a href={buildSiteHref(siteId, "/gallery")}>Gallery</a>}
+              {features.robotics && (
+                <a href={buildSiteHref(siteId, "/robotics")}>Robotics Club</a>
+              )}
+              {features.contact && <a href={buildSiteHref(siteId, "/contact")}>Contact</a>}
             </>
           )}
         </nav>

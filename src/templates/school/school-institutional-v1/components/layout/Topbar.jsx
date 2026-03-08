@@ -24,17 +24,6 @@ const DEFAULT_FEATURES = {
   news: true,
   resources: true,
   notices: true,
-  topbar: true,
-};
-
-const DEFAULT_SOCIAL_LINKS = {
-  facebook: "https://facebook.com",
-  x: "https://x.com",
-  instagram: "https://instagram.com",
-  youtube: "https://youtube.com",
-  tiktok: "https://tiktok.com",
-  linkedin: "https://linkedin.com",
-  whatsapp: "https://wa.me/",
 };
 
 const DEFAULT_SOCIAL_DISPLAY = {
@@ -49,51 +38,40 @@ const DEFAULT_SOCIAL_DISPLAY = {
   footer: true,
 };
 
-function mergeSchoolFeatures(features) {
-  return {
+const DEFAULT_SOCIAL_LINKS = {
+  facebook: "https://facebook.com",
+  x: "https://x.com",
+  instagram: "https://instagram.com",
+  youtube: "https://youtube.com",
+  tiktok: "https://tiktok.com",
+  linkedin: "https://linkedin.com",
+  whatsapp: "https://wa.me/",
+};
+
+function buildSiteHref(siteId, path = "") {
+  const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
+  return `/#/site/${siteId || ""}${clean}`;
+}
+
+export default function Topbar({ settings = {} }) {
+  const features = {
     ...DEFAULT_FEATURES,
-    ...(features || {}),
+    ...(settings?.features || {}),
   };
-}
 
-function mergeSocialLinks(links) {
-  return {
+  const links = {
     ...DEFAULT_SOCIAL_LINKS,
-    ...(links || {}),
+    ...(settings?.social_links || {}),
   };
-}
 
-function normalizeSocialDisplay(display) {
-  return {
+  const socialDisplay = {
     ...DEFAULT_SOCIAL_DISPLAY,
-    ...(display || {}),
+    ...(settings?.social_display || {}),
   };
-}
-
-function getRoutePrefix(settings) {
-  if (settings?.site_id) return `/site/${settings.site_id}`;
-  return "/site";
-}
-
-function buildLink(routePrefix, path) {
-  if (!path) return routePrefix;
-  if (path === "/") return `${routePrefix}/`;
-  return `${routePrefix}${path}`;
-}
-
-export default function Topbar({
-  settings = {},
-  socialLinks = {},
-  socialDisplay = {},
-  topbarLinks = [],
-}) {
-  const f = mergeSchoolFeatures(settings?.features);
-  const links = mergeSocialLinks(socialLinks || settings?.social_links);
-  const display = normalizeSocialDisplay(socialDisplay || settings?.social_display);
 
   const phone = settings?.phone || "+27 00 000 0000";
   const email = settings?.email || "info@school.co.za";
-  const routePrefix = getRoutePrefix(settings);
+  const siteId = settings?.site_id || "";
 
   return (
     <div className="topbar" role="banner" aria-label="Top information bar">
@@ -123,11 +101,7 @@ export default function Topbar({
               ☎ {phone}
             </a>
             <span className="sep">|</span>
-            <a
-              className="email"
-              href={`mailto:${email}`}
-              aria-label="Email school"
-            >
+            <a className="email" href={`mailto:${email}`} aria-label="Email school">
               ✉️ {email}
             </a>
           </div>
@@ -135,58 +109,30 @@ export default function Topbar({
 
         <div className="center">
           <nav className="top-links" aria-label="Top navigation">
-            {topbarLinks?.length > 0 ? (
-              topbarLinks.map((item, idx) => {
-                const href = item?.href || "#";
-                const isExternal = href.startsWith("http");
-
-                return isExternal ? (
-                  <a
-                    key={`${item?.label || "link"}-${idx}`}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {item?.label || "Link"}
-                  </a>
-                ) : (
-                  <a
-                    key={`${item?.label || "link"}-${idx}`}
-                    href={href}
-                  >
-                    {item?.label || "Link"}
-                  </a>
-                );
-              })
-            ) : (
-              <>
-                {f.news && <a href={buildLink(routePrefix, "/news")}>News</a>}
-                {f.resources && (
-                  <a href={buildLink(routePrefix, "/resources/subject-choices")}>
-                    Resources
-                  </a>
-                )}
-                {f.resources && (
-                  <a href={buildLink(routePrefix, "/calendar")}>Calendar</a>
-                )}
-                {f.notices && (
-                  <a href={buildLink(routePrefix, "/notices")}>Notice Board</a>
-                )}
-              </>
+            {features.news && <a href={buildSiteHref(siteId, "/news")}>News</a>}
+            {features.resources && (
+              <a href={buildSiteHref(siteId, "/resources/subject-choices")}>
+                Resources
+              </a>
+            )}
+            {features.resources && (
+              <a href={buildSiteHref(siteId, "/resources/calendar")}>Calendar</a>
+            )}
+            {features.notices && (
+              <a href={buildSiteHref(siteId, "/notices")}>Notice Board</a>
             )}
           </nav>
         </div>
 
         <div className="right">
-          {display.topbar ? (
+          {socialDisplay.topbar ? (
             <div className="social" aria-label="Social media links">
               {Object.keys(ICONS).map((key) => {
                 const Icon = ICONS[key];
-                const visible = display?.[key] ?? true;
-
+                const visible = socialDisplay?.[key] ?? true;
                 if (!visible) return null;
 
-                const href = links?.[key] || "#";
+                const href = links[key] || "#";
 
                 return (
                   <a
@@ -205,11 +151,8 @@ export default function Topbar({
             </div>
           ) : null}
 
-          <div
-            className="auth-links"
-            style={{ fontSize: "12px", display: "flex" }}
-          >
-            <a href={buildLink(routePrefix, "/admissions")}>Apply Now</a>
+          <div className="auth-links" style={{ fontSize: "12px", display: "flex" }}>
+            <a href={buildSiteHref(siteId, "/admissions/apply")}>Apply Now</a>
           </div>
         </div>
       </div>

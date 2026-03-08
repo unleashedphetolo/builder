@@ -28,7 +28,7 @@ const sponsors = [
   },
 ];
 
-export default function Sponsors() {
+export default function Sponsors({ settings = {} }) {
   return (
     <section className="sponsors-section">
       <div className="container">

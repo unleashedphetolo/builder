@@ -24,7 +24,7 @@ export default function BuilderNavbar({
   return (
     <header className="builder-navbar">
       {/* LEFT — Branding */}
-      <div className="left">
+      <div className="right">
         <button onClick={toggleSidebar} className="hamburger">
           ☰
         </button>

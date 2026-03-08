@@ -36,3 +36,24 @@
     transform: rotate(360deg);
   }
 }
+
+.school-institutional-v1-root {
+  font-family: Inter, sans-serif;
+}
+
+.school-institutional-v1-root .container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.school-institutional-v1-root .site-nav {
+  background: white;
+}
+
+.school-institutional-v1-root .builder-fallback-section {
+  padding: 32px 24px;
+}
+
+.builder-section-anchor {
+  position: relative;
+}
