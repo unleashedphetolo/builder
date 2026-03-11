@@ -1,7 +1,13 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
-export default function Button({ to, href, onClick, children, variant = "primary", style }) {
+export default function Button({
+  to,
+  href,
+  onClick,
+  children,
+  variant = "primary",
+  style,
+}) {
   const base = {
     display: "inline-flex",
     alignItems: "center",
@@ -18,12 +24,26 @@ export default function Button({ to, href, onClick, children, variant = "primary
   const variants = {
     primary: { background: "#0b5cff", color: "#fff" },
     secondary: { background: "#111827", color: "#fff" },
-    outline: { background: "transparent", color: "#111827", borderColor: "#e5e7eb" },
+    outline: {
+      background: "transparent",
+      color: "#111827",
+      borderColor: "#e5e7eb",
+    },
   };
 
-  const props = { onClick, style: { ...base, ...(variants[variant] || variants.primary) } };
+  const finalStyle = { ...base, ...(variants[variant] || variants.primary) };
 
-  if (to) return <Link to={to} {...props}>{children}</Link>;
-  if (href) return <a href={href} {...props}>{children}</a>;
-  return <button type="button" {...props}>{children}</button>;
+  if (href || to) {
+    return (
+      <a href={href || to} onClick={onClick} style={finalStyle}>
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <button type="button" onClick={onClick} style={finalStyle}>
+      {children}
+    </button>
+  );
 }

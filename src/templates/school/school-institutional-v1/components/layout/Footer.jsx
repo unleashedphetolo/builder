@@ -1,6 +1,7 @@
 import React from "react";
 import "../../styles/footer.css";
 import logoz from "../../assets/sebone.jpeg";
+import logo from "../../../../../assets/logo.gif";
 import {
   FaFacebookF,
   FaInstagram,
@@ -75,7 +76,8 @@ export default function Footer({ settings = {} }) {
   const schoolName = settings?.site_name || "School";
   const phone = settings?.phone || "";
   const email = settings?.email || "";
-  const slogan = settings?.tagline || "Nurturing Excellence • Inspiring Tomorrow";
+  const slogan =
+    settings?.tagline || "Nurturing Excellence • Inspiring Tomorrow";
   const motto = settings?.motto || "";
   const siteId = settings?.site_id || "";
   const year = new Date().getFullYear();
@@ -84,11 +86,26 @@ export default function Footer({ settings = {} }) {
     {
       title: "Learners",
       items: [
-        { name: "Calendars", path: buildSiteHref(siteId, "/resources/calendar") },
-        { name: "Term dates", path: buildSiteHref(siteId, "/resources/term-plan") },
-        { name: "Student Daily Bulletin", path: buildSiteHref(siteId, "/bulletin") },
-        { name: "Subject Choices", path: buildSiteHref(siteId, "/resources/subject-choices") },
-        { name: "Past Matric Papers", path: buildSiteHref(siteId, "/digital-library") },
+        {
+          name: "Calendars",
+          path: buildSiteHref(siteId, "/resources/calendar"),
+        },
+        {
+          name: "Term dates",
+          path: buildSiteHref(siteId, "/resources/term-plan"),
+        },
+        {
+          name: "Student Daily Bulletin",
+          path: buildSiteHref(siteId, "/bulletin"),
+        },
+        {
+          name: "Subject Choices",
+          path: buildSiteHref(siteId, "/resources/subject-choices"),
+        },
+        {
+          name: "Past Matric Papers",
+          path: buildSiteHref(siteId, "/digital-library"),
+        },
       ],
     },
     {
@@ -96,27 +113,54 @@ export default function Footer({ settings = {} }) {
       items: [
         { name: "Staff Members", path: buildSiteHref(siteId, "/staff") },
         { name: "SGB", path: buildSiteHref(siteId, "/sgb") },
-        { name: "Term dates", path: buildSiteHref(siteId, "/resources/term-plan") },
-        { name: "Attendance Policy", path: buildSiteHref(siteId, "/attendance") },
+        {
+          name: "Term dates",
+          path: buildSiteHref(siteId, "/resources/term-plan"),
+        },
+        {
+          name: "Attendance Policy",
+          path: buildSiteHref(siteId, "/attendance"),
+        },
       ],
     },
     {
       title: "Parents",
       items: [
         { name: "Admissions", path: buildSiteHref(siteId, "/admissions") },
-        { name: "Term dates", path: buildSiteHref(siteId, "/resources/term-plan") },
-        { name: "School Calendar", path: buildSiteHref(siteId, "/schoolcalendar") },
-        { name: "Stationary requirements", path: buildSiteHref(siteId, "/resources/stationary-list") },
+        {
+          name: "Term dates",
+          path: buildSiteHref(siteId, "/resources/term-plan"),
+        },
+        {
+          name: "School Calendar",
+          path: buildSiteHref(siteId, "/schoolcalendar"),
+        },
+        {
+          name: "Stationary requirements",
+          path: buildSiteHref(siteId, "/resources/stationary-list"),
+        },
         { name: "Contact us", path: buildSiteHref(siteId, "/contact") },
       ],
     },
     {
       title: "Activities",
       items: [
-        { name: "Academics", path: buildSiteHref(siteId, "/activities/academics") },
-        { name: "Sports & Recreation", path: buildSiteHref(siteId, "/activities/sports") },
-        { name: "Culture & Activities", path: buildSiteHref(siteId, "/activities/culture") },
-        { name: "Campus Facilities", path: buildSiteHref(siteId, "/activities/facilities") },
+        {
+          name: "Academics",
+          path: buildSiteHref(siteId, "/activities/academics"),
+        },
+        {
+          name: "Sports & Recreation",
+          path: buildSiteHref(siteId, "/activities/sports"),
+        },
+        {
+          name: "Culture & Activities",
+          path: buildSiteHref(siteId, "/activities/culture"),
+        },
+        {
+          name: "Campus Facilities",
+          path: buildSiteHref(siteId, "/activities/facilities"),
+        },
       ],
     },
   ];
@@ -132,17 +176,27 @@ export default function Footer({ settings = {} }) {
           <div className="brand-text">
             <div className="school-name">{schoolName}</div>
             <div className="slogan">{slogan}</div>
-            {motto ? <div className="slogan" style={{ opacity: 0.9 }}>{motto}</div> : null}
+            {motto ? (
+              <div className="slogan" style={{ opacity: 0.9 }}>
+                {motto}
+              </div>
+            ) : null}
 
             <div className="contact small">
               {phone ? (
-                <a href={`tel:${phone}`} style={{ textDecoration: "none", color: "#2a1b6b" }}>
+                <a
+                  href={`tel:${phone}`}
+                  style={{ textDecoration: "none", color: "#2a1b6b" }}
+                >
                   ☎ {phone}
                 </a>
               ) : null}
               {phone && email ? <span className="sep">|</span> : null}
               {email ? (
-                <a href={`mailto:${email}`} style={{ textDecoration: "none", color: "#2a1b6b" }}>
+                <a
+                  href={`mailto:${email}`}
+                  style={{ textDecoration: "none", color: "#2a1b6b" }}
+                >
                   {email}
                 </a>
               ) : null}
@@ -154,7 +208,8 @@ export default function Footer({ settings = {} }) {
           {groups
             .filter((g) => {
               if (g.title === "Activities") return features.activities;
-              if (g.title === "Parents") return features.admissions || features.contact;
+              if (g.title === "Parents")
+                return features.admissions || features.contact;
               return true;
             })
             .map((group) => (
@@ -213,7 +268,7 @@ export default function Footer({ settings = {} }) {
             rel="noopener noreferrer"
             className="ulterspace-link"
           >
-            <img src="/ult2.gif" alt="Ulterspace Logo" className="ulterspace-logo" />
+            <img src={logo} alt="Ulterspace Logo" className="ulterspace-logo" />
             <span>Ulterspace</span>
           </a>
         </div>

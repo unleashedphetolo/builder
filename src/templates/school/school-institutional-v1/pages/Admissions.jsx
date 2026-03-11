@@ -1,13 +1,23 @@
-// Admissions.jsx
 import React from "react";
 import "../styles/admissions.css";
 import SchoolStats from "../components/home/SchoolStats";
 import Breadcrumbs from "../components/common/Breadcrumbs";
 
-export default function Admissions() {
+function buildSiteHref(siteId, path = "") {
+  const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
+  return `/#/site/${siteId || ""}${clean}`;
+}
+
+export default function Admissions({ settings = {} }) {
+  const siteId = settings?.site_id || "";
+  const admissionsPhone = settings?.admissions_phone || settings?.phone || "+27 11 345 6789";
+  const admissionsEmail =
+    settings?.admissions_email || settings?.email || "admissions@school.org";
+
   return (
     <main className="admissions container">
-      <Breadcrumbs />
+      <Breadcrumbs settings={settings} />
+
       <header className="admissions-hero">
         <div className="hero-left">
           <h1 className="hero-title">Admission</h1>
@@ -15,8 +25,12 @@ export default function Admissions() {
             Join a school that shapes character, curiosity and leadership.
           </p>
         </div>
+
         <div className="hero-cta">
-          <a className="btn primary apply-cta" href="/site/admissions/apply">
+          <a
+            className="btn primary apply-cta"
+            href={buildSiteHref(siteId, "/admissions/apply")}
+          >
             Start Application
           </a>
         </div>
@@ -27,6 +41,7 @@ export default function Admissions() {
           <h2 className="card-title">
             Are you ready for the adventure of your life?
           </h2>
+
           <p className="lead">
             View the admissions process and requirements. We admit learners from
             Grade 8 through Grade 12. Follow the clear steps below to apply — we
@@ -58,7 +73,12 @@ export default function Admissions() {
             <a className="btn secondary" href="#download">
               Download Form
             </a>
-            <a className="btn primary" id="apply" href="/site/admissions/apply">
+
+            <a
+              className="btn primary"
+              id="apply"
+              href={buildSiteHref(siteId, "/admissions/apply")}
+            >
               Start Application
             </a>
           </div>
@@ -68,10 +88,11 @@ export default function Admissions() {
               <strong>Eligibility:</strong> Learners must be between ages 12 —
               20 for secondary placements. Special assessments may apply.
             </p>
+
             <p className="muted">
               For any questions call the admissions office at
-              <a href="tel:+27123456789"> +27 11 345 6789</a> or email
-              <a href="mailto:admissions@school.org"> admissions@school.org</a>.
+              <a href={`tel:${admissionsPhone}`}> {admissionsPhone}</a> or email
+              <a href={`mailto:${admissionsEmail}`}> {admissionsEmail}</a>.
             </p>
           </div>
         </article>
@@ -84,14 +105,17 @@ export default function Admissions() {
             </p>
 
             <div className="stats-wrapper">
-              <SchoolStats />
+              <SchoolStats settings={settings} />
             </div>
 
             <div className="quick-links">
-              <a className="link" href="/site/contact">
+              <a className="link" href={buildSiteHref(siteId, "/contact")}>
                 Book a Visit
               </a>
-              <a className="link" href="/site/admissions/requirements">
+              <a
+                className="link"
+                href={buildSiteHref(siteId, "/admissions/requirements")}
+              >
                 Policies
               </a>
             </div>

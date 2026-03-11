@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import "../styles/school-calendar.css";
 import CalendarWidget from "../components/common/CalendarWidget";
 import Breadcrumbs from "../components/common/Breadcrumbs";
@@ -39,6 +38,11 @@ export const EVENTS = [
   },
 ];
 
+function buildSiteHref(siteId, path = "") {
+  const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
+  return `/#/site/${siteId || ""}${clean}`;
+}
+
 function formatDateTime(iso) {
   const d = new Date(iso);
   return d.toLocaleString(undefined, {
@@ -51,17 +55,18 @@ function formatDateTime(iso) {
   });
 }
 
-export default function SchoolCalendar() {
+export default function SchoolCalendar({ settings = {} }) {
+  const siteId = settings?.site_id || "";
   const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
-  // show a few upcoming items (simple preview)
   const preview = [...EVENTS]
     .sort((a, b) => new Date(a.start) - new Date(b.start))
     .slice(0, 6);
 
   return (
     <main className="scal-page container">
-      <Breadcrumbs />
+      <Breadcrumbs settings={settings} />
+
       <header className="scal-hero">
         <div>
           <h1 className="scal-title">School Calendar</h1>
@@ -71,17 +76,26 @@ export default function SchoolCalendar() {
         </div>
 
         <div className="scal-actions">
-          <Link to="/site/calendar/events" className="scal-btn" onClick={scrollTop}>
+          <a
+            href={buildSiteHref(siteId, "/calendar/events")}
+            className="scal-btn"
+            onClick={scrollTop}
+          >
             View All Events
-          </Link>
-          <a className="scal-btn ghost" href="/site/docs/school-calendar.pdf" target="_blank" rel="noreferrer">
+          </a>
+
+          <a
+            className="scal-btn ghost"
+            href="/docs/school-calendar.pdf"
+            target="_blank"
+            rel="noreferrer"
+          >
             Download PDF
           </a>
         </div>
       </header>
 
       <section className="scal-grid">
-        {/* Left: calendar widget */}
         <div className="scal-left">
           <div className="scal-card">
             <div className="scal-card-head">
@@ -94,7 +108,6 @@ export default function SchoolCalendar() {
           </div>
         </div>
 
-        {/* Right: events table preview */}
         <div className="scal-right">
           <div className="scal-right-head">
             <div>
@@ -105,9 +118,13 @@ export default function SchoolCalendar() {
               </p>
             </div>
 
-            <Link to="/site/calendar/events" className="scal-link" onClick={scrollTop}>
+            <a
+              href={buildSiteHref(siteId, "/calendar/events")}
+              className="scal-link"
+              onClick={scrollTop}
+            >
               View All →
-            </Link>
+            </a>
           </div>
 
           <div className="scal-table-wrap" role="region" aria-label="School events preview">

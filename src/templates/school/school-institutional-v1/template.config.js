@@ -1,5 +1,8 @@
 import fallbackLogo from "./assets/sebone.jpeg";
-import fallbackHeroImage from "./assets/Sebone.png";
+import fallbackHeroImage from "./assets/gallery3.png";
+import hero2 from "./assets/gallery4.jpg";
+import hero3 from "./assets/acade14.jpg";
+import heroVideo from "./assets/acade1.mp4";
 
 export const templateConfig = {
   templateKey: "school-institutional-v1",
@@ -69,11 +72,37 @@ export const templateConfig = {
 
     hero_slides: [
       {
+        id: 1,
         type: "image",
-        title: "Welcome to Our School",
-        subtitle: "Building bright futures through excellence in education.",
+        title: "Academic Excellence",
+        subtitle: "High standards, caring teachers.",
         src: fallbackHeroImage,
         alt: "School hero",
+      },
+      {
+        id: 2,
+        type: "image",
+        title: "Achievement & Pride",
+        subtitle: "Celebrating achievement across all grades.",
+        src: hero3,
+        alt: "School awards and achievements",
+      },
+      {
+        id: 3,
+        type: "image",
+        title: "Community & Spirit",
+        subtitle: "A safe, supportive learning environment.",
+        src: hero2,
+        alt: "Students on campus",
+      },
+      {
+        id: 4,
+        type: "video",
+        title: "School Introduction",
+        subtitle: "Discover learning, leadership and school life.",
+        src: heroVideo,
+        poster: fallbackHeroImage,
+        alt: "School introduction video",
       },
     ],
 
@@ -98,8 +127,18 @@ export const templateConfig = {
   },
 
   pages: [
-    { slug: "/", title: "Home", enabled: true, nav: { label: "Home", location: "header", position: 0 } },
-    { slug: "/about", title: "About", enabled: true, nav: { label: "About", location: "header", position: 1 } },
+    {
+      slug: "/",
+      title: "Home",
+      enabled: true,
+      nav: { label: "Home", location: "header", position: 0 },
+    },
+    {
+      slug: "/about",
+      title: "About",
+      enabled: true,
+      nav: { label: "About", location: "header", position: 1 },
+    },
     { slug: "/about/who-we-are", title: "Who We Are", enabled: true },
     { slug: "/about/vision-mission", title: "Vision & Mission", enabled: true },
     { slug: "/about/history", title: "Our History", enabled: true },
@@ -111,32 +150,77 @@ export const templateConfig = {
     { slug: "/activities", title: "School Life", enabled: true },
     { slug: "/activities/academics", title: "Academics", enabled: true },
     { slug: "/activities/sports", title: "Sports & Recreation", enabled: true },
-    { slug: "/activities/culture", title: "Culture & Activities", enabled: true },
-    { slug: "/activities/facilities", title: "Campus Facilities", enabled: true },
+    {
+      slug: "/activities/culture",
+      title: "Culture & Activities",
+      enabled: true,
+    },
+    {
+      slug: "/activities/facilities",
+      title: "Campus Facilities",
+      enabled: true,
+    },
 
-    { slug: "/resources", title: "Resources", enabled: true, nav: { label: "Resources", location: "header", position: 4 } },
-    { slug: "/resources/subject-choices", title: "Subject Choices", enabled: true },
+    {
+      slug: "/resources",
+      title: "Resources",
+      enabled: true,
+      nav: { label: "Resources", location: "header", position: 4 },
+    },
+    {
+      slug: "/resources/subject-choices",
+      title: "Subject Choices",
+      enabled: true,
+    },
     { slug: "/resources/term-plan", title: "Term Plan", enabled: true },
     { slug: "/resources/exam-schedule", title: "Exam Schedule", enabled: true },
-    { slug: "/resources/code-of-conduct", title: "Code Of Conduct", enabled: true },
-    { slug: "/resources/stationary-list", title: "Stationary List", enabled: true },
+    {
+      slug: "/resources/code-of-conduct",
+      title: "Code Of Conduct",
+      enabled: true,
+    },
+    {
+      slug: "/resources/stationary-list",
+      title: "Stationary List",
+      enabled: true,
+    },
     { slug: "/resources/calendar", title: "Calendar", enabled: true },
 
     { slug: "/bulletin", title: "Student Daily Bulletin", enabled: true },
     { slug: "/attendance", title: "Attendance Policy", enabled: true },
     { slug: "/calendar/events", title: "All Events", enabled: true },
 
-    { slug: "/admissions", title: "Admissions", enabled: true, nav: { label: "Admissions", location: "header", position: 5 } },
+    {
+      slug: "/admissions",
+      title: "Admissions",
+      enabled: true,
+      nav: { label: "Admissions", location: "header", position: 5 },
+    },
     { slug: "/admissions/apply", title: "Apply", enabled: true },
     { slug: "/admissions/requirements", title: "Requirements", enabled: true },
     { slug: "/admissions/howtoapply", title: "How To Apply", enabled: true },
 
     { slug: "/digital-library", title: "Digital Library", enabled: true },
     { slug: "/schoolcalendar", title: "School Calendar", enabled: true },
-    { slug: "/news", title: "News", enabled: true, nav: { label: "News", location: "header", position: 3 } },
-    { slug: "/gallery", title: "Gallery", enabled: true, nav: { label: "Gallery", location: "header", position: 6 } },
+    {
+      slug: "/news",
+      title: "News",
+      enabled: true,
+      nav: { label: "News", location: "header", position: 3 },
+    },
+    {
+      slug: "/gallery",
+      title: "Gallery",
+      enabled: true,
+      nav: { label: "Gallery", location: "header", position: 6 },
+    },
     { slug: "/robotics", title: "Robotics Club", enabled: true },
-    { slug: "/contact", title: "Contact", enabled: true, nav: { label: "Contact", location: "header", position: 7 } },
+    {
+      slug: "/contact",
+      title: "Contact",
+      enabled: true,
+      nav: { label: "Contact", location: "header", position: 7 },
+    },
     { slug: "/notices", title: "Notices", enabled: true },
   ],
 };

@@ -3,10 +3,14 @@ import Card from "./../components/common/Card";
 import "../styles/policy.css";
 import Breadcrumbs from "../components/common/Breadcrumbs";
 
-export default function AttendancePolicy() {
+export default function AttendancePolicy({ settings = {} }) {
+  const phone = settings?.phone || "011 023 9428";
+  const email = settings?.email || "sebone@gmail.com";
+
   return (
     <main className="policy-page container">
-      <Breadcrumbs />
+      <Breadcrumbs settings={settings} />
+
       <header className="policy-hero">
         <h1 className="policy-title">Attendance Policy</h1>
         <p className="policy-subtitle">
@@ -22,7 +26,6 @@ export default function AttendancePolicy() {
         </div>
       </header>
 
-      {/* Purpose */}
       <section className="policy-section">
         <h2 className="policy-h2">1. Purpose</h2>
         <Card>
@@ -35,7 +38,6 @@ export default function AttendancePolicy() {
         </Card>
       </section>
 
-      {/* Expectations */}
       <section className="policy-section">
         <h2 className="policy-h2">2. Attendance Expectations</h2>
         <Card>
@@ -48,7 +50,6 @@ export default function AttendancePolicy() {
         </Card>
       </section>
 
-      {/* Late coming */}
       <section className="policy-section">
         <h2 className="policy-h2">3. Late-Coming Procedure</h2>
         <Card>
@@ -78,7 +79,6 @@ export default function AttendancePolicy() {
         </Card>
       </section>
 
-      {/* Absences */}
       <section className="policy-section">
         <h2 className="policy-h2">4. Absences & Reporting</h2>
         <Card>
@@ -96,7 +96,6 @@ export default function AttendancePolicy() {
         </Card>
       </section>
 
-      {/* Catch-up work */}
       <section className="policy-section">
         <h2 className="policy-h2">5. Catch-Up Work & Assessments</h2>
         <Card>
@@ -109,7 +108,6 @@ export default function AttendancePolicy() {
         </Card>
       </section>
 
-      {/* Intervention */}
       <section className="policy-section">
         <h2 className="policy-h2">6. Monitoring & Intervention</h2>
         <Card>
@@ -149,7 +147,6 @@ export default function AttendancePolicy() {
         </Card>
       </section>
 
-      {/* Roles */}
       <section className="policy-section">
         <h2 className="policy-h2">7. Roles & Responsibilities</h2>
         <Card>
@@ -184,7 +181,6 @@ export default function AttendancePolicy() {
         </Card>
       </section>
 
-      {/* Contact */}
       <section className="policy-section">
         <h2 className="policy-h2">8. Contact</h2>
         <Card>
@@ -192,9 +188,9 @@ export default function AttendancePolicy() {
             For attendance enquiries, please contact the school office:
           </p>
           <div className="policy-contact">
-            <a href="tel:+27110239428">☎ 011 023 9428</a>
+            <a href={`tel:${phone}`}>☎ {phone}</a>
             <span className="dot">•</span>
-            <a href="mailto:sebone@gmail.com">✉ sebone@gmail.com</a>
+            <a href={`mailto:${email}`}>✉ {email}</a>
           </div>
         </Card>
       </section>

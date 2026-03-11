@@ -15,12 +15,13 @@ function formatDateTime(iso) {
   });
 }
 
-export default function AllEvents() {
+export default function AllEvents({ settings = {} }) {
   const [q, setQ] = useState("");
 
   const list = useMemo(() => {
     const query = q.trim().toLowerCase();
     const sorted = [...EVENTS].sort((a, b) => new Date(a.start) - new Date(b.start));
+
     if (!query) return sorted;
 
     return sorted.filter((ev) => {
@@ -34,7 +35,8 @@ export default function AllEvents() {
 
   return (
     <main className="scal-page container">
-      <Breadcrumbs />
+      <Breadcrumbs settings={settings} />
+
       <header className="scal-hero">
         <div>
           <h1 className="scal-title">All Calendar Events</h1>

@@ -109,6 +109,7 @@ function mapDefaultsToSiteSettings(siteId, defaults = {}) {
     footer_text: safe.footer_text || "© Your Website. All rights reserved.",
 
     hero_slides: safe.hero_slides,
+    hero_slides_overridden: false,
     features: safe.features,
   };
 }
