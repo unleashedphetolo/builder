@@ -199,7 +199,7 @@ export default function Hero({ settings = {} }) {
                     onError={() => {
                       setTimeout(() => {
                         setIndex((prev) => (prev + 1) % slides.length);
-                      }, 800);
+                      }, 400);
                     }}
                     aria-label={s.alt}
                   />

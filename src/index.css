@@ -6,16 +6,19 @@
 }
 
 /* FULL SCREEN FIX */
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   width: 100%;
 }
 
-/* REMOVE VITE CENTERING */
+/* GLOBAL BODY */
 body {
   font-family: "Segoe UI", system-ui, sans-serif;
   background: #f1f5f9;
-  overflow: hidden; /* prevents double scroll */
+  overflow-x: hidden;   /* only block sideways scroll */
+  overflow-y: auto;     /* allow vertical scroll */
 }
 
 /* LINKS */

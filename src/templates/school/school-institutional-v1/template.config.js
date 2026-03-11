@@ -12,7 +12,7 @@ export const templateConfig = {
     "A full institutional school website template with admissions, resources, governance, gallery, news, notices and contact.",
 
   defaults: {
-    site_name: "Your School Name",
+    site_name: "School Name",
     tagline: "Excellence in Learning",
     motto: "Discipline • Respect • Success",
 

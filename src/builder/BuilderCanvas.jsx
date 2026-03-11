@@ -45,13 +45,15 @@ export default function BuilderCanvas({ siteId, page }) {
             <p>Select a page to preview it.</p>
           </div>
         ) : (
-          <iframe
-            key={previewUrl}
-            src={previewUrl}
-            title="Website Preview"
-            className="builder-preview-frame"
-            loading="lazy"
-          />
+          <div className="builder-preview-frame-wrap">
+            <iframe
+              key={previewUrl}
+              src={previewUrl}
+              title="Website Preview"
+              className="builder-preview-frame"
+              loading="lazy"
+            />
+          </div>
         )}
       </div>
     </div>

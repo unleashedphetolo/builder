@@ -5,7 +5,7 @@ import logos from "../../assets/sebone.jpeg";
 
 const DEFAULT_FEATURES = {
   about: true,
-  digitalLibrary: true,
+  digitalLibrary: false,
   activities: true,
   resources: true,
   news: true,
@@ -41,10 +41,15 @@ export default function Navbar({ settings = {}, navItems = [] }) {
     };
   }, [open]);
 
-  const visibleNavItems = useMemo(() => {
+  const dbNavItems = useMemo(() => {
     return Array.isArray(navItems)
       ? navItems
-          .filter((item) => item && item.is_visible !== false && item.location !== "footer")
+          .filter(
+            (item) =>
+              item &&
+              item.is_visible !== false &&
+              item.location !== "footer"
+          )
           .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
       : [];
   }, [navItems]);
@@ -90,16 +95,26 @@ export default function Navbar({ settings = {}, navItems = [] }) {
     setDropdown((cur) => (cur === key ? null : key));
   };
 
-  const Drop = ({ id, label, items }) => (
+  const Drop = ({ id, label, items, href }) => (
     <div
       className="dropdown parent"
       onMouseEnter={() => setDropdown(id)}
       onMouseLeave={() => setDropdown(null)}
-      onClick={() => toggleDropdown(id)}
     >
-      <span className="drop-btn">
+      <button
+        type="button"
+        className="drop-btn"
+        onClick={() => {
+          if (window.innerWidth <= 880) {
+            toggleDropdown(id);
+          } else if (href) {
+            window.location.href = href;
+          }
+        }}
+        aria-expanded={dropdown === id}
+      >
         {label} <IoChevronDown />
-      </span>
+      </button>
 
       <div className={`drop-menu ${dropdown === id ? "show" : ""}`}>
         {items.map((it) => (
@@ -111,11 +126,129 @@ export default function Navbar({ settings = {}, navItems = [] }) {
     </div>
   );
 
+  const dbNavMap = useMemo(() => {
+    const map = {};
+    dbNavItems.forEach((item) => {
+      const key = (item.label || "").trim().toLowerCase();
+      if (key) map[key] = item;
+    });
+    return map;
+  }, [dbNavItems]);
+
+  const topNav = useMemo(() => {
+    const items = [];
+
+    const getDbHref = (label, fallbackPath) => {
+      const found = dbNavMap[label.toLowerCase()];
+      if (found?.href) return buildSiteHref(siteId, found.href);
+      return buildSiteHref(siteId, fallbackPath);
+    };
+
+    items.push({
+      type: "link",
+      key: "home",
+      label: "Home",
+      href: getDbHref("Home", "/"),
+    });
+
+    if (features.about) {
+      items.push({
+        type: "drop",
+        key: "about",
+        label: "About Us",
+        href: getDbHref("About", "/about"),
+        menu: menus.about,
+      });
+    }
+
+    if (features.digitalLibrary) {
+      items.push({
+        type: "link",
+        key: "digital-library",
+        label: "Digital Library",
+        href: getDbHref("Digital Library", "/digital-library"),
+      });
+    }
+
+    if (features.activities) {
+      items.push({
+        type: "drop",
+        key: "activities",
+        label: "Activities",
+        href: getDbHref("Activities", "/activities"),
+        menu: menus.activities,
+      });
+    }
+
+    if (features.resources) {
+      items.push({
+        type: "drop",
+        key: "resources",
+        label: "Resources",
+        href: getDbHref("Resources", "/resources"),
+        menu: menus.resources,
+      });
+    }
+
+    if (features.news) {
+      items.push({
+        type: "drop",
+        key: "news",
+        label: "News",
+        href: getDbHref("News", "/news"),
+        menu: menus.news,
+      });
+    }
+
+    if (features.admissions) {
+      items.push({
+        type: "drop",
+        key: "admissions",
+        label: "Admissions",
+        href: getDbHref("Admissions", "/admissions"),
+        menu: menus.admissions,
+      });
+    }
+
+    if (features.gallery) {
+      items.push({
+        type: "link",
+        key: "gallery",
+        label: "Gallery",
+        href: getDbHref("Gallery", "/gallery"),
+      });
+    }
+
+    if (features.robotics) {
+      items.push({
+        type: "link",
+        key: "robotics",
+        label: "Robotics Club",
+        href: getDbHref("Robotics Club", "/robotics"),
+      });
+    }
+
+    if (features.contact) {
+      items.push({
+        type: "link",
+        key: "contact",
+        label: "Contact",
+        href: getDbHref("Contact", "/contact"),
+      });
+    }
+
+    return items;
+  }, [dbNavMap, features, menus, siteId]);
+
   return (
     <header className="site-nav">
       <div className="nav-inner">
         <div className="logo-section">
-          <a href={buildSiteHref(siteId, "/")} className="logo-link" aria-label="Go to home">
+          <a
+            href={buildSiteHref(siteId, "/")}
+            className="logo-link"
+            aria-label="Go to home"
+          >
             <img src={logoUrl} alt="School logo" className="logo-image" />
             <div className="logo-text">
               <h1 className="brand-name">{schoolName}</h1>
@@ -125,35 +258,20 @@ export default function Navbar({ settings = {}, navItems = [] }) {
         </div>
 
         <nav className={`nav-links ${open ? "open" : ""}`} aria-label="Main navigation">
-          {visibleNavItems.length > 0 ? (
-            visibleNavItems.map((item) => (
-              <a key={item.id} href={buildSiteHref(siteId, item.href || "/")}>
+          {topNav.map((item) =>
+            item.type === "drop" ? (
+              <Drop
+                key={item.key}
+                id={item.key}
+                label={item.label}
+                href={item.href}
+                items={item.menu}
+              />
+            ) : (
+              <a key={item.key} href={item.href}>
                 {item.label}
               </a>
-            ))
-          ) : (
-            <>
-              <a href={buildSiteHref(siteId, "/")}>Home</a>
-              {features.about && <Drop id="about" label="About Us" items={menus.about} />}
-              {features.digitalLibrary && (
-                <a href={buildSiteHref(siteId, "/digital-library")}>Digital Library</a>
-              )}
-              {features.activities && (
-                <Drop id="activities" label="Activities" items={menus.activities} />
-              )}
-              {features.resources && (
-                <Drop id="resources" label="Resources" items={menus.resources} />
-              )}
-              {features.news && <Drop id="news" label="News" items={menus.news} />}
-              {features.admissions && (
-                <Drop id="adm" label="Admissions" items={menus.admissions} />
-              )}
-              {features.gallery && <a href={buildSiteHref(siteId, "/gallery")}>Gallery</a>}
-              {features.robotics && (
-                <a href={buildSiteHref(siteId, "/robotics")}>Robotics Club</a>
-              )}
-              {features.contact && <a href={buildSiteHref(siteId, "/contact")}>Contact</a>}
-            </>
+            )
           )}
         </nav>
 
