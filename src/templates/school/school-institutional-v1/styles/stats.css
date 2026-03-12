@@ -34,8 +34,8 @@
   line-height: 1.35;
 }
 
-@media (max-width: 420px) {
+/* @media (max-width: 420px) {
   .stats-card {
     grid-template-columns: 1fr;
   }
-}
+} */

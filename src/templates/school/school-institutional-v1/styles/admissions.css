@@ -212,7 +212,7 @@
 }
 
 /* NEW */
-.admissions-page__side {
+/* .admissions-page__side {
   width: 100%;
   max-width: 320px;
   justify-self: end;
@@ -229,4 +229,4 @@
 .admissions-page__stats-wrapper .stats-grid,
 .admissions-page__stats-wrapper .school-stats-grid {
   grid-template-columns: repeat(2, 1fr);
-}
+} */
