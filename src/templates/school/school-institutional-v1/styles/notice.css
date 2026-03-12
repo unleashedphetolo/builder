@@ -73,6 +73,11 @@
   position: relative;
 }
 
+.notice-scroll:hover {
+  overflow-y: auto;
+}
+
+
 /* Notice list */
 .notice-list {
   display: flex;

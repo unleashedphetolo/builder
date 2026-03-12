@@ -107,22 +107,35 @@ export default function NoticeBoard({ settings = {}, notices = [] }) {
   }, [notices]);
 
   useEffect(() => {
-    const box = scrollRef.current;
-    if (!box) return;
+  const box = scrollRef.current;
+  if (!box) return;
 
-    let scroll = 0;
+  let scroll = 0;
+  let paused = false;
 
-    const scrollInterval = setInterval(() => {
-      scroll += 0.5;
-      box.scrollTop = scroll;
+  const interval = setInterval(() => {
+    if (paused) return;
 
-      if (scroll >= box.scrollHeight / 2) {
-        scroll = 0;
-      }
-    }, 20);
+    scroll += 0.5;
+    box.scrollTop = scroll;
 
-    return () => clearInterval(scrollInterval);
-  }, [items]);
+    if (scroll >= box.scrollHeight / 2) {
+      scroll = 0;
+    }
+  }, 20);
+
+  const pause = () => (paused = true);
+  const resume = () => (paused = false);
+
+  box.addEventListener("mouseenter", pause);
+  box.addEventListener("mouseleave", resume);
+
+  return () => {
+    clearInterval(interval);
+    box.removeEventListener("mouseenter", pause);
+    box.removeEventListener("mouseleave", resume);
+  };
+}, [items]);
 
   const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
