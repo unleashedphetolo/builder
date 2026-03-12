@@ -161,14 +161,14 @@ export default function Navbar({ settings = {}, navItems = [] }) {
       });
     }
 
-    if (features.digitalLibrary) {
-      items.push({
-        type: "link",
-        key: "digital-library",
-        label: "Digital Library",
-        href: getDbHref("Digital Library", "/digital-library"),
-      });
-    }
+    // if (features.digitalLibrary) {
+    //   items.push({
+    //     type: "link",
+    //     key: "digital-library",
+    //     label: "Digital Library",
+    //     href: getDbHref("Digital Library", "/digital-library"),
+    //   });
+    // }
 
     if (features.activities) {
       items.push({

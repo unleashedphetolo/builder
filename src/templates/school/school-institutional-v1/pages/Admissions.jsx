@@ -10,25 +10,26 @@ function buildSiteHref(siteId, path = "") {
 
 export default function Admissions({ settings = {} }) {
   const siteId = settings?.site_id || "";
-  const admissionsPhone = settings?.admissions_phone || settings?.phone || "+27 11 345 6789";
+  const admissionsPhone =
+    settings?.admissions_phone || settings?.phone || "+27 11 345 6789";
   const admissionsEmail =
     settings?.admissions_email || settings?.email || "admissions@school.org";
 
   return (
-    <main className="admissions container">
+    <main className="admissions-page admissions-page__container">
       <Breadcrumbs settings={settings} />
 
-      <header className="admissions-hero">
-        <div className="hero-left">
-          <h1 className="hero-title">Admission</h1>
-          <p className="hero-sub">
+      <header className="admissions-page__hero">
+        <div className="admissions-page__hero-left">
+          <h1 className="admissions-page__hero-title">Admission</h1>
+          <p className="admissions-page__hero-sub">
             Join a school that shapes character, curiosity and leadership.
           </p>
         </div>
 
-        <div className="hero-cta">
+        <div className="admissions-page__hero-cta">
           <a
-            className="btn primary apply-cta"
+            className="admissions-page__btn admissions-page__btn--primary admissions-page__apply-cta"
             href={buildSiteHref(siteId, "/admissions/apply")}
           >
             Start Application
@@ -36,19 +37,19 @@ export default function Admissions({ settings = {} }) {
         </div>
       </header>
 
-      <section className="admission-grid">
-        <article className="admission-card">
-          <h2 className="card-title">
+      <section className="admissions-page__grid">
+        <article className="admissions-page__card">
+          <h2 className="admissions-page__card-title">
             Are you ready for the adventure of your life?
           </h2>
 
-          <p className="lead">
+          <p className="admissions-page__lead">
             View the admissions process and requirements. We admit learners from
             Grade 8 through Grade 12. Follow the clear steps below to apply — we
             review each application with care.
           </p>
 
-          <div className="process">
+          <div className="admissions-page__process">
             <ol>
               <li>
                 <strong>Download:</strong> Get the official admission form
@@ -69,13 +70,16 @@ export default function Admissions({ settings = {} }) {
             </ol>
           </div>
 
-          <div className="card-actions">
-            <a className="btn secondary" href="#download">
+          <div className="admissions-page__actions">
+            <a
+              className="admissions-page__btn admissions-page__btn--secondary"
+              href="#download"
+            >
               Download Form
             </a>
 
             <a
-              className="btn primary"
+              className="admissions-page__btn admissions-page__btn--primary"
               id="apply"
               href={buildSiteHref(siteId, "/admissions/apply")}
             >
@@ -83,13 +87,13 @@ export default function Admissions({ settings = {} }) {
             </a>
           </div>
 
-          <div className="admission-notes">
+          <div className="admissions-page__notes">
             <p>
               <strong>Eligibility:</strong> Learners must be between ages 12 —
               20 for secondary placements. Special assessments may apply.
             </p>
 
-            <p className="muted">
+            <p className="admissions-page__muted">
               For any questions call the admissions office at
               <a href={`tel:${admissionsPhone}`}> {admissionsPhone}</a> or email
               <a href={`mailto:${admissionsEmail}`}> {admissionsEmail}</a>.
@@ -97,23 +101,26 @@ export default function Admissions({ settings = {} }) {
           </div>
         </article>
 
-        <aside className="admission-side">
-          <div className="side-card">
-            <h3 className="side-title">School Overview</h3>
-            <p className="small muted">
+        <aside className="admissions-page__side">
+          <div className="admissions-page__side-card">
+            <h3 className="admissions-page__side-title">School Overview</h3>
+            <p className="admissions-page__small admissions-page__muted">
               Established 1990 • Co-educational • Grades 8–12
             </p>
 
-            <div className="stats-wrapper">
+            <div className="admissions-page__stats-wrapper">
               <SchoolStats settings={settings} />
             </div>
 
-            <div className="quick-links">
-              <a className="link" href={buildSiteHref(siteId, "/contact")}>
+            <div className="admissions-page__quick-links">
+              <a
+                className="admissions-page__link"
+                href={buildSiteHref(siteId, "/contact")}
+              >
                 Book a Visit
               </a>
               <a
-                className="link"
+                className="admissions-page__link"
                 href={buildSiteHref(siteId, "/admissions/requirements")}
               >
                 Policies
