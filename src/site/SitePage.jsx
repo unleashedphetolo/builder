@@ -43,28 +43,28 @@ export default function SitePage() {
         setLoading(true);
         setError("");
 
-        const { data: siteData, error: siteErr } = await supabase
-          .from("sites")
-          .select("*")
-          .eq("id", siteId)
-          .single();
+        const [
+          { data: siteData, error: siteErr },
+          { data: settingsData, error: settingsErr },
+          { data: navData, error: navErr },
+        ] = await Promise.all([
+          supabase.from("sites").select("*").eq("id", siteId).single(),
+
+          supabase
+            .from("site_settings")
+            .select("*")
+            .eq("site_id", siteId)
+            .maybeSingle(),
+
+          supabase
+            .from("site_nav_items")
+            .select("*")
+            .eq("site_id", siteId)
+            .order("position", { ascending: true }),
+        ]);
 
         if (siteErr) throw siteErr;
-
-        const { data: settingsData, error: settingsErr } = await supabase
-          .from("site_settings")
-          .select("*")
-          .eq("site_id", siteId)
-          .maybeSingle();
-
         if (settingsErr) throw settingsErr;
-
-        const { data: navData, error: navErr } = await supabase
-          .from("site_nav_items")
-          .select("*")
-          .eq("site_id", siteId)
-          .order("position", { ascending: true });
-
         if (navErr) throw navErr;
 
         let { data: pageData, error: pageErr } = await supabase
@@ -127,9 +127,15 @@ export default function SitePage() {
 
     const root = document.documentElement;
     root.style.setProperty("--primary", settings.primary_color || "#2563eb");
-    root.style.setProperty("--secondary", settings.secondary_color || "#111827");
+    root.style.setProperty(
+      "--secondary",
+      settings.secondary_color || "#111827",
+    );
     root.style.setProperty("--accent", settings.accent_color || "#f59e0b");
-    root.style.setProperty("--font", settings.font_family || "Inter, sans-serif");
+    root.style.setProperty(
+      "--font",
+      settings.font_family || "Inter, sans-serif",
+    );
   }, [settings]);
 
   if (loading) {

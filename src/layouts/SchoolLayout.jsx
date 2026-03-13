@@ -15,7 +15,13 @@ function resolveTemplateImporter(templateKey) {
   }
 
   const firstAvailable = Object.values(schoolTemplates)[0];
-  return firstAvailable || null;
+
+  if (!firstAvailable) {
+    console.error("No school templates found.");
+    return null;
+  }
+
+  return firstAvailable;
 }
 
 function normalizeNavItems(navItems = []) {
@@ -33,8 +39,12 @@ function normalizeSettings(settings = {}) {
     site_id: settings?.site_id || null,
     social_links: settings?.social_links || {},
     social_display: settings?.social_display || {},
-    topbar_links: Array.isArray(settings?.topbar_links) ? settings.topbar_links : [],
-    footer_links: Array.isArray(settings?.footer_links) ? settings.footer_links : [],
+    topbar_links: Array.isArray(settings?.topbar_links)
+      ? settings.topbar_links
+      : [],
+    footer_links: Array.isArray(settings?.footer_links)
+      ? settings.footer_links
+      : [],
     features: settings?.features || {},
   };
 }
@@ -62,7 +72,9 @@ function TemplateLoader({
   const Template = useMemo(() => lazy(importer), [importer]);
 
   return (
-    <Suspense fallback={<div style={{ padding: 24 }}>Loading school template...</div>}>
+    <Suspense
+      fallback={<div style={{ padding: 24 }}>Loading school template...</div>}
+    >
       <Template
         settings={settings}
         navItems={navItems}
@@ -89,7 +101,7 @@ export default function SchoolLayout({
 
   const importer = useMemo(
     () => resolveTemplateImporter(safeSettings.template_key),
-    [safeSettings.template_key]
+    [safeSettings.template_key],
   );
 
   if (!importer) {
