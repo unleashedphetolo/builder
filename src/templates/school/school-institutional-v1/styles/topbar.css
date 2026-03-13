@@ -92,34 +92,34 @@
 /* social buttons */
 .social {
   display: flex;
-  gap: 8px;
+  gap: 4px;
   align-items: center;
 }
 
-.social-btn {
+.social-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
+  background: #000000;
   padding: 8px;
   border-radius: 8px;
-  width: 34px;
-  height: 34px;
-  box-shadow: 0 4px 10px rgba(2, 6, 23, 0.14);
+  width: 20px;
+  height: 20px;
+  box-shadow: 0 6px 14px rgba(2, 6, 23, 0.14);
   transition:
     transform 160ms ease,
     box-shadow 160ms ease,
     background 160ms ease;
   text-decoration: none;
 }
-/* .social-btn svg { display: block; } */
-.social-btn svg {
+/* .social-icon svg { display: block; } */
+.social-icon svg {
   width: 24px !important;
   height: 24px !important;
 }
 
-.social-btn:hover,
-.social-btn:focus {
+.social-icon:hover,
+.social-icon:focus {
   transform: translateY(-3px) scale(1.03);
   box-shadow: 0 8px 18px rgba(2, 6, 23, 0.18);
   outline: none;

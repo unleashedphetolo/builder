@@ -68,3 +68,7 @@
     flex-direction: column;
   }
 }
+
+.builder-footer {
+  margin-top: auto;
+}

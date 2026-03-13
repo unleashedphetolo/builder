@@ -8,12 +8,11 @@ body,
 }
 
 .builder-container {
-  height: 100vh;
+  min-height: 100vh;
   width: 100%;
   display: flex;
   flex-direction: column;
   background: #e2e8f0;
-  overflow: hidden;
 }
 
 /* ===== NAVBAR ===== */
@@ -67,7 +66,7 @@ body,
   flex: 1;
   display: flex;
   min-height: 0;   /* IMPORTANT */
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 /* ===== SIDEBAR ===== */

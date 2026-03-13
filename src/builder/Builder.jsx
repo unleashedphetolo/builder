@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import BuilderNavbar from "./BuilderNavbar";
+import BuilderFooter from "./BuilderFooter";
 import BuilderSidebar from "./BuilderSidebar";
 import BuilderCanvas from "./BuilderCanvas";
 import TemplateSelector from "./TemplateSelector";
@@ -258,6 +259,7 @@ export default function Builder() {
 
         <BuilderCanvas siteId={siteId} page={currentPage} />
       </div>
+      <BuilderFooter />
     </div>
   );
 }

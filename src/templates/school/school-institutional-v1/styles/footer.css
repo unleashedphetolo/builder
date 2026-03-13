@@ -109,7 +109,7 @@
 }
 
 .link-group a {
-  color: #4b4b5b;
+  color: #000000;
   text-decoration: none;
   font-size: 0.9rem;
   transition: all 160ms ease;
@@ -139,41 +139,42 @@
 /* Social */
 .social {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
 }
 
 .social .sep { margin: 0 8px; color: #ccc; }
 
-.social-btn {
+.social-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
+  background: #000000;
   border-radius: 8px;
-  padding: 2px;
-  color: #2a1b6b;
+  padding: 4px;
+  color: #ffffff;
   text-decoration: none;
   box-shadow: 0 3px 8px rgba(0,0,0,0.06);
   transition: all 180ms ease;
 }
-.social-btn svg {
-  width: 24px !important;
-  height: 24px !important;
+.social-icon svg {
+  width: 18px !important;
+  height: 18px !important;
 }
 
-.social-btn:hover {
+.social-icon:hover {
   transform: translateY(-4px) scale(1.05);
-  background: #f0effa;
+  background: #160f64;
   box-shadow: 0 6px 14px rgba(0,0,0,0.1);
 }
 
-.social-btn:focus {
+.social-icon:focus {
   transform: translateY(-4px);
   background: rgba(42,27,107,0.06);
   outline: none;
 }
 .powered-by {
+  font-size: 0.85rem;
   display: flex;
   align-items: center;
   justify-content: center;
