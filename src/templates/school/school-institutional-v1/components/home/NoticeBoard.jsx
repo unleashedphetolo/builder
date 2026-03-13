@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import "../../styles/notice.css";
 
-const DEFAULT_NOTICES = [
+export const NOTICES = [
   {
     id: 1,
     title: "Issuing Term 4 Report Cards",
@@ -103,39 +103,39 @@ export default function NoticeBoard({ settings = {}, notices = [] }) {
   const siteId = settings?.site_id || "";
 
   const items = useMemo(() => {
-    return Array.isArray(notices) && notices.length > 0 ? notices : DEFAULT_NOTICES;
+    return Array.isArray(notices) && notices.length > 0 ? notices : NOTICES;
   }, [notices]);
 
   useEffect(() => {
-  const box = scrollRef.current;
-  if (!box) return;
+    const box = scrollRef.current;
+    if (!box) return;
 
-  let scroll = 0;
-  let paused = false;
+    let scroll = 0;
+    let paused = false;
 
-  const interval = setInterval(() => {
-    if (paused) return;
+    const interval = setInterval(() => {
+      if (paused) return;
 
-    scroll += 0.5;
-    box.scrollTop = scroll;
+      scroll += 0.5;
+      box.scrollTop = scroll;
 
-    if (scroll >= box.scrollHeight / 2) {
-      scroll = 0;
-    }
-  }, 20);
+      if (scroll >= box.scrollHeight / 2) {
+        scroll = 0;
+      }
+    }, 20);
 
-  const pause = () => (paused = true);
-  const resume = () => (paused = false);
+    const pause = () => (paused = true);
+    const resume = () => (paused = false);
 
-  box.addEventListener("mouseenter", pause);
-  box.addEventListener("mouseleave", resume);
+    box.addEventListener("mouseenter", pause);
+    box.addEventListener("mouseleave", resume);
 
-  return () => {
-    clearInterval(interval);
-    box.removeEventListener("mouseenter", pause);
-    box.removeEventListener("mouseleave", resume);
-  };
-}, [items]);
+    return () => {
+      clearInterval(interval);
+      box.removeEventListener("mouseenter", pause);
+      box.removeEventListener("mouseleave", resume);
+    };
+  }, [items]);
 
   const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
@@ -148,7 +148,13 @@ export default function NoticeBoard({ settings = {}, notices = [] }) {
           <a
             href={buildSiteHref(siteId, "/notices")}
             className="view-all"
-            onClick={scrollTop}
+            onClick={(e) => {
+              e.preventDefault();
+              window.dispatchEvent(
+                new CustomEvent("builder:navigate", { detail: "/notices" }),
+              );
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
           >
             View All
           </a>

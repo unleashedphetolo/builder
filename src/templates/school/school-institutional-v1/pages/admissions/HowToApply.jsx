@@ -7,9 +7,17 @@ import Breadcrumbs from "../../components/common/Breadcrumbs";
 export default function HowToApply() {
   const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
+  const navigate = (slug) => {
+    window.dispatchEvent(
+      new CustomEvent("builder:navigate", { detail: slug })
+    );
+    scrollTop();
+  };
+
   return (
     <main className="howtoapply container" style={{ paddingTop: 10, paddingBottom: 40 }}>
-        <Breadcrumbs />
+      <Breadcrumbs />
+
       {/* HERO */}
       <header className="howtoapply-hero">
         <div className="howtoapply-left">
@@ -27,9 +35,16 @@ export default function HowToApply() {
 
         {/* CTA */}
         <div className="howtoapply-cta">
-          <Link to="/site/admissions/apply" onClick={scrollTop} className="howtoapply-btn primary">
+          <a
+            href="/site/admissions/apply"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/admissions/apply");
+            }}
+            className="howtoapply-btn primary"
+          >
             Apply Online
-          </Link>
+          </a>
 
           <a
             href="/site/docs/admission-form.pdf"
@@ -40,9 +55,16 @@ export default function HowToApply() {
             Download Manual Form (PDF)
           </a>
 
-          <Button to="/site/contact" variant="outline">
+          <a
+            href="/site/contact"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/contact");
+            }}
+            className="howtoapply-btn outline"
+          >
             Need Help?
-          </Button>
+          </a>
         </div>
       </header>
 
@@ -62,12 +84,27 @@ export default function HowToApply() {
           </ol>
 
           <div className="howtoapply-actions">
-            <Link to="/site/admissions/apply" onClick={scrollTop} className="howtoapply-btn primary">
+            <a
+              href="/site/admissions/apply"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/admissions/apply");
+              }}
+              className="howtoapply-btn primary"
+            >
               Start Online Application
-            </Link>
-            <Link to="/site/admissions/requirements" onClick={scrollTop} className="howtoapply-btn ghost">
+            </a>
+
+            <a
+              href="/site/admissions/requirements"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/admissions/requirements");
+              }}
+              className="howtoapply-btn ghost"
+            >
               View Requirements
-            </Link>
+            </a>
           </div>
         </article>
 
@@ -88,9 +125,17 @@ export default function HowToApply() {
             <a href="/site/docs/admission-form.pdf" download className="howtoapply-btn primary">
               Download Manual Form
             </a>
-            <Link to="/site/contact" onClick={scrollTop} className="howtoapply-btn ghost">
+
+            <a
+              href="/site/contact"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/contact");
+              }}
+              className="howtoapply-btn ghost"
+            >
               Contact the School
-            </Link>
+            </a>
           </div>
         </article>
       </section>

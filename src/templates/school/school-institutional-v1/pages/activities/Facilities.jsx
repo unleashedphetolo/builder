@@ -53,9 +53,18 @@ function FeatureCard({ title, icon, items }) {
 }
 
 export default function LifeFacilities() {
+
+  const navigate = (slug) => {
+    window.dispatchEvent(
+      new CustomEvent("builder:navigate", { detail: slug })
+    );
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <main className="lf container">
       <Breadcrumbs />
+
       {/* Hero */}
       <header className="lf-hero">
         <div className="lf-hero-left">
@@ -66,12 +75,21 @@ export default function LifeFacilities() {
           </p>
 
           <div className="lf-actions">
-            <Button to="/site/facilities" variant="primary">
+
+            <Button
+              onClick={() => navigate("/facilities")}
+              variant="primary"
+            >
               Full Facilities Page
             </Button>
-            <Button to="/site/gallery" variant="outline">
+
+            <Button
+              onClick={() => navigate("/gallery")}
+              variant="outline"
+            >
               View Photos
             </Button>
+
           </div>
         </div>
 
@@ -101,7 +119,10 @@ export default function LifeFacilities() {
             <p className="lf-muted">Replace these images with your real facility photos.</p>
           </div>
 
-          <Button to="/site/gallery" variant="outline">
+          <Button
+            onClick={() => navigate("/gallery")}
+            variant="outline"
+          >
             Open Gallery →
           </Button>
         </div>

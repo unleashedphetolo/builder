@@ -50,7 +50,7 @@ const DEFAULT_SOCIAL_LINKS = {
 
 function buildSiteHref(siteId, path = "") {
   const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
-  return `/#/site/${siteId || ""}${clean}`;
+  return `#/site/${siteId || ""}${clean}`;
 }
 
 export default function Topbar({ settings = {} }) {
@@ -72,6 +72,14 @@ export default function Topbar({ settings = {} }) {
   const phone = settings?.phone || "+27 00 000 0000";
   const email = settings?.email || "info@school.co.za";
   const siteId = settings?.site_id || "";
+
+  /* instant navigation helper (same as Navbar/Footer) */
+  const navigateTo = (href) => {
+    const slug = href.replace(`#/site/${siteId}`, "") || "/";
+    window.dispatchEvent(
+      new CustomEvent("builder:navigate", { detail: slug })
+    );
+  };
 
   return (
     <div className="topbar" role="banner" aria-label="Top information bar">
@@ -101,7 +109,11 @@ export default function Topbar({ settings = {} }) {
               ☎ {phone}
             </a>
             <span className="sep">|</span>
-            <a className="email" href={`mailto:${email}`} aria-label="Email school">
+            <a
+              className="email"
+              href={`mailto:${email}`}
+              aria-label="Email school"
+            >
               ✉️ {email}
             </a>
           </div>
@@ -109,17 +121,54 @@ export default function Topbar({ settings = {} }) {
 
         <div className="center">
           <nav className="top-links" aria-label="Top navigation">
-            {features.news && <a href={buildSiteHref(siteId, "/news")}>News</a>}
+            {features.news && (
+              <a
+                href={buildSiteHref(siteId, "/news")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateTo(buildSiteHref(siteId, "/news"));
+                }}
+              >
+                News
+              </a>
+            )}
+
             {features.resources && (
-              <a href={buildSiteHref(siteId, "/resources/subject-choices")}>
+              <a
+                href={buildSiteHref(siteId, "/resources/subject-choices")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateTo(
+                    buildSiteHref(siteId, "/resources/subject-choices")
+                  );
+                }}
+              >
                 Resources
               </a>
             )}
+
             {features.resources && (
-              <a href={buildSiteHref(siteId, "/resources/calendar")}>Calendar</a>
+              <a
+                href={buildSiteHref(siteId, "/resources/calendar")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateTo(buildSiteHref(siteId, "/resources/calendar"));
+                }}
+              >
+                Calendar
+              </a>
             )}
+
             {features.notices && (
-              <a href={buildSiteHref(siteId, "/notices")}>Notice Board</a>
+              <a
+                href={buildSiteHref(siteId, "/notices")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateTo(buildSiteHref(siteId, "/notices"));
+                }}
+              >
+                Notice Board
+              </a>
             )}
           </nav>
         </div>
@@ -140,7 +189,7 @@ export default function Topbar({ settings = {} }) {
                     href={href}
                     target={href === "#" ? undefined : "_blank"}
                     rel="noopener noreferrer"
-                    className="social-icon"
+                    className="social-icons"
                     title={key}
                     onClick={(e) => href === "#" && e.preventDefault()}
                   >
@@ -151,8 +200,19 @@ export default function Topbar({ settings = {} }) {
             </div>
           ) : null}
 
-          <div className="auth-links" style={{ fontSize: "12px", display: "flex" }}>
-            <a href={buildSiteHref(siteId, "/admissions/apply")}>Apply Now</a>
+          <div
+            className="auth-links"
+            style={{ fontSize: "12px", display: "flex" }}
+          >
+            <a
+              href={buildSiteHref(siteId, "/admissions/apply")}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateTo(buildSiteHref(siteId, "/admissions/apply"));
+              }}
+            >
+              Apply Now
+            </a>
           </div>
         </div>
       </div>

@@ -17,10 +17,10 @@ const DEFAULT_FEATURES = {
 
 function buildSiteHref(siteId, path = "") {
   const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
-  return `/#/site/${siteId || ""}${clean}`;
+  return `#/site/${siteId || ""}${clean}`;
 }
 
-export default function Navbar({ settings = {}, navItems = [] }) {
+export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
   const features = {
     ...DEFAULT_FEATURES,
     ...(settings?.features || {}),
@@ -46,9 +46,7 @@ export default function Navbar({ settings = {}, navItems = [] }) {
       ? navItems
           .filter(
             (item) =>
-              item &&
-              item.is_visible !== false &&
-              item.location !== "footer"
+              item && item.is_visible !== false && item.location !== "footer",
           )
           .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
       : [];
@@ -58,37 +56,76 @@ export default function Navbar({ settings = {}, navItems = [] }) {
     () => ({
       about: [
         { to: buildSiteHref(siteId, "/about/who-we-are"), label: "Who We Are" },
-        { to: buildSiteHref(siteId, "/about/vision-mission"), label: "Vision & Mission" },
+        {
+          to: buildSiteHref(siteId, "/about/vision-mission"),
+          label: "Vision & Mission",
+        },
         { to: buildSiteHref(siteId, "/staff"), label: "Staff Members" },
         { to: buildSiteHref(siteId, "/sgb"), label: "SGB" },
         { to: buildSiteHref(siteId, "/facilities"), label: "Facilities" },
         { to: buildSiteHref(siteId, "/about/history"), label: "Our History" },
       ],
       activities: [
-        { to: buildSiteHref(siteId, "/activities/academics"), label: "Academics" },
-        { to: buildSiteHref(siteId, "/activities/sports"), label: "Sports & Recreation" },
-        { to: buildSiteHref(siteId, "/activities/culture"), label: "Culture & Activities" },
-        { to: buildSiteHref(siteId, "/activities/facilities"), label: "Campus Facilities" },
+        {
+          to: buildSiteHref(siteId, "/activities/academics"),
+          label: "Academics",
+        },
+        {
+          to: buildSiteHref(siteId, "/activities/sports"),
+          label: "Sports & Recreation",
+        },
+        {
+          to: buildSiteHref(siteId, "/activities/culture"),
+          label: "Culture & Activities",
+        },
+        {
+          to: buildSiteHref(siteId, "/activities/facilities"),
+          label: "Campus Facilities",
+        },
       ],
       resources: [
-        { to: buildSiteHref(siteId, "/resources/subject-choices"), label: "Subject Choices" },
-        { to: buildSiteHref(siteId, "/resources/term-plan"), label: "Term Plan" },
-        { to: buildSiteHref(siteId, "/resources/exam-schedule"), label: "Exam Schedule" },
-        { to: buildSiteHref(siteId, "/resources/code-of-conduct"), label: "Code of Conduct" },
-        { to: buildSiteHref(siteId, "/resources/stationary-list"), label: "Stationary List" },
+        {
+          to: buildSiteHref(siteId, "/resources/subject-choices"),
+          label: "Subject Choices",
+        },
+        {
+          to: buildSiteHref(siteId, "/resources/term-plan"),
+          label: "Term Plan",
+        },
+        {
+          to: buildSiteHref(siteId, "/resources/exam-schedule"),
+          label: "Exam Schedule",
+        },
+        {
+          to: buildSiteHref(siteId, "/resources/code-of-conduct"),
+          label: "Code of Conduct",
+        },
+        {
+          to: buildSiteHref(siteId, "/resources/stationary-list"),
+          label: "Stationary List",
+        },
         { to: buildSiteHref(siteId, "/resources/calendar"), label: "Calendar" },
       ],
       news: [
         { to: buildSiteHref(siteId, "/news"), label: "Newsletters" },
-        { to: buildSiteHref(siteId, "/schoolcalendar"), label: "School Calendar" },
+        {
+          to: buildSiteHref(siteId, "/schoolcalendar"),
+          label: "School Calendar",
+        },
       ],
       admissions: [
-        { to: buildSiteHref(siteId, "/admissions/howtoapply"), label: "How to Apply" },
-        { to: buildSiteHref(siteId, "/admissions/requirements"), label: "Entry Requirements" },
+        {
+          to: buildSiteHref(siteId, "/admissions/howtoapply"),
+          label: "How to Apply",
+        },
+        {
+          to: buildSiteHref(siteId, "/admissions/requirements"),
+          label: "Entry Requirements",
+        },
         { to: buildSiteHref(siteId, "/admissions/apply"), label: "Apply Now" },
       ],
     }),
-    [siteId]
+    [siteId],
   );
 
   const toggleDropdown = (key) => {
@@ -108,7 +145,8 @@ export default function Navbar({ settings = {}, navItems = [] }) {
           if (window.innerWidth <= 880) {
             toggleDropdown(id);
           } else if (href) {
-            window.location.href = href;
+            const slug = href.replace(`#/site/${siteId}`, "") || "/";
+            navigateTo?.(slug);
           }
         }}
         aria-expanded={dropdown === id}
@@ -118,7 +156,16 @@ export default function Navbar({ settings = {}, navItems = [] }) {
 
       <div className={`drop-menu ${dropdown === id ? "show" : ""}`}>
         {items.map((it) => (
-          <a key={`${it.to}-${it.label}`} href={it.to}>
+          <a
+            key={`${it.to}-${it.label}`}
+            href={it.to}
+            onClick={(e) => {
+              e.preventDefault();
+              const slug = it.to.replace(`#/site/${siteId}`, "") || "/";
+              navigateTo?.(slug);
+              setOpen(false); // CLOSE HAMBURGER MENU
+            }}
+          >
             {it.label}
           </a>
         ))}
@@ -248,6 +295,10 @@ export default function Navbar({ settings = {}, navItems = [] }) {
             href={buildSiteHref(siteId, "/")}
             className="logo-link"
             aria-label="Go to home"
+            onClick={(e) => {
+              e.preventDefault();
+              navigateTo?.("/");
+            }}
           >
             <img src={logoUrl} alt="School logo" className="logo-image" />
             <div className="logo-text">
@@ -257,7 +308,10 @@ export default function Navbar({ settings = {}, navItems = [] }) {
           </a>
         </div>
 
-        <nav className={`nav-links ${open ? "open" : ""}`} aria-label="Main navigation">
+        <nav
+          className={`nav-links ${open ? "open" : ""}`}
+          aria-label="Main navigation"
+        >
           {topNav.map((item) =>
             item.type === "drop" ? (
               <Drop
@@ -268,10 +322,19 @@ export default function Navbar({ settings = {}, navItems = [] }) {
                 items={item.menu}
               />
             ) : (
-              <a key={item.key} href={item.href}>
+              <a
+                key={item.key}
+                href={item.href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  const slug = item.href.replace(`#/site/${siteId}`, "") || "/";
+                  navigateTo?.(slug);
+                  setOpen(false); // CLOSE HAMBURGER MENU
+                }}
+              >
                 {item.label}
               </a>
-            )
+            ),
           )}
         </nav>
 

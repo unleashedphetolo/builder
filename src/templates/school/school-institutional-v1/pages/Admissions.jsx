@@ -15,6 +15,13 @@ export default function Admissions({ settings = {} }) {
   const admissionsEmail =
     settings?.admissions_email || settings?.email || "admissions@school.org";
 
+  const navigate = (slug) => {
+    window.dispatchEvent(
+      new CustomEvent("builder:navigate", { detail: slug })
+    );
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <main className="admissions-page admissions-page__container">
       <Breadcrumbs settings={settings} />
@@ -31,6 +38,10 @@ export default function Admissions({ settings = {} }) {
           <a
             className="admissions-page__btn admissions-page__btn--primary admissions-page__apply-cta"
             href={buildSiteHref(siteId, "/admissions/apply")}
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/admissions/apply");
+            }}
           >
             Start Application
           </a>
@@ -82,6 +93,10 @@ export default function Admissions({ settings = {} }) {
               className="admissions-page__btn admissions-page__btn--primary"
               id="apply"
               href={buildSiteHref(siteId, "/admissions/apply")}
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/admissions/apply");
+              }}
             >
               Start Application
             </a>
@@ -89,8 +104,8 @@ export default function Admissions({ settings = {} }) {
 
           <div className="admissions-page__notes">
             <p>
-              <strong>Eligibility:</strong> Learners must be between ages 12 —
-              20 for secondary placements. Special assessments may apply.
+              <strong>Eligibility:</strong> Learners must be between ages 12 — 20
+              for secondary placements. Special assessments may apply.
             </p>
 
             <p className="admissions-page__muted">
@@ -116,12 +131,21 @@ export default function Admissions({ settings = {} }) {
               <a
                 className="admissions-page__link"
                 href={buildSiteHref(siteId, "/contact")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate("/contact");
+                }}
               >
                 Book a Visit
               </a>
+
               <a
                 className="admissions-page__link"
                 href={buildSiteHref(siteId, "/admissions/requirements")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate("/admissions/requirements");
+                }}
               >
                 Policies
               </a>

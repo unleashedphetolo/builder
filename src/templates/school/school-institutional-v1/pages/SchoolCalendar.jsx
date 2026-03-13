@@ -38,10 +38,6 @@ export const EVENTS = [
   },
 ];
 
-function buildSiteHref(siteId, path = "") {
-  const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
-  return `/#/site/${siteId || ""}${clean}`;
-}
 
 function formatDateTime(iso) {
   const d = new Date(iso);
@@ -56,8 +52,11 @@ function formatDateTime(iso) {
 }
 
 export default function SchoolCalendar({ settings = {} }) {
-  const siteId = settings?.site_id || "";
-  const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+
+  const navigate = (slug) => {
+    window.dispatchEvent(new CustomEvent("builder:navigate", { detail: slug }));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const preview = [...EVENTS]
     .sort((a, b) => new Date(a.start) - new Date(b.start))
@@ -71,15 +70,19 @@ export default function SchoolCalendar({ settings = {} }) {
         <div>
           <h1 className="scal-title">School Calendar</h1>
           <p className="scal-subtitle">
-            Key academic dates, examinations, school activities, and public holidays.
+            Key academic dates, examinations, school activities, and public
+            holidays.
           </p>
         </div>
 
         <div className="scal-actions">
           <a
-            href={buildSiteHref(siteId, "/calendar/events")}
+            href="#"
             className="scal-btn"
-            onClick={scrollTop}
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/calendar/events");
+            }}
           >
             View All Events
           </a>
@@ -101,7 +104,9 @@ export default function SchoolCalendar({ settings = {} }) {
             <div className="scal-card-head">
               <div className="scal-tag">Calendar</div>
               <div className="scal-headline">Monthly Overview</div>
-              <div className="scal-muted">Tap days to view events (optional upgrade).</div>
+              <div className="scal-muted">
+                Tap days to view events (optional upgrade).
+              </div>
             </div>
 
             <CalendarWidget />
@@ -114,20 +119,28 @@ export default function SchoolCalendar({ settings = {} }) {
               <div className="scal-tag"># Upcoming</div>
               <h2 className="scal-h2">Upcoming Events</h2>
               <p className="scal-muted">
-                This is a preview. Use “View All Events” for the full calendar list.
+                This is a preview. Use “View All Events” for the full calendar
+                list.
               </p>
             </div>
 
             <a
-              href={buildSiteHref(siteId, "/calendar/events")}
+              href="#"
               className="scal-link"
-              onClick={scrollTop}
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/calendar/events");
+              }}
             >
               View All →
             </a>
           </div>
 
-          <div className="scal-table-wrap" role="region" aria-label="School events preview">
+          <div
+            className="scal-table-wrap"
+            role="region"
+            aria-label="School events preview"
+          >
             <table className="scal-table">
               <thead>
                 <tr>
@@ -162,7 +175,8 @@ export default function SchoolCalendar({ settings = {} }) {
           </div>
 
           <div className="scal-note">
-            For official confirmation of dates, please contact the Administration Office.
+            For official confirmation of dates, please contact the
+            Administration Office.
           </div>
         </div>
       </section>

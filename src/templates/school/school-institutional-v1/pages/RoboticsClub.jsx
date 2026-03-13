@@ -4,10 +4,20 @@ import Button from "../components/common/Button";
 import Breadcrumbs from "../components/common/Breadcrumbs";
 
 export default function RoboticsClub() {
+
+  const navigate = (slug) => {
+    window.dispatchEvent(
+      new CustomEvent("builder:navigate", { detail: slug })
+    );
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <section className="container" style={{ paddingTop: 10, paddingBottom: 40 }}>
       <Breadcrumbs />
+
       <h2 className="section-title">Sebone Robotics Club</h2>
+
       <p style={{ opacity: 0.85, maxWidth: 900, marginBottom: 18 }}>
         The Robotics Club develops problem-solving, teamwork and engineering skills through hands-on projects,
         coding and competitions.
@@ -40,8 +50,21 @@ export default function RoboticsClub() {
       </div>
 
       <div style={{ marginTop: 18, display: "flex", gap: 12, flexWrap: "wrap" }}>
-        <Button to="/site/contact" variant="primary">Join the club</Button>
-        <Button to="/site/gallery" variant="outline">See school gallery</Button>
+
+        <Button
+          onClick={() => navigate("/contact")}
+          variant="primary"
+        >
+          Join the club
+        </Button>
+
+        <Button
+          onClick={() => navigate("/gallery")}
+          variant="outline"
+        >
+          See school gallery
+        </Button>
+
       </div>
     </section>
   );

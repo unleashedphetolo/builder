@@ -22,7 +22,8 @@ function normalizeHeroSlides(heroSlides = []) {
       alt: slide?.alt || "School hero",
       title: slide?.title || "Welcome to Our School",
       subtitle:
-        slide?.subtitle || "Building bright futures through excellence in education.",
+        slide?.subtitle ||
+        "Building bright futures through excellence in education.",
     }));
 }
 
@@ -43,6 +44,11 @@ export default function Hero({ settings = {} }) {
   const videoRef = useRef(null);
 
   const siteId = settings?.site_id || "";
+
+  const navigateTo = (href) => {
+    const slug = href.replace(`/#/site/${siteId}`, "") || "/";
+    window.dispatchEvent(new CustomEvent("builder:navigate", { detail: slug }));
+  };
 
   const stopAutoplay = () => {
     if (autoplayRef.current) {
@@ -214,6 +220,10 @@ export default function Hero({ settings = {} }) {
                   <a
                     href={buildSiteHref(siteId, "/admissions")}
                     className="btns primary"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigateTo(buildSiteHref(siteId, "/admissions"));
+                    }}
                   >
                     Admissions
                   </a>
@@ -221,6 +231,10 @@ export default function Hero({ settings = {} }) {
                   <a
                     href={buildSiteHref(siteId, "/about/who-we-are")}
                     className="btns ghost"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigateTo(buildSiteHref(siteId, "/about/who-we-are"));
+                    }}
                   >
                     Learn more
                   </a>

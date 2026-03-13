@@ -118,6 +118,64 @@ export default function Builder() {
     })();
   }, [siteId]);
 
+/*
+=============================
+Listen for page navigation
+=============================
+*/
+
+useEffect(() => {
+  function handleNavigation(e) {
+    const slug = e.detail || "/";
+
+    const match = pages.find((p) => {
+      const clean = p.slug.replace(/^\/+/, "");
+      const incoming = slug.replace(/^\/+/, "");
+      return clean === incoming;
+    });
+
+    if (match) {
+      setCurrentPageId(match.id);
+    }
+  }
+
+  window.addEventListener("builder:navigate", handleNavigation);
+
+  return () =>
+    window.removeEventListener("builder:navigate", handleNavigation);
+}, [pages]);
+
+  /*
+=============================
+Sync URL slug → current page
+=============================
+*/
+
+useEffect(() => {
+  function syncPageFromUrl() {
+    const hash = window.location.hash || "";
+    const parts = hash.split("/");
+
+    // #/site/{siteId}/slug
+    const slug = parts.slice(3).join("/") || "home";
+
+    const match = pages.find((p) => {
+      const pageSlug = p.slug.replace(/^\/+/, "");
+      return pageSlug === slug.replace(/^\/+/, "");
+    });
+
+    if (match) {
+      setCurrentPageId(match.id);
+    }
+  }
+
+  window.addEventListener("hashchange", syncPageFromUrl);
+
+  syncPageFromUrl();
+
+  return () => window.removeEventListener("hashchange", syncPageFromUrl);
+}, [pages]);
+
   /*
   =============================
   Template selection

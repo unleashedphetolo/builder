@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import "../../styles/breadcrumbs.css";
 
 const LABELS = {
@@ -18,10 +18,6 @@ const LABELS = {
 
   resources: "Resources",
   "subject-choices": "Subject Choices",
-  "term-plan": "Term Plan",
-  "exam-schedule": "Exam Schedule",
-  "code-of-conduct": "Code of Conduct",
-  "stationary-list": "Stationary List",
   calendar: "Calendar",
 
   admissions: "Admissions",
@@ -29,12 +25,9 @@ const LABELS = {
   howtoapply: "How to Apply",
   requirements: "Entry Requirements",
 
-  schoolcalendar: "School Calendar",
-  bulletin: "Student Daily Bulletin",
   contact: "Contact",
   gallery: "Gallery",
   robotics: "Robotics Club",
-  "digital-library": "Digital Library",
   notices: "Notices",
   news: "News",
   events: "Events",
@@ -43,70 +36,94 @@ const LABELS = {
 function prettify(seg) {
   if (!seg) return "";
   if (LABELS[seg]) return LABELS[seg];
+
   return seg
     .replace(/-/g, " ")
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function buildSiteHref(siteId, path = "") {
-  const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
-  return `/#/site/${siteId || ""}${clean}`;
-}
-
-export default function Breadcrumbs({ className = "", settings = {} }) {
+export default function Breadcrumbs({ className = "" }) {
   const location = useLocation();
-  const params = useParams();
-
-  const siteId = settings?.site_id || params?.siteId || "";
 
   const crumbs = useMemo(() => {
-    const pathname = location.pathname || "";
-    const afterSite = pathname.replace(`/site/${siteId}`, "") || "/";
-    const cleanPath = afterSite === "" ? "/" : afterSite;
 
-    const segments = cleanPath.split("/").filter(Boolean);
+    const hash = location.hash || "";
 
-    if (segments.length === 0) return [];
+    if (!hash.includes("/site/")) return [];
 
-    return [
-      { label: "Home", href: buildSiteHref(siteId, "/") },
-      ...segments.map((seg, idx) => {
-        const path = "/" + segments.slice(0, idx + 1).join("/");
-        return {
-          label: prettify(seg),
-          href: buildSiteHref(siteId, path),
-        };
-      }),
+    const afterSite = hash.split("/site/")[1] || "";
+
+    const parts = afterSite.split("/").filter(Boolean);
+
+    // remove siteId
+    const segments = parts.slice(1);
+
+    if (!segments.length) return [];
+
+    let path = "";
+
+    const items = [
+      {
+        label: "Home",
+        slug: "/",
+      },
     ];
-  }, [location.pathname, siteId]);
 
-  if (crumbs.length === 0) return null;
+    segments.forEach((seg) => {
+      path += `/${seg}`;
+
+      items.push({
+        label: prettify(seg),
+        slug: path,
+      });
+    });
+
+    return items;
+
+  }, [location.hash]);
+
+  if (!crumbs.length) return null;
+
+  const navigate = (slug) => {
+    window.dispatchEvent(
+      new CustomEvent("builder:navigate", { detail: slug })
+    );
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <nav className={`bc ${className}`} aria-label="Breadcrumb">
       <ol className="bc-list">
+
         {crumbs.map((c, i) => {
-          const isLast = i === crumbs.length - 1;
+          const last = i === crumbs.length - 1;
 
           return (
-            <li className="bc-item" key={c.href}>
-              {isLast ? (
-                <span className="bc-current" aria-current="page">
-                  {c.label}
-                </span>
+            <li key={c.slug} className="bc-item">
+
+              {last ? (
+                <span className="bc-current">{c.label}</span>
               ) : (
                 <>
-                  <a className="bc-link" href={c.href}>
+                  <a
+                    className="bc-link"
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate(c.slug);
+                    }}
+                  >
                     {c.label}
                   </a>
-                  <span className="bc-sep" aria-hidden="true">
-                    /
-                  </span>
+
+                  <span className="bc-sep">/</span>
                 </>
               )}
+
             </li>
           );
         })}
+
       </ol>
     </nav>
   );

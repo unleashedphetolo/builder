@@ -12,6 +12,7 @@ const HOME_LANGS = [
   "Xitsonga",
   "Sepedi",
   "Setswana",
+  "Afrikaans",
   "isiZulu",
   "isiXhosa",
   "Sesotho",
@@ -46,7 +47,7 @@ function requiredMissing(fields) {
   return fields.some((v) => !String(v ?? "").trim());
 }
 
-export default function Apply() {
+export default function Apply({ settings = {} }) {
   const [stepIndex, setStepIndex] = useState(0);
   const step = steps[stepIndex]?.key;
 
@@ -150,7 +151,12 @@ export default function Apply() {
     }
 
     if (step === "docs") {
-      return !!files.learnerId && !!files.guardianId && !!files.latestReport && !!files.proofAddress;
+      return (
+        !!files.learnerId &&
+        !!files.guardianId &&
+        !!files.latestReport &&
+        !!files.proofAddress
+      );
     }
 
     if (step === "review") {
@@ -187,10 +193,18 @@ export default function Apply() {
       await new Promise((r) => setTimeout(r, 900));
 
       // Example payload (files would be uploaded separately)
-      const payload = { ...form, files: Object.keys(files).reduce((a, k) => ({ ...a, [k]: !!files[k] }), {}) };
+      const payload = {
+        ...form,
+        files: Object.keys(files).reduce(
+          (a, k) => ({ ...a, [k]: !!files[k] }),
+          {},
+        ),
+      };
       console.log("APPLICATION SUBMITTED:", payload);
 
-      window.alert("Application submitted successfully. The school will contact you.");
+      window.alert(
+        "Application submitted successfully. The school will contact you.",
+      );
       setStepIndex(0);
       // Optionally reset:
       // window.location.href = "/admissions";
@@ -200,27 +214,30 @@ export default function Apply() {
   };
 
   return (
-    <main className="admissions container" style={{ paddingTop: 10, paddingBottom: 40 }}>
-      <Breadcrumbs />
+    <main
+      className="admissions container"
+      style={{ paddingTop: 10, paddingBottom: 40 }}
+    >
+      <Breadcrumbs settings={settings} />
       {/* HERO */}
       <header className="admissions-hero">
         <div className="hero-left">
           <h1 className="hero-title">Online Application</h1>
           <p className="hero-sub">
-            Complete the form below and upload required documents. Fields marked <span className="req">*</span> are mandatory.
+            Complete the form below and upload required documents. Fields marked{" "}
+            <span className="req">*</span> are mandatory.
           </p>
         </div>
 
         <div className="hero-cta">
-          <a
-            href="/site/docs/admission-form.pdf"
-            download
-            className="af-ghost-link"
-            aria-label="Download manual admission form PDF"
-          >
+          <a href="/docs/admission-form.pdf" download className="af-ghost-link">
             Download Manual Form
           </a>
-          <Button style={{"fontSize": "medium"}} to="/site/contact" variant="outline">
+          <Button
+            style={{ fontSize: "medium" }}
+            to="/contact"
+            variant="outline"
+          >
             Need Help?
           </Button>
         </div>
@@ -268,23 +285,39 @@ export default function Apply() {
           {step === "learner" && (
             <>
               <h2 className="af-h2">Learner Details</h2>
-              <p className="af-muted">Provide the learner’s official information as per documents.</p>
+              <p className="af-muted">
+                Provide the learner’s official information as per documents.
+              </p>
 
               <div className="af-grid">
                 <Field label="First Name" required>
-                  <input value={form.learnerFirstName} onChange={(e) => set("learnerFirstName", e.target.value)} />
+                  <input
+                    value={form.learnerFirstName}
+                    onChange={(e) => set("learnerFirstName", e.target.value)}
+                  />
                 </Field>
 
                 <Field label="Last Name" required>
-                  <input value={form.learnerLastName} onChange={(e) => set("learnerLastName", e.target.value)} />
+                  <input
+                    value={form.learnerLastName}
+                    onChange={(e) => set("learnerLastName", e.target.value)}
+                  />
                 </Field>
 
                 <Field label="Date of Birth" required>
-                  <input type="date" max={todayISO()} value={form.learnerDOB} onChange={(e) => set("learnerDOB", e.target.value)} />
+                  <input
+                    type="date"
+                    max={todayISO()}
+                    value={form.learnerDOB}
+                    onChange={(e) => set("learnerDOB", e.target.value)}
+                  />
                 </Field>
 
                 <Field label="Gender" required>
-                  <select value={form.learnerGender} onChange={(e) => set("learnerGender", e.target.value)}>
+                  <select
+                    value={form.learnerGender}
+                    onChange={(e) => set("learnerGender", e.target.value)}
+                  >
                     <option value="">Select</option>
                     {GENDERS.map((g) => (
                       <option key={g} value={g}>
@@ -295,7 +328,10 @@ export default function Apply() {
                 </Field>
 
                 <Field label="Applying for Grade" required>
-                  <select value={form.learnerGrade} onChange={(e) => set("learnerGrade", e.target.value)}>
+                  <select
+                    value={form.learnerGrade}
+                    onChange={(e) => set("learnerGrade", e.target.value)}
+                  >
                     <option value="">Select</option>
                     {GRADES.map((g) => (
                       <option key={g} value={g}>
@@ -306,11 +342,18 @@ export default function Apply() {
                 </Field>
 
                 <Field label="Learner ID / Birth Certificate No." required>
-                  <input value={form.learnerIdOrBirth} onChange={(e) => set("learnerIdOrBirth", e.target.value)} placeholder="e.g. 0000000000000" />
+                  <input
+                    value={form.learnerIdOrBirth}
+                    onChange={(e) => set("learnerIdOrBirth", e.target.value)}
+                    placeholder="e.g. 0000000000000"
+                  />
                 </Field>
 
                 <Field label="Home Language" required>
-                  <select value={form.learnerHomeLanguage} onChange={(e) => set("learnerHomeLanguage", e.target.value)}>
+                  <select
+                    value={form.learnerHomeLanguage}
+                    onChange={(e) => set("learnerHomeLanguage", e.target.value)}
+                  >
                     <option value="">Select</option>
                     {HOME_LANGS.map((l) => (
                       <option key={l} value={l}>
@@ -321,27 +364,51 @@ export default function Apply() {
                 </Field>
 
                 <Field label="Nationality">
-                  <input value={form.learnerNationality} onChange={(e) => set("learnerNationality", e.target.value)} placeholder="e.g. South African" />
+                  <input
+                    value={form.learnerNationality}
+                    onChange={(e) => set("learnerNationality", e.target.value)}
+                    placeholder="e.g. South African"
+                  />
                 </Field>
 
                 <Field label="Address Line" required className="span-2">
-                  <input value={form.learnerAddressLine1} onChange={(e) => set("learnerAddressLine1", e.target.value)} placeholder="Street / Section / Extension" />
+                  <input
+                    value={form.learnerAddressLine1}
+                    onChange={(e) => set("learnerAddressLine1", e.target.value)}
+                    placeholder="Street / Section / Extension"
+                  />
                 </Field>
 
                 <Field label="City" required>
-                  <input value={form.learnerAddressCity} onChange={(e) => set("learnerAddressCity", e.target.value)} />
+                  <input
+                    value={form.learnerAddressCity}
+                    onChange={(e) => set("learnerAddressCity", e.target.value)}
+                  />
                 </Field>
 
                 <Field label="Province" required>
-                  <input value={form.learnerAddressProvince} onChange={(e) => set("learnerAddressProvince", e.target.value)} />
+                  <input
+                    value={form.learnerAddressProvince}
+                    onChange={(e) =>
+                      set("learnerAddressProvince", e.target.value)
+                    }
+                  />
                 </Field>
 
                 <Field label="Postal Code">
-                  <input value={form.learnerAddressPostal} onChange={(e) => set("learnerAddressPostal", e.target.value)} />
+                  <input
+                    value={form.learnerAddressPostal}
+                    onChange={(e) =>
+                      set("learnerAddressPostal", e.target.value)
+                    }
+                  />
                 </Field>
 
                 <Field label="Transport Method">
-                  <select value={form.transport} onChange={(e) => set("transport", e.target.value)}>
+                  <select
+                    value={form.transport}
+                    onChange={(e) => set("transport", e.target.value)}
+                  >
                     <option value="">Select</option>
                     {TRANSPORT.map((t) => (
                       <option key={t} value={t}>
@@ -351,7 +418,10 @@ export default function Apply() {
                   </select>
                 </Field>
 
-                <Field label="Medical / Special Support (optional)" className="span-2">
+                <Field
+                  label="Medical / Special Support (optional)"
+                  className="span-2"
+                >
                   <textarea
                     rows={3}
                     value={form.medicalInfo}
@@ -366,15 +436,26 @@ export default function Apply() {
           {step === "guardian" && (
             <>
               <h2 className="af-h2">Parent / Guardian Details</h2>
-              <p className="af-muted">Provide contact details for the primary guardian responsible for the learner.</p>
+              <p className="af-muted">
+                Provide contact details for the primary guardian responsible for
+                the learner.
+              </p>
 
               <div className="af-grid">
                 <Field label="Full Name" required>
-                  <input value={form.guardianFullName} onChange={(e) => set("guardianFullName", e.target.value)} />
+                  <input
+                    value={form.guardianFullName}
+                    onChange={(e) => set("guardianFullName", e.target.value)}
+                  />
                 </Field>
 
                 <Field label="Relationship" required>
-                  <select value={form.guardianRelationship} onChange={(e) => set("guardianRelationship", e.target.value)}>
+                  <select
+                    value={form.guardianRelationship}
+                    onChange={(e) =>
+                      set("guardianRelationship", e.target.value)
+                    }
+                  >
                     <option value="">Select</option>
                     {RELATIONSHIPS.map((r) => (
                       <option key={r} value={r}>
@@ -385,27 +466,48 @@ export default function Apply() {
                 </Field>
 
                 <Field label="ID Number" required>
-                  <input value={form.guardianIdNumber} onChange={(e) => set("guardianIdNumber", e.target.value)} />
+                  <input
+                    value={form.guardianIdNumber}
+                    onChange={(e) => set("guardianIdNumber", e.target.value)}
+                  />
                 </Field>
 
                 <Field label="Phone Number" required>
-                  <input value={form.guardianPhone} onChange={(e) => set("guardianPhone", e.target.value)} placeholder="e.g. 071 000 0000" />
+                  <input
+                    value={form.guardianPhone}
+                    onChange={(e) => set("guardianPhone", e.target.value)}
+                    placeholder="e.g. 071 000 0000"
+                  />
                 </Field>
 
                 <Field label="Alternative Phone">
-                  <input value={form.guardianAltPhone} onChange={(e) => set("guardianAltPhone", e.target.value)} />
+                  <input
+                    value={form.guardianAltPhone}
+                    onChange={(e) => set("guardianAltPhone", e.target.value)}
+                  />
                 </Field>
 
                 <Field label="Email Address">
-                  <input type="email" value={form.guardianEmail} onChange={(e) => set("guardianEmail", e.target.value)} placeholder="e.g. name@email.com" />
+                  <input
+                    type="email"
+                    value={form.guardianEmail}
+                    onChange={(e) => set("guardianEmail", e.target.value)}
+                    placeholder="e.g. name@email.com"
+                  />
                 </Field>
 
                 <Field label="Employer (optional)">
-                  <input value={form.guardianEmployer} onChange={(e) => set("guardianEmployer", e.target.value)} />
+                  <input
+                    value={form.guardianEmployer}
+                    onChange={(e) => set("guardianEmployer", e.target.value)}
+                  />
                 </Field>
 
                 <Field label="Work Phone (optional)">
-                  <input value={form.guardianWorkPhone} onChange={(e) => set("guardianWorkPhone", e.target.value)} />
+                  <input
+                    value={form.guardianWorkPhone}
+                    onChange={(e) => set("guardianWorkPhone", e.target.value)}
+                  />
                 </Field>
               </div>
             </>
@@ -415,35 +517,61 @@ export default function Apply() {
             <>
               <h2 className="af-h2">School Information & Emergency Contact</h2>
               <p className="af-muted">
-                Provide previous school details and an emergency contact we can reach if needed.
+                Provide previous school details and an emergency contact we can
+                reach if needed.
               </p>
 
               <div className="af-grid">
                 <Field label="Previous School Name" required className="span-2">
-                  <input value={form.prevSchoolName} onChange={(e) => set("prevSchoolName", e.target.value)} />
+                  <input
+                    value={form.prevSchoolName}
+                    onChange={(e) => set("prevSchoolName", e.target.value)}
+                  />
                 </Field>
 
                 <Field label="Current/Previous Grade" required>
-                  <input value={form.prevSchoolGrade} onChange={(e) => set("prevSchoolGrade", e.target.value)} placeholder="e.g. Grade 9" />
+                  <input
+                    value={form.prevSchoolGrade}
+                    onChange={(e) => set("prevSchoolGrade", e.target.value)}
+                    placeholder="e.g. Grade 9"
+                  />
                 </Field>
 
                 <Field label="Province" required>
-                  <input value={form.prevSchoolProvince} onChange={(e) => set("prevSchoolProvince", e.target.value)} />
+                  <input
+                    value={form.prevSchoolProvince}
+                    onChange={(e) => set("prevSchoolProvince", e.target.value)}
+                  />
                 </Field>
 
-                <Field label="Reason for Transfer (optional)" className="span-2">
-                  <textarea rows={3} value={form.prevSchoolReason} onChange={(e) => set("prevSchoolReason", e.target.value)} />
+                <Field
+                  label="Reason for Transfer (optional)"
+                  className="span-2"
+                >
+                  <textarea
+                    rows={3}
+                    value={form.prevSchoolReason}
+                    onChange={(e) => set("prevSchoolReason", e.target.value)}
+                  />
                 </Field>
 
                 <Field label="Needs Financial Support?">
-                  <select value={form.needsFinancialSupport} onChange={(e) => set("needsFinancialSupport", e.target.value)}>
+                  <select
+                    value={form.needsFinancialSupport}
+                    onChange={(e) =>
+                      set("needsFinancialSupport", e.target.value)
+                    }
+                  >
                     <option value="No">No</option>
                     <option value="Yes">Yes</option>
                   </select>
                 </Field>
 
                 <Field label="Hostel Required?">
-                  <select value={form.hostels} onChange={(e) => set("hostels", e.target.value)}>
+                  <select
+                    value={form.hostels}
+                    onChange={(e) => set("hostels", e.target.value)}
+                  >
                     <option value="No">No</option>
                     <option value="Yes">Yes</option>
                   </select>
@@ -452,15 +580,26 @@ export default function Apply() {
                 <div className="af-divider span-2" />
 
                 <Field label="Emergency Contact Name" required>
-                  <input value={form.emergencyName} onChange={(e) => set("emergencyName", e.target.value)} />
+                  <input
+                    value={form.emergencyName}
+                    onChange={(e) => set("emergencyName", e.target.value)}
+                  />
                 </Field>
 
                 <Field label="Relationship" required>
-                  <input value={form.emergencyRelationship} onChange={(e) => set("emergencyRelationship", e.target.value)} />
+                  <input
+                    value={form.emergencyRelationship}
+                    onChange={(e) =>
+                      set("emergencyRelationship", e.target.value)
+                    }
+                  />
                 </Field>
 
                 <Field label="Emergency Phone" required className="span-2">
-                  <input value={form.emergencyPhone} onChange={(e) => set("emergencyPhone", e.target.value)} />
+                  <input
+                    value={form.emergencyPhone}
+                    onChange={(e) => set("emergencyPhone", e.target.value)}
+                  />
                 </Field>
               </div>
             </>
@@ -470,7 +609,8 @@ export default function Apply() {
             <>
               <h2 className="af-h2">Required Document Uploads</h2>
               <p className="af-muted">
-                Upload clear photos or PDFs. Recommended: PDF or JPG/PNG. Keep files under a reasonable size.
+                Upload clear photos or PDFs. Recommended: PDF or JPG/PNG. Keep
+                files under a reasonable size.
               </p>
 
               <div className="af-grid">
@@ -510,7 +650,9 @@ export default function Apply() {
                   label="Transfer Letter (if applicable)"
                   hint="Optional"
                   file={files.transferLetter}
-                  onChange={(f) => setFiles((p) => ({ ...p, transferLetter: f }))}
+                  onChange={(f) =>
+                    setFiles((p) => ({ ...p, transferLetter: f }))
+                  }
                 />
 
                 <UploadField
@@ -524,7 +666,8 @@ export default function Apply() {
               <div className="af-callout">
                 <div className="af-callout-title">Tip</div>
                 <div className="af-callout-text">
-                  If you cannot upload documents, you may submit the manual form in person with certified copies.
+                  If you cannot upload documents, you may submit the manual form
+                  in person with certified copies.
                 </div>
               </div>
             </>
@@ -533,33 +676,62 @@ export default function Apply() {
           {step === "review" && (
             <>
               <h2 className="af-h2">Review & Submit</h2>
-              <p className="af-muted">Confirm that your information is correct before submitting.</p>
+              <p className="af-muted">
+                Confirm that your information is correct before submitting.
+              </p>
 
               <div className="af-review">
                 <div className="af-review-col">
                   <div className="af-review-title">Learner</div>
-                  <ReviewRow k="Full Name" v={`${form.learnerFirstName} ${form.learnerLastName}`} />
+                  <ReviewRow
+                    k="Full Name"
+                    v={`${form.learnerFirstName} ${form.learnerLastName}`}
+                  />
                   <ReviewRow k="DOB" v={form.learnerDOB || "—"} />
                   <ReviewRow k="Gender" v={form.learnerGender || "—"} />
                   <ReviewRow k="Grade" v={form.learnerGrade || "—"} />
-                  <ReviewRow k="ID/Birth No." v={form.learnerIdOrBirth || "—"} />
-                  <ReviewRow k="Address" v={`${form.learnerAddressLine1}, ${form.learnerAddressCity}, ${form.learnerAddressProvince}`} />
+                  <ReviewRow
+                    k="ID/Birth No."
+                    v={form.learnerIdOrBirth || "—"}
+                  />
+                  <ReviewRow
+                    k="Address"
+                    v={`${form.learnerAddressLine1}, ${form.learnerAddressCity}, ${form.learnerAddressProvince}`}
+                  />
                 </div>
 
                 <div className="af-review-col">
                   <div className="af-review-title">Parent/Guardian</div>
                   <ReviewRow k="Full Name" v={form.guardianFullName || "—"} />
-                  <ReviewRow k="Relationship" v={form.guardianRelationship || "—"} />
+                  <ReviewRow
+                    k="Relationship"
+                    v={form.guardianRelationship || "—"}
+                  />
                   <ReviewRow k="Phone" v={form.guardianPhone || "—"} />
                   <ReviewRow k="Email" v={form.guardianEmail || "—"} />
                   <div className="af-review-title" style={{ marginTop: 14 }}>
                     Uploads
                   </div>
-                  <ReviewRow k="Learner Document" v={files.learnerId ? "Attached" : "Missing"} />
-                  <ReviewRow k="Guardian ID" v={files.guardianId ? "Attached" : "Missing"} />
-                  <ReviewRow k="Latest Report" v={files.latestReport ? "Attached" : "Missing"} />
-                  <ReviewRow k="Proof of Address" v={files.proofAddress ? "Attached" : "Missing"} />
-                  <ReviewRow k="Transfer Letter" v={files.transferLetter ? "Attached" : "Not provided"} />
+                  <ReviewRow
+                    k="Learner Document"
+                    v={files.learnerId ? "Attached" : "Missing"}
+                  />
+                  <ReviewRow
+                    k="Guardian ID"
+                    v={files.guardianId ? "Attached" : "Missing"}
+                  />
+                  <ReviewRow
+                    k="Latest Report"
+                    v={files.latestReport ? "Attached" : "Missing"}
+                  />
+                  <ReviewRow
+                    k="Proof of Address"
+                    v={files.proofAddress ? "Attached" : "Missing"}
+                  />
+                  <ReviewRow
+                    k="Transfer Letter"
+                    v={files.transferLetter ? "Attached" : "Not provided"}
+                  />
                 </div>
               </div>
 
@@ -571,7 +743,8 @@ export default function Apply() {
                     onChange={(e) => set("consentTruth", e.target.checked)}
                   />
                   <span>
-                    I confirm that the information provided is true and correct to the best of my knowledge.
+                    I confirm that the information provided is true and correct
+                    to the best of my knowledge.
                     <span className="req"> *</span>
                   </span>
                 </label>
@@ -583,15 +756,17 @@ export default function Apply() {
                     onChange={(e) => set("consentPolicy", e.target.checked)}
                   />
                   <span>
-                    I understand that submission does not guarantee placement and that the school may request supporting
-                    documents for verification.
+                    I understand that submission does not guarantee placement
+                    and that the school may request supporting documents for
+                    verification.
                     <span className="req"> *</span>
                   </span>
                 </label>
               </div>
 
               <div className="af-submit-note">
-                By submitting, your application will be sent to the Administration Office for review.
+                By submitting, your application will be sent to the
+                Administration Office for review.
               </div>
             </>
           )}
@@ -599,21 +774,38 @@ export default function Apply() {
 
         {/* Footer actions */}
         <div className="af-footer">
-          <button type="button" className="af-nav ghost" onClick={back} disabled={stepIndex === 0 || submitting}>
+          <button
+            type="button"
+            className="af-nav ghost"
+            onClick={back}
+            disabled={stepIndex === 0 || submitting}
+          >
             Back
           </button>
 
           <div className="af-footer-right">
-            <div className={`af-status ${validateCurrentStep() ? "ok" : "warn"}`}>
+            <div
+              className={`af-status ${validateCurrentStep() ? "ok" : "warn"}`}
+            >
               {validateCurrentStep() ? "Step Complete" : "Incomplete"}
             </div>
 
             {stepIndex < steps.length - 1 ? (
-              <button type="button" className="af-nav primary" onClick={next} disabled={submitting}>
+              <button
+                type="button"
+                className="af-nav primary"
+                onClick={next}
+                disabled={submitting}
+              >
                 Continue
               </button>
             ) : (
-              <button type="button" className="af-nav primary" onClick={submit} disabled={submitting}>
+              <button
+                type="button"
+                className="af-nav primary"
+                onClick={submit}
+                disabled={submitting}
+              >
                 {submitting ? "Submitting..." : "Submit Application"}
               </button>
             )}
@@ -622,7 +814,8 @@ export default function Apply() {
       </section>
 
       <p className="af-help">
-        If you experience any difficulty, contact the school office or submit your manual application form with certified copies.
+        If you experience any difficulty, contact the school office or submit
+        your manual application form with certified copies.
       </p>
     </main>
   );

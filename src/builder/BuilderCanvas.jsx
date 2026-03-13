@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import "../styles/builderCanvas.css";
 
 export default function BuilderCanvas({ siteId, page }) {
@@ -7,11 +7,54 @@ export default function BuilderCanvas({ siteId, page }) {
   const previewUrl = useMemo(() => {
     if (!siteId) return "";
 
-    const slug = page?.slug && page.slug !== "/" ? page.slug : "";
-    const cleanSlug = slug ? `/${slug.replace(/^\/+/, "")}` : "";
+    const slug = page?.slug && page.slug !== "/" ? `/${page.slug}` : "";
 
-    return `/#/site/${siteId}${cleanSlug}?builder=1&preview=1`;
+    return `#/site/${siteId}${slug}?builder=1`;
   }, [siteId, page]);
+
+  useEffect(() => {
+    function handleNavigate(e) {
+      const slug = e.detail || "/";
+
+      if (window.previewFrame?.contentWindow) {
+        window.previewFrame.contentWindow.postMessage(
+          { type: "navigate", slug },
+          "*"
+        );
+      }
+    }
+
+    window.addEventListener("builder:navigate", handleNavigate);
+
+    return () => {
+      window.removeEventListener("builder:navigate", handleNavigate);
+    };
+  }, []);
+
+  const handleIframeLoad = (e) => {
+    try {
+      const iframe = e.target;
+      const url = new URL(iframe.contentWindow.location.href);
+
+      const hash = url.hash || "";
+
+      if (!hash.includes("/site/")) return;
+
+      const parts = hash.split("/");
+
+      // expected: #/site/{siteId}/{slug}
+      const slug = parts.slice(3).join("/") || "/";
+
+      // only sync if page changed
+      if (slug !== page?.slug) {
+        window.dispatchEvent(
+          new CustomEvent("builder:navigate", { detail: slug })
+        );
+      }
+    } catch (err) {
+      // ignore cross-origin errors
+    }
+  };
 
   return (
     <div className="builder-canvas">
@@ -47,11 +90,12 @@ export default function BuilderCanvas({ siteId, page }) {
         ) : (
           <div className="builder-preview-frame-wrap">
             <iframe
-              key={previewUrl}
+              ref={(el) => (window.previewFrame = el)}
               src={previewUrl}
               title="Website Preview"
               className="builder-preview-frame"
               loading="lazy"
+              onLoad={handleIframeLoad}
             />
           </div>
         )}

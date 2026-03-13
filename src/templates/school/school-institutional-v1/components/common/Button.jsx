@@ -33,9 +33,31 @@ export default function Button({
 
   const finalStyle = { ...base, ...(variants[variant] || variants.primary) };
 
-  if (href || to) {
+  function handleClick(e) {
+    if (to) {
+      e.preventDefault();
+
+      window.dispatchEvent(
+        new CustomEvent("builder:navigate", { detail: to })
+      );
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    if (onClick) onClick(e);
+  }
+
+  if (href) {
     return (
-      <a href={href || to} onClick={onClick} style={finalStyle}>
+      <a href={href} style={finalStyle}>
+        {children}
+      </a>
+    );
+  }
+
+  if (to) {
+    return (
+      <a href="#" onClick={handleClick} style={finalStyle}>
         {children}
       </a>
     );

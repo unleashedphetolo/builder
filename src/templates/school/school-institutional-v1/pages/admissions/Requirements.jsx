@@ -5,6 +5,14 @@ import Card from "../../components/common/Card";
 import Breadcrumbs from "../../components/common/Breadcrumbs";
 
 export default function Requirements() {
+
+  const navigate = (slug) => {
+    window.dispatchEvent(
+      new CustomEvent("builder:navigate", { detail: slug })
+    );
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <main className="container requirements-page">
       <Breadcrumbs />
@@ -62,12 +70,16 @@ export default function Requirements() {
           {/* ACTION BUTTONS */}
           <div className="requirements-actions">
 
-            <Link
-              to="/site/admissions/apply"
+            <a
+              href="/site/admissions/apply"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/admissions/apply");
+              }}
               className="requirements-btn primary"
             >
               Apply Online
-            </Link>
+            </a>
 
             <a
               href="/site/docs/admission-form.pdf"
