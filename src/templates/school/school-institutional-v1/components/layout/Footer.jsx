@@ -88,20 +88,33 @@ export default function Footer({ settings = {} }) {
 
   const navigateTo = (href) => {
     const slug = href.replace(`#/site/${siteId}`, "") || "/";
-    window.dispatchEvent(
-      new CustomEvent("builder:navigate", { detail: slug })
-    );
+    window.dispatchEvent(new CustomEvent("builder:navigate", { detail: slug }));
   };
 
   const groups = [
     {
       title: "Learners",
       items: [
-        { name: "Calendars", path: buildSiteHref(siteId, "/resources/calendar") },
-        { name: "Term dates", path: buildSiteHref(siteId, "/resources/term-plan") },
-        { name: "Student Daily Bulletin", path: buildSiteHref(siteId, "/bulletin") },
-        { name: "Subject Choices", path: buildSiteHref(siteId, "/resources/subject-choices") },
-        { name: "Past Matric Papers", path: buildSiteHref(siteId, "/digital-library") },
+        {
+          name: "Calendars",
+          path: buildSiteHref(siteId, "/resources/calendar"),
+        },
+        {
+          name: "Term dates",
+          path: buildSiteHref(siteId, "/resources/term-plan"),
+        },
+        {
+          name: "Student Daily Bulletin",
+          path: buildSiteHref(siteId, "/bulletin"),
+        },
+        {
+          name: "Subject Choices",
+          path: buildSiteHref(siteId, "/resources/subject-choices"),
+        },
+        {
+          name: "Past Matric Papers",
+          path: buildSiteHref(siteId, "/digital-library"),
+        },
       ],
     },
     {
@@ -109,27 +122,54 @@ export default function Footer({ settings = {} }) {
       items: [
         { name: "Staff Members", path: buildSiteHref(siteId, "/staff") },
         { name: "SGB", path: buildSiteHref(siteId, "/sgb") },
-        { name: "Term dates", path: buildSiteHref(siteId, "/resources/term-plan") },
-        { name: "Attendance Policy", path: buildSiteHref(siteId, "/attendance") },
+        {
+          name: "Term dates",
+          path: buildSiteHref(siteId, "/resources/term-plan"),
+        },
+        {
+          name: "Attendance Policy",
+          path: buildSiteHref(siteId, "/attendance"),
+        },
       ],
     },
     {
       title: "Parents",
       items: [
         { name: "Admissions", path: buildSiteHref(siteId, "/admissions") },
-        { name: "Term dates", path: buildSiteHref(siteId, "/resources/term-plan") },
-        { name: "School Calendar", path: buildSiteHref(siteId, "/schoolcalendar") },
-        { name: "Stationary requirements", path: buildSiteHref(siteId, "/resources/stationary-list") },
+        {
+          name: "Term dates",
+          path: buildSiteHref(siteId, "/resources/term-plan"),
+        },
+        {
+          name: "School Calendar",
+          path: buildSiteHref(siteId, "/schoolcalendar"),
+        },
+        {
+          name: "Stationary requirements",
+          path: buildSiteHref(siteId, "/resources/stationary-list"),
+        },
         { name: "Contact us", path: buildSiteHref(siteId, "/contact") },
       ],
     },
     {
       title: "Activities",
       items: [
-        { name: "Academics", path: buildSiteHref(siteId, "/activities/academics") },
-        { name: "Sports & Recreation", path: buildSiteHref(siteId, "/activities/sports") },
-        { name: "Culture & Activities", path: buildSiteHref(siteId, "/activities/culture") },
-        { name: "Campus Facilities", path: buildSiteHref(siteId, "/activities/facilities") },
+        {
+          name: "Academics",
+          path: buildSiteHref(siteId, "/activities/academics"),
+        },
+        {
+          name: "Sports & Recreation",
+          path: buildSiteHref(siteId, "/activities/sports"),
+        },
+        {
+          name: "Culture & Activities",
+          path: buildSiteHref(siteId, "/activities/culture"),
+        },
+        {
+          name: "Campus Facilities",
+          path: buildSiteHref(siteId, "/activities/facilities"),
+        },
       ],
     },
   ];
@@ -137,12 +177,20 @@ export default function Footer({ settings = {} }) {
   return (
     <footer className="site-footer" role="contentinfo">
       <div className="footer-top container">
-
         <div className="brand">
-          <div className="logoz">
-            <img src={logoUrl} alt="School logo" className="logo-image" />
-          </div>
-
+          <a
+            href={buildSiteHref(siteId, "/")}
+            className="logo-link"
+            aria-label="Go to home"
+            onClick={(e) => {
+              e.preventDefault();
+              navigateTo?.("/");
+            }}
+          >
+            <div className="logoz">
+              <img src={logoUrl} alt="School logo" className="logo-image" />
+            </div>
+          </a>
           <div className="brand-text">
             <div className="school-name">{schoolName}</div>
             <div className="slogan">{slogan}</div>
@@ -155,7 +203,10 @@ export default function Footer({ settings = {} }) {
 
             <div className="contact small">
               {phone && (
-                <a href={`tel:${phone}`} style={{ textDecoration: "none", color: "#2a1b6b" }}>
+                <a
+                  href={`tel:${phone}`}
+                  style={{ textDecoration: "none", color: "#2a1b6b" }}
+                >
                   ☎ {phone}
                 </a>
               )}
@@ -163,7 +214,10 @@ export default function Footer({ settings = {} }) {
               {phone && email && <span className="sep">|</span>}
 
               {email && (
-                <a href={`mailto:${email}`} style={{ textDecoration: "none", color: "#2a1b6b" }}>
+                <a
+                  href={`mailto:${email}`}
+                  style={{ textDecoration: "none", color: "#2a1b6b" }}
+                >
                   {email}
                 </a>
               )}
@@ -175,7 +229,8 @@ export default function Footer({ settings = {} }) {
           {groups
             .filter((g) => {
               if (g.title === "Activities") return features.activities;
-              if (g.title === "Parents") return features.admissions || features.contact;
+              if (g.title === "Parents")
+                return features.admissions || features.contact;
               return true;
             })
             .map((group) => (
@@ -199,11 +254,9 @@ export default function Footer({ settings = {} }) {
               </div>
             ))}
         </nav>
-
       </div>
 
       <div className="footer-bottom container">
-
         <div className="copyright small">
           © {year} {schoolName}. All rights reserved.
         </div>
@@ -249,7 +302,6 @@ export default function Footer({ settings = {} }) {
             <span>Ulterspace</span>
           </a>
         </div>
-
       </div>
     </footer>
   );
