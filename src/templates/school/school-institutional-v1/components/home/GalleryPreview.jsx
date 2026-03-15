@@ -1,13 +1,14 @@
 import React from "react";
 import "../../styles/gallery.css";
 
-function buildSiteHref(siteId, path = "") {
-  const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
-  return `/#/site/${siteId || ""}${clean}`;
-}
+export default function GalleryPreview() {
 
-export default function GalleryPreview({ settings = {} }) {
-  const siteId = settings?.site_id || "";
+  const navigate = (slug) => {
+    window.dispatchEvent(
+      new CustomEvent("builder:navigate", { detail: slug })
+    );
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const items = [
     { id: 1, title: "ACADEMICS", img: "/images/gallery1.jpg", link: "/activities/academics" },
@@ -23,7 +24,11 @@ export default function GalleryPreview({ settings = {} }) {
           <a
             className="gallery-card"
             key={item.id}
-            href={buildSiteHref(siteId, item.link)}
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate(item.link);
+            }}
           >
             <img src={item.img} alt={item.title} />
             <div className="gallery-overlay">
