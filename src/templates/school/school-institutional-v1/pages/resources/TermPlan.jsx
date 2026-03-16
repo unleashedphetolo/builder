@@ -1,6 +1,5 @@
 import React from "react";
 import Card from "../../components/common/Card";
-import Breadcrumbs from "../../components/common/Breadcrumbs";
 import termPlanPdf from "../../assets/term-plan.pdf";
 
 export default function TermPlan() {
@@ -8,7 +7,6 @@ export default function TermPlan() {
 
   return (
     <section className="container" style={{ paddingTop: 10, paddingBottom: 40 }}>
-      <Breadcrumbs />
 
       <h2 className="section-title">Academic Term Plan</h2>
 

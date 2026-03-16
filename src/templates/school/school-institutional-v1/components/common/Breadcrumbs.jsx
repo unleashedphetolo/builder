@@ -1,5 +1,4 @@
-import React, { useMemo } from "react";
-import { useLocation } from "react-router-dom";
+import React from "react";
 import "../../styles/breadcrumbs.css";
 
 const LABELS = {
@@ -34,7 +33,6 @@ const LABELS = {
 };
 
 function prettify(seg) {
-  if (!seg) return "";
   if (LABELS[seg]) return LABELS[seg];
 
   return seg
@@ -42,57 +40,31 @@ function prettify(seg) {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-export default function Breadcrumbs({ className = "" }) {
-  const location = useLocation();
+export default function Breadcrumbs({ slug = "/" }) {
 
-  const crumbs = useMemo(() => {
+  const segments = slug.split("/").filter(Boolean);
 
-    const hash = location.hash || "";
+  let path = "";
 
-    if (!hash.includes("/site/")) return [];
+  const crumbs = [{ label: "Home", slug: "/" }];
 
-    const afterSite = hash.split("/site/")[1] || "";
+  segments.forEach((seg) => {
+    path += `/${seg}`;
 
-    const parts = afterSite.split("/").filter(Boolean);
-
-    // remove siteId
-    const segments = parts.slice(1);
-
-    if (!segments.length) return [];
-
-    let path = "";
-
-    const items = [
-      {
-        label: "Home",
-        slug: "/",
-      },
-    ];
-
-    segments.forEach((seg) => {
-      path += `/${seg}`;
-
-      items.push({
-        label: prettify(seg),
-        slug: path,
-      });
+    crumbs.push({
+      label: prettify(seg),
+      slug: path,
     });
-
-    return items;
-
-  }, [location.hash]);
-
-  if (!crumbs.length) return null;
+  });
 
   const navigate = (slug) => {
     window.dispatchEvent(
       new CustomEvent("builder:navigate", { detail: slug })
     );
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
-    <nav className={`bc ${className}`} aria-label="Breadcrumb">
+    <nav className="bc" aria-label="Breadcrumb">
       <ol className="bc-list">
 
         {crumbs.map((c, i) => {
@@ -106,8 +78,8 @@ export default function Breadcrumbs({ className = "" }) {
               ) : (
                 <>
                   <a
-                    className="bc-link"
                     href="#"
+                    className="bc-link"
                     onClick={(e) => {
                       e.preventDefault();
                       navigate(c.slug);

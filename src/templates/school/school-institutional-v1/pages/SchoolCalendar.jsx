@@ -1,7 +1,6 @@
 import React from "react";
 import "../styles/school-calendar.css";
 import CalendarWidget from "../components/common/CalendarWidget";
-import Breadcrumbs from "../components/common/Breadcrumbs";
 
 export const EVENTS = [
   {
@@ -51,7 +50,7 @@ function formatDateTime(iso) {
   });
 }
 
-export default function SchoolCalendar({ settings = {} }) {
+export default function SchoolCalendar() {
 
   const navigate = (slug) => {
     window.dispatchEvent(new CustomEvent("builder:navigate", { detail: slug }));
@@ -64,7 +63,6 @@ export default function SchoolCalendar({ settings = {} }) {
 
   return (
     <main className="scal-page container">
-      <Breadcrumbs settings={settings} />
 
       <header className="scal-hero">
         <div>

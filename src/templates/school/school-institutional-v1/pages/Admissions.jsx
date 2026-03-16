@@ -1,7 +1,6 @@
 import React from "react";
 import "../styles/admissions.css";
 import SchoolStats from "../components/home/SchoolStats";
-import Breadcrumbs from "../components/common/Breadcrumbs";
 
 function buildSiteHref(siteId, path = "") {
   const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
@@ -24,7 +23,6 @@ export default function Admissions({ settings = {} }) {
 
   return (
     <main className="admissions-page admissions-page__container">
-      <Breadcrumbs settings={settings} />
 
       <header className="admissions-page__hero">
         <div className="admissions-page__hero-left">

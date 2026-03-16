@@ -1,7 +1,6 @@
 import React from "react";
 import Card from "./../components/common/Card";
 import "../styles/policy.css";
-import Breadcrumbs from "../components/common/Breadcrumbs";
 
 export default function AttendancePolicy({ settings = {} }) {
   const phone = settings?.phone || "011 023 9428";
@@ -9,7 +8,6 @@ export default function AttendancePolicy({ settings = {} }) {
 
   return (
     <main className="policy-page container">
-      <Breadcrumbs settings={settings} />
 
       <header className="policy-hero">
         <h1 className="policy-title">Attendance Policy</h1>

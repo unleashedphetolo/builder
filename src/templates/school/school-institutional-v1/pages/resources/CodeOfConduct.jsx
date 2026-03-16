@@ -1,13 +1,11 @@
 import React from "react";
 import Card from "../../components/common/Card";
-import Breadcrumbs from "../../components/common/Breadcrumbs";
 
 export default function CodeOfConduct() {
   const pdfFile = "/docs/code-of-conduct.pdf";
 
   return (
     <section className="container" style={{ paddingTop: 10, paddingBottom: 40 }}>
-      <Breadcrumbs />
       <h2 className="section-title">Learner Code of Conduct</h2>
 
       <Card>

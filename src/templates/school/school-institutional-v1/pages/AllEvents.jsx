@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { EVENTS } from "./SchoolCalendar";
 import "../styles/school-calendar.css";
-import Breadcrumbs from "../components/common/Breadcrumbs";
 
 function formatDateTime(iso) {
   const d = new Date(iso);
@@ -15,7 +14,7 @@ function formatDateTime(iso) {
   });
 }
 
-export default function AllEvents({ settings = {} }) {
+export default function AllEvents() {
   const [q, setQ] = useState("");
 
   const list = useMemo(() => {
@@ -35,7 +34,6 @@ export default function AllEvents({ settings = {} }) {
 
   return (
     <main className="scal-page container">
-      <Breadcrumbs settings={settings} />
 
       <header className="scal-hero">
         <div>

@@ -1,6 +1,5 @@
 import React from "react";
 import "../../styles/life-culture.css";
-import Breadcrumbs from "../../components/common/Breadcrumbs";
 
 const CULTURE_SECTIONS = [
   {
@@ -24,7 +23,6 @@ const CULTURE_SECTIONS = [
 export default function LifeCulture() {
   return (
     <main className="lc container">
-      <Breadcrumbs />
       {/* Hero Section */}
       <header className="lc-hero">
         <div className="lc-hero-grid">

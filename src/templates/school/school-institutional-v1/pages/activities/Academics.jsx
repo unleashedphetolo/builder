@@ -1,6 +1,5 @@
 import React from "react";
 import "../../styles/life-academics.css";
-import Breadcrumbs from "../../components/common/Breadcrumbs";
 
 const ACADEMIC_SECTIONS = [
   {
@@ -32,7 +31,6 @@ const ACADEMIC_SECTIONS = [
 export default function LifeAcademics() {
   return (
     <main className="la container">
-      <Breadcrumbs />
       {/* Hero Section */}
       <header className="la-hero">
         <div className="la-hero-grid">

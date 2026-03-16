@@ -1,12 +1,10 @@
 import React from "react";
 import Card from "../../components/common/Card";
 import "../../styles/who-we-are.css";
-import Breadcrumbs from "../../components/common/Breadcrumbs";
 
 export default function WhoWeAre() {
   return (
     <main className="wwa container">
-      <Breadcrumbs />
       {/* Hero */}
       <header className="wwa-hero">
         <div className="wwa-hero-left">

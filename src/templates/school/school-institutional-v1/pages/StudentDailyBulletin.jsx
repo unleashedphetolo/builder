@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from "react";
 import "../styles/bulletin.css";
-import Breadcrumbs from "../components/common/Breadcrumbs";
 
 const BULLETINS = [
   {
@@ -55,7 +54,6 @@ export default function StudentDailyBulletin() {
 
   return (
     <main className="bulletin-page container">
-      <Breadcrumbs />
       <header className="bulletin-header">
         <div>
           <h1 className="bulletin-title">Student Daily Bulletin</h1>

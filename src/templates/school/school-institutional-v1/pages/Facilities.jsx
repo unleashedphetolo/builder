@@ -1,6 +1,5 @@
 import React from "react";
 import "../styles/facilities.css";
-import Breadcrumbs from "../components/common/Breadcrumbs";
 
 const FACILITIES = [
   {
@@ -44,7 +43,6 @@ const FACILITIES = [
 export default function Facilities() {
   return (
     <main className="fac container">
-      <Breadcrumbs />
       {/* Hero */}
       <header className="fac-hero">
         <div>

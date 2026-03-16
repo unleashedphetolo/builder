@@ -1,7 +1,6 @@
 import React from "react";
 import Card from "../common/Card";
 import "../../styles/sgb.css";
-import Breadcrumbs from "../common/Breadcrumbs";
 
 const SGB_MEMBERS = [
   {
@@ -51,7 +50,6 @@ function SGBCard({ person }) {
 export default function SGB() {
   return (
     <section className="sgb-section container">
-      <Breadcrumbs />
       <div className="sgb-header">
         <h2>School Governing Body (SGB)</h2>
 

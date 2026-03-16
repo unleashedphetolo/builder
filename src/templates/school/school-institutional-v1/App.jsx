@@ -43,6 +43,7 @@ import Requirements from "./pages/admissions/Requirements";
 import HowToApply from "./pages/admissions/HowToApply";
 
 import Home from "./pages/Home";
+import Breadcrumbs from "./components/common/Breadcrumbs";
 
 import "./index.css";
 import "./App.css";
@@ -214,9 +215,19 @@ export default function App(props) {
         }}
       />
 
-      <main data-builder-page-root={builderMode ? "1" : "0"}>
+      {/* <main data-builder-page-root={builderMode ? "1" : "0"}>
         {pageContent}
-      </main>
+      </main> */}
+      <main data-builder-page-root={builderMode ? "1" : "0"}>
+
+  {/* Breadcrumbs */}
+  {slug !== "/" && (
+    <Breadcrumbs slug={slug} />
+  )}
+
+  {pageContent}
+
+</main>
 
       <Footer
         settings={settings}

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Card from "../components/common/Card";
 import Button from "../components/common/Button";
-import Breadcrumbs from "../components/common/Breadcrumbs";
 
 export default function Contact({ settings = {} }) {
   const [status, setStatus] = useState("");
@@ -28,7 +27,6 @@ export default function Contact({ settings = {} }) {
 
   return (
     <section className="container" style={{ paddingTop: 10, paddingBottom: 40 }}>
-      <Breadcrumbs settings={settings} />
 
       <h2 className="section-title">Contact Us</h2>
       <p style={{ opacity: 0.85, maxWidth: 900, marginBottom: 18 }}>

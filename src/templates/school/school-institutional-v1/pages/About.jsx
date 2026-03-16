@@ -2,7 +2,6 @@ import React from "react";
 import AboutSection from "../components/home/AboutSection";
 import Card from "../components/common/Card";
 import Button from "../components/common/Button";
-import Breadcrumbs from "../components/common/Breadcrumbs";
 
 function buildSiteHref(siteId, path = "") {
   const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
@@ -14,7 +13,6 @@ export default function AboutLanding({ settings = {} }) {
 
   return (
     <div className="container" style={{ paddingTop: 28, paddingBottom: 40 }}>
-      <Breadcrumbs settings={settings} />
       <h2 className="section-title">About M.O.M Sebone Secondary School</h2>
 
       <AboutSection settings={settings} />

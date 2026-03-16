@@ -3,7 +3,6 @@
 
 import React, { useState } from "react";
 import "../styles/digital-library.css";
-import Breadcrumbs from "../components/common/Breadcrumbs";
 
 const grades = [8, 9, 10, 11, 12];
 const terms = ["Term 1", "Term 2", "Term 3", "Term 4"];
@@ -122,7 +121,6 @@ export default function DigitalLibrary() {
 
   return (
     <section className="digital-library container">
-      <Breadcrumbs />
       {/* Header */}
       <header className="library-header">
         <h1>Digital Academic Library</h1>
