@@ -24,6 +24,19 @@ const ICONS = {
   whatsapp: FaWhatsapp,
 };
 
+const DEFAULT_SOCIAL = {
+  facebook: { enabled: true, url: "https://facebook.com", color: "#1877f2" },
+  instagram: { enabled: true, url: "https://instagram.com", color: "#e4405f" },
+  tiktok: { enabled: true, url: "https://tiktok.com", color: "#ffffff" },
+  linkedin: { enabled: true, url: "https://linkedin.com", color: "#0a66c2" },
+  x: { enabled: true, url: "https://x.com", color: "#ffffff" },
+  youtube: { enabled: true, url: "https://youtube.com", color: "#ff0000" },
+  whatsapp: { enabled: true, url: "https://wa.me/", color: "#25d366" },
+
+  topbar: true,
+  footer: true,
+};
+
 const DEFAULT_FEATURES = {
   activities: true,
   admissions: true,
@@ -64,15 +77,7 @@ export default function Footer({ settings = {} }) {
     ...(settings?.features || {}),
   };
 
-  const links = {
-    ...DEFAULT_SOCIAL_LINKS,
-    ...(settings?.social_links || {}),
-  };
-
-  const socialDisplay = {
-    ...DEFAULT_SOCIAL_DISPLAY,
-    ...(settings?.social_display || {}),
-  };
+  const social = { ...DEFAULT_SOCIAL, ...(settings?.social || {}) };
 
   const logoUrl = settings?.logo_url || logoz;
   const schoolName = settings?.site_name || "School";
@@ -192,8 +197,10 @@ export default function Footer({ settings = {} }) {
             </div>
           </a>
           <div className="brand-text">
-            <div className="school-name">{schoolName}</div>
-            <div className="slogan">{slogan}</div>
+            <div className="school-name">
+              {schoolName} {slogan}
+            </div>
+            {/* <div className="slogan">{slogan}</div> */}
 
             {motto && (
               <div className="slogan" style={{ opacity: 0.9 }}>
@@ -261,28 +268,29 @@ export default function Footer({ settings = {} }) {
           © {year} {schoolName}. All rights reserved.
         </div>
 
-        {socialDisplay.footer && (
+        {social.footer && (
           <div className="social">
             <span className="small">Follow us</span>
 
             {Object.keys(ICONS).map((key) => {
               const Icon = ICONS[key];
-              const visible = socialDisplay?.[key] ?? true;
-              if (!visible) return null;
+              const data = {
+                ...DEFAULT_SOCIAL[key],
+                ...social[key],
+              };
 
-              const href = links[key] || "#";
+              if (!data?.enabled) return null;
 
               return (
                 <a
                   key={key}
-                  href={href}
-                  target={href === "#" ? undefined : "_blank"}
+                  href={data.url || "#"}
+                  onClick={(e) => !data.url && e.preventDefault()}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="social-icon"
-                  title={key}
-                  onClick={(e) => href === "#" && e.preventDefault()}
                 >
-                  <Icon />
+                  <Icon style={{ color: data.color || "#000" }} />
                 </a>
               );
             })}

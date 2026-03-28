@@ -20,33 +20,33 @@ const ICONS = {
   whatsapp: FaWhatsapp,
 };
 
-const DEFAULT_FEATURES = {
-  news: true,
-  resources: true,
-  notices: true,
-};
+// const DEFAULT_FEATURES = {
+//   news: true,
+//   resources: true,
+//   notices: true,
+// };
 
-const DEFAULT_SOCIAL_DISPLAY = {
-  facebook: true,
-  x: true,
-  instagram: true,
-  youtube: true,
-  tiktok: true,
-  linkedin: true,
-  whatsapp: true,
-  topbar: true,
-  footer: true,
-};
+// const DEFAULT_SOCIAL_DISPLAY = {
+//   facebook: true,
+//   x: true,
+//   instagram: true,
+//   youtube: true,
+//   tiktok: true,
+//   linkedin: true,
+//   whatsapp: true,
+//   topbar: true,
+//   footer: true,
+// };
 
-const DEFAULT_SOCIAL_LINKS = {
-  facebook: "https://facebook.com",
-  x: "https://x.com",
-  instagram: "https://instagram.com",
-  youtube: "https://youtube.com",
-  tiktok: "https://tiktok.com",
-  linkedin: "https://linkedin.com",
-  whatsapp: "https://wa.me/",
-};
+// const DEFAULT_SOCIAL_LINKS = {
+//   facebook: "https://facebook.com",
+//   x: "https://x.com",
+//   instagram: "https://instagram.com",
+//   youtube: "https://youtube.com",
+//   tiktok: "https://tiktok.com",
+//   linkedin: "https://linkedin.com",
+//   whatsapp: "https://wa.me/",
+// };
 
 function buildSiteHref(siteId, path = "") {
   const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
@@ -54,20 +54,28 @@ function buildSiteHref(siteId, path = "") {
 }
 
 export default function Topbar({ settings = {} }) {
-  const features = {
-    ...DEFAULT_FEATURES,
-    ...(settings?.features || {}),
-  };
+  // const features = {
+  //   ...DEFAULT_FEATURES,
+  //   ...(settings?.features || {}),
+  // };
 
-  const links = {
-    ...DEFAULT_SOCIAL_LINKS,
-    ...(settings?.social_links || {}),
-  };
+  const DEFAULT_SOCIAL = {
+  facebook: { enabled: true, url: "https://facebook.com", color: "#1877f2" },
+  instagram: { enabled: true, url: "https://instagram.com", color: "#e4405f" },
+  tiktok: { enabled: true, url: "https://tiktok.com", color: "#ffffff" },
+  linkedin: { enabled: true, url: "https://linkedin.com", color: "#0a66c2" },
+  x: { enabled: true, url: "https://x.com", color: "#ffffff" },
+  youtube: { enabled: true, url: "https://youtube.com", color: "#ff0000" },
+  whatsapp: { enabled: true, url: "https://wa.me/", color: "#25d366" },
 
-  const socialDisplay = {
-    ...DEFAULT_SOCIAL_DISPLAY,
-    ...(settings?.social_display || {}),
-  };
+  topbar: true,
+  footer: true,
+};
+
+const social = { ...DEFAULT_SOCIAL, ...(settings?.social || {}) };
+  const topLinks = Array.isArray(settings?.topbar_links)
+    ? settings.topbar_links
+    : [];
 
   const phone = settings?.phone || "+27 00 000 0000";
   const email = settings?.email || "info@school.co.za";
@@ -76,9 +84,7 @@ export default function Topbar({ settings = {} }) {
   /* instant navigation helper (same as Navbar/Footer) */
   const navigateTo = (href) => {
     const slug = href.replace(`#/site/${siteId}`, "") || "/";
-    window.dispatchEvent(
-      new CustomEvent("builder:navigate", { detail: slug })
-    );
+    window.dispatchEvent(new CustomEvent("builder:navigate", { detail: slug }));
   };
 
   return (
@@ -120,80 +126,47 @@ export default function Topbar({ settings = {} }) {
         </div>
 
         <div className="center">
-          <nav className="top-links" aria-label="Top navigation">
-            {features.news && (
-              <a
-                href={buildSiteHref(siteId, "/news")}
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateTo(buildSiteHref(siteId, "/news"));
-                }}
-              >
-                News
-              </a>
-            )}
+          <nav className="top-links">
+            {topLinks.map((item, index) => {
+              if (item.enabled === false) return null;
 
-            {features.resources && (
-              <a
-                href={buildSiteHref(siteId, "/resources/subject-choices")}
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateTo(
-                    buildSiteHref(siteId, "/resources/subject-choices")
-                  );
-                }}
-              >
-                Resources
-              </a>
-            )}
+              const href = buildSiteHref(siteId, item.href);
 
-            {features.resources && (
-              <a
-                href={buildSiteHref(siteId, "/resources/calendar")}
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateTo(buildSiteHref(siteId, "/resources/calendar"));
-                }}
-              >
-                Calendar
-              </a>
-            )}
-
-            {features.notices && (
-              <a
-                href={buildSiteHref(siteId, "/notices")}
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateTo(buildSiteHref(siteId, "/notices"));
-                }}
-              >
-                Notice Board
-              </a>
-            )}
+              return (
+                <a
+                  key={index}
+                  href={href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigateTo(href);
+                  }}
+                >
+                  {item.label}
+                </a>
+              );
+            })}
           </nav>
         </div>
 
         <div className="right">
-          {socialDisplay.topbar ? (
-            <div className="social" aria-label="Social media links">
+          {social.topbar ? (
+            <div className="social">
               {Object.keys(ICONS).map((key) => {
                 const Icon = ICONS[key];
-                const visible = socialDisplay?.[key] ?? true;
-                if (!visible) return null;
+                const data = social[key] || DEFAULT_SOCIAL[key];
 
-                const href = links[key] || "#";
+                if (!data.enabled) return null;
 
                 return (
                   <a
                     key={key}
-                    href={href}
-                    target={href === "#" ? undefined : "_blank"}
+                    href={data.url || "#"}
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="social-icons"
-                    title={key}
-                    onClick={(e) => href === "#" && e.preventDefault()}
+                    onClick={(e) => !data.url && e.preventDefault()}
                   >
-                    <Icon />
+                    <Icon style={{ color: data.color || "#000" }} />
                   </a>
                 );
               })}

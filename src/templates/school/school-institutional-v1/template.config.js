@@ -32,27 +32,20 @@ export const templateConfig = {
     accent_color: "#f59e0b",
     font_family: "Inter, sans-serif",
 
-    social_links: {
-      facebook: "https://facebook.com",
-      x: "https://x.com",
-      instagram: "https://instagram.com",
-      youtube: "https://youtube.com",
-      tiktok: "https://tiktok.com",
-      linkedin: "https://linkedin.com",
-      whatsapp: "https://wa.me/",
-    },
+   social: {
+  facebook: { enabled: true, url: "", color: "#1877f2" },
+  instagram: { enabled: true, url: "", color: "#e4405f" },
+  tiktok: { enabled: false, url: "", color: "#000000" },
+  linkedin: { enabled: true, url: "", color: "#0a66c2" },
+  x: { enabled: true, url: "", color: "#000000" },
+  youtube: { enabled: true, url: "", color: "#ff0000" },
+  whatsapp: { enabled: true, url: "", color: "#25d366" },
 
-    social_display: {
-      facebook: true,
-      x: true,
-      instagram: true,
-      youtube: true,
-      tiktok: true,
-      linkedin: true,
-      whatsapp: true,
-      topbar: true,
-      footer: true,
-    },
+  order: ["facebook","instagram","tiktok","linkedin","x","youtube","whatsapp"],
+
+  topbar: true,
+  footer: true,
+},
 
     topbar_links: [
       { label: "News", href: "/news" },
