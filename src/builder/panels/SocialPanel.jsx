@@ -1,5 +1,4 @@
 import React from "react";
-import { useBuilderStore } from "../../store/useBuilderStore";
 import "../../styles/panels.css";
 
 import { DndContext, closestCenter } from "@dnd-kit/core";
@@ -14,14 +13,65 @@ import { CSS } from "@dnd-kit/utilities";
 const DEFAULT_PLATFORMS = [
   "facebook",
   "instagram",
-  "tiktok",
-  "linkedin",
   "x",
   "youtube",
+  "tiktok",
+  "linkedin",
   "whatsapp",
 ];
 
-/* ---------- DRAG ITEM ---------- */
+const PLATFORM_DEFAULTS = {
+  facebook: {
+    enabled: true,
+    url: "",
+    colorMode: "original",
+    label: "Facebook",
+    placeholder: "https://www.facebook.com",
+  },
+  instagram: {
+    enabled: true,
+    url: "",
+    colorMode: "original",
+    label: "Instagram",
+    placeholder: "https://www.instagram.com",
+  },
+  x: {
+    enabled: true,
+    url: "",
+    colorMode: "original",
+    label: "X",
+    placeholder: "https://www.x.com",
+  },
+  youtube: {
+    enabled: true,
+    url: "",
+    colorMode: "original",
+    label: "YouTube",
+    placeholder: "https://www.youtube.com",
+  },
+  tiktok: {
+    enabled: true,
+    url: "",
+    colorMode: "original",
+    label: "TikTok",
+    placeholder: "https://www.tiktok.com",
+  },
+  linkedin: {
+    enabled: true,
+    url: "",
+    colorMode: "original",
+    label: "LinkedIn",
+    placeholder: "https://www.linkedin.com",
+  },
+  whatsapp: {
+    enabled: true,
+    url: "",
+    colorMode: "original",
+    label: "WhatsApp",
+    placeholder: "https://www.whatsapp.com/",
+  },
+};
+
 function SortableItem({ id, children }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
@@ -41,31 +91,53 @@ function SortableItem({ id, children }) {
   );
 }
 
-/* ---------- MAIN PANEL ---------- */
-export default function SocialPanel() {
-  const { siteSettings, setSiteSettings } = useBuilderStore();
+export default function SocialPanel({
+  siteSettings = {},
+  onUpdateSocialMedia,
+  onUpdateSettings,
+}) {
+  const social =
+    siteSettings.social_media ||
+    siteSettings.social || {
+      topbar: true,
+      footer: true,
+      order: DEFAULT_PLATFORMS,
+    };
 
-  const social = siteSettings.social ?? {
-    topbar: true,
-    footer: true,
-  };
   const order = Array.isArray(social.order) ? social.order : DEFAULT_PLATFORMS;
-  /* ---------- UPDATE FUNCTION ---------- */
-  const update = (platform, field, value) => {
-    setSiteSettings((prev) => ({
-      ...prev,
-      social: {
-        ...prev.social,
-        [platform]: {
-          ...prev.social?.[platform],
-          [field]: value,
-        },
-      },
-    }));
+
+  const persistSocial = async (nextSocial) => {
+    if (onUpdateSocialMedia) {
+      await onUpdateSocialMedia(nextSocial);
+      return;
+    }
+
+    if (onUpdateSettings) {
+      await onUpdateSettings({
+        social_media: nextSocial,
+      });
+    }
   };
 
-  /* ---------- DRAG END ---------- */
-  const handleDragEnd = (event) => {
+  const updateGlobal = async (key, value) => {
+    await persistSocial({
+      ...social,
+      [key]: value,
+    });
+  };
+
+  const update = async (platform, field, value) => {
+    await persistSocial({
+      ...social,
+      [platform]: {
+        ...(PLATFORM_DEFAULTS[platform] || {}),
+        ...(social[platform] || {}),
+        [field]: value,
+      },
+    });
+  };
+
+  const handleDragEnd = async (event) => {
     const { active, over } = event;
 
     if (!over || active.id === over.id) return;
@@ -73,37 +145,27 @@ export default function SocialPanel() {
     const oldIndex = order.indexOf(active.id);
     const newIndex = order.indexOf(over.id);
 
+    if (oldIndex === -1 || newIndex === -1) return;
+
     const newOrder = arrayMove(order, oldIndex, newIndex);
 
-    setSiteSettings((prev) => ({
-      ...prev,
-      social: {
-        ...prev.social,
-        order: newOrder,
-      },
-    }));
+    await persistSocial({
+      ...social,
+      order: newOrder,
+    });
   };
 
   return (
-    <div>
-      <h3>Social Links</h3>
+    <div className="section-block">
+      <h4>Social Media</h4>
 
-      {/* 🔹 GLOBAL TOGGLES */}
       <div className="social-item">
         <label>Show in Topbar</label>
         <label className="switch">
           <input
             type="checkbox"
             checked={!!social.topbar}
-            onChange={() =>
-              setSiteSettings((prev) => ({
-                ...prev,
-                social: {
-                  ...prev.social,
-                  topbar: !prev.social?.topbar,
-                },
-              }))
-            }
+            onChange={(e) => updateGlobal("topbar", e.target.checked)}
           />
           <span className="slider" style={{ "--brand": "#3b82f6" }} />
         </label>
@@ -115,86 +177,73 @@ export default function SocialPanel() {
           <input
             type="checkbox"
             checked={social.footer ?? true}
-            onChange={() =>
-              setSiteSettings((prev) => ({
-                ...prev,
-                social: {
-                  ...prev.social,
-                  footer: !prev.social?.footer,
-                },
-              }))
-            }
+            onChange={(e) => updateGlobal("footer", e.target.checked)}
           />
           <span className="slider" style={{ "--brand": "#3b82f6" }} />
         </label>
       </div>
 
-      {/* 🔹 DRAG LIST */}
       <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={order} strategy={verticalListSortingStrategy}>
           {order.map((platform) => {
-            const DEFAULTS = {
-              facebook: { enabled: true, url: "", color: "#1877f2" },
-              instagram: { enabled: true, url: "", color: "#e4405f" },
-              tiktok: { enabled: false, url: "", color: "#ffffff" },
-              linkedin: { enabled: true, url: "", color: "#0a66c2" },
-              x: { enabled: true, url: "", color: "#ffffff" },
-              youtube: { enabled: true, url: "", color: "#ff0000" },
-              whatsapp: { enabled: true, url: "", color: "#25d366" },
+            const defaults = PLATFORM_DEFAULTS[platform] || {
+              enabled: true,
+              url: "",
+              colorMode: "original",
+              label: platform,
+              placeholder: `https://${platform}.com`,
             };
 
             const data = {
-              ...DEFAULTS[platform],
-              ...social[platform],
+              ...defaults,
+              ...(social[platform] || {}),
             };
 
             return (
               <SortableItem key={platform} id={platform}>
                 <div className="social-item drag-item">
-                  {/* HEADER */}
                   <div className="social-header">
-                    <strong>{platform.toUpperCase()}</strong>
+                    <strong>{data.label}</strong>
 
                     <label className="switch">
                       <input
                         type="checkbox"
                         checked={!!data.enabled}
-                        onChange={() =>
-                          update(platform, "enabled", !data.enabled)
+                        onChange={(e) =>
+                          update(platform, "enabled", e.target.checked)
                         }
                       />
                       <span
                         className="slider"
                         style={{
-                          "--brand": data.color || "#22c55e",
+                          "--brand": "#22c55e",
                         }}
                       />
                     </label>
                   </div>
 
-                  {/* URL */}
-                  {data.enabled && (
-                    <>
-                      <input
-                        type="text"
-                        placeholder={`Enter ${platform} link`}
-                        value={data.url}
-                        onChange={(e) =>
-                          update(platform, "url", e.target.value)
-                        }
-                      />
+                  <div className="field">
+                    <label>{data.label} Link</label>
+                    <input
+                      type="text"
+                      placeholder={data.placeholder}
+                      value={data.url || ""}
+                      onChange={(e) => update(platform, "url", e.target.value)}
+                    />
+                  </div>
 
-                      {/* COLOR */}
-                      <label>Icon Color</label>
-                      <input
-                        type="color"
-                        value={data.color || "#000000"}
-                        onChange={(e) =>
-                          update(platform, "color", e.target.value)
-                        }
-                      />
-                    </>
-                  )}
+                  <div className="field">
+                    <label>Icon Style</label>
+                    <select
+                      value={data.colorMode || "original"}
+                      onChange={(e) =>
+                        update(platform, "colorMode", e.target.value)
+                      }
+                    >
+                      <option value="original">Original</option>
+                      <option value="mono">Black and White</option>
+                    </select>
+                  </div>
                 </div>
               </SortableItem>
             );

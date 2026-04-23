@@ -8,11 +8,20 @@
   overflow: hidden;
 }
 
+.canvas-toolbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .device-switch {
   display: flex;
   gap: 8px;
   margin-top: -7px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .device-switch button {
@@ -27,6 +36,39 @@
   background: #111827;
   color: white;
   border-color: #111827;
+}
+
+.canvas-history-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: -7px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.history-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  border-radius: 0;
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.history-btn:hover {
+  color: #1d4ed8;
+}
+
+.history-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  color: #000000;
 }
 
 .canvas-inner {

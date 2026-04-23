@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../styles/builderNavbar.css";
 import logo from "../assets/logo.gif";
 
@@ -12,75 +12,153 @@ export default function BuilderNavbar({
   onChangeTemplate,
   onExport,
   onDownloadHtml,
-
   saveStatus = "Saved",
 }) {
   const [showPublishConfirm, setShowPublishConfirm] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+
+      if (!mobile) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const goToDashboard = () => {
+    setMobileMenuOpen(false);
     window.location.href = DASHBOARD_URL;
   };
 
-  return (
-    <header className="builder-navbar">
-      {/* LEFT — Branding */}
-      <div className="right">
-        <button onClick={toggleSidebar} className="hamburger">
-          ☰
-        </button>
+  const handleSidebarToggle = () => {
+    if (toggleSidebar) toggleSidebar();
+  };
 
-        <div className="brand">
-          <div className="logo">
-            <img src={logo} alt="Ulterspace logo" />
-          </div>
-          <div className="brand-text">
-            <h3>Ulterspace</h3>
-            <span>Build Beyond Limits</span>
+  const handleMobileMenuToggle = () => {
+    setMobileMenuOpen((prev) => !prev);
+  };
+
+  const handleChangeTemplate = () => {
+    setMobileMenuOpen(false);
+    if (onChangeTemplate) onChangeTemplate();
+  };
+
+  const handlePreview = () => {
+    setMobileMenuOpen(false);
+    if (onPreview) onPreview();
+  };
+
+  const handleExport = () => {
+    setMobileMenuOpen(false);
+    if (onExport) onExport();
+  };
+
+  const handleDownloadHtml = () => {
+    setMobileMenuOpen(false);
+    if (onDownloadHtml) onDownloadHtml();
+  };
+
+  const handlePublishConfirm = () => {
+    if (onPublish) onPublish();
+    setShowPublishConfirm(false);
+    setMobileMenuOpen(false);
+  };
+
+  return (
+    <>
+      <header className="builder-navbar">
+        <div className="builder-navbar-left">
+          <button
+            onClick={handleSidebarToggle}
+            className="sidebar-toggle"
+            type="button"
+            aria-label="Toggle sidebar"
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+
+          <div className="brand">
+            <div className="logo">
+              <img src={logo} alt="Ulterspace logo" />
+            </div>
+
+            <div className="brand-text">
+              <h3>Ulterspace</h3>
+              <span>Build Beyond Limits</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* CENTER — Page Indicator */}
-      <div className="center">
-        <span className="page-indicator"></span>
-      </div>
+        <div className="builder-navbar-center">
+          <span className="page-indicator">Website Builder</span>
+        </div>
 
-      {/* RIGHT — Actions */}
-      <div className="right">
-        <span className="save-status">{saveStatus}</span>
+        <div
+          className={`builder-navbar-right ${
+            mobileMenuOpen ? "mobile-open" : ""
+          }`}
+        >
+          <span className="save-status">{saveStatus}</span>
 
-        {/* <button className="btn ghost" onClick={goToDashboard}>
-          Back to Dashboard
-        </button> */}
+          <button className="btn ghost" onClick={goToDashboard} type="button">
+            Dashboard
+          </button>
 
-        <button className="btn ghost" onClick={goToDashboard}>
-          ← Dashboard
-        </button>
+          <button
+            className="btn ghost"
+            onClick={handleChangeTemplate}
+            type="button"
+          >
+            Change Template
+          </button>
 
-        <button className="btn ghost" onClick={onChangeTemplate}>
-          Change Template
-        </button>
+          <button className="btn" onClick={handlePreview} type="button">
+            Preview
+          </button>
 
-        <button className="btn" onClick={onPreview}>
-          Preview
-        </button>
-        <button className="btn" onClick={onExport}>
-          Export ZIP
-        </button>
+          <button className="btn" onClick={handleExport} type="button">
+            Export ZIP
+          </button>
 
-        <button className="btn secondary" onClick={onDownloadHtml}>
-          Download 1-File
-        </button>
+          <button
+            className="btn secondary"
+            onClick={handleDownloadHtml}
+            type="button"
+          >
+            Download 1-File
+          </button>
+
+          <button
+            className="btn primary"
+            onClick={() => setShowPublishConfirm(true)}
+            type="button"
+          >
+            Publish
+          </button>
+        </div>
 
         <button
-          className="btn primary"
-          onClick={() => setShowPublishConfirm(true)}
+          className={`mobile-menu-toggle ${mobileMenuOpen ? "open" : ""}`}
+          onClick={handleMobileMenuToggle}
+          type="button"
+          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={mobileMenuOpen}
         >
-          Publish
+          <span />
+          <span />
+          <span />
         </button>
-      </div>
+      </header>
 
-      {/* Publish Confirmation Modal */}
       {showPublishConfirm && (
         <div className="publish-modal">
           <div className="publish-box">
@@ -91,16 +169,15 @@ export default function BuilderNavbar({
               <button
                 className="btn"
                 onClick={() => setShowPublishConfirm(false)}
+                type="button"
               >
                 Cancel
               </button>
 
               <button
                 className="btn primary"
-                onClick={() => {
-                  onPublish();
-                  setShowPublishConfirm(false);
-                }}
+                onClick={handlePublishConfirm}
+                type="button"
               >
                 Confirm Publish
               </button>
@@ -108,6 +185,13 @@ export default function BuilderNavbar({
           </div>
         </div>
       )}
-    </header>
+
+      {isMobile && mobileMenuOpen && (
+        <div
+          className="builder-navbar-mobile-backdrop"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+    </>
   );
 }

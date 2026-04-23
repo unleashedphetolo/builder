@@ -122,11 +122,11 @@ export default function Hero({ settings = {} }) {
   }, [slides.length]);
 
   const handleMouseEnter = () => {
-    setIsPaused(true);
-    stopAutoplay();
-    if (videoRef.current) {
-      videoRef.current.pause();
-    }
+    // setIsPaused(true);
+    // stopAutoplay();
+    // if (videoRef.current) {
+    //   videoRef.current.pause();
+    // }
   };
 
   const handleMouseLeave = () => {

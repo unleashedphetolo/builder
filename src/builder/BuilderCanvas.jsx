@@ -1,7 +1,14 @@
 import { useMemo, useState, useEffect } from "react";
 import "../styles/builderCanvas.css";
 
-export default function BuilderCanvas({ siteId, page }) {
+export default function BuilderCanvas({
+  siteId,
+  page,
+  onUndo,
+  onRedo,
+  canUndo = false,
+  canRedo = false,
+}) {
   const [device, setDevice] = useState("desktop");
 
   const previewUrl = useMemo(() => {
@@ -19,7 +26,7 @@ export default function BuilderCanvas({ siteId, page }) {
       if (window.previewFrame?.contentWindow) {
         window.previewFrame.contentWindow.postMessage(
           { type: "navigate", slug },
-          "*"
+          "*",
         );
       }
     }
@@ -45,10 +52,9 @@ export default function BuilderCanvas({ siteId, page }) {
       // expected: #/site/{siteId}/{slug}
       const slug = parts.slice(3).join("/") || "/";
 
-      // only sync if page changed
       if (slug !== page?.slug) {
         window.dispatchEvent(
-          new CustomEvent("builder:navigate", { detail: slug })
+          new CustomEvent("builder:navigate", { detail: slug }),
         );
       }
     } catch (err) {
@@ -58,27 +64,52 @@ export default function BuilderCanvas({ siteId, page }) {
 
   return (
     <div className="builder-canvas">
-      <div className="device-switch">
-        <button
-          className={device === "desktop" ? "active" : ""}
-          onClick={() => setDevice("desktop")}
-        >
-          Desktop
-        </button>
+      <div className="canvas-toolbar">
+        <div className="device-switch">
+          <button
+            type="button"
+            className={device === "desktop" ? "active" : ""}
+            onClick={() => setDevice("desktop")}
+          >
+            Desktop
+          </button>
 
-        <button
-          className={device === "tablet" ? "active" : ""}
-          onClick={() => setDevice("tablet")}
-        >
-          Tablet
-        </button>
+          <button
+            type="button"
+            className={device === "tablet" ? "active" : ""}
+            onClick={() => setDevice("tablet")}
+          >
+            Tablet
+          </button>
 
-        <button
-          className={device === "mobile" ? "active" : ""}
-          onClick={() => setDevice("mobile")}
-        >
-          Mobile
-        </button>
+          <button
+            type="button"
+            className={device === "mobile" ? "active" : ""}
+            onClick={() => setDevice("mobile")}
+          >
+            Mobile
+          </button>
+        </div>
+
+        <div className="canvas-history-actions">
+          <button
+            type="button"
+            className="history-btn"
+            onClick={onUndo}
+            disabled={!canUndo}
+          >
+            Undo
+          </button>
+
+          <button
+            type="button"
+            className="history-btn"
+            onClick={onRedo}
+            disabled={!canRedo}
+          >
+            Redo
+          </button>
+        </div>
       </div>
 
       <div className={`canvas-inner ${device}`}>
