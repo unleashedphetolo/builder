@@ -1,8 +1,23 @@
+import { useEffect, useState } from "react";
+
 export default function SiteDetailsPanel({
   siteSettings = {},
   onUpdateSettings,
 }) {
+  const [localSettings, setLocalSettings] = useState(siteSettings || {});
+
+  useEffect(() => {
+    setLocalSettings(siteSettings || {});
+  }, [siteSettings]);
+
   const update = async (key, value) => {
+    const nextSettings = {
+      ...(localSettings || {}),
+      [key]: value,
+    };
+
+    setLocalSettings(nextSettings);
+
     const patch = {
       [key]: value,
     };
@@ -19,7 +34,7 @@ export default function SiteDetailsPanel({
       <div className="field">
         <label>Site Name</label>
         <input
-          value={siteSettings.site_name || ""}
+          value={localSettings.site_name || ""}
           onChange={(e) => update("site_name", e.target.value)}
           placeholder="Enter site name"
         />
@@ -28,7 +43,7 @@ export default function SiteDetailsPanel({
       <div className="field">
         <label>Tagline / Slogan</label>
         <input
-          value={siteSettings.tagline || ""}
+          value={localSettings.tagline || ""}
           onChange={(e) => update("tagline", e.target.value)}
           placeholder="Enter tagline or slogan"
         />
@@ -37,7 +52,7 @@ export default function SiteDetailsPanel({
       <div className="field">
         <label>Change Logo</label>
         <input
-          value={siteSettings.logo_url || ""}
+          value={localSettings.logo_url || ""}
           onChange={(e) => update("logo_url", e.target.value)}
           placeholder="https://example.com/logo.png"
         />
@@ -47,7 +62,7 @@ export default function SiteDetailsPanel({
         <label>Official Email</label>
         <input
           type="email"
-          value={siteSettings.email || ""}
+          value={localSettings.email || ""}
           onChange={(e) => update("email", e.target.value)}
           placeholder="info@example.com"
         />
@@ -56,7 +71,7 @@ export default function SiteDetailsPanel({
       <div className="field">
         <label>Official Phone</label>
         <input
-          value={siteSettings.phone || ""}
+          value={localSettings.phone || ""}
           onChange={(e) => update("phone", e.target.value)}
           placeholder="+27 ..."
         />

@@ -31,10 +31,30 @@ export default function BuilderCanvas({
       }
     }
 
+    function handleSettingsUpdate(e) {
+      const settings = e.detail || {};
+
+      if (window.previewFrame?.contentWindow) {
+        window.previewFrame.contentWindow.postMessage(
+          { type: "builder:settings-updated", settings },
+          "*",
+        );
+
+        window.previewFrame.contentWindow.postMessage(
+          { type: "site-settings-updated", settings },
+          "*",
+        );
+      }
+    }
+
     window.addEventListener("builder:navigate", handleNavigate);
+    window.addEventListener("builder:settings-updated", handleSettingsUpdate);
+    window.addEventListener("site-settings-updated", handleSettingsUpdate);
 
     return () => {
       window.removeEventListener("builder:navigate", handleNavigate);
+      window.removeEventListener("builder:settings-updated", handleSettingsUpdate);
+      window.removeEventListener("site-settings-updated", handleSettingsUpdate);
     };
   }, []);
 
@@ -55,6 +75,13 @@ export default function BuilderCanvas({
       if (slug !== page?.slug) {
         window.dispatchEvent(
           new CustomEvent("builder:navigate", { detail: slug }),
+        );
+      }
+
+      if (window.previewFrame?.contentWindow) {
+        window.previewFrame.contentWindow.postMessage(
+          { type: "builder:request-sync" },
+          "*",
         );
       }
     } catch (err) {

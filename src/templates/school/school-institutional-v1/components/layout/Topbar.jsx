@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "../../styles/topbar.css";
 import {
   FaFacebookF,
@@ -26,30 +26,161 @@ function buildSiteHref(siteId, path = "") {
 }
 
 export default function Topbar({ settings = {} }) {
+  const [liveSettings, setLiveSettings] = useState(settings || {});
+
+  useEffect(() => {
+    setLiveSettings(settings || {});
+  }, [settings]);
+
+  useEffect(() => {
+    const mergeLiveSettings = (incoming = {}) => {
+      setLiveSettings((prev) => ({
+        ...(prev || {}),
+        ...(incoming || {}),
+        social_links: {
+          ...((prev && prev.social_links) || {}),
+          ...((incoming && incoming.social_links) || {}),
+        },
+        social_display: {
+          ...((prev && prev.social_display) || {}),
+          ...((incoming && incoming.social_display) || {}),
+        },
+      }));
+    };
+
+    const handleCustomSettingsUpdate = (event) => {
+      mergeLiveSettings(event?.detail || {});
+    };
+
+    const handleMessage = (event) => {
+      const payload = event?.data;
+
+      if (!payload || typeof payload !== "object") return;
+
+      if (
+        payload.type === "builder:settings-updated" ||
+        payload.type === "site-settings-updated"
+      ) {
+        mergeLiveSettings(payload.settings || payload.payload || {});
+      }
+    };
+
+    window.addEventListener("builder:settings-updated", handleCustomSettingsUpdate);
+    window.addEventListener("site-settings-updated", handleCustomSettingsUpdate);
+    window.addEventListener("message", handleMessage);
+
+    return () => {
+      window.removeEventListener("builder:settings-updated", handleCustomSettingsUpdate);
+      window.removeEventListener("site-settings-updated", handleCustomSettingsUpdate);
+      window.removeEventListener("message", handleMessage);
+    };
+  }, []);
 
   const DEFAULT_SOCIAL = {
-  facebook: { enabled: true, url: "https://facebook.com", color: "#1877f2" },
-  instagram: { enabled: true, url: "https://instagram.com", color: "#e4405f" },
-  tiktok: { enabled: true, url: "https://tiktok.com", color: "#ffffff" },
-  linkedin: { enabled: true, url: "https://linkedin.com", color: "#0a66c2" },
-  x: { enabled: true, url: "https://x.com", color: "#ffffff" },
-  youtube: { enabled: true, url: "https://youtube.com", color: "#ff0000" },
-  whatsapp: { enabled: true, url: "https://wa.me/", color: "#25d366" },
+    facebook: {
+      enabled: true,
+      url: "https://facebook.com",
+      colorMode: "original",
+      originalColor: "#1877f2",
+      monoColor: "#ffffff",
+      color: "#1877f2",
+    },
+    instagram: {
+      enabled: true,
+      url: "https://instagram.com",
+      colorMode: "original",
+      originalColor: "#e4405f",
+      monoColor: "#ffffff",
+      color: "#e4405f",
+    },
+    tiktok: {
+      enabled: true,
+      url: "https://tiktok.com",
+      colorMode: "original",
+      originalColor: "#ffffff",
+      monoColor: "#ffffff",
+      color: "#ffffff",
+    },
+    linkedin: {
+      enabled: true,
+      url: "https://linkedin.com",
+      colorMode: "original",
+      originalColor: "#0a66c2",
+      monoColor: "#ffffff",
+      color: "#0a66c2",
+    },
+    x: {
+      enabled: true,
+      url: "https://x.com",
+      colorMode: "original",
+      originalColor: "#ffffff",
+      monoColor: "#ffffff",
+      color: "#ffffff",
+    },
+    youtube: {
+      enabled: true,
+      url: "https://youtube.com",
+      colorMode: "original",
+      originalColor: "#ff0000",
+      monoColor: "#ffffff",
+      color: "#ff0000",
+    },
+    whatsapp: {
+      enabled: true,
+      url: "https://wa.me/",
+      colorMode: "original",
+      originalColor: "#25d366",
+      monoColor: "#ffffff",
+      color: "#25d366",
+    },
 
-  topbar: true,
-  footer: true,
-};
+    topbar: true,
+    footer: true,
+    order: [
+      "facebook",
+      "instagram",
+      "tiktok",
+      "linkedin",
+      "x",
+      "youtube",
+      "whatsapp",
+    ],
+  };
 
-const social = { ...DEFAULT_SOCIAL, ...(settings?.social || {}) };
-  const topLinks = Array.isArray(settings?.topbar_links)
-    ? settings.topbar_links
+  const socialLinks = liveSettings?.social_links || liveSettings?.social || {};
+  const socialDisplay = liveSettings?.social_display || {};
+
+  const social = useMemo(
+    () => ({
+      ...DEFAULT_SOCIAL,
+      ...socialLinks,
+      topbar: socialDisplay.topbar ?? DEFAULT_SOCIAL.topbar,
+      footer: socialDisplay.footer ?? DEFAULT_SOCIAL.footer,
+      order: Array.isArray(socialDisplay.order)
+        ? socialDisplay.order
+        : DEFAULT_SOCIAL.order,
+    }),
+    [socialLinks, socialDisplay],
+  );
+
+  const topLinks = Array.isArray(liveSettings?.topbar_links)
+    ? liveSettings.topbar_links
     : [];
 
-  const phone = settings?.phone || "+27 00 000 0000";
-  const email = settings?.email || "info@school.co.za";
-  const siteId = settings?.site_id || "";
+  const phone = liveSettings?.phone || "+27 00 000 0000";
+  const email = liveSettings?.email || "info@school.co.za";
+  const siteId = liveSettings?.site_id || "";
 
-  /* instant navigation helper (same as Navbar/Footer) */
+  const getIconColor = (data = {}) => {
+    const mode = data.colorMode || "original";
+
+    if (mode === "mono") {
+      return data.monoColor || "#ffffff";
+    }
+
+    return data.originalColor || data.color || "#ffffff";
+  };
+
   const navigateTo = (href) => {
     const slug = href.replace(`#/site/${siteId}`, "") || "/";
     window.dispatchEvent(new CustomEvent("builder:navigate", { detail: slug }));
@@ -119,9 +250,14 @@ const social = { ...DEFAULT_SOCIAL, ...(settings?.social || {}) };
         <div className="right">
           {social.topbar ? (
             <div className="social">
-              {Object.keys(ICONS).map((key) => {
+              {(Array.isArray(social.order) ? social.order : Object.keys(ICONS)).map((key) => {
                 const Icon = ICONS[key];
-                const data = social[key] || DEFAULT_SOCIAL[key];
+                if (!Icon) return null;
+
+                const data = {
+                  ...(DEFAULT_SOCIAL[key] || {}),
+                  ...(social[key] || {}),
+                };
 
                 if (!data.enabled) return null;
 
@@ -134,7 +270,7 @@ const social = { ...DEFAULT_SOCIAL, ...(settings?.social || {}) };
                     className="social-icons"
                     onClick={(e) => !data.url && e.preventDefault()}
                   >
-                    <Icon style={{ color: data.color || "#000" }} />
+                    <Icon style={{ color: getIconColor(data) }} />
                   </a>
                 );
               })}

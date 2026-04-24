@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "../../styles/footer.css";
 import logoz from "../../assets/sebone.jpeg";
 import logo from "../../../../../assets/logo.gif";
@@ -25,16 +25,74 @@ const ICONS = {
 };
 
 const DEFAULT_SOCIAL = {
-  facebook: { enabled: true, url: "https://facebook.com", color: "#1877f2" },
-  instagram: { enabled: true, url: "https://instagram.com", color: "#e4405f" },
-  tiktok: { enabled: true, url: "https://tiktok.com", color: "#ffffff" },
-  linkedin: { enabled: true, url: "https://linkedin.com", color: "#0a66c2" },
-  x: { enabled: true, url: "https://x.com", color: "#ffffff" },
-  youtube: { enabled: true, url: "https://youtube.com", color: "#ff0000" },
-  whatsapp: { enabled: true, url: "https://wa.me/", color: "#25d366" },
+  facebook: {
+    enabled: true,
+    url: "https://facebook.com",
+    colorMode: "original",
+    originalColor: "#1877f2",
+    monoColor: "#ffffff",
+    color: "#1877f2",
+  },
+  instagram: {
+    enabled: true,
+    url: "https://instagram.com",
+    colorMode: "original",
+    originalColor: "#e4405f",
+    monoColor: "#ffffff",
+    color: "#e4405f",
+  },
+  tiktok: {
+    enabled: true,
+    url: "https://tiktok.com",
+    colorMode: "original",
+    originalColor: "#ffffff",
+    monoColor: "#ffffff",
+    color: "#ffffff",
+  },
+  linkedin: {
+    enabled: true,
+    url: "https://linkedin.com",
+    colorMode: "original",
+    originalColor: "#0a66c2",
+    monoColor: "#ffffff",
+    color: "#0a66c2",
+  },
+  x: {
+    enabled: true,
+    url: "https://x.com",
+    colorMode: "original",
+    originalColor: "#ffffff",
+    monoColor: "#ffffff",
+    color: "#ffffff",
+  },
+  youtube: {
+    enabled: true,
+    url: "https://youtube.com",
+    colorMode: "original",
+    originalColor: "#ff0000",
+    monoColor: "#ffffff",
+    color: "#ff0000",
+  },
+  whatsapp: {
+    enabled: true,
+    url: "https://wa.me/",
+    colorMode: "original",
+    originalColor: "#25d366",
+    monoColor: "#ffffff",
+    color: "#25d366",
+  },
 
   topbar: true,
   footer: true,
+  order: [
+    "facebook",
+    "instagram",
+    "tiktok",
+    "linkedin",
+    "x",
+    "youtube",
+    "whatsapp",
+  ],
 };
 
 const DEFAULT_FEATURES = {
@@ -44,50 +102,102 @@ const DEFAULT_FEATURES = {
   digitalLibrary: true,
 };
 
-const DEFAULT_SOCIAL_LINKS = {
-  facebook: "https://facebook.com",
-  x: "https://x.com",
-  instagram: "https://instagram.com",
-  youtube: "https://youtube.com",
-  tiktok: "https://tiktok.com",
-  linkedin: "https://linkedin.com",
-  whatsapp: "https://wa.me/",
-};
-
-const DEFAULT_SOCIAL_DISPLAY = {
-  facebook: true,
-  x: true,
-  instagram: true,
-  youtube: true,
-  tiktok: true,
-  linkedin: true,
-  whatsapp: true,
-  topbar: true,
-  footer: true,
-};
-
 function buildSiteHref(siteId, path = "") {
   const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
   return `#/site/${siteId || ""}${clean}`;
 }
 
 export default function Footer({ settings = {} }) {
+  const [liveSettings, setLiveSettings] = useState(settings || {});
+
+  useEffect(() => {
+    setLiveSettings(settings || {});
+  }, [settings]);
+
+  useEffect(() => {
+    const mergeLiveSettings = (incoming = {}) => {
+      setLiveSettings((prev) => ({
+        ...(prev || {}),
+        ...(incoming || {}),
+        social_links: {
+          ...((prev && prev.social_links) || {}),
+          ...((incoming && incoming.social_links) || {}),
+        },
+        social_display: {
+          ...((prev && prev.social_display) || {}),
+          ...((incoming && incoming.social_display) || {}),
+        },
+      }));
+    };
+
+    const handleCustomSettingsUpdate = (event) => {
+      mergeLiveSettings(event?.detail || {});
+    };
+
+    const handleMessage = (event) => {
+      const payload = event?.data;
+
+      if (!payload || typeof payload !== "object") return;
+
+      if (
+        payload.type === "builder:settings-updated" ||
+        payload.type === "site-settings-updated"
+      ) {
+        mergeLiveSettings(payload.settings || payload.payload || {});
+      }
+    };
+
+    window.addEventListener("builder:settings-updated", handleCustomSettingsUpdate);
+    window.addEventListener("site-settings-updated", handleCustomSettingsUpdate);
+    window.addEventListener("message", handleMessage);
+
+    return () => {
+      window.removeEventListener("builder:settings-updated", handleCustomSettingsUpdate);
+      window.removeEventListener("site-settings-updated", handleCustomSettingsUpdate);
+      window.removeEventListener("message", handleMessage);
+    };
+  }, []);
+
   const features = {
     ...DEFAULT_FEATURES,
-    ...(settings?.features || {}),
+    ...(liveSettings?.features || {}),
   };
 
-  const social = { ...DEFAULT_SOCIAL, ...(settings?.social || {}) };
+  const socialLinks = liveSettings?.social_links || liveSettings?.social || {};
+  const socialDisplay = liveSettings?.social_display || {};
 
-  const logoUrl = settings?.logo_url || logoz;
-  const schoolName = settings?.site_name || "School";
-  const phone = settings?.phone || "";
-  const email = settings?.email || "";
+  const social = useMemo(
+    () => ({
+      ...DEFAULT_SOCIAL,
+      ...socialLinks,
+      topbar: socialDisplay.topbar ?? DEFAULT_SOCIAL.topbar,
+      footer: socialDisplay.footer ?? DEFAULT_SOCIAL.footer,
+      order: Array.isArray(socialDisplay.order)
+        ? socialDisplay.order
+        : DEFAULT_SOCIAL.order,
+    }),
+    [socialLinks, socialDisplay],
+  );
+
+  const logoUrl = liveSettings?.logo_url || logoz;
+  const schoolName = liveSettings?.site_name || "School";
+  const phone = liveSettings?.phone || "";
+  const email = liveSettings?.email || "";
   const slogan =
-    settings?.tagline || "Nurturing Excellence • Inspiring Tomorrow";
-  const motto = settings?.motto || "";
-  const siteId = settings?.site_id || "";
+    liveSettings?.tagline || "Nurturing Excellence • Inspiring Tomorrow";
+  const motto = liveSettings?.motto || "";
+  const siteId = liveSettings?.site_id || "";
   const year = new Date().getFullYear();
+
+  const getIconColor = (data = {}) => {
+    const mode = data.colorMode || "original";
+
+    if (mode === "mono") {
+      return data.monoColor || "#ffffff";
+    }
+
+    return data.originalColor || data.color || "#ffffff";
+  };
 
   /* ---------- instant navigation helper ---------- */
 
@@ -200,7 +310,6 @@ export default function Footer({ settings = {} }) {
             <div className="school-name">
               {schoolName} {slogan}
             </div>
-            {/* <div className="slogan">{slogan}</div> */}
 
             {motto && (
               <div className="slogan" style={{ opacity: 0.9 }}>
@@ -272,11 +381,13 @@ export default function Footer({ settings = {} }) {
           <div className="social">
             <span className="small">Follow us</span>
 
-            {Object.keys(ICONS).map((key) => {
+            {(Array.isArray(social.order) ? social.order : Object.keys(ICONS)).map((key) => {
               const Icon = ICONS[key];
+              if (!Icon) return null;
+
               const data = {
-                ...DEFAULT_SOCIAL[key],
-                ...social[key],
+                ...(DEFAULT_SOCIAL[key] || {}),
+                ...(social[key] || {}),
               };
 
               if (!data?.enabled) return null;
@@ -290,7 +401,7 @@ export default function Footer({ settings = {} }) {
                   rel="noopener noreferrer"
                   className="social-icon"
                 >
-                  <Icon style={{ color: data.color || "#000" }} />
+                  <Icon style={{ color: getIconColor(data) }} />
                 </a>
               );
             })}

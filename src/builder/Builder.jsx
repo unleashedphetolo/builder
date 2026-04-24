@@ -42,6 +42,8 @@ export default function Builder() {
 
   const isRestoringRef = useRef(false);
   const hasBootstrappedHistoryRef = useRef(false);
+  const settingsSaveTimeoutRef = useRef(null);
+  const socialSaveTimeoutRef = useRef(null);
 
   const currentPage = useMemo(
     () => pages.find((p) => p.id === currentPageId) || null,
@@ -66,6 +68,36 @@ export default function Builder() {
     }),
     [siteSettings, pages, navItems, currentPageId, layoutKey, templateKey],
   );
+
+  const emitLiveSettingsUpdate = (nextSettings) => {
+    window.dispatchEvent(
+      new CustomEvent("builder:settings-updated", {
+        detail: nextSettings,
+      }),
+    );
+
+    window.dispatchEvent(
+      new CustomEvent("site-settings-updated", {
+        detail: nextSettings,
+      }),
+    );
+
+    window.postMessage(
+      {
+        type: "builder:settings-updated",
+        settings: nextSettings,
+      },
+      "*",
+    );
+
+    window.postMessage(
+      {
+        type: "site-settings-updated",
+        settings: nextSettings,
+      },
+      "*",
+    );
+  };
 
   /*
   =============================
@@ -119,6 +151,7 @@ export default function Builder() {
     (async () => {
       const st = await loadSiteSettings(siteId);
       setSiteSettings(st);
+      emitLiveSettingsUpdate(st);
 
       const nav = await loadSiteNav(siteId);
       setNavItems(nav);
@@ -182,7 +215,6 @@ export default function Builder() {
       const hash = window.location.hash || "";
       const parts = hash.split("/");
 
-      // #/site/{siteId}/slug
       const slug = parts.slice(3).join("/") || "home";
 
       const match = pages.find((p) => {
@@ -245,6 +277,17 @@ export default function Builder() {
     setRedoStack([]);
   }, [builderSnapshot]);
 
+  useEffect(() => {
+    return () => {
+      if (settingsSaveTimeoutRef.current) {
+        clearTimeout(settingsSaveTimeoutRef.current);
+      }
+      if (socialSaveTimeoutRef.current) {
+        clearTimeout(socialSaveTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const applySnapshotToState = (snapshot) => {
     if (!snapshot) return;
 
@@ -256,6 +299,8 @@ export default function Builder() {
     setCurrentPageId(snapshot.currentPageId || null);
     setLayoutKey(snapshot.layoutKey || "school");
     setTemplateKey(snapshot.templateKey || null);
+
+    emitLiveSettingsUpdate(snapshot.siteSettings || null);
 
     setTimeout(() => {
       isRestoringRef.current = false;
@@ -332,6 +377,7 @@ export default function Builder() {
 
     const st = await loadSiteSettings(ensured.id);
     setSiteSettings(st);
+    emitLiveSettingsUpdate(st);
 
     const nav = await loadSiteNav(ensured.id);
     setNavItems(nav);
@@ -365,25 +411,59 @@ export default function Builder() {
   const onUpdateSettings = async (patch) => {
     if (!siteId) return;
 
+    const nextSettings = {
+      ...(siteSettings || {}),
+      ...patch,
+    };
+
+    setSiteSettings(nextSettings);
+    emitLiveSettingsUpdate(nextSettings);
     setSaveStatus("Saving changes...");
 
-    const updated = await updateSiteSettings(siteId, patch);
-
-    if (updated) {
-      setSiteSettings(updated);
-      setSaveStatus("All changes saved");
+    if (settingsSaveTimeoutRef.current) {
+      clearTimeout(settingsSaveTimeoutRef.current);
     }
+
+    settingsSaveTimeoutRef.current = setTimeout(async () => {
+      const updated = await updateSiteSettings(siteId, patch);
+
+      if (updated) {
+        setSiteSettings((prev) => {
+          const merged = {
+            ...(prev || {}),
+            ...updated,
+          };
+          emitLiveSettingsUpdate(merged);
+          return merged;
+        });
+        setSaveStatus("All changes saved");
+      }
+    }, 250);
   };
 
   const onUpdateTheme = async (patch) => {
     if (!siteId) return;
 
+    const nextSettings = {
+      ...(siteSettings || {}),
+      ...patch,
+    };
+
+    setSiteSettings(nextSettings);
+    emitLiveSettingsUpdate(nextSettings);
     setSaveStatus("Saving theme...");
 
     const updated = await updateSiteSettings(siteId, patch);
 
     if (updated) {
-      setSiteSettings(updated);
+      setSiteSettings((prev) => {
+        const merged = {
+          ...(prev || {}),
+          ...updated,
+        };
+        emitLiveSettingsUpdate(merged);
+        return merged;
+      });
       setSaveStatus("Theme updated");
     }
   };
@@ -391,12 +471,26 @@ export default function Builder() {
   const onUpdateColors = async (patch) => {
     if (!siteId) return;
 
+    const nextSettings = {
+      ...(siteSettings || {}),
+      ...patch,
+    };
+
+    setSiteSettings(nextSettings);
+    emitLiveSettingsUpdate(nextSettings);
     setSaveStatus("Saving colors...");
 
     const updated = await updateSiteSettings(siteId, patch);
 
     if (updated) {
-      setSiteSettings(updated);
+      setSiteSettings((prev) => {
+        const merged = {
+          ...(prev || {}),
+          ...updated,
+        };
+        emitLiveSettingsUpdate(merged);
+        return merged;
+      });
       setSaveStatus("Colors updated");
     }
   };
@@ -404,6 +498,13 @@ export default function Builder() {
   const onUpdateAnnouncements = async (announcements) => {
     if (!siteId) return;
 
+    const nextSettings = {
+      ...(siteSettings || {}),
+      announcements,
+    };
+
+    setSiteSettings(nextSettings);
+    emitLiveSettingsUpdate(nextSettings);
     setSaveStatus("Saving announcements...");
 
     const updated = await updateSiteSettings(siteId, {
@@ -411,7 +512,14 @@ export default function Builder() {
     });
 
     if (updated) {
-      setSiteSettings(updated);
+      setSiteSettings((prev) => {
+        const merged = {
+          ...(prev || {}),
+          ...updated,
+        };
+        emitLiveSettingsUpdate(merged);
+        return merged;
+      });
       setSaveStatus("Announcements updated");
     }
   };
@@ -419,32 +527,57 @@ export default function Builder() {
   const onUpdateSocialMedia = async (socialPatch) => {
     if (!siteId) return;
 
+    const currentLinks = siteSettings?.social_links || {};
+    const currentDisplay = siteSettings?.social_display || {};
+
+    const { topbar, footer, order, ...platforms } = socialPatch;
+
+    const nextLinks = {
+      ...currentLinks,
+      ...platforms,
+    };
+
+    const nextDisplay = {
+      ...currentDisplay,
+      ...(typeof topbar === "boolean" ? { topbar } : {}),
+      ...(typeof footer === "boolean" ? { footer } : {}),
+      ...(Array.isArray(order) ? { order } : {}),
+    };
+
+    const nextSettings = {
+      ...(siteSettings || {}),
+      social_links: nextLinks,
+      social_display: nextDisplay,
+    };
+
+    setSiteSettings(nextSettings);
+    emitLiveSettingsUpdate(nextSettings);
     setSaveStatus("Saving social media...");
 
-    const currentSocial = {
-      ...(siteSettings?.social || {}),
-      ...(siteSettings?.social_media || {}),
-    };
-
-    const nextSocial = {
-      ...currentSocial,
-      ...socialPatch,
-    };
-
-    const updated = await updateSiteSettings(siteId, {
-      social_media: nextSocial,
-      social: nextSocial,
-    });
-
-    if (updated) {
-      setSiteSettings((prev) => ({
-        ...(prev || {}),
-        ...updated,
-        social_media: nextSocial,
-        social: nextSocial,
-      }));
-      setSaveStatus("Social media updated");
+    if (socialSaveTimeoutRef.current) {
+      clearTimeout(socialSaveTimeoutRef.current);
     }
+
+    socialSaveTimeoutRef.current = setTimeout(async () => {
+      const updated = await updateSiteSettings(siteId, {
+        social_links: nextLinks,
+        social_display: nextDisplay,
+      });
+
+      if (updated) {
+        setSiteSettings((prev) => {
+          const merged = {
+            ...(prev || {}),
+            ...updated,
+            social_links: nextLinks,
+            social_display: nextDisplay,
+          };
+          emitLiveSettingsUpdate(merged);
+          return merged;
+        });
+        setSaveStatus("Social media updated");
+      }
+    }, 120);
   };
 
   /*

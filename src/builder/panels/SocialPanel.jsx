@@ -114,15 +114,16 @@ export default function SocialPanel({
     }),
   );
 
-  const socialSource = siteSettings.social_media || siteSettings.social || {};
+  const socialLinks = siteSettings.social_links || {};
+  const socialDisplay = siteSettings.social_display || {};
 
   const social = {
-    topbar: socialSource.topbar ?? true,
-    footer: socialSource.footer ?? true,
-    order: Array.isArray(socialSource.order)
-      ? socialSource.order
+    topbar: socialDisplay.topbar ?? true,
+    footer: socialDisplay.footer ?? true,
+    order: Array.isArray(socialDisplay.order)
+      ? socialDisplay.order
       : DEFAULT_PLATFORMS,
-    ...socialSource,
+    ...socialLinks,
   };
 
   const order = Array.isArray(social.order) ? social.order : DEFAULT_PLATFORMS;
@@ -141,8 +142,15 @@ export default function SocialPanel({
     }
 
     if (onUpdateSettings) {
+      const { topbar, footer, order, ...platforms } = normalized;
+
       await onUpdateSettings({
-        social_media: normalized,
+        social_links: platforms,
+        social_display: {
+          topbar: topbar ?? true,
+          footer: footer ?? true,
+          order: Array.isArray(order) ? order : DEFAULT_PLATFORMS,
+        },
       });
     }
   };
