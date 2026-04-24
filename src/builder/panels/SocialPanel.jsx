@@ -1,7 +1,7 @@
 import React from "react";
 import "../../styles/panels.css";
 
-import { DndContext, closestCenter } from "@dnd-kit/core";
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
@@ -73,19 +73,29 @@ const PLATFORM_DEFAULTS = {
 };
 
 function SortableItem({ id, children }) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    opacity: isDragging ? 0.92 : 1,
   };
 
   return (
-    <div ref={setNodeRef} style={style}>
-      <div className="drag-handle" {...attributes} {...listeners}>
-        ☰
-      </div>
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`social-sortable-wrapper ${isDragging ? "is-dragging" : ""}`}
+      {...attributes}
+      {...listeners}
+    >
       {children}
     </div>
   );
@@ -96,25 +106,43 @@ export default function SocialPanel({
   onUpdateSocialMedia,
   onUpdateSettings,
 }) {
-  const social =
-    siteSettings.social_media ||
-    siteSettings.social || {
-      topbar: true,
-      footer: true,
-      order: DEFAULT_PLATFORMS,
-    };
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+  );
+
+  const socialSource = siteSettings.social_media || siteSettings.social || {};
+
+  const social = {
+    topbar: socialSource.topbar ?? true,
+    footer: socialSource.footer ?? true,
+    order: Array.isArray(socialSource.order)
+      ? socialSource.order
+      : DEFAULT_PLATFORMS,
+    ...socialSource,
+  };
 
   const order = Array.isArray(social.order) ? social.order : DEFAULT_PLATFORMS;
 
   const persistSocial = async (nextSocial) => {
+    const normalized = {
+      ...nextSocial,
+      order: Array.isArray(nextSocial.order)
+        ? nextSocial.order
+        : DEFAULT_PLATFORMS,
+    };
+
     if (onUpdateSocialMedia) {
-      await onUpdateSocialMedia(nextSocial);
+      await onUpdateSocialMedia(normalized);
       return;
     }
 
     if (onUpdateSettings) {
       await onUpdateSettings({
-        social_media: nextSocial,
+        social_media: normalized,
       });
     }
   };
@@ -126,7 +154,7 @@ export default function SocialPanel({
     });
   };
 
-  const update = async (platform, field, value) => {
+  const updatePlatform = async (platform, field, value) => {
     await persistSocial({
       ...social,
       [platform]: {
@@ -159,95 +187,125 @@ export default function SocialPanel({
     <div className="section-block">
       <h4>Social Media</h4>
 
-      <div className="social-item">
-        <label>Show in Topbar</label>
+      <div className="field">
+        <p className="helper-text">
+          Manage where social links appear, switch each platform on or off, and
+          drag cards to reorder them naturally.
+        </p>
+      </div>
+
+      <div className="social-item social-global-row">
+        <div className="social-global-copy">
+          <strong>Show in Topbar</strong>
+          <span>Display social icons in the website topbar</span>
+        </div>
+
         <label className="switch">
           <input
             type="checkbox"
             checked={!!social.topbar}
             onChange={(e) => updateGlobal("topbar", e.target.checked)}
           />
-          <span className="slider" style={{ "--brand": "#3b82f6" }} />
+          <span className="slider" style={{ "--brand": "#2563eb" }} />
         </label>
       </div>
 
-      <div className="social-item">
-        <label>Show in Footer</label>
+      <div className="social-item social-global-row">
+        <div className="social-global-copy">
+          <strong>Show in Footer</strong>
+          <span>Display social icons in the footer section</span>
+        </div>
+
         <label className="switch">
           <input
             type="checkbox"
             checked={social.footer ?? true}
             onChange={(e) => updateGlobal("footer", e.target.checked)}
           />
-          <span className="slider" style={{ "--brand": "#3b82f6" }} />
+          <span className="slider" style={{ "--brand": "#2563eb" }} />
         </label>
       </div>
 
-      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
         <SortableContext items={order} strategy={verticalListSortingStrategy}>
-          {order.map((platform) => {
-            const defaults = PLATFORM_DEFAULTS[platform] || {
-              enabled: true,
-              url: "",
-              colorMode: "original",
-              label: platform,
-              placeholder: `https://${platform}.com`,
-            };
+          <div className="social-platform-list">
+            {order.map((platform) => {
+              const defaults = PLATFORM_DEFAULTS[platform] || {
+                enabled: true,
+                url: "",
+                colorMode: "original",
+                label: platform,
+                placeholder: `https://${platform}.com`,
+              };
 
-            const data = {
-              ...defaults,
-              ...(social[platform] || {}),
-            };
+              const data = {
+                ...defaults,
+                ...(social[platform] || {}),
+              };
 
-            return (
-              <SortableItem key={platform} id={platform}>
-                <div className="social-item drag-item">
-                  <div className="social-header">
-                    <strong>{data.label}</strong>
+              return (
+                <SortableItem key={platform} id={platform}>
+                  <div className="social-item drag-item enterprise-social-card">
+                    <div className="social-header">
+                      <div className="social-title-block">
+                        <strong>{data.label}</strong>
+                        <span className="muted-text">
+                          Drag this card to reorder
+                        </span>
+                      </div>
 
-                    <label className="switch">
+                      <label className="switch" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          checked={!!data.enabled}
+                          onChange={(e) =>
+                            updatePlatform(platform, "enabled", e.target.checked)
+                          }
+                        />
+                        <span
+                          className="slider"
+                          style={{
+                            "--brand": "#22c55e",
+                          }}
+                        />
+                      </label>
+                    </div>
+
+                    <div className="field">
+                      <label>{data.label} Link</label>
                       <input
-                        type="checkbox"
-                        checked={!!data.enabled}
+                        type="text"
+                        placeholder={data.placeholder}
+                        value={data.url || ""}
+                        onClick={(e) => e.stopPropagation()}
                         onChange={(e) =>
-                          update(platform, "enabled", e.target.checked)
+                          updatePlatform(platform, "url", e.target.value)
                         }
                       />
-                      <span
-                        className="slider"
-                        style={{
-                          "--brand": "#22c55e",
-                        }}
-                      />
-                    </label>
-                  </div>
+                    </div>
 
-                  <div className="field">
-                    <label>{data.label} Link</label>
-                    <input
-                      type="text"
-                      placeholder={data.placeholder}
-                      value={data.url || ""}
-                      onChange={(e) => update(platform, "url", e.target.value)}
-                    />
+                    <div className="field">
+                      <label>Icon Style</label>
+                      <select
+                        value={data.colorMode || "original"}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) =>
+                          updatePlatform(platform, "colorMode", e.target.value)
+                        }
+                      >
+                        <option value="original">Original</option>
+                        <option value="mono">Black and White</option>
+                      </select>
+                    </div>
                   </div>
-
-                  <div className="field">
-                    <label>Icon Style</label>
-                    <select
-                      value={data.colorMode || "original"}
-                      onChange={(e) =>
-                        update(platform, "colorMode", e.target.value)
-                      }
-                    >
-                      <option value="original">Original</option>
-                      <option value="mono">Black and White</option>
-                    </select>
-                  </div>
-                </div>
-              </SortableItem>
-            );
-          })}
+                </SortableItem>
+              );
+            })}
+          </div>
         </SortableContext>
       </DndContext>
     </div>

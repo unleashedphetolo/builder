@@ -20,44 +20,12 @@ const ICONS = {
   whatsapp: FaWhatsapp,
 };
 
-// const DEFAULT_FEATURES = {
-//   news: true,
-//   resources: true,
-//   notices: true,
-// };
-
-// const DEFAULT_SOCIAL_DISPLAY = {
-//   facebook: true,
-//   x: true,
-//   instagram: true,
-//   youtube: true,
-//   tiktok: true,
-//   linkedin: true,
-//   whatsapp: true,
-//   topbar: true,
-//   footer: true,
-// };
-
-// const DEFAULT_SOCIAL_LINKS = {
-//   facebook: "https://facebook.com",
-//   x: "https://x.com",
-//   instagram: "https://instagram.com",
-//   youtube: "https://youtube.com",
-//   tiktok: "https://tiktok.com",
-//   linkedin: "https://linkedin.com",
-//   whatsapp: "https://wa.me/",
-// };
-
 function buildSiteHref(siteId, path = "") {
   const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
   return `#/site/${siteId || ""}${clean}`;
 }
 
 export default function Topbar({ settings = {} }) {
-  // const features = {
-  //   ...DEFAULT_FEATURES,
-  //   ...(settings?.features || {}),
-  // };
 
   const DEFAULT_SOCIAL = {
   facebook: { enabled: true, url: "https://facebook.com", color: "#1877f2" },

@@ -421,17 +421,28 @@ export default function Builder() {
 
     setSaveStatus("Saving social media...");
 
-    const currentSocial = siteSettings?.social_media || {};
+    const currentSocial = {
+      ...(siteSettings?.social || {}),
+      ...(siteSettings?.social_media || {}),
+    };
+
+    const nextSocial = {
+      ...currentSocial,
+      ...socialPatch,
+    };
 
     const updated = await updateSiteSettings(siteId, {
-      social_media: {
-        ...currentSocial,
-        ...socialPatch,
-      },
+      social_media: nextSocial,
+      social: nextSocial,
     });
 
     if (updated) {
-      setSiteSettings(updated);
+      setSiteSettings((prev) => ({
+        ...(prev || {}),
+        ...updated,
+        social_media: nextSocial,
+        social: nextSocial,
+      }));
       setSaveStatus("Social media updated");
     }
   };

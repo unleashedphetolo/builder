@@ -99,7 +99,8 @@ export default function BuilderNavbar({
         </div>
 
         <div className="builder-navbar-center">
-          <span className="page-indicator">Website Builder</span>
+          {/* <span className="page-indicator">Website Builder</span> */}
+          <span className="page-indicator">ICT</span>
         </div>
 
         <div

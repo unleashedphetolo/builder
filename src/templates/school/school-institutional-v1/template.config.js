@@ -32,20 +32,70 @@ export const templateConfig = {
     accent_color: "#f59e0b",
     font_family: "Inter, sans-serif",
 
-   social: {
-  facebook: { enabled: true, url: "", color: "#1877f2" },
-  instagram: { enabled: true, url: "", color: "#e4405f" },
-  tiktok: { enabled: false, url: "", color: "#000000" },
-  linkedin: { enabled: true, url: "", color: "#0a66c2" },
-  x: { enabled: true, url: "", color: "#000000" },
-  youtube: { enabled: true, url: "", color: "#ff0000" },
-  whatsapp: { enabled: true, url: "", color: "#25d366" },
+    social: {
+      facebook: {
+        enabled: true,
+        url: "",
+        colorMode: "original",
+        originalColor: "#1877f2",
+        monoColor: "#111111",
+      },
+      instagram: {
+        enabled: true,
+        url: "",
+        colorMode: "original",
+        originalColor: "#e4405f",
+        monoColor: "#111111",
+      },
+      tiktok: {
+        enabled: false,
+        url: "",
+        colorMode: "original",
+        originalColor: "#000000",
+        monoColor: "#111111",
+      },
+      linkedin: {
+        enabled: true,
+        url: "",
+        colorMode: "original",
+        originalColor: "#0a66c2",
+        monoColor: "#111111",
+      },
+      x: {
+        enabled: true,
+        url: "",
+        colorMode: "original",
+        originalColor: "#000000",
+        monoColor: "#111111",
+      },
+      youtube: {
+        enabled: true,
+        url: "",
+        colorMode: "original",
+        originalColor: "#ff0000",
+        monoColor: "#111111",
+      },
+      whatsapp: {
+        enabled: true,
+        url: "",
+        colorMode: "original",
+        originalColor: "#25d366",
+        monoColor: "#111111",
+      },
 
-  order: ["facebook","instagram","tiktok","linkedin","x","youtube","whatsapp"],
+      order: [
+        "facebook",
+        "instagram",
+        "tiktok",
+        "linkedin",
+        "x",
+        "youtube",
+        "whatsapp",
+      ],
 
-  topbar: true,
-  footer: true,
-},
+      topbar: true,
+      footer: true,
+    },
 
     topbar_links: [
       { label: "News", href: "/news" },
