@@ -20,7 +20,10 @@ import {
 } from "./siteService";
 
 export default function Builder() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  // const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(
+    typeof window !== "undefined" ? window.innerWidth > 768 : true,
+  );
 
   const [siteId, setSiteId] = useState(null);
   const [layoutKey, setLayoutKey] = useState("school");
@@ -686,6 +689,7 @@ export default function Builder() {
 
       <BuilderNavbar
         toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+        sidebarOpen={sidebarOpen}
         onPreview={handlePreview}
         onPublish={handlePublish}
         onChangeTemplate={() => setShowTemplateSelector(true)}

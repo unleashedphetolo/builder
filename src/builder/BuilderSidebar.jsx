@@ -36,6 +36,9 @@ export default function BuilderSidebar({
   const [activeTab, setActiveTab] = useState("announcements");
   const [hoveredTab, setHoveredTab] = useState("announcements");
   const [openedTab, setOpenedTab] = useState(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(
+  typeof window !== "undefined" ? window.innerWidth <= 768 : false,
+);
 
   const tabs = useMemo(
     () => [
@@ -101,6 +104,7 @@ export default function BuilderSidebar({
   }, [tabs, openedTab, hoveredTab, activeTab]);
 
   const handleOpenTab = (tabKey) => {
+    setSidebarCollapsed(false);
     setActiveTab(tabKey);
     setOpenedTab(tabKey);
   };
@@ -216,7 +220,9 @@ export default function BuilderSidebar({
         <>
           <div className="sidebar-preview-item">Site name and slogan</div>
           <div className="sidebar-preview-item">Logo and contact details</div>
-          <div className="sidebar-preview-item">Institution profile settings</div>
+          <div className="sidebar-preview-item">
+            Institution profile settings
+          </div>
         </>
       );
     }
@@ -225,8 +231,12 @@ export default function BuilderSidebar({
       return (
         <>
           <div className="sidebar-preview-item">Topbar and footer display</div>
-          <div className="sidebar-preview-item">Platform links and visibility</div>
-          <div className="sidebar-preview-item">Original or mono icon style</div>
+          <div className="sidebar-preview-item">
+            Platform links and visibility
+          </div>
+          <div className="sidebar-preview-item">
+            Original or mono icon style
+          </div>
         </>
       );
     }
@@ -236,7 +246,9 @@ export default function BuilderSidebar({
         <>
           <div className="sidebar-preview-item">Category-based templates</div>
           <div className="sidebar-preview-item">Switch structure safely</div>
-          <div className="sidebar-preview-item">Curated institutional layouts</div>
+          <div className="sidebar-preview-item">
+            Curated institutional layouts
+          </div>
         </>
       );
     }
@@ -285,7 +297,11 @@ export default function BuilderSidebar({
   };
 
   return (
-    <aside className={`sidebar sidebar-shell ${openedTab ? "panel-open" : ""}`}>
+    <aside
+      className={`sidebar sidebar-shell ${openedTab ? "panel-open" : ""} ${
+        sidebarCollapsed ? "sidebar-collapsed" : ""
+      }`}
+    >
       <div className="sidebar-rail">
         <div className="sidebar-rail-top">
           {tabs.map((tab) => {
@@ -313,7 +329,7 @@ export default function BuilderSidebar({
         </div>
       </div>
 
-      {!openedTab && (
+      {!sidebarCollapsed && !openedTab && (
         <div className="sidebar-preview-panel">
           <div className="sidebar-preview-header">
             <div className="sidebar-preview-header-main">
@@ -324,13 +340,25 @@ export default function BuilderSidebar({
               </div>
             </div>
 
-            <button
-              type="button"
-              className="sidebar-open-button"
-              onClick={() => handleOpenTab(previewTab.key)}
-            >
-              Open
-            </button>
+            <div className="sidebar-preview-actions">
+              <button
+                type="button"
+                className="sidebar-open-button"
+                onClick={() => handleOpenTab(previewTab.key)}
+              >
+                Open
+              </button>
+
+              <button
+                type="button"
+                className="sidebar-preview-close"
+                onClick={() => setSidebarCollapsed(true)}
+                aria-label="Close preview panel"
+                title="Close preview panel"
+              >
+                ×
+              </button>
+            </div>
           </div>
 
           <div className="sidebar-preview-body">
@@ -339,7 +367,7 @@ export default function BuilderSidebar({
         </div>
       )}
 
-      {openedTab && (
+      {!sidebarCollapsed && openedTab && (
         <div className="sidebar-modal-panel">
           <div className="sidebar-modal-header">
             <button

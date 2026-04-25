@@ -139,3 +139,9 @@
   display: block;
   background: #fff;
 }
+
+@media (max-width: 768px) {
+  .builder-canvas {
+    margin-right: -20px;
+  }
+}

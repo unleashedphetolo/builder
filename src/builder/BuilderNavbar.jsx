@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { FiChevronsLeft, FiChevronsRight } from "react-icons/fi";
 import "../styles/builderNavbar.css";
 import logo from "../assets/logo.gif";
 
@@ -7,6 +8,7 @@ const DASHBOARD_URL =
 
 export default function BuilderNavbar({
   toggleSidebar,
+  sidebarOpen = true,
   onPreview,
   onPublish,
   onChangeTemplate,
@@ -79,11 +81,10 @@ export default function BuilderNavbar({
             onClick={handleSidebarToggle}
             className="sidebar-toggle"
             type="button"
-            aria-label="Toggle sidebar"
+            aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+            title={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
           >
-            <span />
-            <span />
-            <span />
+            {sidebarOpen ? <FiChevronsLeft /> : <FiChevronsRight />}
           </button>
 
           <div className="brand">
@@ -99,7 +100,6 @@ export default function BuilderNavbar({
         </div>
 
         <div className="builder-navbar-center">
-          {/* <span className="page-indicator">Website Builder</span> */}
           <span className="page-indicator">ICT</span>
         </div>
 
