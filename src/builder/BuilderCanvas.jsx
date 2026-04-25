@@ -9,7 +9,12 @@ export default function BuilderCanvas({
   canUndo = false,
   canRedo = false,
 }) {
-  const [device, setDevice] = useState("desktop");
+  const [device, setDevice] = useState(() => {
+    if (typeof window === "undefined") return "desktop";
+    if (window.innerWidth <= 768) return "mobile";
+    if (window.innerWidth <= 1024) return "tablet";
+    return "desktop";
+  });
 
   const previewUrl = useMemo(() => {
     if (!siteId) return "";
@@ -18,6 +23,21 @@ export default function BuilderCanvas({
 
     return `#/site/${siteId}${slug}?builder=1`;
   }, [siteId, page]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setDevice("mobile");
+      } else if (window.innerWidth <= 1024) {
+        setDevice("tablet");
+      } else {
+        setDevice("desktop");
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     function handleNavigate(e) {
@@ -53,7 +73,10 @@ export default function BuilderCanvas({
 
     return () => {
       window.removeEventListener("builder:navigate", handleNavigate);
-      window.removeEventListener("builder:settings-updated", handleSettingsUpdate);
+      window.removeEventListener(
+        "builder:settings-updated",
+        handleSettingsUpdate,
+      );
       window.removeEventListener("site-settings-updated", handleSettingsUpdate);
     };
   }, []);

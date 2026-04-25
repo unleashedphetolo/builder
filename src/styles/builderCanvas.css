@@ -3,7 +3,8 @@
   background: #e5e7eb;
   display: flex;
   flex-direction: column;
-  padding: 16px;
+  /* padding: 16px; */
+  padding-top: 16px;
   min-height: 0;
   overflow: hidden;
 }
@@ -142,6 +143,6 @@
 
 @media (max-width: 768px) {
   .builder-canvas {
-    margin-right: -20px;
+    margin-right: 1px;
   }
 }
