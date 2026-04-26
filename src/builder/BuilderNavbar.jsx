@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { FiChevronsLeft, FiChevronsRight } from "react-icons/fi";
 import "../styles/builderNavbar.css";
 import logo from "../assets/logo.gif";
+import { Link } from "react-router-dom";
 
 const DASHBOARD_URL =
   import.meta.env.VITE_DASHBOARD_URL || "http://localhost:3000/dashboard";
@@ -87,7 +88,7 @@ export default function BuilderNavbar({
             {sidebarOpen ? <FiChevronsLeft /> : <FiChevronsRight />}
           </button>
 
-          <div className="brand">
+          <Link to="/" className="brand">
             <div className="logo">
               <img src={logo} alt="Ulterspace logo" />
             </div>
@@ -96,7 +97,7 @@ export default function BuilderNavbar({
               <h3>Ulterspace</h3>
               <span>Build Beyond Limits</span>
             </div>
-          </div>
+          </Link>
         </div>
 
         <div className="builder-navbar-center">

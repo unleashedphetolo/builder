@@ -1,5 +1,6 @@
 import "../styles/builderFooter.css";
 import logo from "../assets/logo.gif";
+import { Link } from "react-router-dom";
 
 
 const DASHBOARD_URL =
@@ -10,11 +11,8 @@ export default function BuilderFooter() {
     <footer className="builder-footer">
       <div className="footer-container">
         {/* BRAND */}
-        {/* <div className="footer-brand">
-          <h3>Ulterspace Builder</h3>
-          <p>Build Beyond Limits</p>
-        </div> */}
-        <div className="footer-brand">
+        
+        <Link to="/" className="footer-brand">
           <div className="logo">
             <img src={logo} alt="Ulterspace logo" />
           </div>
@@ -23,7 +21,7 @@ export default function BuilderFooter() {
             <h3>Ulterspace</h3>
             <span>Build Beyond Limits</span>
           </div>
-        </div>
+        </Link>
 
         {/* QUICK LINKS */}
         <div className="footer-links">

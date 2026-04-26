@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { IoChevronDown } from "react-icons/io5";
 import "../../styles/navbar.css";
-import logos from "../../assets/sebone.jpeg";
+import logos from "../../assets/institutional.png";
 
 const DEFAULT_FEATURES = {
   about: true,
@@ -21,18 +21,18 @@ function buildSiteHref(siteId, path = "") {
 }
 
 export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
-  const features = {
-    ...DEFAULT_FEATURES,
-    ...(settings?.features || {}),
-  };
-
-  const logoUrl = settings?.logo_url || logos;
-  const schoolName = settings?.site_name || "School";
-  const tagline = settings?.tagline || "Secondary School";
-  const siteId = settings?.site_id || "";
-
+  const [liveSettings, setLiveSettings] = useState(settings || {});
+  const [liveNavItems, setLiveNavItems] = useState(navItems || []);
   const [open, setOpen] = useState(false);
   const [dropdown, setDropdown] = useState(null);
+
+  useEffect(() => {
+    setLiveSettings(settings || {});
+  }, [settings]);
+
+  useEffect(() => {
+    setLiveNavItems(Array.isArray(navItems) ? navItems : []);
+  }, [navItems]);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -41,16 +41,83 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
     };
   }, [open]);
 
+  useEffect(() => {
+    const mergeLiveSettings = (incoming = {}) => {
+      setLiveSettings((prev) => ({
+        ...(prev || {}),
+        ...(incoming || {}),
+      }));
+    };
+
+    const updateLiveNav = (incoming = []) => {
+      if (Array.isArray(incoming)) {
+        setLiveNavItems(incoming);
+      }
+    };
+
+    const handleSettingsUpdate = (event) => {
+      mergeLiveSettings(event?.detail || {});
+    };
+
+    const handleNavUpdate = (event) => {
+      updateLiveNav(event?.detail || []);
+    };
+
+    const handleMessage = (event) => {
+      const payload = event?.data;
+
+      if (!payload || typeof payload !== "object") return;
+
+      if (
+        payload.type === "builder:settings-updated" ||
+        payload.type === "site-settings-updated"
+      ) {
+        mergeLiveSettings(payload.settings || payload.payload || {});
+      }
+
+      if (
+        payload.type === "builder:nav-updated" ||
+        payload.type === "site-nav-updated"
+      ) {
+        updateLiveNav(payload.navItems || payload.items || payload.payload || []);
+      }
+    };
+
+    window.addEventListener("builder:settings-updated", handleSettingsUpdate);
+    window.addEventListener("site-settings-updated", handleSettingsUpdate);
+    window.addEventListener("builder:nav-updated", handleNavUpdate);
+    window.addEventListener("site-nav-updated", handleNavUpdate);
+    window.addEventListener("message", handleMessage);
+
+    return () => {
+      window.removeEventListener("builder:settings-updated", handleSettingsUpdate);
+      window.removeEventListener("site-settings-updated", handleSettingsUpdate);
+      window.removeEventListener("builder:nav-updated", handleNavUpdate);
+      window.removeEventListener("site-nav-updated", handleNavUpdate);
+      window.removeEventListener("message", handleMessage);
+    };
+  }, []);
+
+  const features = {
+    ...DEFAULT_FEATURES,
+    ...(liveSettings?.features || {}),
+  };
+
+  const logoUrl = liveSettings?.logo_url || logos;
+  const schoolName = liveSettings?.site_name || "School";
+  const tagline = liveSettings?.tagline || "Secondary School";
+  const siteId = liveSettings?.site_id || "";
+
   const dbNavItems = useMemo(() => {
-    return Array.isArray(navItems)
-      ? navItems
+    return Array.isArray(liveNavItems)
+      ? liveNavItems
           .filter(
             (item) =>
               item && item.is_visible !== false && item.location !== "footer",
           )
           .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
       : [];
-  }, [navItems]);
+  }, [liveNavItems]);
 
   const menus = useMemo(
     () => ({
@@ -163,7 +230,7 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
               e.preventDefault();
               const slug = it.to.replace(`#/site/${siteId}`, "") || "/";
               navigateTo?.(slug);
-              setOpen(false); // CLOSE HAMBURGER MENU
+              setOpen(false);
             }}
           >
             {it.label}
@@ -207,15 +274,6 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
         menu: menus.about,
       });
     }
-
-    // if (features.digitalLibrary) {
-    //   items.push({
-    //     type: "link",
-    //     key: "digital-library",
-    //     label: "Digital Library",
-    //     href: getDbHref("Digital Library", "/digital-library"),
-    //   });
-    // }
 
     if (features.activities) {
       items.push({
@@ -329,7 +387,7 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
                   e.preventDefault();
                   const slug = item.href.replace(`#/site/${siteId}`, "") || "/";
                   navigateTo?.(slug);
-                  setOpen(false); // CLOSE HAMBURGER MENU
+                  setOpen(false);
                 }}
               >
                 {item.label}
