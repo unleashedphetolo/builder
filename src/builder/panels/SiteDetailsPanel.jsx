@@ -29,14 +29,14 @@ export default function SiteDetailsPanel({
 
   return (
     <div className="section-block">
-      <h4>Site Details</h4>
+      <h4>Website Details</h4>
 
       <div className="field">
-        <label>Site Name</label>
+        <label>Website Name</label>
         <input
           value={localSettings.site_name || ""}
           onChange={(e) => update("site_name", e.target.value)}
-          placeholder="Enter site name"
+          placeholder="Enter website name"
         />
       </div>
 

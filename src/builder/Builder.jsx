@@ -20,9 +20,8 @@ import {
 } from "./siteService";
 
 export default function Builder() {
-  // const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(
-    typeof window !== "undefined" ? window.innerWidth > 768 : true,
+    typeof window !== "undefined" ? window.innerWidth > 1024 : true,
   );
 
   const [siteId, setSiteId] = useState(null);

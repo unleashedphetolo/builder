@@ -1,4 +1,6 @@
 import "../styles/builderFooter.css";
+import logo from "../assets/logo.gif";
+
 
 const DASHBOARD_URL =
   import.meta.env.VITE_DASHBOARD_URL || "http://localhost:5173";
@@ -7,11 +9,20 @@ export default function BuilderFooter() {
   return (
     <footer className="builder-footer">
       <div className="footer-container">
-        
         {/* BRAND */}
-        <div className="footer-brand">
+        {/* <div className="footer-brand">
           <h3>Ulterspace Builder</h3>
           <p>Build Beyond Limits</p>
+        </div> */}
+        <div className="footer-brand">
+          <div className="logo">
+            <img src={logo} alt="Ulterspace logo" />
+          </div>
+
+          <div className="brand-text">
+            <h3>Ulterspace</h3>
+            <span>Build Beyond Limits</span>
+          </div>
         </div>
 
         {/* QUICK LINKS */}
@@ -48,7 +59,6 @@ export default function BuilderFooter() {
             </li>
           </ul>
         </div>
-
       </div>
 
       <div className="footer-bottom">

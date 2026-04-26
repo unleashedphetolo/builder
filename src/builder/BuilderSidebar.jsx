@@ -37,7 +37,7 @@ export default function BuilderSidebar({
   const [hoveredTab, setHoveredTab] = useState("announcements");
   const [openedTab, setOpenedTab] = useState(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(
-  typeof window !== "undefined" ? window.innerWidth <= 768 : false,
+  typeof window !== "undefined" ? window.innerWidth <= 1024 : false,
 );
 
   const tabs = useMemo(
@@ -50,7 +50,7 @@ export default function BuilderSidebar({
       },
       {
         key: "site",
-        label: "Site Details",
+        label: "Website Details",
         icon: "🏢",
         subtitle: "Identity, logo, contact and branding",
       },
@@ -218,7 +218,7 @@ export default function BuilderSidebar({
     if (tabKey === "site") {
       return (
         <>
-          <div className="sidebar-preview-item">Site name and slogan</div>
+          <div className="sidebar-preview-item">Website name and slogan</div>
           <div className="sidebar-preview-item">Logo and contact details</div>
           <div className="sidebar-preview-item">
             Institution profile settings

@@ -400,12 +400,13 @@
   }
 
   .page-indicator {
-    font-size: 14px;
-  }
-
-  .brand-text span {
+    /* font-size: 14px; */
     display: none;
   }
+
+  /* .brand-text span {
+    display: none;
+  } */
 
   .save-status {
     display: none;
@@ -415,6 +416,12 @@
     font-size: 13px;
   }
 }
+
+@media (max-width: 1024px) {
+  .page-indicator {
+    display: none;
+  }
+  }
 
 /* New */
 
