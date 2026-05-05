@@ -8,6 +8,7 @@ import {
   FaWhatsapp,
   FaYoutube,
 } from "react-icons/fa";
+import { FiRefreshCw } from "react-icons/fi";
 import { FaXTwitter } from "react-icons/fa6";
 
 const ICONS = {
@@ -65,13 +66,25 @@ export default function Topbar({ settings = {} }) {
       }
     };
 
-    window.addEventListener("builder:settings-updated", handleCustomSettingsUpdate);
-    window.addEventListener("site-settings-updated", handleCustomSettingsUpdate);
+    window.addEventListener(
+      "builder:settings-updated",
+      handleCustomSettingsUpdate,
+    );
+    window.addEventListener(
+      "site-settings-updated",
+      handleCustomSettingsUpdate,
+    );
     window.addEventListener("message", handleMessage);
 
     return () => {
-      window.removeEventListener("builder:settings-updated", handleCustomSettingsUpdate);
-      window.removeEventListener("site-settings-updated", handleCustomSettingsUpdate);
+      window.removeEventListener(
+        "builder:settings-updated",
+        handleCustomSettingsUpdate,
+      );
+      window.removeEventListener(
+        "site-settings-updated",
+        handleCustomSettingsUpdate,
+      );
       window.removeEventListener("message", handleMessage);
     };
   }, []);
@@ -190,7 +203,7 @@ export default function Topbar({ settings = {} }) {
     <div className="topbar" role="banner" aria-label="Top information bar">
       <div className="container topbar-inner">
         <div className="left">
-          <div
+          {/* <div
             className="brand-small"
             aria-hidden="true"
             style={{ width: "25px", height: "25px" }}
@@ -207,7 +220,34 @@ export default function Topbar({ settings = {} }) {
                 borderRadius: "4px",
               }}
             />
-          </div>
+          </div> */}
+          <button
+            type="button"
+            className="brand-small"
+            aria-label="Refresh page"
+            onClick={() => window.location.reload()}
+            style={{
+              width: "20px",
+              height: "20px",
+              border: "none",
+              background: "transparent",
+              padding: 0,
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+            }}
+          >
+            <FiRefreshCw
+              className="brand-icon"
+              style={{
+                width: "100%",
+                height: "100%",
+                color: "#948f8f",
+                display: "block",
+              }}
+            />
+          </button>
 
           <div className="contact">
             <a className="phone" href={`tel:${phone}`} aria-label="Call school">
@@ -250,7 +290,10 @@ export default function Topbar({ settings = {} }) {
         <div className="right">
           {social.topbar ? (
             <div className="social">
-              {(Array.isArray(social.order) ? social.order : Object.keys(ICONS)).map((key) => {
+              {(Array.isArray(social.order)
+                ? social.order
+                : Object.keys(ICONS)
+              ).map((key) => {
                 const Icon = ICONS[key];
                 if (!Icon) return null;
 

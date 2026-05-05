@@ -80,7 +80,8 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 8px;
+  /* padding: 8px; */
+  padding-top: 8px;
   background: transparent;
 }
 
