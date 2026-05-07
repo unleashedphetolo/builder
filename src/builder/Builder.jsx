@@ -733,7 +733,11 @@ export default function Builder() {
         />
       </div>
 
-      <BuilderFooter />
+      <BuilderFooter
+        onPreview={handlePreview}
+        onPublish={handlePublish}
+        onChangeTemplate={() => setShowTemplateSelector(true)}
+      />
     </div>
   );
 }

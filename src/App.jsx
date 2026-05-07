@@ -1,9 +1,18 @@
-import { HashRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
-import { useEffect } from "react";
+import {
+  HashRouter,
+  Routes,
+  Route,
+  Navigate,
+  useParams,
+} from "react-router-dom";
+import { useEffect, useState } from "react";
 import { supabase } from "./supabase/client";
 
 import Builder from "./builder/Builder";
 import SitePage from "./site/SitePage";
+
+const DASHBOARD_LOGIN_URL =
+  import.meta.env.VITE_DASHBOARD_LOGIN_URL || "http://localhost:3000";
 
 function readTokens() {
   const url = new URL(window.location.href);
@@ -22,6 +31,8 @@ function readTokens() {
 }
 
 function SessionHydrator({ children }) {
+  const [hydrating, setHydrating] = useState(true);
+
   useEffect(() => {
     (async () => {
       const { access_token, refresh_token } = readTokens();
@@ -39,15 +50,84 @@ function SessionHydrator({ children }) {
 
         window.history.replaceState({}, "", cleanUrl.toString());
       }
+
+      setHydrating(false);
     })();
   }, []);
+
+  if (hydrating) {
+    return null;
+  }
+
+  return children;
+}
+
+function ProtectedBuilder({ children }) {
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [allowed, setAllowed] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const checkSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!mounted) return;
+
+      if (!session?.user) {
+        window.location.href = DASHBOARD_LOGIN_URL;
+        return;
+      }
+
+      setAllowed(true);
+      setCheckingAuth(false);
+    };
+
+    checkSession();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session?.user) {
+        window.location.href = DASHBOARD_LOGIN_URL;
+      }
+    });
+
+    return () => {
+      mounted = false;
+      subscription?.unsubscribe();
+    };
+  }, []);
+
+  if (checkingAuth) {
+    return null;
+  }
+
+  if (!allowed) {
+    return null;
+  }
 
   return children;
 }
 
 function BuilderWrapper() {
   const { orgId } = useParams();
-  return <Builder orgId={orgId} />;
+
+  return (
+    <ProtectedBuilder>
+      <Builder orgId={orgId} />
+    </ProtectedBuilder>
+  );
+}
+
+function ProtectedBuilderHome() {
+  return (
+    <ProtectedBuilder>
+      <Builder />
+    </ProtectedBuilder>
+  );
 }
 
 export default function App() {
@@ -59,7 +139,7 @@ export default function App() {
           <Route path="/" element={<Navigate to="/builder" replace />} />
 
           {/* Builder */}
-          <Route path="/builder" element={<Builder />} />
+          <Route path="/builder" element={<ProtectedBuilderHome />} />
           <Route path="/builder/:orgId" element={<BuilderWrapper />} />
 
           {/* Public Website */}

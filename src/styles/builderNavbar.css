@@ -210,12 +210,12 @@
 .btn.ghost {
   background: transparent;
   border: 1px solid transparent;
-  color: #1e40af;
+  color: #ffffff;
   box-shadow: none;
 }
 
 .btn.ghost:hover {
-  background: #eff6ff;
+  background: #1e40af;
   border-color: #dbeafe;
 }
 
