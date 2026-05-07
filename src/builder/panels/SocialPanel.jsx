@@ -10,6 +10,16 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaYoutube,
+  FaTiktok,
+  FaLinkedinIn,
+  FaWhatsapp,
+} from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+
 const DEFAULT_PLATFORMS = [
   "facebook",
   "instagram",
@@ -71,6 +81,65 @@ const PLATFORM_DEFAULTS = {
     placeholder: "https://www.whatsapp.com/",
   },
 };
+
+const PLATFORM_ICONS = {
+  facebook: {
+    icon: FaFacebookF,
+    color: "#1877F2",
+  },
+  instagram: {
+    icon: FaInstagram,
+    color: "#E4405F",
+  },
+  x: {
+    icon: FaXTwitter,
+    color: "#000000",
+  },
+  youtube: {
+    icon: FaYoutube,
+    color: "#FF0000",
+  },
+  tiktok: {
+    icon: FaTiktok,
+    color: "#000000",
+  },
+  linkedin: {
+    icon: FaLinkedinIn,
+    color: "#0A66C2",
+  },
+  whatsapp: {
+    icon: FaWhatsapp,
+    color: "#25D366",
+  },
+};
+
+function PlatformIcon({ platform }) {
+  const item = PLATFORM_ICONS[platform];
+
+  if (!item?.icon) return null;
+
+  const Icon = item.icon;
+
+  return (
+    <span
+      style={{
+        width: 30,
+        height: 30,
+        borderRadius: 10,
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "#f8fafc",
+        border: "1px solid #e2e8f0",
+        color: item.color,
+        flexShrink: 0,
+      }}
+      aria-hidden="true"
+    >
+      <Icon size={16} />
+    </span>
+  );
+}
 
 function SortableItem({ id, children }) {
   const {
@@ -259,11 +328,30 @@ export default function SocialPanel({
                 <SortableItem key={platform} id={platform}>
                   <div className="social-item drag-item enterprise-social-card">
                     <div className="social-header">
-                      <div className="social-title-block">
-                        <strong>{data.label}</strong>
-                        <span className="muted-text">
-                          Drag this card to reorder
-                        </span>
+                      <div
+                        className="social-title-block"
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          gap: 10,
+                        }}
+                      >
+                        <PlatformIcon platform={platform} />
+
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 4,
+                            minWidth: 0,
+                          }}
+                        >
+                          <strong>{data.label}</strong>
+                          <span className="muted-text">
+                            Drag this card to reorder
+                          </span>
+                        </div>
                       </div>
 
                       <label className="switch" onClick={(e) => e.stopPropagation()}>

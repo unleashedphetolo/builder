@@ -1,9 +1,33 @@
 export default function TemplatePanel({
   layoutKey = "school",
   templates = [],
+  templateKey,
   selectedTemplateKey,
+  onChangeTemplate,
   onSelectTemplate,
 }) {
+  const activeTemplateKey = selectedTemplateKey || templateKey;
+
+  const getLivePreviewUrl = (template) => {
+    const safeLayoutKey = template.layout_key || layoutKey || "school";
+    const safeTemplateKey = template.template_key;
+
+    if (!safeTemplateKey) return "";
+
+    return `#/template-preview/${safeLayoutKey}/${safeTemplateKey}?mini=1`;
+  };
+
+  const handleSelectTemplate = (template) => {
+    if (onSelectTemplate) {
+      onSelectTemplate(template);
+      return;
+    }
+
+    if (onChangeTemplate) {
+      onChangeTemplate(template.template_key);
+    }
+  };
+
   return (
     <div className="panel-shell">
       <div className="panel-header">
@@ -23,20 +47,42 @@ export default function TemplatePanel({
         )}
 
         {templates.map((template) => {
-          const active = selectedTemplateKey === template.template_key;
+          const active = activeTemplateKey === template.template_key;
+          const previewUrl = getLivePreviewUrl(template);
 
           return (
             <button
               key={template.template_key}
               type="button"
-              className={`template-option ${active ? "active" : ""}`}
-              onClick={() => onSelectTemplate?.(template)}
+              className={`template-option template-option-with-preview ${
+                active ? "active" : ""
+              }`}
+              onClick={() => handleSelectTemplate(template)}
             >
-              <div>
+              <div className="template-preview-box">
+                {previewUrl ? (
+                  <iframe
+                    src={previewUrl}
+                    title={`${template.name} live preview`}
+                    className="template-preview-frame"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="template-preview-fallback">
+                    <span>{template.name?.slice(0, 1) || "T"}</span>
+                    <small>Live Preview</small>
+                  </div>
+                )}
+              </div>
+
+              <div className="template-option-content">
                 <strong>{template.name}</strong>
                 <p>{template.description}</p>
               </div>
-              <span>{active ? "Selected" : "Use"}</span>
+
+              <span className="template-use-pill">
+                {active ? "Selected" : "Use"}
+              </span>
             </button>
           );
         })}

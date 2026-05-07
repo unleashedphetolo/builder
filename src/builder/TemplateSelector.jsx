@@ -18,6 +18,12 @@ export default function TemplateSelector({
     return (templates || []).filter((t) => t.layout_key === tab);
   }, [templates, tab]);
 
+  const getLivePreviewUrl = (template) => {
+    if (!template?.layout_key || !template?.template_key) return "";
+
+    return `#/template-preview/${template.layout_key}/${template.template_key}?mini=1`;
+  };
+
   return (
     <div className="template-modal">
       <div className="template-modal-inner">
@@ -28,11 +34,7 @@ export default function TemplateSelector({
             pages after.
           </p>
 
-          {error && (
-            <div className="template-error">
-              {error}
-            </div>
-          )}
+          {error && <div className="template-error">{error}</div>}
         </div>
 
         {/* Category Tabs */}
@@ -67,50 +69,81 @@ export default function TemplateSelector({
             </div>
           )}
 
-          {list.map((t) => (
-            <div key={t.template_key} className="template-card">
-              <div className="template-preview">
-                <img
-                  src={t.preview_image || "/fallback-template.png"}
-                  alt={t.name}
-                  onError={(e) =>
-                    (e.currentTarget.src = "/fallback-template.png")
-                  }
-                />
-              </div>
+          {list.map((t) => {
+            const livePreviewUrl = getLivePreviewUrl(t);
 
-              <div className="template-meta">
-                <div className="template-title-row">
-                  <h3>{t.name}</h3>
-                  <span className="badge">READY</span>
-                </div>
-
-                <p>{t.description || "Professional website template."}</p>
-
-                <div className="template-tags">
-                  {(t.tags || []).slice(0, 4).map((tag) => (
-                    <span key={tag} className="tag">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="template-actions">
-                <button
-                  className="btn primary"
+            return (
+              <div key={t.template_key} className="template-card">
+                <div
+                  className="template-preview"
+                  role="button"
+                  tabIndex={0}
+                  title={`Use ${t.name}`}
                   onClick={() =>
                     onSelect({
                       layout_key: t.layout_key,
                       template_key: t.template_key,
                     })
                   }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+
+                      onSelect({
+                        layout_key: t.layout_key,
+                        template_key: t.template_key,
+                      });
+                    }
+                  }}
                 >
-                  Use this template
-                </button>
+                  {livePreviewUrl ? (
+                    <iframe
+                      src={livePreviewUrl}
+                      title={`${t.name} live preview`}
+                      className="template-live-preview-frame"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="template-live-preview-fallback">
+                      <strong>{t.name?.slice(0, 1) || "T"}</strong>
+                      <span>Live Preview</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="template-meta">
+                  <div className="template-title-row">
+                    <h3>{t.name}</h3>
+                    <span className="badge">READY</span>
+                  </div>
+
+                  <p>{t.description || "Professional website template."}</p>
+
+                  <div className="template-tags">
+                    {(t.tags || []).slice(0, 4).map((tag) => (
+                      <span key={tag} className="tag">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="template-actions">
+                  <button
+                    className="btn primary"
+                    onClick={() =>
+                      onSelect({
+                        layout_key: t.layout_key,
+                        template_key: t.template_key,
+                      })
+                    }
+                  >
+                    Use this template
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

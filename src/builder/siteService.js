@@ -58,10 +58,24 @@ function resolveTemplateConfig(layoutKey, templateKey) {
   return null;
 }
 
+export function normalizePageSlug(slug = "/") {
+  const raw = String(slug || "/").trim();
+
+  const cleanRaw = raw
+    .split("?")[0]
+    .split("#")[0]
+    .replace(/^\/+|\/+$/g, "");
+
+  if (!cleanRaw || cleanRaw.toLowerCase() === "home") return "/";
+
+  return `/${cleanRaw}`;
+}
+
 function buildAbsoluteHref(href = "") {
   if (!href) return "/";
   if (href.startsWith("http")) return href;
-  return href.startsWith("/") ? href : `/${href}`;
+
+  return normalizePageSlug(href);
 }
 
 function normalizeDefaults(defaults = {}) {
@@ -69,10 +83,16 @@ function normalizeDefaults(defaults = {}) {
     ...defaults,
     social_links: defaults?.social_links || {},
     social_display: defaults?.social_display || {},
-    topbar_links: Array.isArray(defaults?.topbar_links) ? defaults.topbar_links : [],
-    footer_links: Array.isArray(defaults?.footer_links) ? defaults.footer_links : [],
+    topbar_links: Array.isArray(defaults?.topbar_links)
+      ? defaults.topbar_links
+      : [],
+    footer_links: Array.isArray(defaults?.footer_links)
+      ? defaults.footer_links
+      : [],
     features: defaults?.features || {},
-    hero_slides: Array.isArray(defaults?.hero_slides) ? defaults.hero_slides : [],
+    hero_slides: Array.isArray(defaults?.hero_slides)
+      ? defaults.hero_slides
+      : [],
   };
 }
 
@@ -131,12 +151,116 @@ function buildDefaultSectionsForPage({ siteId, pageId, sections = [] }) {
   }));
 }
 
+function getTemplatePageKey(page = {}) {
+  const slug = normalizePageSlug(page.slug || "/");
+
+  return (
+    page.template_page_key ||
+    page.key ||
+    page.id ||
+    page.page_key ||
+    slug.replace(/^\/+/, "").replace(/\//g, "-") ||
+    "home"
+  );
+}
+
+export async function updateLinkedNavItemForPage({
+  siteId,
+  pageId,
+  patch = {},
+  page = null,
+}) {
+  if (!pageId) return null;
+
+  const navPatch = {};
+
+  if (Object.prototype.hasOwnProperty.call(patch, "title")) {
+    navPatch.label = patch.title || page?.title || "Untitled page";
+  }
+
+  if (Object.prototype.hasOwnProperty.call(patch, "slug")) {
+    navPatch.href = buildAbsoluteHref(patch.slug || page?.slug || "/");
+  }
+
+  if (
+    Object.prototype.hasOwnProperty.call(patch, "is_visible") ||
+    Object.prototype.hasOwnProperty.call(patch, "is_published")
+  ) {
+    const nextVisible =
+      patch.is_visible !== undefined
+        ? patch.is_visible
+        : patch.is_published !== undefined
+        ? patch.is_published
+        : true;
+
+    navPatch.is_visible = nextVisible !== false;
+  }
+
+  if (!Object.keys(navPatch).length) return null;
+
+  let query = supabase.from("site_nav_items").update(navPatch).eq("page_id", pageId);
+
+  if (siteId) {
+    query = query.eq("site_id", siteId);
+  }
+
+  const { data, error } = await query.select("*");
+
+  if (error) {
+    console.error("updateLinkedNavItemForPage error", error);
+    return null;
+  }
+
+  return data || [];
+}
+
+export async function updatePageSortOrder(args, maybePageIds) {
+  const siteId = typeof args === "object" ? args?.siteId : args;
+  const pageIds = Array.isArray(args)
+    ? args
+    : Array.isArray(maybePageIds)
+    ? maybePageIds
+    : Array.isArray(args?.pageIds)
+    ? args.pageIds
+    : [];
+
+  if (!siteId || !pageIds.length) return false;
+
+  await Promise.all(
+    pageIds.map((pageId, index) =>
+      supabase
+        .from("site_pages")
+        .update({ sort_order: index })
+        .eq("site_id", siteId)
+        .eq("id", pageId)
+    )
+  );
+
+  await Promise.all(
+    pageIds.map((pageId, index) =>
+      supabase
+        .from("site_nav_items")
+        .update({ position: index })
+        .eq("site_id", siteId)
+        .eq("page_id", pageId)
+    )
+  );
+
+  return true;
+}
+
 export async function updateSitePage(pageId, patch) {
   if (!pageId) return null;
 
+  const safePatch = { ...(patch || {}) };
+
+  if (Object.prototype.hasOwnProperty.call(safePatch, "slug")) {
+    safePatch.slug = normalizePageSlug(safePatch.slug);
+  }
+
   const { data, error } = await supabase
     .from("site_pages")
-    .update(patch)
+    .update(safePatch)
     .eq("id", pageId)
     .select("*")
     .single();
@@ -145,6 +269,13 @@ export async function updateSitePage(pageId, patch) {
     console.error("updateSitePage error", error);
     return null;
   }
+
+  await updateLinkedNavItemForPage({
+    siteId: data?.site_id,
+    pageId,
+    patch: safePatch,
+    page: data,
+  });
 
   return data;
 }
@@ -171,6 +302,7 @@ export async function updatePageContentField({ pageId, field, value, current }) 
 
   return data;
 }
+
 // ---------- Main site functions ----------
 
 export async function ensureSiteForOrg({ layoutKey, templateKey }) {
@@ -324,11 +456,15 @@ export async function seedSiteFromTemplate({ siteId, layoutKey, templateKey }) {
     // 3) create site_pages
     const enabledPages = pages.filter((p) => p?.enabled !== false);
 
-    const pageRows = enabledPages.map((page) => ({
+    const pageRows = enabledPages.map((page, index) => ({
       site_id: siteId,
-      slug: page.slug,
+      slug: normalizePageSlug(page.slug),
       title: page.title,
+      content: page.content || {},
       is_published: page.enabled !== false,
+      is_visible: page.enabled !== false,
+      sort_order: page.sort_order ?? page.position ?? page.nav?.position ?? index,
+      template_page_key: getTemplatePageKey(page),
       seo: page.seo || {},
       layout_override: null,
     }));
@@ -341,12 +477,12 @@ export async function seedSiteFromTemplate({ siteId, layoutKey, templateKey }) {
     if (pagesErr) throw pagesErr;
 
     const pageBySlug = Object.fromEntries(
-      createdPages.map((page) => [page.slug, page])
+      createdPages.map((page) => [normalizePageSlug(page.slug), page])
     );
 
     // 4) create site_sections from template pages[].sections
     const sectionRows = enabledPages.flatMap((page) => {
-      const dbPage = pageBySlug[page.slug];
+      const dbPage = pageBySlug[normalizePageSlug(page.slug)];
       if (!dbPage) return [];
       return buildDefaultSectionsForPage({
         siteId,
@@ -366,18 +502,20 @@ export async function seedSiteFromTemplate({ siteId, layoutKey, templateKey }) {
     // 5) create nav items from page nav config
     const navRows = enabledPages
       .filter((page) => page?.nav)
-      .map((page) => {
-        const dbPage = pageBySlug[page.slug];
+      .map((page, index) => {
+        const cleanSlug = normalizePageSlug(page.slug);
+        const dbPage = pageBySlug[cleanSlug];
+
         return {
           site_id: siteId,
           location: page.nav.location || "header",
           label: page.nav.label || page.title,
-          href: buildAbsoluteHref(page.slug),
+          href: buildAbsoluteHref(cleanSlug),
           page_id: dbPage?.id || null,
           parent_id: null,
-          position: page.nav.position ?? 0,
+          position: page.nav.position ?? page.position ?? index,
           is_external: false,
-          is_visible: true,
+          is_visible: page.enabled !== false,
           meta: page.nav.meta || {},
         };
       });
@@ -404,6 +542,7 @@ export async function loadSitePages(siteId) {
     .from("site_pages")
     .select("*")
     .eq("site_id", siteId)
+    .order("sort_order", { ascending: true })
     .order("created_at", { ascending: true });
 
   if (error) {

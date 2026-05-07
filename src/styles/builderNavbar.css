@@ -215,8 +215,9 @@
 }
 
 .btn.ghost:hover {
-  background: #1e40af;
+  background: #ffffff;
   border-color: #dbeafe;
+  color: #1d2a49;
 }
 
 /* ACTION MENU TOGGLE */

@@ -10,6 +10,7 @@ import { supabase } from "./supabase/client";
 
 import Builder from "./builder/Builder";
 import SitePage from "./site/SitePage";
+import TemplateLivePreview from "./site/TemplateLivePreview";
 
 const DASHBOARD_LOGIN_URL =
   import.meta.env.VITE_DASHBOARD_LOGIN_URL || "http://localhost:3000";
@@ -144,8 +145,11 @@ export default function App() {
 
           {/* Public Website */}
           <Route path="/site/:siteId" element={<SitePage />} />
-          <Route path="/site/:siteId/:slug" element={<SitePage />} />
-
+          <Route path="/site/:siteId/*" element={<SitePage />} />
+          <Route
+            path="/template-preview/:layoutKey/:templateKey/*"
+            element={<TemplateLivePreview />}
+          />
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/builder" replace />} />
         </Routes>

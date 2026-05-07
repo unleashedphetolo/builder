@@ -230,7 +230,7 @@ social_display: {
     },
     { slug: "/resources/calendar", title: "Calendar", enabled: true },
 
-    { slug: "/bulletin", title: "Student Daily Bulletin", enabled: true },
+    { slug: "/bulletin", title: " Daily Bulletin", enabled: true },
     { slug: "/attendance", title: "Attendance Policy", enabled: true },
     { slug: "/calendar/events", title: "All Events", enabled: true },
 

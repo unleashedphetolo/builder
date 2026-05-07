@@ -32,13 +32,14 @@ export default function BuilderSidebar({
   onUpdateAnyPage,
   onUpdatePageContent,
   onUpdateAnyPageContent,
+  onReorderPages,
 }) {
   const [activeTab, setActiveTab] = useState("announcements");
   const [hoveredTab, setHoveredTab] = useState("announcements");
   const [openedTab, setOpenedTab] = useState(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(
-  typeof window !== "undefined" ? window.innerWidth <= 1024 : false,
-);
+    typeof window !== "undefined" ? window.innerWidth <= 1024 : false,
+  );
 
   const tabs = useMemo(
     () => [
@@ -82,7 +83,7 @@ export default function BuilderSidebar({
         key: "pages",
         label: "Pages",
         icon: "📄",
-        subtitle: "Manage pages and navigation structure",
+        subtitle: "Open, preview, search, reorder and control page visibility.",
       },
       {
         key: "analytics",
@@ -186,6 +187,7 @@ export default function BuilderSidebar({
           onUpdateAnyPage={onUpdateAnyPage}
           onUpdatePageContent={onUpdatePageContent}
           onUpdateAnyPageContent={onUpdateAnyPageContent}
+          onReorderPages={onReorderPages}
         />
       );
     }

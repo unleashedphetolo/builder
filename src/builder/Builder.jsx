@@ -17,6 +17,8 @@ import {
   loadSiteNav,
   updateSitePage,
   updatePageContentField,
+  updatePageSortOrder,
+  normalizePageSlug,
 } from "./siteService";
 
 export default function Builder() {
@@ -187,12 +189,10 @@ export default function Builder() {
 
   useEffect(() => {
     function handleNavigation(e) {
-      const slug = e.detail || "/";
+      const slug = normalizePageSlug(e.detail || "/");
 
       const match = pages.find((p) => {
-        const clean = (p.slug || "").replace(/^\/+/, "");
-        const incoming = String(slug).replace(/^\/+/, "");
-        return clean === incoming;
+        return normalizePageSlug(p.slug || "/") === slug;
       });
 
       if (match) {
@@ -215,13 +215,16 @@ export default function Builder() {
   useEffect(() => {
     function syncPageFromUrl() {
       const hash = window.location.hash || "";
-      const parts = hash.split("/");
+      const cleanHash = hash.replace(/^#/, "").split("?")[0];
+      const parts = cleanHash.split("/").filter(Boolean);
 
-      const slug = parts.slice(3).join("/") || "home";
+      if (parts[0] !== "site") return;
+
+      const slugParts = parts.slice(2);
+      const slug = normalizePageSlug(slugParts.join("/") || "/");
 
       const match = pages.find((p) => {
-        const pageSlug = (p.slug || "").replace(/^\/+/, "");
-        return pageSlug === slug.replace(/^\/+/, "");
+        return normalizePageSlug(p.slug || "/") === slug;
       });
 
       if (match) {
@@ -588,6 +591,56 @@ export default function Builder() {
   =============================
   */
 
+  const handleSelectPage = (pageId) => {
+    setCurrentPageId(pageId);
+
+    const selectedPage = pages.find((p) => p.id === pageId);
+
+    if (selectedPage?.slug) {
+      window.dispatchEvent(
+        new CustomEvent("builder:navigate", {
+          detail: normalizePageSlug(selectedPage.slug),
+        }),
+      );
+    }
+  };
+
+  const onReorderPages = async (pageIds = []) => {
+    if (!siteId || !Array.isArray(pageIds) || !pageIds.length) return;
+
+    setSaveStatus("Saving page order...");
+
+    setPages((prev) => {
+      const byId = new Map(prev.map((page) => [page.id, page]));
+      const reordered = pageIds
+        .map((id, index) => {
+          const page = byId.get(id);
+          return page ? { ...page, sort_order: index } : null;
+        })
+        .filter(Boolean);
+
+      const untouched = prev.filter((page) => !pageIds.includes(page.id));
+
+      return [...reordered, ...untouched].sort((a, b) => {
+        const aOrder = a.sort_order ?? 0;
+        const bOrder = b.sort_order ?? 0;
+        return aOrder - bOrder;
+      });
+    });
+
+    setNavItems((prev) =>
+      prev.map((item) => {
+        const index = pageIds.indexOf(item.page_id);
+        if (index === -1) return item;
+        return { ...item, position: index };
+      }),
+    );
+
+    await updatePageSortOrder({ siteId, pageIds });
+
+    setSaveStatus("Page order updated");
+  };
+
   const onUpdatePage = async (patch) => {
     if (!currentPage) return;
 
@@ -708,7 +761,7 @@ export default function Builder() {
             navItems={navItems}
             currentPage={currentPageId}
             currentPageData={currentPage}
-            setCurrentPage={setCurrentPageId}
+            setCurrentPage={handleSelectPage}
             siteSettings={siteSettings}
             onUpdateSettings={onUpdateSettings}
             onUpdateTheme={onUpdateTheme}
@@ -720,6 +773,7 @@ export default function Builder() {
             onUpdateAnyPage={onUpdateAnyPage}
             onUpdatePageContent={onUpdatePageContent}
             onUpdateAnyPageContent={onUpdateAnyPageContent}
+            onReorderPages={onReorderPages}
           />
         )}
 

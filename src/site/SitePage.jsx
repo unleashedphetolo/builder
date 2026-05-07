@@ -6,8 +6,21 @@ import SchoolLayout from "../layouts/SchoolLayout";
 import BusinessLayout from "../layouts/BusinessLayout";
 import PortfolioLayout from "../layouts/PortfolioLayout";
 
+function normalizePageSlug(slug = "/") {
+  const raw = String(slug || "/").trim();
+
+  const cleanRaw = raw
+    .split("?")[0]
+    .split("#")[0]
+    .replace(/^\/+|\/+$/g, "");
+
+  if (!cleanRaw || cleanRaw.toLowerCase() === "home") return "/";
+
+  return `/${cleanRaw}`;
+}
+
 export default function SitePage() {
-  const { siteId } = useParams();
+  const { siteId, "*": wildcardSlug } = useParams();
   const location = useLocation();
 
   const [loading, setLoading] = useState(true);
@@ -20,9 +33,14 @@ export default function SitePage() {
 
   const pageSlug = useMemo(() => {
     if (!siteId) return "/";
+
+    if (typeof wildcardSlug === "string") {
+      return normalizePageSlug(wildcardSlug);
+    }
+
     const path = location.pathname.replace(`/site/${siteId}`, "") || "/";
-    return path === "" ? "/" : path;
-  }, [location.pathname, siteId]);
+    return normalizePageSlug(path);
+  }, [location.pathname, siteId, wildcardSlug]);
 
   const isBuilderPreview = useMemo(() => {
     const search = new URLSearchParams(location.search);
@@ -67,23 +85,38 @@ export default function SitePage() {
         if (settingsErr) throw settingsErr;
         if (navErr) throw navErr;
 
-        let { data: pageData, error: pageErr } = await supabase
+        let pageQuery = supabase
           .from("site_pages")
           .select("*")
           .eq("site_id", siteId)
-          .eq("slug", pageSlug)
-          .maybeSingle();
+          .eq("slug", pageSlug);
+
+        if (!isBuilderPreview) {
+          pageQuery = pageQuery
+            .neq("is_visible", false)
+            .neq("is_published", false);
+        }
+
+        let { data: pageData, error: pageErr } = await pageQuery.maybeSingle();
 
         if (pageErr) throw pageErr;
 
         // fallback to home if slug page not found
         if (!pageData && pageSlug !== "/") {
-          const { data: homePage, error: homeErr } = await supabase
+          let homeQuery = supabase
             .from("site_pages")
             .select("*")
             .eq("site_id", siteId)
-            .eq("slug", "/")
-            .maybeSingle();
+            .eq("slug", "/");
+
+          if (!isBuilderPreview) {
+            homeQuery = homeQuery
+              .neq("is_visible", false)
+              .neq("is_published", false);
+          }
+
+          const { data: homePage, error: homeErr } =
+            await homeQuery.maybeSingle();
 
           if (homeErr) throw homeErr;
           pageData = homePage;
@@ -120,7 +153,7 @@ export default function SitePage() {
     return () => {
       mounted = false;
     };
-  }, [siteId, pageSlug]);
+  }, [siteId, pageSlug, isBuilderPreview]);
 
   useEffect(() => {
     if (!settings) return;

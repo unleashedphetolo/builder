@@ -1,6 +1,48 @@
 import { useMemo, useState, useEffect } from "react";
 import "../styles/builderCanvas.css";
 
+function normalizePreviewSlug(slug = "/") {
+  const raw = String(slug || "/").trim();
+
+  const cleanRaw = raw
+    .split("?")[0]
+    .split("#")[0]
+    .replace(/^\/+|\/+$/g, "");
+
+  if (!cleanRaw || cleanRaw.toLowerCase() === "home") return "/";
+
+  return `/${cleanRaw}`;
+}
+
+function buildPreviewUrl(siteId, slug = "/") {
+  if (!siteId) return "";
+
+  const cleanSlug = normalizePreviewSlug(slug);
+  const path = cleanSlug === "/" ? "" : cleanSlug;
+
+  return `#/site/${siteId}${path}?builder=1`;
+}
+
+function extractSlugFromHash(hash = "") {
+  const cleanHash = String(hash || "")
+    .replace(/^#/, "")
+    .split("?")[0];
+
+  const parts = cleanHash.split("/").filter(Boolean);
+
+  // expected:
+  // #/site/{siteId}
+  // #/site/{siteId}/about
+  // #/site/{siteId}/about/history
+  if (parts[0] !== "site") return "/";
+
+  const slugParts = parts.slice(2);
+
+  if (!slugParts.length) return "/";
+
+  return normalizePreviewSlug(`/${slugParts.join("/")}`);
+}
+
 export default function BuilderCanvas({
   siteId,
   page,
@@ -19,9 +61,7 @@ export default function BuilderCanvas({
   const previewUrl = useMemo(() => {
     if (!siteId) return "";
 
-    const slug = page?.slug && page.slug !== "/" ? `/${page.slug}` : "";
-
-    return `#/site/${siteId}${slug}?builder=1`;
+    return buildPreviewUrl(siteId, page?.slug || "/");
   }, [siteId, page]);
 
   useEffect(() => {
@@ -41,11 +81,25 @@ export default function BuilderCanvas({
 
   useEffect(() => {
     function handleNavigate(e) {
-      const slug = e.detail || "/";
+      const slug = normalizePreviewSlug(e.detail || "/");
+      const nextPreviewUrl = buildPreviewUrl(siteId, slug);
+
+      if (window.previewFrame && nextPreviewUrl) {
+        const currentSrc = window.previewFrame.getAttribute("src") || "";
+
+        if (currentSrc !== nextPreviewUrl) {
+          window.previewFrame.setAttribute("src", nextPreviewUrl);
+        }
+      }
 
       if (window.previewFrame?.contentWindow) {
         window.previewFrame.contentWindow.postMessage(
           { type: "navigate", slug },
+          "*",
+        );
+
+        window.previewFrame.contentWindow.postMessage(
+          { type: "builder:navigate", slug },
           "*",
         );
       }
@@ -79,23 +133,20 @@ export default function BuilderCanvas({
       );
       window.removeEventListener("site-settings-updated", handleSettingsUpdate);
     };
-  }, []);
+  }, [siteId]);
 
   const handleIframeLoad = (e) => {
     try {
       const iframe = e.target;
       const url = new URL(iframe.contentWindow.location.href);
-
       const hash = url.hash || "";
 
       if (!hash.includes("/site/")) return;
 
-      const parts = hash.split("/");
+      const slug = extractSlugFromHash(hash);
+      const currentPageSlug = normalizePreviewSlug(page?.slug || "/");
 
-      // expected: #/site/{siteId}/{slug}
-      const slug = parts.slice(3).join("/") || "/";
-
-      if (slug !== page?.slug) {
+      if (slug !== currentPageSlug) {
         window.dispatchEvent(
           new CustomEvent("builder:navigate", { detail: slug }),
         );

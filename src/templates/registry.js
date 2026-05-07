@@ -11,7 +11,7 @@ export const DEFAULT_TEMPLATES = [
     layout_key: "school",
     template_key: "school-institutional-v1",
     template_path: "templates/school/school-institutional-v1",
-    name: "Institutional School (Sebone-style)",
+    name: "Institutional School",
     description:
       "Full multi-page school website: topbar social links, notices, news, gallery, admissions, staff and contact.",
     tags: ["multi-page", "institutional", "news", "gallery"],

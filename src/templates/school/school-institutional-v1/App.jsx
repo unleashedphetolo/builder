@@ -47,6 +47,7 @@ import Breadcrumbs from "./components/common/Breadcrumbs";
 
 import "./index.css";
 import "./App.css";
+import StudentDailyBulletin from "./pages/StudentDailyBulletin";
 
 const PAGE_COMPONENTS = {
   "/": Home,
@@ -86,6 +87,7 @@ const PAGE_COMPONENTS = {
   "/robotics": RoboticsClub,
   "/contact": Contact,
   "/digital-library": DigitalLibrary,
+  "/bulletin": StudentDailyBulletin,
   "/schoolcalendar": SchoolCalendar,
   "/calendar/events": AllEvents,
 };
@@ -173,7 +175,7 @@ export default function App(props) {
 
   useEffect(() => {
     if (page?.slug) {
-      setCurrentSlug(page.slug);
+      // setCurrentSlug(page.slug);
     }
   }, [page?.slug]);
 
