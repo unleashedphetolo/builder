@@ -416,6 +416,28 @@
   .btn {
     font-size: 13px;
   }
+  .btn.secondary {
+  background: #1d4ed8;
+  color: white;
+  border: none;
+}
+
+.btn.secondary:hover {
+  background: #1e40af;
+}
+
+.btn.ghost {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #000000;
+  box-shadow: none;
+}
+
+.btn.ghost:hover {
+  background: #0c0b29;
+  border-color: #dbeafe;
+  color: #1d2a49;
+}
 }
 
 @media (max-width: 1024px) {
