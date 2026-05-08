@@ -22,6 +22,7 @@ import {
   FiMoreVertical as FiGripVertical,
   FiHome,
   FiSearch,
+  FiX,
 } from "react-icons/fi";
 
 function normalizeSlug(slug = "/") {
@@ -305,9 +306,14 @@ export default function PagesPanel({
 
   const handleSelectPage = (page) => {
     setCurrentPage?.(page.id);
+
     window.dispatchEvent(
       new CustomEvent("builder:navigate", { detail: normalizeSlug(page.slug) }),
     );
+
+    if (window.innerWidth <= 1024) {
+      window.dispatchEvent(new CustomEvent("builder:close-sidebar"));
+    }
   };
 
   const handleToggleVisibility = (page, visible) => {
@@ -344,6 +350,22 @@ export default function PagesPanel({
           placeholder="Search pages..."
           onChange={(e) => setSearch(e.target.value)}
         />
+
+        {search && (
+          <button
+            type="button"
+            className="enterprise-page-search-clear"
+            aria-label="Clear search"
+            title="Clear search"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setSearch("");
+            }}
+          >
+            <FiX />
+          </button>
+        )}
       </label>
 
       <div className="enterprise-page-list-wrap">

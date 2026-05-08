@@ -20,11 +20,12 @@ export default function TemplatePanel({
   const handleSelectTemplate = (template) => {
     if (onSelectTemplate) {
       onSelectTemplate(template);
-      return;
+    } else if (onChangeTemplate) {
+      onChangeTemplate(template.template_key);
     }
 
-    if (onChangeTemplate) {
-      onChangeTemplate(template.template_key);
+    if (window.innerWidth <= 1024) {
+      window.dispatchEvent(new CustomEvent("builder:close-sidebar"));
     }
   };
 

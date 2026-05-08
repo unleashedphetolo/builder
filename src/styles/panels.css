@@ -589,6 +589,26 @@ select {
   font-size: 13px;
 }
 
+.enterprise-page-search-clear {
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  border: 0;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+}
+
+.enterprise-page-search-clear:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
 .enterprise-page-list-wrap {
   max-height: 72vh;
   overflow: auto;

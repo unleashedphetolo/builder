@@ -205,7 +205,20 @@ export default function Builder() {
     return () =>
       window.removeEventListener("builder:navigate", handleNavigation);
   }, [pages]);
+// =============================
+// Listen for sidebar close events
+// =============================
+  useEffect(() => {
+    function handleCloseSidebar() {
+      setSidebarOpen(false);
+    }
 
+    window.addEventListener("builder:close-sidebar", handleCloseSidebar);
+
+    return () => {
+      window.removeEventListener("builder:close-sidebar", handleCloseSidebar);
+    };
+  }, []);
   /*
   =============================
   Sync URL slug → current page
