@@ -32,6 +32,15 @@ export default function SiteDetailsPanel({
       <h4>Website Details</h4>
 
       <div className="field">
+        <label>Change Logo</label>
+        <input
+          value={localSettings.logo_url || ""}
+          onChange={(e) => update("logo_url", e.target.value)}
+          placeholder="https://example.com/logo.png"
+        />
+      </div>
+
+      <div className="field">
         <label>Website Name</label>
         <input
           value={localSettings.site_name || ""}
@@ -50,11 +59,11 @@ export default function SiteDetailsPanel({
       </div>
 
       <div className="field">
-        <label>Change Logo</label>
+        <label>Motto</label>
         <input
-          value={localSettings.logo_url || ""}
-          onChange={(e) => update("logo_url", e.target.value)}
-          placeholder="https://example.com/logo.png"
+          value={localSettings.motto || ""}
+          onChange={(e) => update("motto", e.target.value)}
+          placeholder="Eg: Discipline • Respect • Success"
         />
       </div>
 

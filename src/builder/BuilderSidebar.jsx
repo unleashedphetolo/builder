@@ -178,6 +178,8 @@ export default function BuilderSidebar({
       return (
         <PagesPanel
           siteId={siteId}
+          layoutKey={layoutKey}
+          templateKey={templateKey}
           pages={pages}
           navItems={navItems}
           currentPage={currentPage}

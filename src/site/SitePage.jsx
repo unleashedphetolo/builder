@@ -171,6 +171,43 @@ export default function SitePage() {
     );
   }, [settings]);
 
+  // useEffect(() => {
+  //   const siteName = settings?.site_name || "Website Preview";
+
+  //   document.title = siteName;
+  // }, [settings]);
+  useEffect(() => {
+    const siteName = settings?.site_name || "Website Preview";
+    const siteLogo = settings?.logo_url || "/favicon.ico";
+
+    document.title = siteName;
+
+    // Remove existing builder/app favicons first
+    document
+      .querySelectorAll(
+        'link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"]',
+      )
+      .forEach((icon) => icon.remove());
+
+    const logoWithRefresh = siteLogo.includes("?")
+      ? `${siteLogo}&v=${Date.now()}`
+      : `${siteLogo}?v=${Date.now()}`;
+
+    const icon = document.createElement("link");
+    icon.rel = "icon";
+    icon.href = logoWithRefresh;
+    document.head.appendChild(icon);
+
+    const shortcutIcon = document.createElement("link");
+    shortcutIcon.rel = "shortcut icon";
+    shortcutIcon.href = logoWithRefresh;
+    document.head.appendChild(shortcutIcon);
+
+    const appleIcon = document.createElement("link");
+    appleIcon.rel = "apple-touch-icon";
+    appleIcon.href = logoWithRefresh;
+    document.head.appendChild(appleIcon);
+  }, [settings?.site_name, settings?.logo_url]);
   if (loading) {
     return <div style={{ padding: 32 }}>Loading…</div>;
   }
@@ -179,7 +216,7 @@ export default function SitePage() {
     return <div style={{ padding: 32, color: "crimson" }}>{error}</div>;
   }
 
-  const layoutKey = site?.layout_key || "school";
+  const layoutKey = site?.layout_key;
 
   const sharedProps = {
     site,
@@ -194,6 +231,10 @@ export default function SitePage() {
     builderMode: isBuilderPreview,
   };
 
+  if (layoutKey === "school") {
+    return <SchoolLayout {...sharedProps} />;
+  }
+
   if (layoutKey === "business") {
     return <BusinessLayout {...sharedProps} />;
   }
@@ -202,5 +243,9 @@ export default function SitePage() {
     return <PortfolioLayout {...sharedProps} />;
   }
 
-  return <SchoolLayout {...sharedProps} />;
+  return (
+    <div style={{ padding: 32, color: "crimson" }}>
+      Website layout not found. Please select a template.
+    </div>
+  );
 }

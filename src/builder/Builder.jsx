@@ -11,6 +11,7 @@ import { DEFAULT_TEMPLATES } from "../templates/registry";
 import {
   ensureSiteForOrg,
   seedSiteFromTemplate,
+  syncSitePagesForTemplate,
   loadSitePages,
   loadSiteSettings,
   updateSiteSettings,
@@ -18,6 +19,7 @@ import {
   updateSitePage,
   updatePageContentField,
   updatePageSortOrder,
+  updateSiteTemplateOnly,
   normalizePageSlug,
 } from "./siteService";
 
@@ -27,7 +29,7 @@ export default function Builder() {
   );
 
   const [siteId, setSiteId] = useState(null);
-  const [layoutKey, setLayoutKey] = useState("school");
+  const [layoutKey, setLayoutKey] = useState(null);
   const [templateKey, setTemplateKey] = useState(null);
 
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
@@ -119,26 +121,54 @@ export default function Builder() {
         return;
       }
 
-      const ensured = await ensureSiteForOrg({
-        layoutKey: "school",
-      });
+      const { data: profileData, error: profileErr } = await supabase
+        .from("profiles")
+        .select("organization_id")
+        .eq("id", user.id)
+        .maybeSingle();
 
-      if (!ensured) {
+      if (profileErr) {
+        console.error("Builder boot profile error:", profileErr);
         setShowTemplateSelector(true);
         return;
       }
 
-      if (!ensured.template_key) {
-        setSiteId(ensured.id);
-        setLayoutKey(ensured.layout_key || "school");
-        setTemplateKey(null);
+      const orgId = profileData?.organization_id || null;
+
+      if (!orgId) {
         setShowTemplateSelector(true);
         return;
       }
 
-      setSiteId(ensured.id);
-      setLayoutKey(ensured.layout_key || "school");
-      setTemplateKey(ensured.template_key || null);
+      const { data: existingSite, error: siteErr } = await supabase
+        .from("sites")
+        .select("*")
+        .eq("organization_id", orgId)
+        .order("updated_at", { ascending: false })
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (siteErr) {
+        console.error("Builder boot site error:", siteErr);
+        setShowTemplateSelector(true);
+        return;
+      }
+
+      if (!existingSite) {
+        setShowTemplateSelector(true);
+        return;
+      }
+
+      setSiteId(existingSite.id);
+      setLayoutKey(existingSite.layout_key || null);
+      setTemplateKey(existingSite.template_key || null);
+
+      if (!existingSite.template_key) {
+        setShowTemplateSelector(true);
+        return;
+      }
+
       setShowTemplateSelector(false);
     })();
   }, []);
@@ -205,9 +235,10 @@ export default function Builder() {
     return () =>
       window.removeEventListener("builder:navigate", handleNavigation);
   }, [pages]);
-// =============================
-// Listen for sidebar close events
-// =============================
+
+  // =============================
+  // Listen for sidebar close events
+  // =============================
   useEffect(() => {
     function handleCloseSidebar() {
       setSidebarOpen(false);
@@ -219,6 +250,7 @@ export default function Builder() {
       window.removeEventListener("builder:close-sidebar", handleCloseSidebar);
     };
   }, []);
+
   /*
   =============================
   Sync URL slug → current page
@@ -315,7 +347,7 @@ export default function Builder() {
     setPages(snapshot.pages || []);
     setNavItems(snapshot.navItems || []);
     setCurrentPageId(snapshot.currentPageId || null);
-    setLayoutKey(snapshot.layoutKey || "school");
+    setLayoutKey(snapshot.layoutKey || null);
     setTemplateKey(snapshot.templateKey || null);
 
     emitLiveSettingsUpdate(snapshot.siteSettings || null);
@@ -357,11 +389,73 @@ export default function Builder() {
   const handleTemplateSelect = async (tpl) => {
     setTemplateError("");
 
-    const nextLayoutKey = tpl?.layout_key || "school";
+    const nextLayoutKey = tpl?.layout_key || layoutKey;
     const nextTemplateKey = tpl?.template_key;
 
-    if (!nextTemplateKey) {
+    if (!nextLayoutKey || !nextTemplateKey) {
       setTemplateError("Template key missing.");
+      return;
+    }
+
+    const hasExistingWebsiteData =
+      !!siteId && Array.isArray(pages) && pages.length > 0;
+
+    if (hasExistingWebsiteData) {
+      setSaveStatus("Changing template...");
+
+      const updatedSite = await updateSiteTemplateOnly({
+        siteId,
+        layoutKey: nextLayoutKey,
+        templateKey: nextTemplateKey,
+      });
+
+      if (!updatedSite) {
+        setTemplateError(
+          "Template could not be saved. Check the sites table update rule or duplicate layout constraint.",
+        );
+        setSaveStatus("Template change failed");
+        return;
+      }
+
+      const syncResult = await syncSitePagesForTemplate({
+        siteId,
+        layoutKey: nextLayoutKey,
+        templateKey: nextTemplateKey,
+      });
+
+      if (!syncResult?.ok) {
+        setTemplateError(
+          syncResult?.error?.message ||
+            "Template pages could not be synced. Website data was not deleted.",
+        );
+        setSaveStatus("Template page sync failed");
+        return;
+      }
+
+      setLayoutKey(updatedSite.layout_key || nextLayoutKey);
+      setTemplateKey(updatedSite.template_key || nextTemplateKey);
+      setShowTemplateSelector(false);
+
+      const st = await loadSiteSettings(siteId);
+      setSiteSettings(st);
+      emitLiveSettingsUpdate(st);
+
+      const nav = syncResult.navItems?.length
+        ? syncResult.navItems
+        : await loadSiteNav(siteId);
+      setNavItems(nav);
+
+      const p = syncResult.pages?.length
+        ? syncResult.pages
+        : await loadSitePages(siteId);
+      setPages(p);
+
+      setCurrentPageId((prev) => {
+        if (prev && p.some((page) => page.id === prev)) return prev;
+        return p?.[0]?.id || null;
+      });
+
+      setSaveStatus("Template changed. Website data preserved");
       return;
     }
 
@@ -724,8 +818,11 @@ export default function Builder() {
   =============================
   */
 
+  // const handlePreview = () => {
+  //   window.open(`/#/site/${siteId || ""}`, "_blank");
+  // };
   const handlePreview = () => {
-    window.open(`/#/site/${siteId || ""}`, "_blank");
+    window.open(`/#/site/${siteId || ""}?preview=1&t=${Date.now()}`, "_blank");
   };
 
   const handlePublish = () => {
@@ -743,11 +840,11 @@ export default function Builder() {
     <div className="builder-container">
       {showTemplateSelector && (
         <TemplateSelector
-          templates={
-            availableTemplates.length ? availableTemplates : DEFAULT_TEMPLATES
-          }
-          defaultLayout={layoutKey}
+          templates={DEFAULT_TEMPLATES}
+          selectedLayoutKey={layoutKey}
+          selectedTemplateKey={templateKey}
           onSelect={handleTemplateSelect}
+          onClose={() => setShowTemplateSelector(false)}
           error={templateError}
         />
       )}

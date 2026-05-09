@@ -276,6 +276,8 @@ function SortablePageRow({
 
 export default function PagesPanel({
   siteId,
+  layoutKey,
+  templateKey,
   pages = [],
   navItems = [],
   currentPage,
@@ -294,9 +296,26 @@ export default function PagesPanel({
     }),
   );
 
-  const tree = useMemo(() => buildPageTree(pages, navItems), [pages, navItems]);
+  const activePageIds = useMemo(() => {
+    return new Set((pages || []).map((page) => page.id));
+  }, [pages, layoutKey, templateKey]);
+
+  const activeNavItems = useMemo(() => {
+    return (navItems || []).filter((item) => {
+      if (!item?.page_id) return true;
+      return activePageIds.has(item.page_id);
+    });
+  }, [navItems, activePageIds, layoutKey, templateKey]);
+
+  const tree = useMemo(
+    () => buildPageTree(pages, activeNavItems),
+    [pages, activeNavItems, layoutKey, templateKey],
+  );
+
   const filteredTree = useMemo(() => filterTree(tree, search), [tree, search]);
+
   const flatRows = useMemo(() => flattenTree(filteredTree), [filteredTree]);
+
   const sortableIds = useMemo(
     () => flatRows.map(({ page }) => page.id),
     [flatRows],
@@ -393,7 +412,9 @@ export default function PagesPanel({
                   />
                 ))
               ) : (
-                <div className="enterprise-page-empty">No pages found.</div>
+                <div className="enterprise-page-empty">
+                  No pages found for the selected template.
+                </div>
               )}
             </div>
           </SortableContext>

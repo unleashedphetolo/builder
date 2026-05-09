@@ -922,31 +922,31 @@ select {
 }
 
 .template-option-with-preview {
-  display: grid;
-  grid-template-columns: 94px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 10px;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 10px !important;
 }
 
+/* same measurement style as PagesPanel preview */
 .template-preview-box {
-  width: 94px;
-  height: 66px;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  flex-shrink: 0;
-  position: relative;
+  width: 100% !important;
+  height: 150px !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  overflow: hidden !important;
+  position: relative !important;
 }
 
 .template-preview-frame {
-  width: 500%;
-  height: 500%;
-  border: 0;
-  transform: scale(0.25);
-  transform-origin: 0 0;
-  pointer-events: none;
-  background: #ffffff;
+  width: 400% !important;
+  height: 400% !important;
+  border: 0 !important;
+  transform: scale(0.25) !important;
+  transform-origin: 0 0 !important;
+  pointer-events: none !important;
+  background: #ffffff !important;
 }
 
 .template-preview-image {
@@ -990,6 +990,7 @@ select {
 }
 
 .template-option-content {
+  width: 100% !important;
   min-width: 0;
 }
 
@@ -1016,14 +1017,19 @@ select {
 }
 
 .template-use-pill {
-  min-width: 58px;
+  width: 100% !important;
+  min-width: 100% !important;
+  box-sizing: border-box !important;
   border-radius: 999px;
-  padding: 6px 8px;
+  padding: 7px 10px;
   background: #f1f5f9;
   color: #475569;
   font-size: 11px;
   font-weight: 800;
   text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .template-option.active .template-use-pill {
@@ -1033,19 +1039,18 @@ select {
 }
 
 @media (max-width: 768px) {
-  .template-option-with-preview {
-    grid-template-columns: 82px minmax(0, 1fr) 52px;
-    gap: 8px;
+  .template-preview-box {
+    height: 150px !important;
   }
 
-  .template-preview-box {
-    width: 82px;
-    height: 58px;
+  .template-preview-frame {
+    width: 400% !important;
+    height: 400% !important;
+    transform: scale(0.25) !important;
   }
 
   .template-use-pill {
-    min-width: 52px;
     font-size: 10px;
-    padding: 6px;
+    padding: 7px;
   }
 }

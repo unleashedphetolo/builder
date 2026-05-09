@@ -13,7 +13,7 @@
 
 /* ===== SIDEBAR SHELL ===== */
 .sidebar {
-  width: 420px;
+  width: 480px;
   height: calc(100vh - 72px);
   background: var(--panel-bg);
   border-right: 1px solid var(--border);
@@ -308,6 +308,8 @@
   }
 }
 
+
+
 @media (max-width: 1024px) {
 
   .sidebar-rail {
@@ -355,7 +357,6 @@
 
   .sidebar {
     position: fixed;
-    /* top: 72px; */
     left: 0;
     width: 100%;
     height: calc(100vh - 72px);

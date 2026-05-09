@@ -164,6 +164,50 @@ function getTemplatePageKey(page = {}) {
   );
 }
 
+function hasUsefulContent(content) {
+  if (!content) return false;
+  if (typeof content !== "object") return true;
+  return Object.keys(content).length > 0;
+}
+
+function getReusablePageContent(existingPage, templatePage) {
+  if (hasUsefulContent(existingPage?.content)) {
+    return existingPage.content;
+  }
+
+  return templatePage?.content || {};
+}
+
+function getReusableSectionContent(existingSection, templateSection) {
+  if (hasUsefulContent(existingSection?.content)) {
+    return existingSection.content;
+  }
+
+  return templateSection?.content || {};
+}
+
+function getTemplateSectionKey(section = {}, fallbackIndex = 0) {
+  return (
+    section.section_key ||
+    section.key ||
+    section.id ||
+    `${section.type || "section"}-${fallbackIndex}`
+  );
+}
+
+async function hideRowsByIds(table, ids = [], patch = {}) {
+  if (!ids.length) return true;
+
+  const { error } = await supabase.from(table).update(patch).in("id", ids);
+
+  if (error) {
+    console.error(`hideRowsByIds ${table} error:`, error);
+    return false;
+  }
+
+  return true;
+}
+
 export async function updateLinkedNavItemForPage({
   siteId,
   pageId,
@@ -190,15 +234,18 @@ export async function updateLinkedNavItemForPage({
       patch.is_visible !== undefined
         ? patch.is_visible
         : patch.is_published !== undefined
-        ? patch.is_published
-        : true;
+          ? patch.is_published
+          : true;
 
     navPatch.is_visible = nextVisible !== false;
   }
 
   if (!Object.keys(navPatch).length) return null;
 
-  let query = supabase.from("site_nav_items").update(navPatch).eq("page_id", pageId);
+  let query = supabase
+    .from("site_nav_items")
+    .update(navPatch)
+    .eq("page_id", pageId);
 
   if (siteId) {
     query = query.eq("site_id", siteId);
@@ -219,10 +266,10 @@ export async function updatePageSortOrder(args, maybePageIds) {
   const pageIds = Array.isArray(args)
     ? args
     : Array.isArray(maybePageIds)
-    ? maybePageIds
-    : Array.isArray(args?.pageIds)
-    ? args.pageIds
-    : [];
+      ? maybePageIds
+      : Array.isArray(args?.pageIds)
+        ? args.pageIds
+        : [];
 
   if (!siteId || !pageIds.length) return false;
 
@@ -305,7 +352,7 @@ export async function updatePageContentField({ pageId, field, value, current }) 
 
 // ---------- Main site functions ----------
 
-export async function ensureSiteForOrg({ layoutKey, templateKey }) {
+export async function ensureSiteForOrg({ layoutKey, templateKey } = {}) {
   const orgId = await getCurrentOrgId();
 
   if (!orgId) {
@@ -313,21 +360,15 @@ export async function ensureSiteForOrg({ layoutKey, templateKey }) {
     return null;
   }
 
-  const safeLayoutKey = layoutKey || "school";
-  const safeTemplateKey =
-    templateKey ||
-    (safeLayoutKey === "business"
-      ? "business-executive-v1"
-      : safeLayoutKey === "portfolio"
-      ? "portfolio-clean-v1"
-      : "school-institutional-v1");
+  const safeLayoutKey = layoutKey || null;
+  const safeTemplateKey = templateKey || null;
 
   const { data: existing, error: exErr } = await supabase
     .from("sites")
     .select("*")
     .eq("organization_id", orgId)
-    .eq("layout_key", safeLayoutKey)
-    .order("created_at", { ascending: true })
+    .order("updated_at", { ascending: false })
+    .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
 
@@ -338,8 +379,10 @@ export async function ensureSiteForOrg({ layoutKey, templateKey }) {
 
   if (existing) {
     if (
-      existing.template_key !== safeTemplateKey ||
-      existing.layout_key !== safeLayoutKey
+      safeLayoutKey &&
+      safeTemplateKey &&
+      (existing.template_key !== safeTemplateKey ||
+        existing.layout_key !== safeLayoutKey)
     ) {
       const { data: patched, error: patchErr } = await supabase
         .from("sites")
@@ -362,6 +405,13 @@ export async function ensureSiteForOrg({ layoutKey, templateKey }) {
     return existing;
   }
 
+  if (!safeLayoutKey || !safeTemplateKey) {
+    console.error(
+      "ensureSiteForOrg: no existing site and no template selected yet"
+    );
+    return null;
+  }
+
   const payload = {
     organization_id: orgId,
     layout_key: safeLayoutKey,
@@ -382,6 +432,376 @@ export async function ensureSiteForOrg({ layoutKey, templateKey }) {
   }
 
   return created;
+}
+
+export async function updateSiteTemplateOnly({ siteId, layoutKey, templateKey }) {
+  if (!siteId || !layoutKey || !templateKey) return null;
+
+  const { data, error } = await supabase
+    .from("sites")
+    .update({
+      layout_key: layoutKey,
+      template_key: templateKey,
+    })
+    .eq("id", siteId)
+    .select("*")
+    .single();
+
+  if (error) {
+    console.error("updateSiteTemplateOnly error:", error);
+    return null;
+  }
+
+  return data;
+}
+
+export async function syncSitePagesForTemplate({
+  siteId,
+  layoutKey,
+  templateKey,
+}) {
+  try {
+    if (!siteId || !layoutKey || !templateKey) {
+      throw new Error("Missing siteId, layoutKey or templateKey.");
+    }
+
+    const config = resolveTemplateConfig(layoutKey, templateKey);
+
+    if (!config) {
+      throw new Error(
+        `Template config not found for ${layoutKey}/${templateKey}`
+      );
+    }
+
+    const templatePages = Array.isArray(config.pages)
+      ? config.pages.filter((page) => page?.enabled !== false)
+      : [];
+
+    if (!templatePages.length) {
+      return {
+        ok: true,
+        config,
+        pages: [],
+        navItems: [],
+      };
+    }
+
+    const [
+      { data: existingPages, error: pagesErr },
+      { data: existingSections, error: sectionsErr },
+      { data: existingNavItems, error: navErr },
+    ] = await Promise.all([
+      supabase.from("site_pages").select("*").eq("site_id", siteId),
+      supabase.from("site_sections").select("*").eq("site_id", siteId),
+      supabase.from("site_nav_items").select("*").eq("site_id", siteId),
+    ]);
+
+    if (pagesErr) throw pagesErr;
+    if (sectionsErr) throw sectionsErr;
+    if (navErr) throw navErr;
+
+    const pagesBySlug = new Map();
+    const pagesByTemplateKey = new Map();
+
+    (existingPages || []).forEach((page) => {
+      pagesBySlug.set(normalizePageSlug(page.slug || "/"), page);
+
+      if (page.template_page_key) {
+        pagesByTemplateKey.set(page.template_page_key, page);
+      }
+    });
+
+    const activePageIds = new Set();
+    const activePagesByTemplateKey = new Map();
+    const activePagesBySlug = new Map();
+
+    for (const templatePage of templatePages) {
+      const cleanSlug = normalizePageSlug(templatePage.slug || "/");
+      const templatePageKey = getTemplatePageKey(templatePage);
+      const sortOrder =
+        templatePage.sort_order ??
+        templatePage.position ??
+        templatePage.nav?.position ??
+        templatePages.indexOf(templatePage);
+
+      const matchedPage =
+        pagesByTemplateKey.get(templatePageKey) || pagesBySlug.get(cleanSlug);
+
+      if (matchedPage?.id) {
+        const pagePatch = {
+          slug: cleanSlug,
+          title: templatePage.title || matchedPage.title || "Untitled page",
+          is_published: true,
+          is_visible: true,
+          sort_order: sortOrder,
+          template_page_key: templatePageKey,
+          seo: templatePage.seo || matchedPage.seo || {},
+          layout_override: null,
+        };
+
+        if (!hasUsefulContent(matchedPage.content)) {
+          pagePatch.content = templatePage.content || {};
+        }
+
+        const { data: updatedPage, error: updatePageErr } = await supabase
+          .from("site_pages")
+          .update(pagePatch)
+          .eq("id", matchedPage.id)
+          .select("*")
+          .single();
+
+        if (updatePageErr) throw updatePageErr;
+
+        activePageIds.add(updatedPage.id);
+        activePagesByTemplateKey.set(templatePageKey, updatedPage);
+        activePagesBySlug.set(cleanSlug, updatedPage);
+        pagesBySlug.set(cleanSlug, updatedPage);
+        pagesByTemplateKey.set(templatePageKey, updatedPage);
+      } else {
+        const pagePayload = {
+          site_id: siteId,
+          slug: cleanSlug,
+          title: templatePage.title || "Untitled page",
+          content: templatePage.content || {},
+          is_published: true,
+          is_visible: true,
+          sort_order: sortOrder,
+          template_page_key: templatePageKey,
+          seo: templatePage.seo || {},
+          layout_override: null,
+        };
+
+        const { data: createdPage, error: createPageErr } = await supabase
+          .from("site_pages")
+          .insert(pagePayload)
+          .select("*")
+          .single();
+
+        if (createPageErr) throw createPageErr;
+
+        activePageIds.add(createdPage.id);
+        activePagesByTemplateKey.set(templatePageKey, createdPage);
+        activePagesBySlug.set(cleanSlug, createdPage);
+        pagesBySlug.set(cleanSlug, createdPage);
+        pagesByTemplateKey.set(templatePageKey, createdPage);
+      }
+    }
+
+    const oldPageIdsToHide = (existingPages || [])
+      .filter((page) => !activePageIds.has(page.id))
+      .map((page) => page.id);
+
+    await hideRowsByIds("site_pages", oldPageIdsToHide, {
+      is_visible: false,
+      is_published: false,
+    });
+
+    const sectionsByPageId = new Map();
+
+    (existingSections || []).forEach((section) => {
+      if (!sectionsByPageId.has(section.page_id)) {
+        sectionsByPageId.set(section.page_id, []);
+      }
+
+      sectionsByPageId.get(section.page_id).push(section);
+    });
+
+    for (const templatePage of templatePages) {
+      const templatePageKey = getTemplatePageKey(templatePage);
+      const activePage = activePagesByTemplateKey.get(templatePageKey);
+
+      if (!activePage?.id) continue;
+
+      const templateSections = Array.isArray(templatePage.sections)
+        ? templatePage.sections
+        : [];
+
+      const existingForPage = sectionsByPageId.get(activePage.id) || [];
+      const usedSectionIds = new Set();
+
+      for (let index = 0; index < templateSections.length; index += 1) {
+        const templateSection = templateSections[index];
+        const templateSectionKey = getTemplateSectionKey(
+          templateSection,
+          index
+        );
+
+        const matchedSection = existingForPage.find((section) => {
+          if (usedSectionIds.has(section.id)) return false;
+
+          const existingKey = getTemplateSectionKey(section, index);
+
+          return (
+            existingKey === templateSectionKey ||
+            section.type === templateSection.type
+          );
+        });
+
+        if (matchedSection?.id) {
+          const sectionPatch = {
+            type: templateSection.type,
+            position: index,
+            visible: templateSection.visible !== false,
+            is_locked: templateSection.is_locked === true,
+            style: templateSection.style || matchedSection.style || {},
+            animation:
+              templateSection.animation || matchedSection.animation || {},
+            revision: (matchedSection.revision || 1) + 1,
+          };
+
+          if (!hasUsefulContent(matchedSection.content)) {
+            sectionPatch.content = templateSection.content || {};
+          }
+
+          const { error: updateSectionErr } = await supabase
+            .from("site_sections")
+            .update(sectionPatch)
+            .eq("id", matchedSection.id);
+
+          if (updateSectionErr) throw updateSectionErr;
+
+          usedSectionIds.add(matchedSection.id);
+        } else {
+          const sectionPayload = {
+            site_id: siteId,
+            page_id: activePage.id,
+            type: templateSection.type,
+            content: getReusableSectionContent(null, templateSection),
+            position: index,
+            visible: templateSection.visible !== false,
+            is_locked: templateSection.is_locked === true,
+            style: templateSection.style || {},
+            animation: templateSection.animation || {},
+            updated_by: null,
+            revision: 1,
+            library_id: null,
+          };
+
+          const { error: insertSectionErr } = await supabase
+            .from("site_sections")
+            .insert(sectionPayload);
+
+          if (insertSectionErr) throw insertSectionErr;
+        }
+      }
+
+      const sectionsToHide = existingForPage
+        .filter((section) => !usedSectionIds.has(section.id))
+        .map((section) => section.id);
+
+      await hideRowsByIds("site_sections", sectionsToHide, {
+        visible: false,
+      });
+    }
+
+    const activeNavIds = new Set();
+
+    for (let index = 0; index < templatePages.length; index += 1) {
+      const templatePage = templatePages[index];
+
+      if (!templatePage?.nav) continue;
+
+      const cleanSlug = normalizePageSlug(templatePage.slug || "/");
+      const templatePageKey = getTemplatePageKey(templatePage);
+      const activePage =
+        activePagesByTemplateKey.get(templatePageKey) ||
+        activePagesBySlug.get(cleanSlug);
+
+      if (!activePage?.id) continue;
+
+      const href = buildAbsoluteHref(cleanSlug);
+      const location = templatePage.nav.location || "header";
+
+      const matchedNav =
+        (existingNavItems || []).find(
+          (item) => item.page_id === activePage.id && item.location === location
+        ) ||
+        (existingNavItems || []).find(
+          (item) => item.href === href && item.location === location
+        );
+
+      const navPatch = {
+        site_id: siteId,
+        location,
+        label: templatePage.nav.label || templatePage.title,
+        href,
+        page_id: activePage.id,
+        parent_id: null,
+        position:
+          templatePage.nav.position ?? templatePage.position ?? index,
+        is_external: false,
+        is_visible: templatePage.enabled !== false,
+        meta: templatePage.nav.meta || {},
+      };
+
+      if (matchedNav?.id) {
+        const { data: updatedNav, error: updateNavErr } = await supabase
+          .from("site_nav_items")
+          .update(navPatch)
+          .eq("id", matchedNav.id)
+          .select("*")
+          .single();
+
+        if (updateNavErr) throw updateNavErr;
+
+        activeNavIds.add(updatedNav.id);
+      } else {
+        const { data: createdNav, error: createNavErr } = await supabase
+          .from("site_nav_items")
+          .insert(navPatch)
+          .select("*")
+          .single();
+
+        if (createNavErr) throw createNavErr;
+
+        activeNavIds.add(createdNav.id);
+      }
+    }
+
+    const oldNavIdsToHide = (existingNavItems || [])
+      .filter((item) => !activeNavIds.has(item.id))
+      .map((item) => item.id);
+
+    await hideRowsByIds("site_nav_items", oldNavIdsToHide, {
+      is_visible: false,
+    });
+
+    const [{ data: syncedPages, error: syncedPagesErr }, { data: syncedNav }] =
+      await Promise.all([
+        supabase
+          .from("site_pages")
+          .select("*")
+          .eq("site_id", siteId)
+          .eq("is_visible", true)
+          .eq("is_published", true)
+          .order("sort_order", { ascending: true })
+          .order("created_at", { ascending: true }),
+
+        supabase
+          .from("site_nav_items")
+          .select("*")
+          .eq("site_id", siteId)
+          .eq("is_visible", true)
+          .order("position", { ascending: true }),
+      ]);
+
+    if (syncedPagesErr) throw syncedPagesErr;
+
+    return {
+      ok: true,
+      config,
+      pages: syncedPages || [],
+      navItems: syncedNav || [],
+    };
+  } catch (e) {
+    console.error("syncSitePagesForTemplate failed", e);
+    return {
+      ok: false,
+      error: e,
+      pages: [],
+      navItems: [],
+    };
+  }
 }
 
 export async function seedSiteFromTemplate({ siteId, layoutKey, templateKey }) {
@@ -463,7 +883,8 @@ export async function seedSiteFromTemplate({ siteId, layoutKey, templateKey }) {
       content: page.content || {},
       is_published: page.enabled !== false,
       is_visible: page.enabled !== false,
-      sort_order: page.sort_order ?? page.position ?? page.nav?.position ?? index,
+      sort_order:
+        page.sort_order ?? page.position ?? page.nav?.position ?? index,
       template_page_key: getTemplatePageKey(page),
       seo: page.seo || {},
       layout_override: null,
@@ -542,6 +963,8 @@ export async function loadSitePages(siteId) {
     .from("site_pages")
     .select("*")
     .eq("site_id", siteId)
+    .eq("is_visible", true)
+    .eq("is_published", true)
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: true });
 
@@ -559,6 +982,7 @@ export async function loadPageSections({ siteId, pageId }) {
     .select("*")
     .eq("site_id", siteId)
     .eq("page_id", pageId)
+    .eq("visible", true)
     .order("position", { ascending: true });
 
   if (error) {
@@ -593,6 +1017,7 @@ export async function loadSiteNav(siteId) {
     .from("site_nav_items")
     .select("*")
     .eq("site_id", siteId)
+    .eq("is_visible", true)
     .order("position", { ascending: true });
 
   if (error) {

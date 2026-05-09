@@ -147,13 +147,25 @@ export default function Footer({ settings = {} }) {
       }
     };
 
-    window.addEventListener("builder:settings-updated", handleCustomSettingsUpdate);
-    window.addEventListener("site-settings-updated", handleCustomSettingsUpdate);
+    window.addEventListener(
+      "builder:settings-updated",
+      handleCustomSettingsUpdate,
+    );
+    window.addEventListener(
+      "site-settings-updated",
+      handleCustomSettingsUpdate,
+    );
     window.addEventListener("message", handleMessage);
 
     return () => {
-      window.removeEventListener("builder:settings-updated", handleCustomSettingsUpdate);
-      window.removeEventListener("site-settings-updated", handleCustomSettingsUpdate);
+      window.removeEventListener(
+        "builder:settings-updated",
+        handleCustomSettingsUpdate,
+      );
+      window.removeEventListener(
+        "site-settings-updated",
+        handleCustomSettingsUpdate,
+      );
       window.removeEventListener("message", handleMessage);
     };
   }, []);
@@ -292,52 +304,55 @@ export default function Footer({ settings = {} }) {
   return (
     <footer className="site-footer" role="contentinfo">
       <div className="footer-top container">
-        <div className="brand">
-          <a
-            href={buildSiteHref(siteId, "/")}
-            className="logo-link"
-            aria-label="Go to home"
-            onClick={(e) => {
-              e.preventDefault();
-              navigateTo?.("/");
-            }}
-          >
-            <div className="logoz">
-              <img src={logoUrl} alt="School logo" className="logo-image" />
-            </div>
-          </a>
-          <div className="brand-text">
-            <div className="school-name">
-              {schoolName} {slogan}
-            </div>
-
-            {motto && (
-              <div className="slogan" style={{ opacity: 0.9 }}>
-                {motto}
+        <div className="brand brand-stacked">
+          <div className="brand-identity-row">
+            <a
+              href={buildSiteHref(siteId, "/")}
+              className="logo-link"
+              aria-label="Go to home"
+              onClick={(e) => {
+                e.preventDefault();
+                navigateTo?.("/");
+              }}
+            >
+              <div className="logoz">
+                <img src={logoUrl} alt="School logo" className="logo-image" />
               </div>
+            </a>
+
+            <div className="brand-text">
+              <div className="school-name">{schoolName}</div>
+
+              {slogan && (
+                <div className="slogan" style={{ opacity: 0.9 }}>
+                  {slogan}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {motto && <div className="motto">{motto}</div>}
+
+          <div className="contact small">
+            {phone && (
+              <a
+                href={`tel:${phone}`}
+                style={{ textDecoration: "none", color: "#2a1b6b" }}
+              >
+                ☎ {phone}
+              </a>
             )}
 
-            <div className="contact small">
-              {phone && (
-                <a
-                  href={`tel:${phone}`}
-                  style={{ textDecoration: "none", color: "#2a1b6b" }}
-                >
-                  ☎ {phone}
-                </a>
-              )}
+            {phone && email && <span className="sep">|</span>}
 
-              {phone && email && <span className="sep">|</span>}
-
-              {email && (
-                <a
-                  href={`mailto:${email}`}
-                  style={{ textDecoration: "none", color: "#2a1b6b" }}
-                >
-                  {email}
-                </a>
-              )}
-            </div>
+            {email && (
+              <a
+                href={`mailto:${email}`}
+                style={{ textDecoration: "none", color: "#2a1b6b" }}
+              >
+                {email}
+              </a>
+            )}
           </div>
         </div>
 
@@ -381,7 +396,10 @@ export default function Footer({ settings = {} }) {
           <div className="social">
             <span className="small">Follow us</span>
 
-            {(Array.isArray(social.order) ? social.order : Object.keys(ICONS)).map((key) => {
+            {(Array.isArray(social.order)
+              ? social.order
+              : Object.keys(ICONS)
+            ).map((key) => {
               const Icon = ICONS[key];
               if (!Icon) return null;
 
