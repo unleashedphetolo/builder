@@ -20,18 +20,20 @@ export default function Contact({ settings = {} }) {
   const onSubmit = (e) => {
     e.preventDefault();
     setStatus(
-      "Thanks! Your message is ready. Connect this form to email or a backend when you're ready."
+      "Thanks! Your message is ready. Connect this form to email or a backend when you're ready.",
     );
     e.currentTarget.reset();
   };
 
   return (
-    <section className="container" style={{ paddingTop: 10, paddingBottom: 40 }}>
-
+    <section
+      className="container"
+      style={{ paddingTop: 10, paddingBottom: 40 }}
+    >
       <h2 className="section-title">Contact Us</h2>
       <p style={{ opacity: 0.85, maxWidth: 900, marginBottom: 18 }}>
-        For admissions, school information, events and learner support — reach out and we’ll
-        respond as soon as possible.
+        For admissions, school information, events and learner support — reach
+        out and we’ll respond as soon as possible.
       </p>
 
       <div
@@ -45,7 +47,12 @@ export default function Contact({ settings = {} }) {
           <h3 style={{ marginBottom: 10 }}>Send a Message</h3>
 
           <form onSubmit={onSubmit} style={{ display: "grid", gap: 10 }}>
-            <input required name="name" placeholder="Full name" style={inputStyle} />
+            <input
+              required
+              name="name"
+              placeholder="Full name"
+              style={inputStyle}
+            />
             <input
               required
               type="email"
@@ -53,7 +60,11 @@ export default function Contact({ settings = {} }) {
               placeholder="Email address"
               style={inputStyle}
             />
-            <input name="phone" placeholder="Phone number (optional)" style={inputStyle} />
+            <input
+              name="phone"
+              placeholder="Phone number (optional)"
+              style={inputStyle}
+            />
             <textarea
               required
               name="message"
@@ -62,7 +73,14 @@ export default function Contact({ settings = {} }) {
               style={inputStyle}
             />
 
-            <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: 10,
+                alignItems: "center",
+                flexWrap: "wrap",
+              }}
+            >
               <Button variant="primary">Send</Button>
               {status ? <span style={{ opacity: 0.85 }}>{status}</span> : null}
             </div>
@@ -71,10 +89,6 @@ export default function Contact({ settings = {} }) {
 
         <Card>
           <h3 style={{ marginBottom: 10 }}>School Details</h3>
-          <p style={{ opacity: 0.85 }}>
-            Add your official contact details here (phone, email, address, office hours).
-          </p>
-
           <div style={{ marginTop: 12, opacity: 0.9 }}>
             <p>
               <strong>Phone:</strong> {phone}
