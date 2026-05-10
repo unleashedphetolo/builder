@@ -537,8 +537,7 @@ export default function Builder() {
 
   const isLoadingWorkspace = bootingBuilder || isPreparingSelectedTemplate;
 
-  const shouldShowTemplateGuide =
-    !bootingBuilder && pagesLoaded && (!hasSelectedTemplate || !hasUsablePages);
+  const shouldShowTemplateGuide = !bootingBuilder && !hasSelectedTemplate;
 
   const loadingText = bootingBuilder
     ? "Checking your account, organization and saved website template."
@@ -673,7 +672,8 @@ export default function Builder() {
         if (!mounted) return;
 
         if (!user) {
-          setShowTemplateSelector(true);
+          setPagesLoaded(true);
+          setShowTemplateSelector(false);
           return;
         }
 
@@ -689,14 +689,16 @@ export default function Builder() {
 
         if (profileErr) {
           console.error("Builder boot profile error:", profileErr);
-          setShowTemplateSelector(true);
+          setPagesLoaded(true);
+          setShowTemplateSelector(false);
           return;
         }
 
         const orgId = profileData?.organization_id || null;
 
         if (!orgId) {
-          setShowTemplateSelector(true);
+          setPagesLoaded(true);
+          setShowTemplateSelector(false);
           return;
         }
 
@@ -715,12 +717,14 @@ export default function Builder() {
 
         if (siteErr) {
           console.error("Builder boot site error:", siteErr);
-          setShowTemplateSelector(true);
+          setPagesLoaded(true);
+          setShowTemplateSelector(false);
           return;
         }
 
         if (!existingSite) {
-          setShowTemplateSelector(true);
+          setPagesLoaded(true);
+          setShowTemplateSelector(false);
           return;
         }
 
@@ -730,7 +734,8 @@ export default function Builder() {
         setLoadingProgress(55);
 
         if (!existingSite.template_key) {
-          setShowTemplateSelector(true);
+          setPagesLoaded(true);
+          setShowTemplateSelector(false);
           return;
         }
 
