@@ -436,7 +436,7 @@
 .btn.ghost:hover {
   background: #0c0b29;
   border-color: #dbeafe;
-  color: #1d2a49;
+  color: #ffffff;
 }
 }
 
@@ -444,6 +444,20 @@
   .page-indicator {
     display: none;
   }
+
+
+.btn.ghost {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #000000;
+  box-shadow: none;
+}
+
+.btn.ghost:hover {
+  background: #0c0b29;
+  border-color: #dbeafe;
+  color: #ffffff;
+}
   }
 
 /* New */
