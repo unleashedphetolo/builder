@@ -20,6 +20,33 @@ function buildSiteHref(siteId, path = "") {
   return `#/site/${siteId || ""}${clean}`;
 }
 
+function normalizeSlug(slug = "/") {
+  const raw = String(slug || "/").trim();
+
+  const cleanRaw = raw
+    .split("?")[0]
+    .split("#")[0]
+    .replace(/^\/+|\/+$/g, "");
+
+  if (!cleanRaw || cleanRaw.toLowerCase() === "home") return "/";
+
+  return `/${cleanRaw}`;
+}
+
+function hrefToSlug(href = "", siteId = "") {
+  if (!href) return "/";
+  if (String(href).startsWith("http")) return href;
+
+  const withoutHash = String(href).replace(/^#/, "");
+  const sitePrefix = `/site/${siteId || ""}`;
+
+  if (withoutHash.startsWith(sitePrefix)) {
+    return normalizeSlug(withoutHash.replace(sitePrefix, "") || "/");
+  }
+
+  return normalizeSlug(withoutHash);
+}
+
 export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
   const [liveSettings, setLiveSettings] = useState(settings || {});
   const [liveNavItems, setLiveNavItems] = useState(navItems || []);
@@ -36,6 +63,7 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
+
     return () => {
       document.body.style.overflow = "";
     };
@@ -46,6 +74,10 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
       setLiveSettings((prev) => ({
         ...(prev || {}),
         ...(incoming || {}),
+        features: {
+          ...((prev && prev.features) || {}),
+          ...((incoming && incoming.features) || {}),
+        },
       }));
     };
 
@@ -79,7 +111,9 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
         payload.type === "builder:nav-updated" ||
         payload.type === "site-nav-updated"
       ) {
-        updateLiveNav(payload.navItems || payload.items || payload.payload || []);
+        updateLiveNav(
+          payload.navItems || payload.items || payload.payload || [],
+        );
       }
     };
 
@@ -90,8 +124,14 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
     window.addEventListener("message", handleMessage);
 
     return () => {
-      window.removeEventListener("builder:settings-updated", handleSettingsUpdate);
-      window.removeEventListener("site-settings-updated", handleSettingsUpdate);
+      window.removeEventListener(
+        "builder:settings-updated",
+        handleSettingsUpdate,
+      );
+      window.removeEventListener(
+        "site-settings-updated",
+        handleSettingsUpdate,
+      );
       window.removeEventListener("builder:nav-updated", handleNavUpdate);
       window.removeEventListener("site-nav-updated", handleNavUpdate);
       window.removeEventListener("message", handleMessage);
@@ -108,16 +148,117 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
   const tagline = liveSettings?.tagline || "Secondary School";
   const siteId = liveSettings?.site_id || "";
 
-  const dbNavItems = useMemo(() => {
+  const headerNavItems = useMemo(() => {
     return Array.isArray(liveNavItems)
       ? liveNavItems
-          .filter(
-            (item) =>
-              item && item.is_visible !== false && item.location !== "footer",
-          )
+          .filter((item) => item && (item.location || "header") === "header")
           .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
       : [];
   }, [liveNavItems]);
+
+  const visibleHeaderNavItems = useMemo(() => {
+    return headerNavItems.filter((item) => item.is_visible !== false);
+  }, [headerNavItems]);
+
+  const visibleNavByLabel = useMemo(() => {
+    const map = new Map();
+
+    visibleHeaderNavItems.forEach((item) => {
+      const key = String(item.label || "")
+        .trim()
+        .toLowerCase();
+
+      if (key) {
+        map.set(key, item);
+      }
+    });
+
+    return map;
+  }, [visibleHeaderNavItems]);
+
+  const visibleNavBySlug = useMemo(() => {
+    const map = new Map();
+
+    visibleHeaderNavItems.forEach((item) => {
+      const slug = normalizeSlug(item.href || "/");
+
+      if (slug) {
+        map.set(slug, item);
+      }
+    });
+
+    return map;
+  }, [visibleHeaderNavItems]);
+
+  const allNavByLabel = useMemo(() => {
+    const map = new Map();
+
+    headerNavItems.forEach((item) => {
+      const key = String(item.label || "")
+        .trim()
+        .toLowerCase();
+
+      if (key) {
+        map.set(key, item);
+      }
+    });
+
+    return map;
+  }, [headerNavItems]);
+
+  const allNavBySlug = useMemo(() => {
+    const map = new Map();
+
+    headerNavItems.forEach((item) => {
+      const slug = normalizeSlug(item.href || "/");
+
+      if (slug) {
+        map.set(slug, item);
+      }
+    });
+
+    return map;
+  }, [headerNavItems]);
+
+  const isVisibleNavTarget = (label, fallbackPath) => {
+    const labelKey = String(label || "")
+      .trim()
+      .toLowerCase();
+
+    const slugKey = normalizeSlug(fallbackPath || "/");
+
+    const found = allNavByLabel.get(labelKey) || allNavBySlug.get(slugKey);
+
+    // Important:
+    // If the link does not exist in site_nav_items yet,
+    // keep showing the template default link.
+    if (!found) return true;
+
+    return found.is_visible !== false;
+  };
+
+  const getDbHref = (label, fallbackPath) => {
+    const labelKey = String(label || "")
+      .trim()
+      .toLowerCase();
+
+    const slugKey = normalizeSlug(fallbackPath || "/");
+
+    const found = visibleNavByLabel.get(labelKey) || visibleNavBySlug.get(slugKey);
+
+    if (found?.href) {
+      return buildSiteHref(siteId, found.href);
+    }
+
+    return buildSiteHref(siteId, fallbackPath);
+  };
+
+  const filterMenuItems = (items = []) => {
+    return items.filter((item) => {
+      const slug = hrefToSlug(item.to, siteId);
+      return isVisibleNavTarget(item.label, slug);
+    });
+  };
 
   const menus = useMemo(
     () => ({
@@ -240,82 +381,94 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
     </div>
   );
 
-  const dbNavMap = useMemo(() => {
-    const map = {};
-    dbNavItems.forEach((item) => {
-      const key = (item.label || "").trim().toLowerCase();
-      if (key) map[key] = item;
-    });
-    return map;
-  }, [dbNavItems]);
-
   const topNav = useMemo(() => {
     const items = [];
 
-    const getDbHref = (label, fallbackPath) => {
-      const found = dbNavMap[label.toLowerCase()];
-      if (found?.href) return buildSiteHref(siteId, found.href);
-      return buildSiteHref(siteId, fallbackPath);
-    };
+    if (isVisibleNavTarget("Home", "/")) {
+      items.push({
+        type: "link",
+        key: "home",
+        label: "Home",
+        href: getDbHref("Home", "/"),
+      });
+    }
 
-    items.push({
-      type: "link",
-      key: "home",
-      label: "Home",
-      href: getDbHref("Home", "/"),
-    });
-
-    if (features.about) {
+    const aboutMenu = filterMenuItems(menus.about);
+    if (
+      features.about &&
+      isVisibleNavTarget("About", "/about") &&
+      aboutMenu.length
+    ) {
       items.push({
         type: "drop",
         key: "about",
         label: "About Us",
         href: getDbHref("About", "/about"),
-        menu: menus.about,
+        menu: aboutMenu,
       });
     }
 
-    if (features.activities) {
+    const activitiesMenu = filterMenuItems(menus.activities);
+    if (
+      features.activities &&
+      isVisibleNavTarget("Activities", "/activities") &&
+      activitiesMenu.length
+    ) {
       items.push({
         type: "drop",
         key: "activities",
         label: "Activities",
         href: getDbHref("Activities", "/activities"),
-        menu: menus.activities,
+        menu: activitiesMenu,
       });
     }
 
-    if (features.resources) {
+    const resourcesMenu = filterMenuItems(menus.resources);
+    if (
+      features.resources &&
+      isVisibleNavTarget("Resources", "/resources") &&
+      resourcesMenu.length
+    ) {
       items.push({
         type: "drop",
         key: "resources",
         label: "Resources",
         href: getDbHref("Resources", "/resources"),
-        menu: menus.resources,
+        menu: resourcesMenu,
       });
     }
 
-    if (features.news) {
+    const newsMenu = filterMenuItems(menus.news);
+    if (
+      features.news &&
+      isVisibleNavTarget("News", "/news") &&
+      newsMenu.length
+    ) {
       items.push({
         type: "drop",
         key: "news",
         label: "News",
         href: getDbHref("News", "/news"),
-        menu: menus.news,
+        menu: newsMenu,
       });
     }
 
-    if (features.admissions) {
+    const admissionsMenu = filterMenuItems(menus.admissions);
+    if (
+      features.admissions &&
+      isVisibleNavTarget("Admissions", "/admissions") &&
+      admissionsMenu.length
+    ) {
       items.push({
         type: "drop",
         key: "admissions",
         label: "Admissions",
         href: getDbHref("Admissions", "/admissions"),
-        menu: menus.admissions,
+        menu: admissionsMenu,
       });
     }
 
-    if (features.gallery) {
+    if (features.gallery && isVisibleNavTarget("Gallery", "/gallery")) {
       items.push({
         type: "link",
         key: "gallery",
@@ -324,7 +477,10 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
       });
     }
 
-    if (features.robotics) {
+    if (
+      features.robotics &&
+      isVisibleNavTarget("Robotics Club", "/robotics")
+    ) {
       items.push({
         type: "link",
         key: "robotics",
@@ -333,7 +489,7 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
       });
     }
 
-    if (features.contact) {
+    if (features.contact && isVisibleNavTarget("Contact", "/contact")) {
       items.push({
         type: "link",
         key: "contact",
@@ -343,7 +499,15 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
     }
 
     return items;
-  }, [dbNavMap, features, menus, siteId]);
+  }, [
+    features,
+    menus,
+    siteId,
+    allNavByLabel,
+    allNavBySlug,
+    visibleNavByLabel,
+    visibleNavBySlug,
+  ]);
 
   return (
     <header className="site-nav">

@@ -42,9 +42,14 @@ export default function SitePage() {
     return normalizePageSlug(path);
   }, [location.pathname, siteId, wildcardSlug]);
 
-  const isBuilderPreview = useMemo(() => {
+  const isBuilderMode = useMemo(() => {
     const search = new URLSearchParams(location.search);
-    return search.get("builder") === "1" || search.get("preview") === "1";
+    return search.get("builder") === "1";
+  }, [location.search]);
+
+  const isPublicPreview = useMemo(() => {
+    const search = new URLSearchParams(location.search);
+    return search.get("preview") === "1";
   }, [location.search]);
 
   useEffect(() => {
@@ -78,6 +83,8 @@ export default function SitePage() {
             .from("site_nav_items")
             .select("*")
             .eq("site_id", siteId)
+            .neq("is_visible", false)
+            .order("location", { ascending: true })
             .order("position", { ascending: true }),
         ]);
 
@@ -91,7 +98,9 @@ export default function SitePage() {
           .eq("site_id", siteId)
           .eq("slug", pageSlug);
 
-        if (!isBuilderPreview) {
+        // builder=1 can open hidden pages for editing.
+        // preview=1 must behave like public website preview.
+        if (!isBuilderMode) {
           pageQuery = pageQuery
             .neq("is_visible", false)
             .neq("is_published", false);
@@ -109,7 +118,7 @@ export default function SitePage() {
             .eq("site_id", siteId)
             .eq("slug", "/");
 
-          if (!isBuilderPreview) {
+          if (!isBuilderMode) {
             homeQuery = homeQuery
               .neq("is_visible", false)
               .neq("is_published", false);
@@ -126,12 +135,18 @@ export default function SitePage() {
           throw new Error("Page not found.");
         }
 
-        const { data: sectionData, error: sectionErr } = await supabase
+        let sectionQuery = supabase
           .from("site_sections")
           .select("*")
           .eq("site_id", siteId)
           .eq("page_id", pageData.id)
           .order("position", { ascending: true });
+
+        if (!isBuilderMode) {
+          sectionQuery = sectionQuery.neq("visible", false);
+        }
+
+        const { data: sectionData, error: sectionErr } = await sectionQuery;
 
         if (sectionErr) throw sectionErr;
 
@@ -153,7 +168,7 @@ export default function SitePage() {
     return () => {
       mounted = false;
     };
-  }, [siteId, pageSlug, isBuilderPreview]);
+  }, [siteId, pageSlug, isBuilderMode, isPublicPreview]);
 
   useEffect(() => {
     if (!settings) return;
@@ -171,11 +186,73 @@ export default function SitePage() {
     );
   }, [settings]);
 
-  // useEffect(() => {
-  //   const siteName = settings?.site_name || "Website Preview";
+  useEffect(() => {
+    const handleSettingsUpdate = (event) => {
+      const incoming = event?.detail || {};
 
-  //   document.title = siteName;
-  // }, [settings]);
+      setSettings((prev) => ({
+        ...(prev || {}),
+        ...(incoming || {}),
+      }));
+    };
+
+    const handleNavUpdate = (event) => {
+      const incoming = event?.detail || [];
+
+      if (Array.isArray(incoming)) {
+        setNavItems(incoming.filter((item) => item?.is_visible !== false));
+      }
+    };
+
+    const handleMessage = (event) => {
+      const payload = event?.data;
+
+      if (!payload || typeof payload !== "object") return;
+
+      if (
+        payload.type === "builder:settings-updated" ||
+        payload.type === "site-settings-updated"
+      ) {
+        setSettings((prev) => ({
+          ...(prev || {}),
+          ...(payload.settings || payload.payload || {}),
+        }));
+      }
+
+      if (
+        payload.type === "builder:nav-updated" ||
+        payload.type === "site-nav-updated"
+      ) {
+        const incoming =
+          payload.navItems || payload.items || payload.payload || [];
+
+        if (Array.isArray(incoming)) {
+          setNavItems(incoming.filter((item) => item?.is_visible !== false));
+        }
+      }
+    };
+
+    window.addEventListener("builder:settings-updated", handleSettingsUpdate);
+    window.addEventListener("site-settings-updated", handleSettingsUpdate);
+    window.addEventListener("builder:nav-updated", handleNavUpdate);
+    window.addEventListener("site-nav-updated", handleNavUpdate);
+    window.addEventListener("message", handleMessage);
+
+    return () => {
+      window.removeEventListener(
+        "builder:settings-updated",
+        handleSettingsUpdate,
+      );
+      window.removeEventListener(
+        "site-settings-updated",
+        handleSettingsUpdate,
+      );
+      window.removeEventListener("builder:nav-updated", handleNavUpdate);
+      window.removeEventListener("site-nav-updated", handleNavUpdate);
+      window.removeEventListener("message", handleMessage);
+    };
+  }, []);
+
   useEffect(() => {
     const siteName = settings?.site_name || "Website Preview";
     const siteLogo = settings?.logo_url || "/favicon.ico";
@@ -208,6 +285,7 @@ export default function SitePage() {
     appleIcon.href = logoWithRefresh;
     document.head.appendChild(appleIcon);
   }, [settings?.site_name, settings?.logo_url]);
+
   if (loading) {
     return <div style={{ padding: 32 }}>Loading…</div>;
   }
@@ -228,7 +306,8 @@ export default function SitePage() {
     navItems: navItems || [],
     page,
     sections: sections || [],
-    builderMode: isBuilderPreview,
+    builderMode: isBuilderMode,
+    previewMode: isPublicPreview,
   };
 
   if (layoutKey === "school") {

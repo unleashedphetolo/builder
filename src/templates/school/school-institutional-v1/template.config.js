@@ -1,4 +1,4 @@
-import fallbackLogo from "./assets/sebone.jpeg";
+import fallbackLogo from "./assets/institutional.png";
 import fallbackHeroImage from "./assets/gallery3.png";
 import hero2 from "./assets/gallery4.jpg";
 import hero3 from "./assets/acade14.jpg";
@@ -21,7 +21,7 @@ export const templateConfig = {
 
     email: "info@yourschool.co.za",
     phone: "+27 00 000 0000",
-    address_line1: "Your school address",
+    address_line1: "123 Education St",
     city: "Johannesburg",
     province: "Gauteng",
     postal_code: "0000",
@@ -38,49 +38,49 @@ export const templateConfig = {
     url: "",
     colorMode: "original",
     originalColor: "#1877f2",
-    monoColor: "#111111",
+    monoColor: "#ffffff",
   },
   instagram: {
     enabled: true,
     url: "",
     colorMode: "original",
     originalColor: "#e4405f",
-    monoColor: "#111111",
+    monoColor: "#ffffff",
   },
   tiktok: {
     enabled: true,
     url: "",
     colorMode: "original",
-    originalColor: "#000000",
-    monoColor: "#111111",
+    originalColor: "#ffffff",
+    monoColor: "#ffffff",
   },
   linkedin: {
     enabled: true,
     url: "",
     colorMode: "original",
     originalColor: "#0a66c2",
-    monoColor: "#111111",
+    monoColor: "#ffffff",
   },
   x: {
     enabled: true,
     url: "",
     colorMode: "original",
-    originalColor: "#000000",
-    monoColor: "#111111",
+    originalColor: "#ffffff",
+    monoColor: "#ffffff",
   },
   youtube: {
     enabled: true,
     url: "",
     colorMode: "original",
     originalColor: "#ff0000",
-    monoColor: "#111111",
+    monoColor: "#ffffff",
   },
   whatsapp: {
     enabled: true,
     url: "",
     colorMode: "original",
     originalColor: "#25d366",
-    monoColor: "#111111",
+    monoColor: "#ffffff",
   },
 },
 
@@ -101,7 +101,7 @@ social_display: {
     topbar_links: [
       { label: "News", href: "/news" },
       { label: "Resources", href: "/resources" },
-      { label: "Calendar", href: "/resources/calendar" },
+      // { label: "Calendar", href: "/resources/calendar" },
       { label: "Notice Board", href: "/notices" },
     ],
 

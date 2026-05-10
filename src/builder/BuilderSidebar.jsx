@@ -33,6 +33,7 @@ export default function BuilderSidebar({
   onUpdatePageContent,
   onUpdateAnyPageContent,
   onReorderPages,
+  onUpdateTopbar,
 }) {
   const [activeTab, setActiveTab] = useState("announcements");
   const [hoveredTab, setHoveredTab] = useState("announcements");
@@ -83,7 +84,7 @@ export default function BuilderSidebar({
         key: "pages",
         label: "Pages",
         icon: "📄",
-        subtitle: "Open, preview, search, reorder and control page visibility.",
+        subtitle: "Control topbar and page visibility.",
       },
       {
         key: "analytics",
@@ -184,12 +185,14 @@ export default function BuilderSidebar({
           navItems={navItems}
           currentPage={currentPage}
           currentPageData={currentPageData}
+          siteSettings={siteSettings}
           setCurrentPage={setCurrentPage}
           onUpdatePage={onUpdatePage}
           onUpdateAnyPage={onUpdateAnyPage}
           onUpdatePageContent={onUpdatePageContent}
           onUpdateAnyPageContent={onUpdateAnyPageContent}
           onReorderPages={onReorderPages}
+          onUpdateTopbar={onUpdateTopbar}
         />
       );
     }
@@ -280,9 +283,11 @@ export default function BuilderSidebar({
     if (tabKey === "pages") {
       return (
         <>
-          <div className="sidebar-preview-item">Pages and navigation</div>
-          <div className="sidebar-preview-item">Parent and child pages</div>
-          <div className="sidebar-preview-item">Open and edit page details</div>
+          <div className="sidebar-preview-item">Topbar on/off control</div>
+          <div className="sidebar-preview-item">Page visibility control</div>
+          <div className="sidebar-preview-item">
+            Links follow page on/off automatically
+          </div>
         </>
       );
     }

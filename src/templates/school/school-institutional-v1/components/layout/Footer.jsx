@@ -107,12 +107,42 @@ function buildSiteHref(siteId, path = "") {
   return `#/site/${siteId || ""}${clean}`;
 }
 
-export default function Footer({ settings = {} }) {
+function normalizeHref(href = "/") {
+  if (!href) return "/";
+  if (String(href).startsWith("http")) return href;
+
+  const clean = String(href)
+    .replace(/^#/, "")
+    .split("?")[0]
+    .split("#")[0]
+    .replace(/^\/+|\/+$/g, "");
+
+  const withoutSitePrefix = clean.replace(/^site\/[^/]+\/?/, "");
+
+  if (!withoutSitePrefix || withoutSitePrefix.toLowerCase() === "home") {
+    return "/";
+  }
+
+  return `/${withoutSitePrefix.replace(/^\/+|\/+$/g, "")}`;
+}
+
+export default function Footer({
+  settings = {},
+  navItems = [],
+  navigateTo: navigateToProp,
+}) {
   const [liveSettings, setLiveSettings] = useState(settings || {});
+  const [liveNavItems, setLiveNavItems] = useState(
+    Array.isArray(navItems) ? navItems : [],
+  );
 
   useEffect(() => {
     setLiveSettings(settings || {});
   }, [settings]);
+
+  useEffect(() => {
+    setLiveNavItems(Array.isArray(navItems) ? navItems : []);
+  }, [navItems]);
 
   useEffect(() => {
     const mergeLiveSettings = (incoming = {}) => {
@@ -127,11 +157,25 @@ export default function Footer({ settings = {} }) {
           ...((prev && prev.social_display) || {}),
           ...((incoming && incoming.social_display) || {}),
         },
+        features: {
+          ...((prev && prev.features) || {}),
+          ...((incoming && incoming.features) || {}),
+        },
       }));
+    };
+
+    const updateLiveNav = (incoming = []) => {
+      if (Array.isArray(incoming)) {
+        setLiveNavItems(incoming);
+      }
     };
 
     const handleCustomSettingsUpdate = (event) => {
       mergeLiveSettings(event?.detail || {});
+    };
+
+    const handleNavUpdate = (event) => {
+      updateLiveNav(event?.detail || []);
     };
 
     const handleMessage = (event) => {
@@ -145,6 +189,15 @@ export default function Footer({ settings = {} }) {
       ) {
         mergeLiveSettings(payload.settings || payload.payload || {});
       }
+
+      if (
+        payload.type === "builder:nav-updated" ||
+        payload.type === "site-nav-updated"
+      ) {
+        updateLiveNav(
+          payload.navItems || payload.items || payload.payload || [],
+        );
+      }
     };
 
     window.addEventListener(
@@ -155,6 +208,8 @@ export default function Footer({ settings = {} }) {
       "site-settings-updated",
       handleCustomSettingsUpdate,
     );
+    window.addEventListener("builder:nav-updated", handleNavUpdate);
+    window.addEventListener("site-nav-updated", handleNavUpdate);
     window.addEventListener("message", handleMessage);
 
     return () => {
@@ -166,6 +221,8 @@ export default function Footer({ settings = {} }) {
         "site-settings-updated",
         handleCustomSettingsUpdate,
       );
+      window.removeEventListener("builder:nav-updated", handleNavUpdate);
+      window.removeEventListener("site-nav-updated", handleNavUpdate);
       window.removeEventListener("message", handleMessage);
     };
   }, []);
@@ -201,6 +258,31 @@ export default function Footer({ settings = {} }) {
   const siteId = liveSettings?.site_id || "";
   const year = new Date().getFullYear();
 
+  const isLinkVisibleByPage = (href = "/") => {
+    const cleanHref = normalizeHref(href);
+
+    if (String(cleanHref).startsWith("http")) {
+      return true;
+    }
+
+    const matched = (Array.isArray(liveNavItems) ? liveNavItems : []).find(
+      (item) => {
+        if (!item?.href) return false;
+        return normalizeHref(item.href) === cleanHref;
+      },
+    );
+
+    /*
+      Important:
+      If there is no nav item for this footer link yet,
+      keep showing the template default link.
+      Only hide it when the matching page/nav item exists and is Off.
+    */
+    if (!matched) return true;
+
+    return matched.is_visible !== false;
+  };
+
   const getIconColor = (data = {}) => {
     const mode = data.colorMode || "original";
 
@@ -214,7 +296,13 @@ export default function Footer({ settings = {} }) {
   /* ---------- instant navigation helper ---------- */
 
   const navigateTo = (href) => {
-    const slug = href.replace(`#/site/${siteId}`, "") || "/";
+    const slug = normalizeHref(href);
+
+    if (navigateToProp) {
+      navigateToProp(slug);
+      return;
+    }
+
     window.dispatchEvent(new CustomEvent("builder:navigate", { detail: slug }));
   };
 
@@ -301,6 +389,18 @@ export default function Footer({ settings = {} }) {
     },
   ];
 
+  const visibleGroups = groups
+    .filter((g) => {
+      if (g.title === "Activities") return features.activities;
+      if (g.title === "Parents") return features.admissions || features.contact;
+      return true;
+    })
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => isLinkVisibleByPage(item.path)),
+    }))
+    .filter((group) => group.items.length > 0);
+
   return (
     <footer className="site-footer" role="contentinfo">
       <div className="footer-top container">
@@ -312,7 +412,7 @@ export default function Footer({ settings = {} }) {
               aria-label="Go to home"
               onClick={(e) => {
                 e.preventDefault();
-                navigateTo?.("/");
+                navigateTo("/");
               }}
             >
               <div className="logoz">
@@ -357,33 +457,26 @@ export default function Footer({ settings = {} }) {
         </div>
 
         <nav className="footer-links">
-          {groups
-            .filter((g) => {
-              if (g.title === "Activities") return features.activities;
-              if (g.title === "Parents")
-                return features.admissions || features.contact;
-              return true;
-            })
-            .map((group) => (
-              <div key={group.title} className="link-group">
-                <h4>{group.title}</h4>
-                <ul>
-                  {group.items.map((item) => (
-                    <li key={item.name}>
-                      <a
-                        href={item.path}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          navigateTo(item.path);
-                        }}
-                      >
-                        {item.name}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+          {visibleGroups.map((group) => (
+            <div key={group.title} className="link-group">
+              <h4>{group.title}</h4>
+              <ul>
+                {group.items.map((item) => (
+                  <li key={item.name}>
+                    <a
+                      href={item.path}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigateTo(item.path);
+                      }}
+                    >
+                      {item.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </nav>
       </div>
 

@@ -13,7 +13,7 @@ import SchoolLifeLanding from "./pages/SchoolLife";
 import ResourcesLanding from "./pages/ResourcesLanding";
 import DigitalLibrary from "./pages/DigitalLibrary";
 import News from "./pages/News";
-import Notices from "./pages/Notices"; 
+import Notices from "./pages/Notices";
 import Gallery from "./pages/Gallery";
 import Staff from "./pages/Staff";
 import Facilities from "./pages/Facilities";
@@ -131,6 +131,7 @@ export default function App(props) {
     page,
     sections = [],
     builderMode = false,
+    previewMode = false,
   } = props || {};
 
   const [currentSlug, setCurrentSlug] = useState(page?.slug || "/");
@@ -141,6 +142,14 @@ export default function App(props) {
     currentSlug && currentSlug.startsWith("/")
       ? currentSlug
       : `/${currentSlug || ""}`;
+
+  const navigateTo = (nextSlug) => {
+    window.dispatchEvent(
+      new CustomEvent("builder:navigate", {
+        detail: nextSlug || "/",
+      }),
+    );
+  };
 
   /* ---------- LISTEN: iframe navigation ---------- */
 
@@ -190,7 +199,9 @@ export default function App(props) {
       <PageComponent
         sections={sections}
         builderMode={builderMode}
+        previewMode={previewMode}
         settings={settings}
+        navItems={navItems}
       />
     );
 
@@ -202,40 +213,39 @@ export default function App(props) {
 
       <Topbar
         settings={settings}
+        navItems={navItems}
         socialLinks={settings?.social_links}
         socialDisplay={settings?.social_display}
         topbarLinks={settings?.topbar_links || []}
+        navigateTo={navigateTo}
+        builderMode={builderMode}
+        previewMode={previewMode}
       />
 
       <Navbar
         settings={settings}
         navItems={navItems}
-        navigateTo={(slug) => {
-          window.dispatchEvent(
-            new CustomEvent("builder:navigate", { detail: slug })
-          );
-        }}
+        navigateTo={navigateTo}
+        builderMode={builderMode}
+        previewMode={previewMode}
       />
 
-      {/* <main data-builder-page-root={builderMode ? "1" : "0"}>
-        {pageContent}
-      </main> */}
       <main data-builder-page-root={builderMode ? "1" : "0"}>
+        {/* Breadcrumbs */}
+        {slug !== "/" && <Breadcrumbs slug={slug} />}
 
-  {/* Breadcrumbs */}
-  {slug !== "/" && (
-    <Breadcrumbs slug={slug} />
-  )}
-
-  {pageContent}
-
-</main>
+        {pageContent}
+      </main>
 
       <Footer
         settings={settings}
+        navItems={navItems}
         socialLinks={settings?.social_links}
         socialDisplay={settings?.social_display}
         footerLinks={settings?.footer_links || []}
+        navigateTo={navigateTo}
+        builderMode={builderMode}
+        previewMode={previewMode}
       />
 
       <ScrollTopButton />

@@ -26,9 +26,19 @@ function resolveTemplateImporter(templateKey) {
 
 function normalizeNavItems(navItems = []) {
   if (!Array.isArray(navItems)) return [];
+
   return navItems
     .filter((item) => item && item.is_visible !== false)
-    .sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+    .sort((a, b) => {
+      const locationA = a.location || "";
+      const locationB = b.location || "";
+
+      if (locationA !== locationB) {
+        return locationA.localeCompare(locationB);
+      }
+
+      return (a.position ?? 0) - (b.position ?? 0);
+    });
 }
 
 function normalizeSettings(settings = {}) {
@@ -45,7 +55,10 @@ function normalizeSettings(settings = {}) {
     footer_links: Array.isArray(settings?.footer_links)
       ? settings.footer_links
       : [],
-    features: settings?.features || {},
+    features: {
+      topbar: true,
+      ...(settings?.features || {}),
+    },
   };
 }
 
@@ -67,6 +80,7 @@ function TemplateLoader({
   page,
   sections,
   builderMode,
+  previewMode,
   children,
 }) {
   const Template = useMemo(() => lazy(importer), [importer]);
@@ -81,6 +95,7 @@ function TemplateLoader({
         page={page}
         sections={sections}
         builderMode={builderMode}
+        previewMode={previewMode}
       >
         {children}
       </Template>
@@ -94,6 +109,7 @@ export default function SchoolLayout({
   page,
   sections,
   builderMode = false,
+  previewMode = false,
   children,
 }) {
   const safeSettings = useMemo(() => normalizeSettings(settings), [settings]);
@@ -116,6 +132,7 @@ export default function SchoolLayout({
       page={page}
       sections={sections}
       builderMode={builderMode}
+      previewMode={previewMode}
     >
       {children}
     </TemplateLoader>

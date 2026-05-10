@@ -26,12 +26,38 @@ function buildSiteHref(siteId, path = "") {
   return `#/site/${siteId || ""}${clean}`;
 }
 
-export default function Topbar({ settings = {} }) {
+function normalizeHref(href = "/") {
+  if (!href) return "/";
+  if (String(href).startsWith("http")) return href;
+
+  const clean = String(href)
+    .split("?")[0]
+    .split("#")[0]
+    .replace(/^\/+|\/+$/g, "");
+
+  if (!clean || clean.toLowerCase() === "home") return "/";
+
+  return `/${clean}`;
+}
+
+export default function Topbar({
+  settings = {},
+  navItems = [],
+  socialLinks,
+  socialDisplay,
+  topbarLinks = [],
+  navigateTo,
+}) {
   const [liveSettings, setLiveSettings] = useState(settings || {});
+  const [liveNavItems, setLiveNavItems] = useState(navItems || []);
 
   useEffect(() => {
     setLiveSettings(settings || {});
   }, [settings]);
+
+  useEffect(() => {
+    setLiveNavItems(Array.isArray(navItems) ? navItems : []);
+  }, [navItems]);
 
   useEffect(() => {
     const mergeLiveSettings = (incoming = {}) => {
@@ -46,11 +72,23 @@ export default function Topbar({ settings = {} }) {
           ...((prev && prev.social_display) || {}),
           ...((incoming && incoming.social_display) || {}),
         },
+        features: {
+          ...((prev && prev.features) || {}),
+          ...((incoming && incoming.features) || {}),
+        },
       }));
     };
 
     const handleCustomSettingsUpdate = (event) => {
       mergeLiveSettings(event?.detail || {});
+    };
+
+    const handleNavUpdate = (event) => {
+      const incoming = event?.detail || [];
+
+      if (Array.isArray(incoming)) {
+        setLiveNavItems(incoming);
+      }
     };
 
     const handleMessage = (event) => {
@@ -64,6 +102,18 @@ export default function Topbar({ settings = {} }) {
       ) {
         mergeLiveSettings(payload.settings || payload.payload || {});
       }
+
+      if (
+        payload.type === "builder:nav-updated" ||
+        payload.type === "site-nav-updated"
+      ) {
+        const incoming =
+          payload.navItems || payload.items || payload.payload || [];
+
+        if (Array.isArray(incoming)) {
+          setLiveNavItems(incoming);
+        }
+      }
     };
 
     window.addEventListener(
@@ -74,6 +124,8 @@ export default function Topbar({ settings = {} }) {
       "site-settings-updated",
       handleCustomSettingsUpdate,
     );
+    window.addEventListener("builder:nav-updated", handleNavUpdate);
+    window.addEventListener("site-nav-updated", handleNavUpdate);
     window.addEventListener("message", handleMessage);
 
     return () => {
@@ -85,6 +137,8 @@ export default function Topbar({ settings = {} }) {
         "site-settings-updated",
         handleCustomSettingsUpdate,
       );
+      window.removeEventListener("builder:nav-updated", handleNavUpdate);
+      window.removeEventListener("site-nav-updated", handleNavUpdate);
       window.removeEventListener("message", handleMessage);
     };
   }, []);
@@ -160,29 +214,93 @@ export default function Topbar({ settings = {} }) {
     ],
   };
 
-  const socialLinks = liveSettings?.social_links || liveSettings?.social || {};
-  const socialDisplay = liveSettings?.social_display || {};
+  const topbarEnabled = liveSettings?.features?.topbar !== false;
+
+  const resolvedSocialLinks =
+    socialLinks || liveSettings?.social_links || liveSettings?.social || {};
+  const resolvedSocialDisplay =
+    socialDisplay || liveSettings?.social_display || {};
 
   const social = useMemo(
     () => ({
       ...DEFAULT_SOCIAL,
-      ...socialLinks,
-      topbar: socialDisplay.topbar ?? DEFAULT_SOCIAL.topbar,
-      footer: socialDisplay.footer ?? DEFAULT_SOCIAL.footer,
-      order: Array.isArray(socialDisplay.order)
-        ? socialDisplay.order
+      ...resolvedSocialLinks,
+      topbar: resolvedSocialDisplay.topbar ?? DEFAULT_SOCIAL.topbar,
+      footer: resolvedSocialDisplay.footer ?? DEFAULT_SOCIAL.footer,
+      order: Array.isArray(resolvedSocialDisplay.order)
+        ? resolvedSocialDisplay.order
         : DEFAULT_SOCIAL.order,
     }),
-    [socialLinks, socialDisplay],
+    [resolvedSocialLinks, resolvedSocialDisplay],
   );
 
-  const topLinks = Array.isArray(liveSettings?.topbar_links)
-    ? liveSettings.topbar_links
-    : [];
+  const allTopbarNavItems = useMemo(() => {
+    return (Array.isArray(liveNavItems) ? liveNavItems : [])
+      .filter((item) => item?.location === "topbar")
+      .sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+  }, [liveNavItems]);
+
+  const isLinkVisibleByPage = (href = "/") => {
+    const cleanHref = normalizeHref(href);
+
+    if (String(cleanHref).startsWith("http")) {
+      return true;
+    }
+
+    const matched = (Array.isArray(liveNavItems) ? liveNavItems : []).find(
+      (item) => {
+        if (!item?.href) return false;
+        return normalizeHref(item.href) === cleanHref;
+      },
+    );
+
+    /*
+      Important:
+      If there is no nav item for this page yet,
+      keep showing the template default link.
+      Only hide it when the matching page/nav item exists and is Off.
+    */
+    if (!matched) return true;
+
+    return matched.is_visible !== false;
+  };
+
+  const navTopLinks = useMemo(() => {
+    return allTopbarNavItems
+      .filter((item) => item?.is_visible !== false)
+      .map((item) => ({
+        label: item.label,
+        href: item.href || "/",
+        is_external: item.is_external === true,
+      }));
+  }, [allTopbarNavItems]);
+
+  const fallbackTopLinks = useMemo(() => {
+    const links = Array.isArray(topbarLinks)
+      ? topbarLinks
+      : Array.isArray(liveSettings?.topbar_links)
+        ? liveSettings.topbar_links
+        : [];
+
+    return links
+      .filter((item) => item?.enabled !== false)
+      .filter((item) => isLinkVisibleByPage(item?.href || "/"))
+      .map((item) => ({
+        label: item.label || item.title,
+        href: item.href || "/",
+        is_external:
+          item.is_external === true ||
+          String(item.href || "").startsWith("http"),
+      }));
+  }, [topbarLinks, liveSettings?.topbar_links, liveNavItems]);
+
+  const topLinks = allTopbarNavItems.length ? navTopLinks : fallbackTopLinks;
 
   const phone = liveSettings?.phone || "+27 00 000 0000";
   const email = liveSettings?.email || "info@school.co.za";
   const siteId = liveSettings?.site_id || "";
+
+  const applyNowVisible = isLinkVisibleByPage("/admissions/apply");
 
   const getIconColor = (data = {}) => {
     const mode = data.colorMode || "original";
@@ -194,33 +312,32 @@ export default function Topbar({ settings = {} }) {
     return data.originalColor || data.color || "#ffffff";
   };
 
-  const navigateTo = (href) => {
-    const slug = href.replace(`#/site/${siteId}`, "") || "/";
-    window.dispatchEvent(new CustomEvent("builder:navigate", { detail: slug }));
+  const goTo = (href) => {
+    if (String(href || "").startsWith("http")) return;
+
+    const cleanSlug = normalizeHref(href);
+    const fullHref = buildSiteHref(siteId, cleanSlug);
+
+    if (navigateTo) {
+      navigateTo(cleanSlug);
+      return;
+    }
+
+    window.dispatchEvent(
+      new CustomEvent("builder:navigate", { detail: cleanSlug }),
+    );
+
+    window.location.hash = fullHref.replace(/^#/, "");
   };
+
+  if (!topbarEnabled) {
+    return null;
+  }
 
   return (
     <div className="topbar" role="banner" aria-label="Top information bar">
       <div className="container topbar-inner">
         <div className="left">
-          {/* <div
-            className="brand-small"
-            aria-hidden="true"
-            style={{ width: "25px", height: "25px" }}
-          >
-            <img
-              src="/images/Education.jpg"
-              alt="South African Education Logo"
-              className="brand-icon"
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "contain",
-                display: "block",
-                borderRadius: "4px",
-              }}
-            />
-          </div> */}
           <button
             type="button"
             className="brand-small"
@@ -267,17 +384,23 @@ export default function Topbar({ settings = {} }) {
         <div className="center">
           <nav className="top-links">
             {topLinks.map((item, index) => {
-              if (item.enabled === false) return null;
+              if (!item?.label) return null;
 
-              const href = buildSiteHref(siteId, item.href);
+              const href = item.is_external
+                ? item.href
+                : buildSiteHref(siteId, item.href);
 
               return (
                 <a
-                  key={index}
+                  key={`${item.label}-${item.href}-${index}`}
                   href={href}
+                  target={item.is_external ? "_blank" : undefined}
+                  rel={item.is_external ? "noopener noreferrer" : undefined}
                   onClick={(e) => {
+                    if (item.is_external) return;
+
                     e.preventDefault();
-                    navigateTo(href);
+                    goTo(item.href);
                   }}
                 >
                   {item.label}
@@ -320,20 +443,22 @@ export default function Topbar({ settings = {} }) {
             </div>
           ) : null}
 
-          <div
-            className="auth-links"
-            style={{ fontSize: "12px", display: "flex" }}
-          >
-            <a
-              href={buildSiteHref(siteId, "/admissions/apply")}
-              onClick={(e) => {
-                e.preventDefault();
-                navigateTo(buildSiteHref(siteId, "/admissions/apply"));
-              }}
+          {applyNowVisible && (
+            <div
+              className="auth-links"
+              style={{ fontSize: "12px", display: "flex" }}
             >
-              Apply Now
-            </a>
-          </div>
+              <a
+                href={buildSiteHref(siteId, "/admissions/apply")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  goTo("/admissions/apply");
+                }}
+              >
+                Apply Now
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -274,6 +274,112 @@ function SortablePageRow({
   );
 }
 
+function TopbarMasterRow({ siteId, enabled, onToggle }) {
+  const [hovered, setHovered] = useState(false);
+  const showPreview = hovered;
+
+  return (
+    <div
+      className={`enterprise-page-card ${!enabled ? "is-hidden" : ""}`}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div className="enterprise-page-row">
+        <span className="page-drag-handle" />
+
+        <span className="page-number">01</span>
+
+        <span className="page-type-icon">
+          {enabled ? <FiEye /> : <FiEyeOff />}
+        </span>
+
+        <span className="page-title-block">
+          <strong>Topbar</strong>
+          <small>
+            {enabled
+              ? "Whole topbar area is visible"
+              : "Whole topbar area is hidden"}
+          </small>
+        </span>
+
+        <button
+          type="button"
+          className={`page-visibility-toggle ${enabled ? "on" : "off"}`}
+          title={enabled ? "Turn topbar off" : "Turn topbar on"}
+          aria-label={enabled ? "Turn topbar off" : "Turn topbar on"}
+          onClick={() => onToggle?.(!enabled)}
+        >
+          {enabled ? <FiEye /> : <FiEyeOff />}
+          <span>{enabled ? "On" : "Off"}</span>
+        </button>
+      </div>
+
+      {showPreview && siteId && (
+        <div
+          className="page-mini-preview-shell"
+          style={{
+            padding: "10px",
+            background: "#f8fafc",
+          }}
+        >
+          <div className="page-mini-preview-topline">
+            <FiEdit3 />
+            <span>Focused topbar preview</span>
+          </div>
+
+          <div
+            className="page-mini-preview-frame-wrap"
+            style={{
+              height: "48px",
+              minHeight: "48px",
+              maxHeight: "48px",
+              overflow: "hidden",
+              borderRadius: "12px",
+              border: "1px solid #e2e8f0",
+              background: "#ffffff",
+            }}
+          >
+            <iframe
+              src={previewUrl(siteId, "/")}
+              title="Topbar focused preview"
+              loading="lazy"
+              style={{
+                width: "400%",
+                height: "150%",
+                border: "0",
+                transform: "scale(0.25)",
+                transformOrigin: "0 0",
+                pointerEvents: "none",
+                background: "#ffffff",
+                display: "block",
+              }}
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PanelSection({ title, children, empty }) {
+  return (
+    <div className="enterprise-page-section">
+      <div className="page-mini-preview-topline">
+        <FiEdit3 />
+        <span>{title}</span>
+      </div>
+
+      <div className="enterprise-page-list">
+        {children || (
+          <div className="enterprise-page-empty">
+            {empty || "No items found."}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function PagesPanel({
   siteId,
   layoutKey,
@@ -282,11 +388,13 @@ export default function PagesPanel({
   navItems = [],
   currentPage,
   // currentPageData,
+  siteSettings,
   setCurrentPage,
   // onUpdatePage,
   onUpdateAnyPage,
   // onUpdatePageContent,
   onReorderPages,
+  onUpdateTopbar,
 }) {
   const [search, setSearch] = useState("");
 
@@ -307,9 +415,15 @@ export default function PagesPanel({
     });
   }, [navItems, activePageIds, layoutKey, templateKey]);
 
+  const pageNavItems = useMemo(() => {
+    return activeNavItems.filter((item) => item?.page_id);
+  }, [activeNavItems]);
+
+  const topbarEnabled = siteSettings?.features?.topbar !== false;
+
   const tree = useMemo(
-    () => buildPageTree(pages, activeNavItems),
-    [pages, activeNavItems, layoutKey, templateKey],
+    () => buildPageTree(pages, pageNavItems),
+    [pages, pageNavItems, layoutKey, templateKey],
   );
 
   const filteredTree = useMemo(() => filterTree(tree, search), [tree, search]);
@@ -320,8 +434,6 @@ export default function PagesPanel({
     () => flatRows.map(({ page }) => page.id),
     [flatRows],
   );
-
-  // const selectedContent = currentPageData?.content || {};
 
   const handleSelectPage = (page) => {
     setCurrentPage?.(page.id);
@@ -355,13 +467,6 @@ export default function PagesPanel({
 
   return (
     <div className="panel-shell enterprise-pages-panel">
-      {/* <div className="panel-header enterprise-pages-header">
-        <div>
-          <h3>Pages and navigation</h3>
-          <p>Open, preview, search, reorder and control page visibility.</p>
-        </div>
-      </div> */}
-
       <label className="enterprise-page-search" aria-label="Search pages">
         <FiSearch />
         <input
@@ -388,100 +493,47 @@ export default function PagesPanel({
       </label>
 
       <div className="enterprise-page-list-wrap">
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
+        <PanelSection title="Topbar">
+          <TopbarMasterRow
+            siteId={siteId}
+            enabled={topbarEnabled}
+            onToggle={onUpdateTopbar}
+          />
+        </PanelSection>
+
+        <PanelSection
+          title="Pages"
+          empty="No pages found for the selected template."
         >
-          <SortableContext
-            items={sortableIds}
-            strategy={verticalListSortingStrategy}
-          >
-            <div className="enterprise-page-list">
-              {flatRows.length ? (
-                flatRows.map(({ page, level }, index) => (
-                  <SortablePageRow
-                    key={page.id}
-                    siteId={siteId}
-                    page={page}
-                    level={level}
-                    number={index + 1}
-                    currentPage={currentPage}
-                    onSelectPage={handleSelectPage}
-                    onToggleVisibility={handleToggleVisibility}
-                  />
-                ))
-              ) : (
-                <div className="enterprise-page-empty">
-                  No pages found for the selected template.
+          {flatRows.length ? (
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={sortableIds}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="enterprise-page-list">
+                  {flatRows.map(({ page, level }, index) => (
+                    <SortablePageRow
+                      key={page.id}
+                      siteId={siteId}
+                      page={page}
+                      level={level}
+                      number={index + 2}
+                      currentPage={currentPage}
+                      onSelectPage={handleSelectPage}
+                      onToggleVisibility={handleToggleVisibility}
+                    />
+                  ))}
                 </div>
-              )}
-            </div>
-          </SortableContext>
-        </DndContext>
+              </SortableContext>
+            </DndContext>
+          ) : null}
+        </PanelSection>
       </div>
-
-      {/* {currentPageData && (
-        <div className="card-block enterprise-page-editor">
-          <div className="page-editor-title-row">
-            <div>
-              <strong>Edit selected page</strong>
-              <small>{normalizeSlug(currentPageData.slug)}</small>
-            </div>
-          </div>
-
-          <div className="field compact">
-            <label>Page title</label>
-            <input
-              value={currentPageData?.title || ""}
-              onChange={(e) => onUpdatePage?.({ title: e.target.value })}
-            />
-          </div>
-
-          <div className="field compact">
-            <label>Page slug</label>
-            <input
-              value={normalizeSlug(currentPageData?.slug || "/")}
-              onChange={(e) => onUpdatePage?.({ slug: normalizeSlug(e.target.value) })}
-            />
-          </div>
-
-          <div className="field compact">
-            <label>Fallback headline</label>
-            <input
-              value={selectedContent?.headline || currentPageData?.title || ""}
-              onChange={(e) => onUpdatePageContent?.("headline", e.target.value)}
-            />
-          </div>
-
-          <div className="field compact">
-            <label>Fallback intro / description</label>
-            <textarea
-              value={selectedContent?.description || ""}
-              placeholder="This text is used by templates that render page fallback content."
-              onChange={(e) => onUpdatePageContent?.("description", e.target.value)}
-            />
-          </div>
-
-          <div className="grid-2">
-            <div className="field compact">
-              <label>Button text</label>
-              <input
-                value={selectedContent?.primaryText || ""}
-                onChange={(e) => onUpdatePageContent?.("primaryText", e.target.value)}
-              />
-            </div>
-
-            <div className="field compact">
-              <label>Button link</label>
-              <input
-                value={selectedContent?.primaryHref || ""}
-                onChange={(e) => onUpdatePageContent?.("primaryHref", e.target.value)}
-              />
-            </div>
-          </div>
-        </div>
-      )} */}
     </div>
   );
 }
