@@ -346,7 +346,18 @@
   .builder-navbar-center {
     justify-content: flex-start;
   }
+.btn.ghost {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #000000;
+  box-shadow: none;
+}
 
+.btn.ghost:hover {
+  background: #0c0b29;
+  border-color: #dbeafe;
+  color: #ffffff;
+}
   .builder-navbar-right {
     position: absolute;
     top: calc(100% + 10px);
