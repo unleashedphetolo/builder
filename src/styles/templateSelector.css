@@ -188,7 +188,7 @@
 }
 
 .template-preview::after {
-  content: "Click preview to use";
+  content: "Click to preview";
   position: absolute;
   left: 12px;
   bottom: 12px;
@@ -328,10 +328,11 @@
 }
 
 .template-tags {
-  display: flex;
+  /* display: flex; */
+  display: none;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 12px;
+  /* margin-top: 12px; */
 }
 
 .tag {
@@ -345,7 +346,7 @@
 }
 
 .template-actions {
-  margin-top: auto;
+  /* margin-top: auto; */
   padding: 16px;
 }
 
@@ -513,8 +514,9 @@
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.045);
 }
 
-.template-search-box:hover {border-color: #034880;}
-
+.template-search-box:hover {
+  border-color: #034880;
+}
 
 .template-search-icon {
   width: 26px;
@@ -775,8 +777,6 @@
   gap: 10px;
 }
 
-
-
 .template-search-icon {
   width: 28px;
   height: 28px;
@@ -847,7 +847,8 @@
 }
 
 .template-card {
-  min-height: 480px !important;
+  min-height: 280px !important;
+  /* min-height: 480px !important; */
 }
 
 .template-card.current {
@@ -966,7 +967,7 @@
 
 @media (max-width: 420px) {
   .template-preview {
-    height: 260px !important;
+    height: 270px !important;
   }
 
   .template-live-preview-frame {

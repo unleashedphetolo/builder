@@ -552,7 +552,6 @@ select {
   text-align: center;
 }
 
-
 /* For the Pages src/styles/panels.css */
 
 .enterprise-pages-panel {
@@ -650,7 +649,7 @@ select {
 
 .enterprise-page-row {
   display: grid;
-    grid-template-columns: 10px 24px 26px minmax(0, 1fr) 58px;
+  grid-template-columns: 10px 24px 26px minmax(0, 1fr) 58px;
   align-items: center;
   gap: 5px;
   min-height: 56px;
@@ -841,7 +840,7 @@ select {
 
 @media (max-width: 768px) {
   .enterprise-page-row {
-      grid-template-columns: 8px 22px 24px minmax(0, 1fr) 54px;
+    grid-template-columns: 8px 22px 24px minmax(0, 1fr) 54px;
     gap: 4px;
     min-height: 54px;
     padding: 7px 5px !important;
@@ -863,15 +862,15 @@ select {
   }
 
   .page-visibility-toggle {
-  width: 54px;
-  min-width: 54px;
-  padding: 6px 7px;
-  gap: 4px;
-}
+    width: 54px;
+    min-width: 54px;
+    padding: 6px 7px;
+    gap: 4px;
+  }
 
-.page-visibility-toggle span {
-  display: inline;
-}
+  .page-visibility-toggle span {
+    display: inline;
+  }
 
   .page-title-block strong {
     font-size: 12.5px;
@@ -931,7 +930,8 @@ select {
 /* same measurement style as PagesPanel preview */
 .template-preview-box {
   width: 100% !important;
-  height: 150px !important;
+  /* height: 150px !important; */
+  height: 170px !important;
   border: 1px solid #e2e8f0 !important;
   border-radius: 12px !important;
   background: #ffffff !important;
@@ -1040,7 +1040,7 @@ select {
 
 @media (max-width: 768px) {
   .template-preview-box {
-    height: 150px !important;
+    height: 170px !important;
   }
 
   .template-preview-frame {

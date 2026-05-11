@@ -165,16 +165,37 @@ export default function TemplateSelector({
     );
   };
 
+  const getTemplateCacheKey = (template) => {
+    return (
+      template?.updated_at ||
+      template?.updatedAt ||
+      template?.modified_at ||
+      template?.last_modified ||
+      template?.template_updated_at ||
+      template?.created_at ||
+      template?.template_key ||
+      "1"
+    );
+  };
+
   const getLivePreviewUrl = (template) => {
     if (!template?.layout_key || !template?.template_key) return "";
 
-    return `#/template-preview/${template.layout_key}/${template.template_key}?mini=1`;
+    const cacheKey = getTemplateCacheKey(template);
+
+    return `/?preview_v=${encodeURIComponent(
+      cacheKey,
+    )}#/template-preview/${template.layout_key}/${template.template_key}?mini=1`;
   };
 
   const getFullPreviewUrl = (template) => {
     if (!template?.layout_key || !template?.template_key) return "";
 
-    return `#/template-preview/${template.layout_key}/${template.template_key}?preview=1`;
+    const cacheKey = getTemplateCacheKey(template);
+
+    return `/?preview_v=${encodeURIComponent(
+      cacheKey,
+    )}#/template-preview/${template.layout_key}/${template.template_key}?preview=1`;
   };
 
   const getTemplateScore = (template, query) => {
@@ -344,7 +365,11 @@ export default function TemplateSelector({
     : "";
 
   const ApplyProgress = ({ compact = false }) => (
-    <span className={compact ? "template-apply-progress compact" : "template-apply-progress"}>
+    <span
+      className={
+        compact ? "template-apply-progress compact" : "template-apply-progress"
+      }
+    >
       <span className="template-apply-progress-top">
         <span>Completing</span>
         <strong>{applyingProgress}%</strong>
@@ -591,10 +616,7 @@ export default function TemplateSelector({
             border: 0;
             background: #ffffff;
             box-shadow: 0 24px 80px rgba(15, 23, 42, 0.22);
-            transition:
-              width 180ms ease,
-              max-width 180ms ease,
-              border-radius 180ms ease;
+            transition: none !important;
           }
 
           .template-preview-card-actions {
@@ -741,7 +763,11 @@ export default function TemplateSelector({
                   className={`template-preview-device-btn ${
                     previewDevice === "desktop" ? "active" : ""
                   }`}
-                  onClick={() => setPreviewDevice("desktop")}
+                  onClick={() => {
+                    if (previewDevice !== "desktop") {
+                      setPreviewDevice("desktop");
+                    }
+                  }}
                   title="Desktop preview"
                   aria-label="Desktop preview"
                 >
@@ -753,7 +779,11 @@ export default function TemplateSelector({
                   className={`template-preview-device-btn ${
                     previewDevice === "tablet" ? "active" : ""
                   }`}
-                  onClick={() => setPreviewDevice("tablet")}
+                  onClick={() => {
+                    if (previewDevice !== "tablet") {
+                      setPreviewDevice("tablet");
+                    }
+                  }}
                   title="Tablet preview"
                   aria-label="Tablet preview"
                 >
@@ -765,7 +795,11 @@ export default function TemplateSelector({
                   className={`template-preview-device-btn ${
                     previewDevice === "mobile" ? "active" : ""
                   }`}
-                  onClick={() => setPreviewDevice("mobile")}
+                  onClick={() => {
+                    if (previewDevice !== "mobile") {
+                      setPreviewDevice("mobile");
+                    }
+                  }}
                   title="Mobile preview"
                   aria-label="Mobile preview"
                 >
@@ -798,7 +832,7 @@ export default function TemplateSelector({
             <div className="template-preview-frame-shell">
               {previewUrl ? (
                 <iframe
-                  key={`${previewTemplate.template_key}-${previewDevice}`}
+                  key={previewTemplate.template_key}
                   src={previewUrl}
                   title={`${previewTemplate.name || "Template"} full preview`}
                   className="template-preview-device-frame"

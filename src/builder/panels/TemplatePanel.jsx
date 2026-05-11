@@ -455,10 +455,7 @@ export default function TemplatePanel({
             border: 0;
             background: #ffffff;
             box-shadow: 0 24px 80px rgba(15, 23, 42, 0.22);
-            transition:
-              width 180ms ease,
-              max-width 180ms ease,
-              border-radius 180ms ease;
+            transition: none !important;
           }
 
           @media (max-width: 768px) {
@@ -578,7 +575,11 @@ export default function TemplatePanel({
                   className={`template-panel-preview-device-btn ${
                     previewDevice === "desktop" ? "active" : ""
                   }`}
-                  onClick={() => setPreviewDevice("desktop")}
+                  onClick={() => {
+                    if (previewDevice !== "desktop") {
+                      setPreviewDevice("desktop");
+                    }
+                  }}
                   title="Desktop preview"
                   aria-label="Desktop preview"
                 >
@@ -590,7 +591,11 @@ export default function TemplatePanel({
                   className={`template-panel-preview-device-btn ${
                     previewDevice === "tablet" ? "active" : ""
                   }`}
-                  onClick={() => setPreviewDevice("tablet")}
+                  onClick={() => {
+                    if (previewDevice !== "tablet") {
+                      setPreviewDevice("tablet");
+                    }
+                  }}
                   title="Tablet preview"
                   aria-label="Tablet preview"
                 >
@@ -602,7 +607,11 @@ export default function TemplatePanel({
                   className={`template-panel-preview-device-btn ${
                     previewDevice === "mobile" ? "active" : ""
                   }`}
-                  onClick={() => setPreviewDevice("mobile")}
+                  onClick={() => {
+                    if (previewDevice !== "mobile") {
+                      setPreviewDevice("mobile");
+                    }
+                  }}
                   title="Mobile preview"
                   aria-label="Mobile preview"
                 >
@@ -635,7 +644,7 @@ export default function TemplatePanel({
             <div className="template-panel-preview-frame-shell">
               {previewUrl ? (
                 <iframe
-                  key={`${previewTemplate.template_key}-${previewDevice}`}
+                  key={previewTemplate.template_key}
                   src={previewUrl}
                   title={`${previewTemplate.name || "Template"} full preview`}
                   className="template-panel-preview-device-frame"
