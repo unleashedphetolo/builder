@@ -509,6 +509,7 @@ export default function Builder() {
   const [currentPageId, setCurrentPageId] = useState(null);
 
   const [siteSettings, setSiteSettings] = useState(null);
+  const [organization, setOrganization] = useState(null);
   const [navItems, setNavItems] = useState([]);
 
   const [templateError, setTemplateError] = useState("");
@@ -553,13 +554,22 @@ export default function Builder() {
   const builderSnapshot = useMemo(
     () => ({
       siteSettings,
+      organization,
       pages,
       navItems,
       currentPageId,
       layoutKey,
       templateKey,
     }),
-    [siteSettings, pages, navItems, currentPageId, layoutKey, templateKey],
+    [
+      siteSettings,
+      organization,
+      pages,
+      navItems,
+      currentPageId,
+      layoutKey,
+      templateKey,
+    ],
   );
 
   const emitLiveSettingsUpdate = (nextSettings) => {
@@ -700,6 +710,20 @@ export default function Builder() {
           setPagesLoaded(true);
           setShowTemplateSelector(false);
           return;
+        }
+
+        const { data: orgData, error: orgErr } = await supabase
+          .from("organizations")
+          .select("*")
+          .eq("id", orgId)
+          .maybeSingle();
+
+        if (!mounted) return;
+
+        if (orgErr) {
+          console.error("Builder boot organization error:", orgErr);
+        } else {
+          setOrganization(orgData || null);
         }
 
         setLoadingProgress(40);
@@ -1002,6 +1026,7 @@ export default function Builder() {
     isRestoringRef.current = true;
 
     setSiteSettings(snapshot.siteSettings || null);
+    setOrganization(snapshot.organization || null);
     setPages(snapshot.pages || []);
     setNavItems(snapshot.navItems || []);
     setCurrentPageId(snapshot.currentPageId || null);
@@ -1227,6 +1252,75 @@ export default function Builder() {
         setSaveStatus("All changes saved");
       }
     }, 250);
+  };
+
+  const onUpdateOrganization = async (patch = {}) => {
+    if (!organization?.id) {
+      setSaveStatus("Organization not found");
+      return;
+    }
+
+    const allowedKeys = [
+      "address_line1",
+      "city",
+      "province",
+      "postal_code",
+      "country",
+    ];
+
+    const allowedPatch = allowedKeys.reduce((acc, key) => {
+      if (Object.prototype.hasOwnProperty.call(patch, key)) {
+        acc[key] = patch[key] || "";
+      }
+
+      return acc;
+    }, {});
+
+    if (!Object.keys(allowedPatch).length) {
+      return;
+    }
+
+    const nextOrganization = {
+      ...(organization || {}),
+      ...allowedPatch,
+    };
+
+    const nextSettings = {
+      ...(siteSettings || {}),
+      ...allowedPatch,
+    };
+
+    setOrganization(nextOrganization);
+    setSiteSettings(nextSettings);
+    emitLiveSettingsUpdate(nextSettings);
+    setSaveStatus("Saving organization address...");
+
+    const { data, error } = await supabase
+      .from("organizations")
+      .update(allowedPatch)
+      .eq("id", organization.id)
+      .select("*")
+      .single();
+
+    if (error) {
+      console.error("onUpdateOrganization error:", error);
+      setSaveStatus("Organization address update failed");
+      return;
+    }
+
+    const mergedSettings = {
+      ...(siteSettings || {}),
+      address_line1: data?.address_line1 || "",
+      city: data?.city || "",
+      province: data?.province || "",
+      postal_code: data?.postal_code || "",
+      country: data?.country || "",
+    };
+
+    setOrganization(data || nextOrganization);
+    setSiteSettings(mergedSettings);
+    emitLiveSettingsUpdate(mergedSettings);
+    setSaveStatus("Organization address saved");
   };
 
   const onUpdateTheme = async (patch) => {
@@ -1654,7 +1748,9 @@ export default function Builder() {
             currentPageData={currentPage}
             setCurrentPage={handleSelectPage}
             siteSettings={siteSettings}
+            organization={organization}
             onUpdateSettings={onUpdateSettings}
+            onUpdateOrganization={onUpdateOrganization}
             onUpdateTheme={onUpdateTheme}
             onUpdateColors={onUpdateColors}
             onUpdateAnnouncements={onUpdateAnnouncements}

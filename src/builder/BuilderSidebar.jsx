@@ -22,7 +22,9 @@ export default function BuilderSidebar({
   currentPageData,
   setCurrentPage,
   siteSettings,
+  organization,
   onUpdateSettings,
+  onUpdateOrganization,
   onUpdateTheme,
   onUpdateColors,
   onUpdateAnnouncements,
@@ -129,7 +131,9 @@ export default function BuilderSidebar({
       return (
         <SiteDetailsPanel
           siteSettings={siteSettings}
+          organization={organization}
           onUpdateSettings={onUpdateSettings}
+          onUpdateOrganization={onUpdateOrganization}
         />
       );
     }

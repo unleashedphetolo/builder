@@ -6,6 +6,24 @@ import {
   FiSmartphone,
 } from "react-icons/fi";
 
+function TemplatePanelProgressBar({ progress }) {
+  return (
+    <span className="template-panel-progress">
+      <span className="template-panel-progress-top">
+        <span>Completing</span>
+        <strong>{progress}%</strong>
+      </span>
+
+      <span className="template-panel-progress-track">
+        <span
+          className="template-panel-progress-fill"
+          style={{ width: `${progress}%` }}
+        />
+      </span>
+    </span>
+  );
+}
+
 export default function TemplatePanel({
   layoutKey = "school",
   templates = [],
@@ -21,16 +39,14 @@ export default function TemplatePanel({
   const [previewTemplate, setPreviewTemplate] = useState(null);
   const [previewDevice, setPreviewDevice] = useState("desktop");
 
-  useEffect(() => {
-    if (!applyingTemplateKey) {
-      setApplyProgress(0);
-      return;
-    }
+  const isTemplateApplying = applyingTemplateKey !== "";
 
-    setApplyProgress(12);
+  useEffect(() => {
+    if (!applyingTemplateKey) return undefined;
 
     const interval = window.setInterval(() => {
       setApplyProgress((prev) => {
+        if (prev >= 100) return 100;
         if (prev < 30) return prev + 8;
         if (prev < 56) return prev + 6;
         if (prev < 78) return prev + 4;
@@ -43,19 +59,28 @@ export default function TemplatePanel({
   }, [applyingTemplateKey]);
 
   useEffect(() => {
-    if (!applyingTemplateKey) return;
+    if (!applyingTemplateKey) return undefined;
+    if (activeTemplateKey !== applyingTemplateKey) return undefined;
 
-    if (activeTemplateKey === applyingTemplateKey) {
+    let resetTimeout;
+
+    const completeTimeout = window.setTimeout(() => {
       setApplyProgress(100);
 
-      const timeout = window.setTimeout(() => {
+      resetTimeout = window.setTimeout(() => {
         setApplyingTemplateKey("");
         setApplyProgress(0);
         setPreviewTemplate(null);
       }, 500);
+    }, 0);
 
-      return () => window.clearTimeout(timeout);
-    }
+    return () => {
+      window.clearTimeout(completeTimeout);
+
+      if (resetTimeout) {
+        window.clearTimeout(resetTimeout);
+      }
+    };
   }, [activeTemplateKey, applyingTemplateKey]);
 
   const getLivePreviewUrl = (template) => {
@@ -78,7 +103,7 @@ export default function TemplatePanel({
 
   const handleSelectTemplate = (template) => {
     if (!template?.template_key) return;
-    if (applyingTemplateKey) return;
+    if (isTemplateApplying) return;
 
     setApplyingTemplateKey(template.template_key);
     setApplyProgress(12);
@@ -104,7 +129,7 @@ export default function TemplatePanel({
   };
 
   const handleClosePreview = () => {
-    if (applyingTemplateKey) return;
+    if (isTemplateApplying) return;
     setPreviewTemplate(null);
   };
 
@@ -129,22 +154,6 @@ export default function TemplatePanel({
     if (previewDevice === "tablet") return "calc(100vh - 108px)";
     return "calc(100vh - 74px)";
   };
-
-  const ProgressBar = () => (
-    <span className="template-panel-progress">
-      <span className="template-panel-progress-top">
-        <span>Completing</span>
-        <strong>{applyProgress}%</strong>
-      </span>
-
-      <span className="template-panel-progress-track">
-        <span
-          className="template-panel-progress-fill"
-          style={{ width: `${applyProgress}%` }}
-        />
-      </span>
-    </span>
-  );
 
   const previewUrl = previewTemplate ? getFullPreviewUrl(previewTemplate) : "";
 
@@ -193,6 +202,23 @@ export default function TemplatePanel({
             border: 0;
             background: transparent;
             cursor: zoom-in;
+          }
+
+          .template-option {
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+          }
+
+          .template-option[aria-disabled="true"] {
+            opacity: 0.75;
+            cursor: wait;
+            pointer-events: none;
+          }
+
+          .template-option:focus-visible {
+            outline: 3px solid rgba(37, 99, 235, 0.35);
+            outline-offset: 3px;
           }
 
           .template-use-pill.is-progress {
@@ -558,7 +584,7 @@ export default function TemplatePanel({
                 type="button"
                 className="template-panel-preview-back"
                 onClick={handleClosePreview}
-                disabled={Boolean(applyingTemplateKey)}
+                disabled={isTemplateApplying}
               >
                 <span className="template-panel-preview-back-icon">
                   <FiChevronLeft />
@@ -632,7 +658,7 @@ export default function TemplatePanel({
                 disabled={applyingTemplateKey === previewTemplate.template_key}
               >
                 {applyingTemplateKey === previewTemplate.template_key ? (
-                  <ProgressBar />
+                  <TemplatePanelProgressBar progress={applyProgress} />
                 ) : (
                   "Start with this Template"
                 )}
@@ -695,14 +721,26 @@ export default function TemplatePanel({
           const isApplying = applyingTemplateKey === template.template_key;
 
           return (
-            <button
+            <div
               key={template.template_key}
-              type="button"
+              role="button"
+              tabIndex={isTemplateApplying ? -1 : 0}
               className={`template-option template-option-with-preview ${
                 active ? "active" : ""
               }`}
-              onClick={() => handleSelectTemplate(template)}
-              disabled={Boolean(applyingTemplateKey)}
+              onClick={() => {
+                if (isTemplateApplying) return;
+                handleSelectTemplate(template);
+              }}
+              onKeyDown={(event) => {
+                if (isTemplateApplying) return;
+
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  handleSelectTemplate(template);
+                }
+              }}
+              aria-disabled={isTemplateApplying}
             >
               <div className="template-preview-box">
                 {previewUrl ? (
@@ -724,7 +762,7 @@ export default function TemplatePanel({
                   className="template-preview-click-layer"
                   aria-label={`Preview ${template.name}`}
                   onClick={(event) => handlePreviewTemplate(event, template)}
-                  disabled={Boolean(applyingTemplateKey)}
+                  disabled={isTemplateApplying}
                 />
               </div>
 
@@ -737,7 +775,7 @@ export default function TemplatePanel({
                     type="button"
                     className="template-preview-action"
                     onClick={(event) => handlePreviewTemplate(event, template)}
-                    disabled={Boolean(applyingTemplateKey)}
+                    disabled={isTemplateApplying}
                   >
                     Preview site
                   </button>
@@ -748,7 +786,7 @@ export default function TemplatePanel({
                     }`}
                   >
                     {isApplying ? (
-                      <ProgressBar />
+                      <TemplatePanelProgressBar progress={applyProgress} />
                     ) : active ? (
                       "Selected"
                     ) : (
@@ -757,7 +795,7 @@ export default function TemplatePanel({
                   </span>
                 </div>
               </div>
-            </button>
+            </div>
           );
         })}
       </div>

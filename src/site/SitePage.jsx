@@ -19,6 +19,29 @@ function normalizePageSlug(slug = "/") {
   return `/${cleanRaw}`;
 }
 
+function getOrganizationPatch(incoming = {}) {
+  const patch = {};
+  const allowedKeys = [
+    "id",
+    "name",
+    "email",
+    "phone",
+    "address_line1",
+    "city",
+    "province",
+    "postal_code",
+    "country",
+  ];
+
+  allowedKeys.forEach((key) => {
+    if (Object.prototype.hasOwnProperty.call(incoming, key)) {
+      patch[key] = incoming[key];
+    }
+  });
+
+  return patch;
+}
+
 export default function SitePage() {
   const { siteId, "*": wildcardSlug } = useParams();
   const location = useLocation();
@@ -27,6 +50,7 @@ export default function SitePage() {
   const [error, setError] = useState("");
   const [site, setSite] = useState(null);
   const [settings, setSettings] = useState(null);
+  const [organization, setOrganization] = useState(null);
   const [navItems, setNavItems] = useState([]);
   const [page, setPage] = useState(null);
   const [sections, setSections] = useState([]);
@@ -92,6 +116,24 @@ export default function SitePage() {
         if (settingsErr) throw settingsErr;
         if (navErr) throw navErr;
 
+        let organizationData = null;
+
+        if (siteData?.organization_id) {
+          const { data: orgData, error: orgErr } = await supabase
+            .from("organizations")
+            .select(
+              "id,name,email,phone,address_line1,city,province,postal_code,country",
+            )
+            .eq("id", siteData.organization_id)
+            .maybeSingle();
+
+          if (orgErr) {
+            console.error("SitePage organization load error:", orgErr);
+          } else {
+            organizationData = orgData || null;
+          }
+        }
+
         let pageQuery = supabase
           .from("site_pages")
           .select("*")
@@ -152,8 +194,24 @@ export default function SitePage() {
 
         if (!mounted) return;
 
+        const mergedSettings = {
+          ...(settingsData || {}),
+          organization: organizationData,
+          organization_id:
+            organizationData?.id || siteData?.organization_id || null,
+          organization_name:
+            settingsData?.organization_name || organizationData?.name || "",
+          site_name:
+            settingsData?.site_name ||
+            organizationData?.name ||
+            "Website Preview",
+          email: settingsData?.email || organizationData?.email || "",
+          phone: settingsData?.phone || organizationData?.phone || "",
+        };
+
         setSite(siteData || null);
-        setSettings(settingsData || null);
+        setSettings(mergedSettings);
+        setOrganization(organizationData || null);
         setNavItems(navData || []);
         setPage(pageData || null);
         setSections(sectionData || []);
@@ -189,11 +247,55 @@ export default function SitePage() {
   useEffect(() => {
     const handleSettingsUpdate = (event) => {
       const incoming = event?.detail || {};
+      const organizationPatch = getOrganizationPatch(incoming);
 
-      setSettings((prev) => ({
-        ...(prev || {}),
-        ...(incoming || {}),
-      }));
+      if (Object.keys(organizationPatch).length > 0) {
+        setOrganization((prev) => ({
+          ...(prev || {}),
+          ...organizationPatch,
+        }));
+      }
+
+      setSettings((prev) => {
+        const nextOrganization =
+          Object.keys(organizationPatch).length > 0
+            ? {
+                ...(prev?.organization || {}),
+                ...organizationPatch,
+              }
+            : prev?.organization || null;
+
+        return {
+          ...(prev || {}),
+          ...(incoming || {}),
+          organization: nextOrganization,
+          organization_id:
+            nextOrganization?.id ||
+            incoming?.organization_id ||
+            prev?.organization_id ||
+            null,
+          organization_name:
+            incoming?.organization_name ||
+            prev?.organization_name ||
+            nextOrganization?.name ||
+            "",
+          site_name:
+            incoming?.site_name ||
+            prev?.site_name ||
+            nextOrganization?.name ||
+            "Website Preview",
+          email:
+            incoming?.email ||
+            prev?.email ||
+            nextOrganization?.email ||
+            "",
+          phone:
+            incoming?.phone ||
+            prev?.phone ||
+            nextOrganization?.phone ||
+            "",
+        };
+      });
     };
 
     const handleNavUpdate = (event) => {
@@ -213,10 +315,56 @@ export default function SitePage() {
         payload.type === "builder:settings-updated" ||
         payload.type === "site-settings-updated"
       ) {
-        setSettings((prev) => ({
-          ...(prev || {}),
-          ...(payload.settings || payload.payload || {}),
-        }));
+        const incoming = payload.settings || payload.payload || {};
+        const organizationPatch = getOrganizationPatch(incoming);
+
+        if (Object.keys(organizationPatch).length > 0) {
+          setOrganization((prev) => ({
+            ...(prev || {}),
+            ...organizationPatch,
+          }));
+        }
+
+        setSettings((prev) => {
+          const nextOrganization =
+            Object.keys(organizationPatch).length > 0
+              ? {
+                  ...(prev?.organization || {}),
+                  ...organizationPatch,
+                }
+              : prev?.organization || null;
+
+          return {
+            ...(prev || {}),
+            ...(incoming || {}),
+            organization: nextOrganization,
+            organization_id:
+              nextOrganization?.id ||
+              incoming?.organization_id ||
+              prev?.organization_id ||
+              null,
+            organization_name:
+              incoming?.organization_name ||
+              prev?.organization_name ||
+              nextOrganization?.name ||
+              "",
+            site_name:
+              incoming?.site_name ||
+              prev?.site_name ||
+              nextOrganization?.name ||
+              "Website Preview",
+            email:
+              incoming?.email ||
+              prev?.email ||
+              nextOrganization?.email ||
+              "",
+            phone:
+              incoming?.phone ||
+              prev?.phone ||
+              nextOrganization?.phone ||
+              "",
+          };
+        });
       }
 
       if (
@@ -254,7 +402,12 @@ export default function SitePage() {
   }, []);
 
   useEffect(() => {
-    const siteName = settings?.site_name || "Website Preview";
+    const siteName =
+      settings?.site_name ||
+      settings?.organization?.name ||
+      organization?.name ||
+      "Website Preview";
+
     const siteLogo = settings?.logo_url || "/favicon.ico";
 
     document.title = siteName;
@@ -284,7 +437,12 @@ export default function SitePage() {
     appleIcon.rel = "apple-touch-icon";
     appleIcon.href = logoWithRefresh;
     document.head.appendChild(appleIcon);
-  }, [settings?.site_name, settings?.logo_url]);
+  }, [
+    settings?.site_name,
+    settings?.logo_url,
+    settings?.organization,
+    organization,
+  ]);
 
   if (loading) {
     return <div style={{ padding: 32 }}>Loading…</div>;
@@ -296,13 +454,30 @@ export default function SitePage() {
 
   const layoutKey = site?.layout_key;
 
+  const sharedOrganization = organization || settings?.organization || null;
+
   const sharedProps = {
     site,
     settings: {
       ...(settings || {}),
       site_id: siteId,
       template_key: site?.template_key || settings?.template_key || null,
+      organization: sharedOrganization,
+      organization_id:
+        sharedOrganization?.id ||
+        settings?.organization_id ||
+        site?.organization_id ||
+        null,
+      organization_name:
+        settings?.organization_name || sharedOrganization?.name || "",
+      site_name:
+        settings?.site_name ||
+        sharedOrganization?.name ||
+        "Website Preview",
+      email: settings?.email || sharedOrganization?.email || "",
+      phone: settings?.phone || sharedOrganization?.phone || "",
     },
+    organization: sharedOrganization,
     navItems: navItems || [],
     page,
     sections: sections || [],
