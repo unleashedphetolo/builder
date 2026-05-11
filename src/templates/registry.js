@@ -14,7 +14,7 @@ export const DEFAULT_TEMPLATES = [
     name: "Institutional School",
     description:
       "Full multi-page school website: topbar social links, notices, news, gallery, admissions, staff and contact.",
-    tags: ["multi-page", "institutional", "news", "gallery"],
+    tags: ["multi-page", "institutional"],
     preview_image: "/template-previews/school-institutional.png",
   },
 
@@ -25,7 +25,7 @@ export const DEFAULT_TEMPLATES = [
     name: "Modern Academy",
     description:
       "Clean academic design with hero slider, featured programs, announcements and quick links.",
-    tags: ["clean", "modern", "announcements"],
+    tags: ["modern", "announcements"],
     preview_image: "/template-previews/school-modern.png",
   },
 
@@ -51,7 +51,7 @@ export const DEFAULT_TEMPLATES = [
     name: "Agency Pro",
     description:
       "High-conversion agency site with portfolio, case studies, team and lead capture.",
-    tags: ["agency", "portfolio", "lead"],
+      tags: ["agency", "portfolio", "lead"],
     preview_image: "/template-previews/business-agency.png",
   },
 

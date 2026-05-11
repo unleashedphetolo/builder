@@ -499,21 +499,6 @@
   gap: 10px;
 }
 
-/* .template-search-box {
-  flex: 1;
-  min-width: 0;
-  min-height: 46px;
-  border-color: #478ec9;
-  border: 1px solid #3668aa;
-  border-radius: 16px;
-  background: #ffffff;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 12px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.045);
-} */
-
 .template-search-box {
   flex: 1;
   min-width: 0;
@@ -965,3 +950,28 @@
   }
 }
 
+/* Fix mobile template preview from looking too squeezed */
+@media (max-width: 720px) {
+  .template-preview {
+    height: 230px !important;
+  }
+
+  .template-live-preview-frame {
+    width: 220% !important;
+    height: 220% !important;
+    transform: scale(0.455) !important;
+    transform-origin: top left !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .template-preview {
+    height: 260px !important;
+  }
+
+  .template-live-preview-frame {
+    width: 200% !important;
+    height: 200% !important;
+    transform: scale(0.5) !important;
+  }
+}

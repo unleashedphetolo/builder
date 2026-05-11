@@ -663,11 +663,14 @@ export default function TemplatePanel({
 
       <div className="panel-header">
         <h3>Website Template</h3>
-        <p>Show templates for the selected category only.</p>
       </div>
 
       <div className="chip-row">
-        <span className="status-chip">Category: {layoutKey}</span>
+        <span className="status-chip enterprise-category-chip">
+          <span className="category-dot" />
+          <span className="category-label">Category:</span>
+          <strong>{layoutKey}</strong>
+        </span>
       </div>
 
       <div className="template-list">
