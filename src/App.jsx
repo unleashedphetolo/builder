@@ -13,7 +13,7 @@ import SitePage from "./site/SitePage";
 import TemplateLivePreview from "./site/TemplateLivePreview";
 
 const DASHBOARD_LOGIN_URL =
-  import.meta.env.VITE_DASHBOARD_LOGIN_URL || "http://localhost:3000";
+  import.meta.env.VITE_DASHBOARD_LOGIN_URL || "http://localhost:5173";
 
 function readTokens() {
   const url = new URL(window.location.href);

@@ -5,7 +5,7 @@ import logo from "../assets/logo.gif";
 import { Link } from "react-router-dom";
 
 const DASHBOARD_URL =
-  import.meta.env.VITE_DASHBOARD_URL || "http://localhost:3000/dashboard";
+  import.meta.env.VITE_DASHBOARD_URL || "http://localhost:5173/dashboard";
 
 export default function BuilderNavbar({
   toggleSidebar,
