@@ -107,7 +107,6 @@ export default function SitePage() {
             .from("site_nav_items")
             .select("*")
             .eq("site_id", siteId)
-            .neq("is_visible", false)
             .order("location", { ascending: true })
             .order("position", { ascending: true }),
         ]);
@@ -302,7 +301,7 @@ export default function SitePage() {
       const incoming = event?.detail || [];
 
       if (Array.isArray(incoming)) {
-        setNavItems(incoming.filter((item) => item?.is_visible !== false));
+        setNavItems(incoming);
       }
     };
 
@@ -375,7 +374,27 @@ export default function SitePage() {
           payload.navItems || payload.items || payload.payload || [];
 
         if (Array.isArray(incoming)) {
-          setNavItems(incoming.filter((item) => item?.is_visible !== false));
+          setNavItems(incoming);
+        }
+      }
+
+      if (
+        payload.type === "builder:page-updated" ||
+        payload.type === "site-page-updated"
+      ) {
+        const incomingPage = payload.page || payload.payload || null;
+
+        if (incomingPage?.id) {
+          setPage((prev) => {
+            if (!prev || prev.id === incomingPage.id) {
+              return {
+                ...(prev || {}),
+                ...incomingPage,
+              };
+            }
+
+            return prev;
+          });
         }
       }
     };

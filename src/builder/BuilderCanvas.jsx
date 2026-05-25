@@ -121,9 +121,30 @@ export default function BuilderCanvas({
       }
     }
 
+    function handleNavUpdate(e) {
+      const detail = e.detail || {};
+      const navItems = Array.isArray(detail)
+        ? detail
+        : detail.navItems || detail.items || detail.payload || [];
+
+      if (window.previewFrame?.contentWindow) {
+        window.previewFrame.contentWindow.postMessage(
+          { type: "builder:nav-updated", navItems },
+          "*",
+        );
+
+        window.previewFrame.contentWindow.postMessage(
+          { type: "site-nav-updated", navItems },
+          "*",
+        );
+      }
+    }
+
     window.addEventListener("builder:navigate", handleNavigate);
     window.addEventListener("builder:settings-updated", handleSettingsUpdate);
     window.addEventListener("site-settings-updated", handleSettingsUpdate);
+    window.addEventListener("builder:nav-updated", handleNavUpdate);
+    window.addEventListener("site-nav-updated", handleNavUpdate);
 
     return () => {
       window.removeEventListener("builder:navigate", handleNavigate);
@@ -132,8 +153,32 @@ export default function BuilderCanvas({
         handleSettingsUpdate,
       );
       window.removeEventListener("site-settings-updated", handleSettingsUpdate);
+      window.removeEventListener("builder:nav-updated", handleNavUpdate);
+      window.removeEventListener("site-nav-updated", handleNavUpdate);
     };
   }, [siteId]);
+
+  useEffect(() => {
+    if (!page) return;
+
+    if (window.previewFrame?.contentWindow) {
+      window.previewFrame.contentWindow.postMessage(
+        {
+          type: "builder:page-updated",
+          page,
+        },
+        "*",
+      );
+
+      window.previewFrame.contentWindow.postMessage(
+        {
+          type: "site-page-updated",
+          page,
+        },
+        "*",
+      );
+    }
+  }, [page]);
 
   const handleIframeLoad = (e) => {
     try {

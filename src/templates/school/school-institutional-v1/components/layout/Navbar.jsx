@@ -180,7 +180,7 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
     const map = new Map();
 
     visibleHeaderNavItems.forEach((item) => {
-      const slug = normalizeSlug(item.href || "/");
+      const slug = hrefToSlug(item.href || "/", siteId);
 
       if (slug) {
         map.set(slug, item);
@@ -188,7 +188,7 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
     });
 
     return map;
-  }, [visibleHeaderNavItems]);
+  }, [visibleHeaderNavItems, siteId]);
 
   const allNavByLabel = useMemo(() => {
     const map = new Map();
@@ -210,7 +210,7 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
     const map = new Map();
 
     headerNavItems.forEach((item) => {
-      const slug = normalizeSlug(item.href || "/");
+      const slug = hrefToSlug(item.href || "/", siteId);
 
       if (slug) {
         map.set(slug, item);
@@ -218,7 +218,7 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
     });
 
     return map;
-  }, [headerNavItems]);
+  }, [headerNavItems, siteId]);
 
   const isVisibleNavTarget = (label, fallbackPath) => {
     const labelKey = String(label || "")
@@ -229,10 +229,7 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
 
     const found = allNavByLabel.get(labelKey) || allNavBySlug.get(slugKey);
 
-    // Important:
-    // If the link does not exist in site_nav_items yet,
-    // keep showing the template default link.
-    if (!found) return true;
+    if (!found) return false;
 
     return found.is_visible !== false;
   };
@@ -244,7 +241,8 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
 
     const slugKey = normalizeSlug(fallbackPath || "/");
 
-    const found = visibleNavByLabel.get(labelKey) || visibleNavBySlug.get(slugKey);
+    const found =
+      visibleNavByLabel.get(labelKey) || visibleNavBySlug.get(slugKey);
 
     if (found?.href) {
       return buildSiteHref(siteId, found.href);

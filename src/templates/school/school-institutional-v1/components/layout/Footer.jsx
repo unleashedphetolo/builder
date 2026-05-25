@@ -272,13 +272,7 @@ export default function Footer({
       },
     );
 
-    /*
-      Important:
-      If there is no nav item for this footer link yet,
-      keep showing the template default link.
-      Only hide it when the matching page/nav item exists and is Off.
-    */
-    if (!matched) return true;
+    if (!matched) return false;
 
     return matched.is_visible !== false;
   };
@@ -292,8 +286,6 @@ export default function Footer({
 
     return data.originalColor || data.color || "#ffffff";
   };
-
-  /* ---------- instant navigation helper ---------- */
 
   const navigateTo = (href) => {
     const slug = normalizeHref(href);

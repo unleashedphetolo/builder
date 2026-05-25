@@ -254,13 +254,7 @@ export default function Topbar({
       },
     );
 
-    /*
-      Important:
-      If there is no nav item for this page yet,
-      keep showing the template default link.
-      Only hide it when the matching page/nav item exists and is Off.
-    */
-    if (!matched) return true;
+    if (!matched) return false;
 
     return matched.is_visible !== false;
   };
