@@ -39,22 +39,235 @@ function normalizePageSlug(slug = "/") {
   return `/${cleanRaw}`;
 }
 
-function buildNavItems({ pages = [] }) {
-  return pages
-    .filter((page) => page?.enabled !== false && page?.nav)
-    .map((page, index) => ({
-      id: `preview-nav-${index}`,
-      site_id: "template-preview",
-      location: page.nav.location || "header",
-      label: page.nav.label || page.title,
-      href: normalizePageSlug(page.slug),
-      page_id: `preview-page-${index}`,
-      parent_id: null,
-      position: page.nav.position ?? index,
-      is_external: false,
-      is_visible: true,
-      meta: page.nav.meta || {},
-    }));
+function titleFromSlug(slug = "/") {
+  const clean = normalizePageSlug(slug);
+
+  if (clean === "/") return "Home";
+
+  const last = clean.split("/").filter(Boolean).pop() || "Page";
+
+  return last
+    .replace(/[-_]/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function normalizePreviewLink(link = {}, fallbackLocation = "header", index = 0) {
+  const href = link.href || link.slug || "/";
+
+  return {
+    label: link.label || link.title || titleFromSlug(href),
+    href: String(href).startsWith("http") ? href : normalizePageSlug(href),
+    location: link.location || fallbackLocation,
+    position: link.position ?? index,
+    enabled: link.enabled !== false,
+    is_external:
+      link.is_external === true || String(href || "").startsWith("http"),
+    meta: link.meta || {},
+  };
+}
+
+function makeNavItem({
+  id,
+  siteId = "template-preview",
+  location = "header",
+  label,
+  href = "/",
+  pageId = null,
+  position = 0,
+  isExternal = false,
+  isVisible = true,
+  meta = {},
+}) {
+  return {
+    id,
+    site_id: siteId,
+    location,
+    label,
+    href: isExternal ? href : normalizePageSlug(href),
+    page_id: pageId,
+    parent_id: null,
+    position,
+    is_external: isExternal,
+    is_visible: isVisible !== false,
+    meta,
+  };
+}
+
+function dedupeNavItems(items = []) {
+  const seen = new Set();
+  const output = [];
+
+  items.forEach((item) => {
+    if (!item?.href || !item?.location) return;
+
+    const key = `${item.location}:${item.href}:${item.label || ""}`;
+
+    if (seen.has(key)) return;
+
+    seen.add(key);
+    output.push(item);
+  });
+
+  return output.sort((a, b) => {
+    const locationCompare = String(a.location || "").localeCompare(
+      String(b.location || ""),
+    );
+
+    if (locationCompare !== 0) return locationCompare;
+
+    return (a.position ?? 0) - (b.position ?? 0);
+  });
+}
+
+function buildNavItems({ pages = [], defaults = {} }) {
+  const enabledPages = Array.isArray(pages)
+    ? pages.filter((page) => page?.enabled !== false)
+    : [];
+
+  const pageIdBySlug = new Map();
+
+  enabledPages.forEach((page, index) => {
+    pageIdBySlug.set(normalizePageSlug(page.slug || "/"), `preview-page-${index}`);
+  });
+
+  const navRows = [];
+
+  enabledPages.forEach((page, index) => {
+    const cleanSlug = normalizePageSlug(page.slug || "/");
+    const nav = page.nav || {};
+
+    navRows.push(
+      makeNavItem({
+        id: `preview-nav-page-${index}`,
+        location: nav.location || "header",
+        label: nav.label || page.title || titleFromSlug(cleanSlug),
+        href: cleanSlug,
+        pageId: `preview-page-${index}`,
+        position: nav.position ?? page.position ?? page.sort_order ?? index,
+        isExternal: false,
+        isVisible: page.enabled !== false && nav.enabled !== false,
+        meta: nav.meta || {
+          template_page_key:
+            page.template_page_key ||
+            page.key ||
+            cleanSlug.replace(/^\/+/, "").replace(/\//g, "-") ||
+            "home",
+          auto_generated_preview: true,
+        },
+      }),
+    );
+  });
+
+  const parentGroups = [
+    {
+      label: "About",
+      href: "/about",
+      matchPrefix: "/about/",
+      position: 10,
+    },
+    {
+      label: "Activities",
+      href: "/activities",
+      matchPrefix: "/activities/",
+      position: 20,
+    },
+    {
+      label: "Resources",
+      href: "/resources",
+      matchPrefix: "/resources/",
+      position: 30,
+    },
+    {
+      label: "News",
+      href: "/news",
+      matchPrefix: "/news/",
+      position: 40,
+    },
+    {
+      label: "Admissions",
+      href: "/admissions",
+      matchPrefix: "/admissions/",
+      position: 50,
+    },
+  ];
+
+  parentGroups.forEach((group, index) => {
+    const alreadyExists = navRows.some(
+      (item) =>
+        item.location === "header" &&
+        normalizePageSlug(item.href) === normalizePageSlug(group.href),
+    );
+
+    const hasChildren = enabledPages.some((page) =>
+      normalizePageSlug(page.slug || "/").startsWith(group.matchPrefix),
+    );
+
+    if (!alreadyExists && hasChildren) {
+      navRows.push(
+        makeNavItem({
+          id: `preview-nav-parent-${index}`,
+          location: "header",
+          label: group.label,
+          href: group.href,
+          pageId: pageIdBySlug.get(normalizePageSlug(group.href)) || null,
+          position: group.position,
+          isExternal: false,
+          isVisible: true,
+          meta: {
+            auto_generated_preview_parent: true,
+          },
+        }),
+      );
+    }
+  });
+
+  const topbarLinks = Array.isArray(defaults.topbar_links)
+    ? defaults.topbar_links
+    : [];
+
+  const footerLinks = Array.isArray(defaults.footer_links)
+    ? defaults.footer_links
+    : [];
+
+  topbarLinks.forEach((link, index) => {
+    const safeLink = normalizePreviewLink(link, "topbar", index);
+    const pageId = pageIdBySlug.get(normalizePageSlug(safeLink.href)) || null;
+
+    navRows.push(
+      makeNavItem({
+        id: `preview-nav-topbar-${index}`,
+        location: "topbar",
+        label: safeLink.label,
+        href: safeLink.href,
+        pageId,
+        position: safeLink.position,
+        isExternal: safeLink.is_external,
+        isVisible: safeLink.enabled !== false,
+        meta: safeLink.meta,
+      }),
+    );
+  });
+
+  footerLinks.forEach((link, index) => {
+    const safeLink = normalizePreviewLink(link, "footer", index);
+    const pageId = pageIdBySlug.get(normalizePageSlug(safeLink.href)) || null;
+
+    navRows.push(
+      makeNavItem({
+        id: `preview-nav-footer-${index}`,
+        location: "footer",
+        label: safeLink.label,
+        href: safeLink.href,
+        pageId,
+        position: safeLink.position,
+        isExternal: safeLink.is_external,
+        isVisible: safeLink.enabled !== false,
+        meta: safeLink.meta,
+      }),
+    );
+  });
+
+  return dedupeNavItems(navRows);
 }
 
 function buildSections({ page, pageIndex }) {
@@ -92,6 +305,11 @@ export default function TemplateLivePreview() {
   const isMini = useMemo(() => {
     const search = new URLSearchParams(location.search);
     return search.get("mini") === "1";
+  }, [location.search]);
+
+  const isFullPreview = useMemo(() => {
+    const search = new URLSearchParams(location.search);
+    return search.get("preview") === "1";
   }, [location.search]);
 
   if (!config) {
@@ -148,7 +366,10 @@ export default function TemplateLivePreview() {
     hero_slides: Array.isArray(defaults.hero_slides)
       ? defaults.hero_slides
       : [],
-    features: defaults.features || {},
+    features: {
+      topbar: true,
+      ...(defaults.features || {}),
+    },
   };
 
   const page = {
@@ -168,15 +389,30 @@ export default function TemplateLivePreview() {
     seo: activePage.seo || {},
   };
 
+  const navItems = buildNavItems({
+    pages,
+    defaults,
+  });
+
+  const navigateTo = (slug = "/") => {
+    const cleanSlug = normalizePageSlug(slug);
+    const path = cleanSlug === "/" ? "" : cleanSlug;
+    const mode = isMini ? "mini=1" : isFullPreview ? "preview=1" : "preview=1";
+
+    window.location.hash = `/template-preview/${layoutKey}/${templateKey}${path}?${mode}`;
+  };
+
   const sharedProps = {
     site,
     settings,
-    navItems: buildNavItems({ pages }),
+    navItems,
     page,
     sections: buildSections({ page: activePage, pageIndex }),
     builderMode: true,
     templatePreviewMode: true,
     miniPreview: isMini,
+    previewMode: isFullPreview,
+    navigateTo,
   };
 
   if (layoutKey === "business") {

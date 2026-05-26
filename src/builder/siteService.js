@@ -151,7 +151,8 @@ function applyOrganizationFallbackToSettings(settings = {}, organization = {}) {
     country: preferExistingOrOrg(settings.country, orgCountry, settings.country),
 
     footer_text:
-      isUsefulValue(settings.footer_text) && settings.footer_text !== "© Your Website. All rights reserved."
+      isUsefulValue(settings.footer_text) &&
+      settings.footer_text !== "© Your Website. All rights reserved."
         ? settings.footer_text
         : orgName
           ? `© ${orgName}. All rights reserved.`
@@ -467,9 +468,14 @@ async function upsertNavItem({ existingNavItems = [], navPatch }) {
     );
 
   if (matchedNav?.id) {
+    const safeNavPatch = {
+      ...navPatch,
+      is_visible: matchedNav.is_visible !== false,
+    };
+
     const { data, error } = await supabase
       .from("site_nav_items")
-      .update(navPatch)
+      .update(safeNavPatch)
       .eq("id", matchedNav.id)
       .select("*")
       .single();
@@ -532,7 +538,7 @@ async function syncTemplateNavItems({
       parent_id: null,
       position: nav.position ?? templatePage.position ?? index,
       is_external: false,
-      is_visible: templatePage.enabled !== false,
+      is_visible: activePage.is_visible !== false && activePage.is_published !== false,
       meta: nav.meta || {
         template_page_key: templatePageKey,
         auto_generated: true,
@@ -578,6 +584,11 @@ async function syncTemplateNavItems({
         index,
         page,
       });
+
+      if (page?.id) {
+        navPatch.is_visible =
+          page.is_visible !== false && page.is_published !== false;
+      }
 
       const nav = await upsertNavItem({ existingNavItems, navPatch });
 
@@ -1000,8 +1011,8 @@ export async function syncSitePagesForTemplate({
         const pagePatch = {
           slug: cleanSlug,
           title: templatePage.title || matchedPage.title || "Untitled page",
-          is_published: true,
-          is_visible: true,
+          is_published: matchedPage.is_published !== false,
+          is_visible: matchedPage.is_visible !== false,
           sort_order: sortOrder,
           template_page_key: templatePageKey,
           seo: templatePage.seo || matchedPage.seo || {},
