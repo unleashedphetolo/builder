@@ -41,6 +41,8 @@ import AllEvents from "./pages/AllEvents";
 import Apply from "./pages/admissions/Apply";
 import Requirements from "./pages/admissions/Requirements";
 import HowToApply from "./pages/admissions/HowToApply";
+import Hero from "./components/home/Hero";
+
 
 import Home from "./pages/Home";
 import Breadcrumbs from "./components/common/Breadcrumbs";

@@ -7,6 +7,48 @@ function buildSiteHref(siteId, path = "") {
   return `/#/site/${siteId || ""}${clean}`;
 }
 
+function normalizeHref(href = "/") {
+  if (!href) return "/";
+
+  if (String(href).startsWith("http")) {
+    return String(href);
+  }
+
+  const clean = String(href)
+    .replace(/^#/, "")
+    .split("?")[0]
+    .split("#")[0]
+    .replace(/^\/+|\/+$/g, "");
+
+  const withoutSitePrefix = clean.replace(/^site\/[^/]+\/?/, "");
+
+  if (!withoutSitePrefix || withoutSitePrefix.toLowerCase() === "home") {
+    return "/";
+  }
+
+  return `/${withoutSitePrefix.replace(/^\/+|\/+$/g, "")}`;
+}
+
+function isVisibleByNav(navItems = [], paths = [], fallbackVisible = true) {
+  const cleanPaths = paths.map((path) => normalizeHref(path));
+
+  const matches = (Array.isArray(navItems) ? navItems : []).filter((item) => {
+    if (!item?.href) return false;
+
+    const itemHref = normalizeHref(item.href);
+
+    return cleanPaths.includes(itemHref);
+  });
+
+  if (!matches.length) return fallbackVisible;
+
+  if (matches.some((item) => item.is_visible === false)) {
+    return false;
+  }
+
+  return matches.some((item) => item.is_visible !== false);
+}
+
 function normalizeHeroSlides(heroSlides = []) {
   if (!Array.isArray(heroSlides) || heroSlides.length === 0) {
     return [];
@@ -27,7 +69,7 @@ function normalizeHeroSlides(heroSlides = []) {
     }));
 }
 
-export default function Hero({ settings = {} }) {
+export default function Hero({ settings = {}, navItems = [] }) {
   const templateSlides = templateConfig?.defaults?.hero_slides || [];
   const dbSlides = settings?.hero_slides || [];
   const useCustomSlides = settings?.hero_slides_overridden === true;
@@ -44,6 +86,16 @@ export default function Hero({ settings = {} }) {
   const videoRef = useRef(null);
 
   const siteId = settings?.site_id || "";
+
+  const showAdmissionsButton = isVisibleByNav(navItems, ["/admissions"], true);
+
+  const showLearnMoreButton = isVisibleByNav(
+    navItems,
+    ["/about/who-we-are"],
+    true,
+  );
+
+  const showCtaRow = showAdmissionsButton || showLearnMoreButton;
 
   const navigateTo = (href) => {
     const slug = href.replace(`/#/site/${siteId}`, "") || "/";
@@ -216,29 +268,37 @@ export default function Hero({ settings = {} }) {
                 <h2>{s.title}</h2>
                 <p className="subtitle">{s.subtitle}</p>
 
-                <div className="cta-row">
-                  <a
-                    href={buildSiteHref(siteId, "/admissions")}
-                    className="btns primary"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      navigateTo(buildSiteHref(siteId, "/admissions"));
-                    }}
-                  >
-                    Admissions
-                  </a>
+                {showCtaRow && (
+                  <div className="cta-row">
+                    {showAdmissionsButton && (
+                      <a
+                        href={buildSiteHref(siteId, "/admissions")}
+                        className="btns primary"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigateTo(buildSiteHref(siteId, "/admissions"));
+                        }}
+                      >
+                        Admissions
+                      </a>
+                    )}
 
-                  <a
-                    href={buildSiteHref(siteId, "/about/who-we-are")}
-                    className="btns ghost"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      navigateTo(buildSiteHref(siteId, "/about/who-we-are"));
-                    }}
-                  >
-                    Learn more
-                  </a>
-                </div>
+                    {showLearnMoreButton && (
+                      <a
+                        href={buildSiteHref(siteId, "/about/who-we-are")}
+                        className="btns ghost"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigateTo(
+                            buildSiteHref(siteId, "/about/who-we-are"),
+                          );
+                        }}
+                      >
+                        Learn more
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           );

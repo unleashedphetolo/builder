@@ -32,10 +32,10 @@ function normalizeHref(href = "/") {
   return `/${withoutSitePrefix.replace(/^\/+|\/+$/g, "")}`;
 }
 
-function isVisibleByNav(navItems = [], paths = []) {
+function isVisibleByNav(navItems = [], paths = [], fallbackVisible = true) {
   const cleanPaths = paths.map((path) => normalizeHref(path));
 
-  const matched = (Array.isArray(navItems) ? navItems : []).find((item) => {
+  const matches = (Array.isArray(navItems) ? navItems : []).filter((item) => {
     if (!item?.href) return false;
 
     const itemHref = normalizeHref(item.href);
@@ -43,54 +43,83 @@ function isVisibleByNav(navItems = [], paths = []) {
     return cleanPaths.includes(itemHref);
   });
 
-  if (!matched) return false;
+  if (!matches.length) return fallbackVisible;
 
-  return matched.is_visible !== false;
+  if (matches.some((item) => item.is_visible === false)) {
+    return false;
+  }
+
+  return matches.some((item) => item.is_visible !== false);
 }
 
 export default function Home({ settings = {}, navItems = [] }) {
-  const showAbout = isVisibleByNav(navItems, [
-    "/about",
-    "/about/who-we-are",
-    "/about/vision-mission",
+  const showHome = isVisibleByNav(navItems, ["/"]);
+
+  const showHero = isVisibleByNav(navItems, ["/home/hero"]);
+
+  const showNotices = isVisibleByNav(navItems, ["/notices"]);
+
+  const showAboutSection = isVisibleByNav(navItems, ["/home/about-section"]);
+
+  const showGalleryPreview = isVisibleByNav(navItems, [
+    "/home/gallery-preview",
   ]);
 
-  const showGallery = isVisibleByNav(navItems, ["/gallery"]);
-
-  const showAdmissions = isVisibleByNav(navItems, [
-    "/admissions",
-    "/admissions/howtoapply",
-    "/admissions/apply",
+  const showPrincipalMessage = isVisibleByNav(navItems, [
+    "/home/principal-message",
+    "/principal-message",
   ]);
+
+  const showAdmissions = isVisibleByNav(navItems, ["/admissions"]);
 
   const showCalendar = isVisibleByNav(navItems, [
     "/schoolcalendar",
     "/resources/calendar",
   ]);
 
-  const showWallOfFame = isVisibleByNav(navItems, [
-    "/wall-of-fame",
-    "/walloffame",
-    "/fame",
-  ]);
+  const showWallOfFame = isVisibleByNav(navItems, ["/wall-of-fame"]);
+
+  const showSponsors = isVisibleByNav(navItems, ["/sponsors"]);
+
+  if (!showHome) {
+    return null;
+  }
 
   return (
     <>
-      <Hero settings={settings} />
-      <NoticeBoard settings={settings} />
+      {showHero && <Hero settings={settings} navItems={navItems} />}
+
+      {showNotices && (
+        <NoticeBoard settings={settings} navItems={navItems} />
+      )}
 
       <div className="container">
-        {showAbout && <AboutSection settings={settings} />}
-        {showGallery && <GalleryPreview settings={settings} />}
+        {showAboutSection && (
+          <AboutSection settings={settings} navItems={navItems} />
+        )}
+
+        {showGalleryPreview && (
+          <GalleryPreview settings={settings} navItems={navItems} />
+        )}
       </div>
 
-      <PrincipalMessage settings={settings} />
+      {showPrincipalMessage && (
+        <PrincipalMessage settings={settings} navItems={navItems} />
+      )}
 
-      {showAdmissions && <Admissions settings={settings} />}
-      {showCalendar && <SchoolCalendar settings={settings} />}
-      {showWallOfFame && <WallOfFame settings={settings} />}
+      {showAdmissions && (
+        <Admissions settings={settings} navItems={navItems} />
+      )}
 
-      <Sponsors settings={settings} />
+      {showCalendar && (
+        <SchoolCalendar settings={settings} navItems={navItems} />
+      )}
+
+      {showWallOfFame && (
+        <WallOfFame settings={settings} navItems={navItems} />
+      )}
+
+      {showSponsors && <Sponsors settings={settings} navItems={navItems} />}
     </>
   );
 }

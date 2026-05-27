@@ -28,7 +28,7 @@ function normalizeNavItems(navItems = []) {
   if (!Array.isArray(navItems)) return [];
 
   return navItems
-    .filter((item) => item && item.is_visible !== false)
+    .filter(Boolean)
     .sort((a, b) => {
       const locationA = a.location || "";
       const locationB = b.location || "";
