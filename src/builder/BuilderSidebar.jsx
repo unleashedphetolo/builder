@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "../styles/builderSidebar.css";
 import "../styles/panels.css";
 
@@ -43,6 +43,57 @@ export default function BuilderSidebar({
   const [sidebarCollapsed, setSidebarCollapsed] = useState(
     typeof window !== "undefined" ? window.innerWidth <= 1024 : false,
   );
+
+  useEffect(() => {
+    const collapseSidebarForEditor = () => {
+      setOpenedTab(null);
+      setSidebarCollapsed(true);
+    };
+
+    const handleCloseSidebar = () => {
+      collapseSidebarForEditor();
+    };
+
+    const handleMediaEditorState = (event) => {
+      if (event?.detail?.open === true) {
+        collapseSidebarForEditor();
+      }
+    };
+
+    const handleMessage = (event) => {
+      const payload = event?.data;
+
+      if (!payload || typeof payload !== "object") return;
+
+      if (payload.type === "builder:close-sidebar") {
+        collapseSidebarForEditor();
+        return;
+      }
+
+      if (
+        payload.type === "builder:media-editor-state" &&
+        payload.open === true
+      ) {
+        collapseSidebarForEditor();
+      }
+    };
+
+    window.addEventListener("builder:close-sidebar", handleCloseSidebar);
+    window.addEventListener(
+      "builder:media-editor-state",
+      handleMediaEditorState,
+    );
+    window.addEventListener("message", handleMessage);
+
+    return () => {
+      window.removeEventListener("builder:close-sidebar", handleCloseSidebar);
+      window.removeEventListener(
+        "builder:media-editor-state",
+        handleMediaEditorState,
+      );
+      window.removeEventListener("message", handleMessage);
+    };
+  }, []);
 
   const tabs = useMemo(
     () => [
@@ -107,11 +158,48 @@ export default function BuilderSidebar({
     return tabs.find((tab) => tab.key === keyToUse) || tabs[0];
   }, [tabs, openedTab, hoveredTab, activeTab]);
 
-  const handleOpenTab = (tabKey) => {
-    setSidebarCollapsed(false);
-    setActiveTab(tabKey);
-    setOpenedTab(tabKey);
+  // const handleOpenTab = (tabKey) => {
+  //   setSidebarCollapsed(false);
+  //   setActiveTab(tabKey);
+  //   setOpenedTab(tabKey);
+  // };
+  const closeMediaEditorBeforeOpeningPanel = (tabKey) => {
+  const detail = {
+    source: "sidebar",
+    tabKey,
   };
+
+  /*
+    Supports any media editor rendered directly in the builder window.
+  */
+  window.dispatchEvent(
+    new CustomEvent("builder:close-media-editor", {
+      detail,
+    }),
+  );
+
+  /*
+    Closes media editors running inside the live website preview iframe.
+    This is the important message for Hero/Navbar/Footer editors.
+  */
+  if (window.previewFrame?.contentWindow) {
+    window.previewFrame.contentWindow.postMessage(
+      {
+        type: "builder:close-media-editor",
+        ...detail,
+      },
+      "*",
+    );
+  }
+};
+
+const handleOpenTab = (tabKey) => {
+  closeMediaEditorBeforeOpeningPanel(tabKey);
+
+  setSidebarCollapsed(false);
+  setActiveTab(tabKey);
+  setOpenedTab(tabKey);
+};
 
   const handleBack = () => {
     setOpenedTab(null);

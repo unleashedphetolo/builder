@@ -147,3 +147,111 @@
     margin-right: 1px;
   }
 }
+
+/* =========================================================
+   DOCKED MEDIA EDITOR WORKSPACE
+   Keeps website preview visible while editor opens on right
+   ========================================================= */
+
+.canvas-workspace {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  padding-top: 8px;
+}
+
+.canvas-workspace .canvas-inner {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+  min-height: 0;
+  padding-top: 0;
+}
+
+.canvas-workspace .builder-preview-frame-wrap {
+  min-width: 0;
+}
+
+.builder-media-editor-dock {
+  display: none;
+  flex: 0 0 492px;
+  width: 492px;
+  min-width: 492px;
+  height: 100%;
+  min-height: 0;
+  margin-left: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  border-left: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: -8px 0 26px rgba(15, 23, 42, 0.08);
+}
+
+.canvas-workspace.media-editor-open .builder-media-editor-dock {
+  display: block;
+}
+
+.canvas-workspace.media-editor-open .canvas-inner.desktop {
+  flex: 1 1 auto;
+  width: auto;
+  max-width: none;
+}
+
+.canvas-workspace.media-editor-open
+  .canvas-inner.desktop
+  .builder-preview-frame-wrap {
+  width: 100%;
+  max-width: 100%;
+}
+
+/*
+  Keep Tablet and Mobile preview sizes correct.
+  Do not stretch them to fill the remaining space.
+*/
+.canvas-workspace.media-editor-open
+  .canvas-inner.tablet
+  .builder-preview-frame-wrap {
+  width: min(768px, 100%);
+  max-width: 768px;
+}
+
+.canvas-workspace.media-editor-open
+  .canvas-inner.mobile
+  .builder-preview-frame-wrap {
+  width: min(400px, 100%);
+  max-width: 400px;
+}
+
+/*
+  On smaller browser widths, the editor becomes full-screen
+  because there is not enough room for a clean side-by-side layout.
+*/
+@media (max-width: 1180px) {
+  .canvas-workspace.media-editor-open .builder-media-editor-dock {
+    position: fixed;
+    inset: 0;
+    z-index: 1000000;
+    display: block;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    margin-left: 0;
+    border-left: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+/* Allow the docked editor to control its own internal scrolling */
+.builder-media-editor-dock {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.canvas-workspace.media-editor-open {
+  min-height: 0;
+  overflow: hidden;
+}

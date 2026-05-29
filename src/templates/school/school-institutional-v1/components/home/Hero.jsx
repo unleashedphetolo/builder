@@ -1,16 +1,30 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import BuilderMediaEditor from "../../../../../builder/BuilderMediaEditor";
 import "../../styles/hero.css";
 import { templateConfig } from "../../template.config";
+
+const DEFAULT_SLIDESHOW_SETTINGS = {
+  autoplay: true,
+  intervalSeconds: 5,
+  pauseOnHover: false,
+  showArrows: true,
+  showDots: true,
+  transition: "fade",
+};
 
 function buildSiteHref(siteId, path = "") {
   const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
   return `/#/site/${siteId || ""}${clean}`;
 }
 
+function isExternalHref(href = "") {
+  return /^https?:\/\//i.test(String(href || ""));
+}
+
 function normalizeHref(href = "/") {
   if (!href) return "/";
 
-  if (String(href).startsWith("http")) {
+  if (isExternalHref(href)) {
     return String(href);
   }
 
@@ -27,6 +41,14 @@ function normalizeHref(href = "/") {
   }
 
   return `/${withoutSitePrefix.replace(/^\/+|\/+$/g, "")}`;
+}
+
+function resolveSiteHref(siteId, href = "/") {
+  if (isExternalHref(href)) {
+    return href;
+  }
+
+  return buildSiteHref(siteId, normalizeHref(href));
 }
 
 function isVisibleByNav(navItems = [], paths = [], fallbackVisible = true) {
@@ -49,36 +71,106 @@ function isVisibleByNav(navItems = [], paths = [], fallbackVisible = true) {
   return matches.some((item) => item.is_visible !== false);
 }
 
+function normalizeSlideshowSettings(settings = {}) {
+  const rawSeconds = Number(settings?.intervalSeconds);
+  const intervalSeconds = Number.isFinite(rawSeconds)
+    ? Math.min(30, Math.max(2, rawSeconds))
+    : DEFAULT_SLIDESHOW_SETTINGS.intervalSeconds;
+
+  return {
+    ...DEFAULT_SLIDESHOW_SETTINGS,
+    ...(settings || {}),
+    intervalSeconds,
+    autoplay: settings?.autoplay !== false,
+    pauseOnHover: settings?.pauseOnHover === true,
+    showArrows: settings?.showArrows !== false,
+    showDots: settings?.showDots !== false,
+    transition: settings?.transition || DEFAULT_SLIDESHOW_SETTINGS.transition,
+  };
+}
+
 function normalizeHeroSlides(heroSlides = []) {
   if (!Array.isArray(heroSlides) || heroSlides.length === 0) {
     return [];
   }
 
   return heroSlides
-    .filter((slide) => slide && (slide.src || slide.image))
+    .filter((slide) => slide && (slide.src || slide.image || slide.url))
     .map((slide, index) => ({
       id: slide?.id || index + 1,
       type: slide?.type === "video" ? "video" : "image",
-      src: slide?.src || slide?.image || "",
+      src: slide?.src || slide?.image || slide?.url || "",
+      image: slide?.image || slide?.src || slide?.url || "",
+      url: slide?.url || slide?.src || slide?.image || "",
       poster: slide?.poster || slide?.image || slide?.src || "",
       alt: slide?.alt || "School hero",
       title: slide?.title || "Welcome to Our School",
       subtitle:
         slide?.subtitle ||
         "Building bright futures through excellence in education.",
+
+      primaryButtonText:
+        slide?.primaryButtonText ||
+        slide?.primary_button_text ||
+        slide?.primaryText ||
+        "Admissions",
+      primaryButtonHref:
+        slide?.primaryButtonHref ||
+        slide?.primary_button_href ||
+        slide?.primaryHref ||
+        "/admissions",
+
+      secondaryButtonText:
+        slide?.secondaryButtonText ||
+        slide?.secondary_button_text ||
+        slide?.secondaryText ||
+        "Learn more",
+      secondaryButtonHref:
+        slide?.secondaryButtonHref ||
+        slide?.secondary_button_href ||
+        slide?.secondaryHref ||
+        "/about/who-we-are",
+
+      overlayOpacity:
+        typeof slide?.overlayOpacity === "number"
+          ? slide.overlayOpacity
+          : typeof slide?.overlay_opacity === "number"
+            ? slide.overlay_opacity
+            : 0.45,
+
+      objectPosition:
+        slide?.objectPosition || slide?.object_position || "center center",
+
+      backgroundColor:
+        slide?.backgroundColor || slide?.background_color || "#0f172a",
+
+      fixedBackground:
+        slide?.fixedBackground === true || slide?.fixed_background === true,
     }));
 }
 
-export default function Hero({ settings = {}, navItems = [] }) {
+export default function Hero({
+  settings = {},
+  navItems = [],
+  builderMode = false,
+}) {
   const templateSlides = templateConfig?.defaults?.hero_slides || [];
   const dbSlides = settings?.hero_slides || [];
   const useCustomSlides = settings?.hero_slides_overridden === true;
 
-  const slides = useMemo(() => {
+  const savedSlides = useMemo(() => {
     const sourceSlides = useCustomSlides ? dbSlides : templateSlides;
     return normalizeHeroSlides(sourceSlides);
   }, [useCustomSlides, dbSlides, templateSlides]);
 
+  const savedSlideshowSettings = useMemo(() => {
+    return normalizeSlideshowSettings(settings?.hero_slideshow_settings || {});
+  }, [settings?.hero_slideshow_settings]);
+
+  const [liveSlides, setLiveSlides] = useState(savedSlides);
+  const [liveSlideshowSettings, setLiveSlideshowSettings] = useState(
+    savedSlideshowSettings,
+  );
   const [index, setIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -86,21 +178,22 @@ export default function Hero({ settings = {}, navItems = [] }) {
   const videoRef = useRef(null);
 
   const siteId = settings?.site_id || "";
+  const currentSlide = liveSlides[index] || null;
 
-  const showAdmissionsButton = isVisibleByNav(navItems, ["/admissions"], true);
+  useEffect(() => {
+    setLiveSlides(savedSlides);
+    setIndex(0);
+  }, [savedSlides]);
 
-  const showLearnMoreButton = isVisibleByNav(
-    navItems,
-    ["/about/who-we-are"],
-    true,
-  );
+  useEffect(() => {
+    setLiveSlideshowSettings(savedSlideshowSettings);
+  }, [savedSlideshowSettings]);
 
-  const showCtaRow = showAdmissionsButton || showLearnMoreButton;
-
-  const navigateTo = (href) => {
-    const slug = href.replace(`/#/site/${siteId}`, "") || "/";
-    window.dispatchEvent(new CustomEvent("builder:navigate", { detail: slug }));
-  };
+  useEffect(() => {
+    if (index >= liveSlides.length && liveSlides.length > 0) {
+      setIndex(0);
+    }
+  }, [index, liveSlides.length]);
 
   const stopAutoplay = () => {
     if (autoplayRef.current) {
@@ -110,91 +203,173 @@ export default function Hero({ settings = {}, navItems = [] }) {
   };
 
   const next = () => {
-    setIndex((prev) => (prev + 1) % slides.length);
+    if (liveSlides.length <= 1) return;
+
+    setIndex((previous) => (previous + 1) % liveSlides.length);
   };
 
   const prev = () => {
-    setIndex((prev) => (prev - 1 + slides.length) % slides.length);
+    if (liveSlides.length <= 1) return;
+
+    setIndex(
+      (previous) =>
+        (previous - 1 + liveSlides.length) % liveSlides.length,
+    );
   };
 
-  const goTo = (i) => {
-    setIndex(i);
+  const goTo = (slideIndex) => {
+    if (slideIndex < 0 || slideIndex >= liveSlides.length) return;
+
+    setIndex(slideIndex);
+  };
+
+  const navigateTo = (href = "/") => {
+    if (isExternalHref(href)) {
+      window.open(href, "_blank", "noopener,noreferrer");
+      return;
+    }
+
+    const slug = normalizeHref(href);
+
+    window.dispatchEvent(
+      new CustomEvent("builder:navigate", {
+        detail: slug,
+      }),
+    );
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleHeroSave = (patch = {}) => {
+    if (Array.isArray(patch?.hero_slides)) {
+      setLiveSlides(normalizeHeroSlides(patch.hero_slides));
+      setIndex(0);
+    }
+
+    if (patch?.hero_slideshow_settings) {
+      setLiveSlideshowSettings(
+        normalizeSlideshowSettings(patch.hero_slideshow_settings),
+      );
+    }
   };
 
   useEffect(() => {
-    if (!slides.length) return;
-
-    const current = slides[index];
     stopAutoplay();
 
-    if (isPaused) return;
+    if (
+      !liveSlideshowSettings.autoplay ||
+      isPaused ||
+      liveSlides.length <= 1 ||
+      !currentSlide
+    ) {
+      return undefined;
+    }
 
-    if (current?.type === "image") {
+    if (currentSlide.type === "image") {
       autoplayRef.current = setInterval(() => {
-        setIndex((prev) => (prev + 1) % slides.length);
-      }, 5000);
+        setIndex((previous) => (previous + 1) % liveSlides.length);
+      }, liveSlideshowSettings.intervalSeconds * 1000);
     }
 
     return () => stopAutoplay();
-  }, [index, slides, isPaused]);
+  }, [
+    currentSlide,
+    isPaused,
+    liveSlides.length,
+    liveSlideshowSettings.autoplay,
+    liveSlideshowSettings.intervalSeconds,
+  ]);
 
   useEffect(() => {
-    if (!slides.length) return;
-
-    const current = slides[index];
-
-    if (current?.type === "video" && videoRef.current) {
-      const video = videoRef.current;
-      video.currentTime = 0;
-
-      const playPromise = video.play();
-      if (playPromise && typeof playPromise.catch === "function") {
-        playPromise.catch(() => {
-          setTimeout(() => {
-            setIndex((prev) => (prev + 1) % slides.length);
-          }, 800);
-        });
-      }
-    } else if (videoRef.current) {
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
+    if (!currentSlide || currentSlide.type !== "video" || !videoRef.current) {
+      return;
     }
-  }, [index, slides]);
+
+    const video = videoRef.current;
+
+    video.currentTime = 0;
+
+    if (liveSlideshowSettings.autoplay && !isPaused) {
+      const playPromise = video.play();
+
+      if (playPromise && typeof playPromise.catch === "function") {
+        playPromise.catch(() => {});
+      }
+    } else {
+      video.pause();
+    }
+  }, [
+    currentSlide,
+    isPaused,
+    liveSlideshowSettings.autoplay,
+    liveSlides.length,
+  ]);
 
   useEffect(() => {
-    if (!slides.length) return;
+    if (!liveSlides.length) return undefined;
 
-    const onKey = (e) => {
-      if (e.key === "ArrowLeft") prev();
-      if (e.key === "ArrowRight") next();
+    const handleKeyDown = (event) => {
+      if (event.key === "ArrowLeft") {
+        prev();
+      }
+
+      if (event.key === "ArrowRight") {
+        next();
+      }
     };
 
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [slides.length]);
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [liveSlides.length]);
 
   const handleMouseEnter = () => {
-    // setIsPaused(true);
-    // stopAutoplay();
-    // if (videoRef.current) {
-    //   videoRef.current.pause();
-    // }
+    if (!liveSlideshowSettings.pauseOnHover) return;
+
+    setIsPaused(true);
+    stopAutoplay();
+
+    if (videoRef.current) {
+      videoRef.current.pause();
+    }
   };
 
   const handleMouseLeave = () => {
+    if (!liveSlideshowSettings.pauseOnHover) return;
+
     setIsPaused(false);
-    const current = slides[index];
-    if (current?.type === "video" && videoRef.current) {
+
+    if (
+      currentSlide?.type === "video" &&
+      liveSlideshowSettings.autoplay &&
+      videoRef.current
+    ) {
       videoRef.current.play().catch(() => {});
     }
   };
 
-  if (!slides.length) {
+  if (!liveSlides.length) {
     return (
       <section className="hero hero-carousel">
+        {builderMode && (
+          <BuilderMediaEditor
+            enabled={builderMode}
+            type="slideshow"
+            label="Edit Hero Slideshow"
+            slides={liveSlides}
+            settings={settings}
+            triggerLabel="Edit"
+            triggerTitle="Edit hero slideshow"
+            onSave={handleHeroSave}
+          />
+        )}
+
         <div className="slide active">
           <div className="slide-caption container">
             <h2>No hero slides configured</h2>
+
             <p className="subtitle">
               Add hero slides in template.config.js or site settings.
             </p>
@@ -206,95 +381,196 @@ export default function Hero({ settings = {}, navItems = [] }) {
 
   return (
     <section
-      className="hero hero-carousel"
+      className={`hero hero-carousel hero-transition-${liveSlideshowSettings.transition}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       aria-roledescription="carousel"
       aria-label="School highlights"
     >
+      {builderMode && (
+        <BuilderMediaEditor
+          enabled={builderMode}
+          type="slideshow"
+          label="Edit Hero Slideshow"
+          slides={liveSlides}
+          settings={{
+            ...settings,
+            hero_slideshow_settings: liveSlideshowSettings,
+          }}
+          triggerLabel="Edit"
+          triggerTitle="Edit hero slideshow"
+          onSave={handleHeroSave}
+        />
+      )}
+
       <div className="slides">
-        {slides.map((s, i) => {
-          const active = i === index;
+        {liveSlides.map((slide, slideIndex) => {
+          const active = slideIndex === index;
+
+          const primaryButtonVisible =
+            Boolean(slide.primaryButtonText) &&
+            isVisibleByNav(
+              navItems,
+              [slide.primaryButtonHref || "/admissions"],
+              true,
+            );
+
+          const secondaryButtonVisible =
+            Boolean(slide.secondaryButtonText) &&
+            isVisibleByNav(
+              navItems,
+              [slide.secondaryButtonHref || "/about/who-we-are"],
+              true,
+            );
+
+          const showCtaRow =
+            primaryButtonVisible || secondaryButtonVisible;
 
           return (
             <div
-              key={s.id}
+              key={slide.id}
               className={`slide ${active ? "active" : ""}`}
               aria-hidden={!active}
+              style={{
+                backgroundColor: slide.backgroundColor || "#0f172a",
+              }}
             >
-              {s.type === "image" ? (
+              {slide.type === "image" ? (
                 <div
                   className="slide-media"
                   style={{
-                    backgroundImage: `url(${s.src || ""})`,
+                    backgroundImage: `url(${slide.src || slide.image || ""})`,
+                    backgroundPosition:
+                      slide.objectPosition || "center center",
+                    backgroundAttachment: slide.fixedBackground
+                      ? "fixed"
+                      : "scroll",
                   }}
                 >
                   <img
-                    src={s.src || ""}
-                    alt={s.alt}
+                    src={slide.src || slide.image || ""}
+                    alt={slide.alt}
                     loading="lazy"
                     className="visually-hidden"
                     aria-hidden="true"
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none";
+                    onError={(event) => {
+                      event.currentTarget.style.display = "none";
                     }}
                   />
                 </div>
               ) : (
-                <div className="slide-media video-wrap">
+                <div
+                  className="slide-media video-wrap"
+                  style={{
+                    backgroundColor: slide.backgroundColor || "#0f172a",
+                  }}
+                >
                   <video
                     ref={active ? videoRef : null}
                     className="hero-video"
-                    src={s.src}
-                    poster={s.poster || ""}
+                    src={slide.src || slide.url || ""}
+                    poster={slide.poster || ""}
                     muted
                     playsInline
-                    autoPlay
+                    autoPlay={liveSlideshowSettings.autoplay && active}
+                    controls={!liveSlideshowSettings.autoplay && active}
                     preload="auto"
                     onEnded={() => {
-                      setIndex((prev) => (prev + 1) % slides.length);
+                      if (liveSlideshowSettings.autoplay) {
+                        next();
+                      }
                     }}
-                    onError={() => {
-                      setTimeout(() => {
-                        setIndex((prev) => (prev + 1) % slides.length);
-                      }, 400);
+                    aria-label={slide.alt}
+                    style={{
+                      objectPosition:
+                        slide.objectPosition || "center center",
                     }}
-                    aria-label={s.alt}
                   />
                 </div>
               )}
 
+              <div
+                className="slide-overlay"
+                aria-hidden="true"
+                style={{
+                  opacity:
+                    typeof slide.overlayOpacity === "number"
+                      ? slide.overlayOpacity
+                      : 0.45,
+                }}
+              />
+
               <div className="slide-caption container">
-                <h2>{s.title}</h2>
-                <p className="subtitle">{s.subtitle}</p>
+                <h2>{slide.title}</h2>
+                <p className="subtitle">{slide.subtitle}</p>
 
                 {showCtaRow && (
                   <div className="cta-row">
-                    {showAdmissionsButton && (
+                    {primaryButtonVisible && (
                       <a
-                        href={buildSiteHref(siteId, "/admissions")}
+                        href={resolveSiteHref(
+                          siteId,
+                          slide.primaryButtonHref || "/admissions",
+                        )}
+                        target={
+                          isExternalHref(slide.primaryButtonHref)
+                            ? "_blank"
+                            : undefined
+                        }
+                        rel={
+                          isExternalHref(slide.primaryButtonHref)
+                            ? "noopener noreferrer"
+                            : undefined
+                        }
                         className="btns primary"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          navigateTo(buildSiteHref(siteId, "/admissions"));
-                        }}
-                      >
-                        Admissions
-                      </a>
-                    )}
+                        onClick={(event) => {
+                          if (isExternalHref(slide.primaryButtonHref)) {
+                            return;
+                          }
 
-                    {showLearnMoreButton && (
-                      <a
-                        href={buildSiteHref(siteId, "/about/who-we-are")}
-                        className="btns ghost"
-                        onClick={(e) => {
-                          e.preventDefault();
+                          event.preventDefault();
+
                           navigateTo(
-                            buildSiteHref(siteId, "/about/who-we-are"),
+                            slide.primaryButtonHref || "/admissions",
                           );
                         }}
                       >
-                        Learn more
+                        {slide.primaryButtonText}
+                      </a>
+                    )}
+
+                    {secondaryButtonVisible && (
+                      <a
+                        href={resolveSiteHref(
+                          siteId,
+                          slide.secondaryButtonHref ||
+                            "/about/who-we-are",
+                        )}
+                        target={
+                          isExternalHref(slide.secondaryButtonHref)
+                            ? "_blank"
+                            : undefined
+                        }
+                        rel={
+                          isExternalHref(slide.secondaryButtonHref)
+                            ? "noopener noreferrer"
+                            : undefined
+                        }
+                        className="btns ghost"
+                        onClick={(event) => {
+                          if (isExternalHref(slide.secondaryButtonHref)) {
+                            return;
+                          }
+
+                          event.preventDefault();
+
+                          navigateTo(
+                            slide.secondaryButtonHref ||
+                              "/about/who-we-are",
+                          );
+                        }}
+                      >
+                        {slide.secondaryButtonText}
                       </a>
                     )}
                   </div>
@@ -305,40 +581,50 @@ export default function Hero({ settings = {}, navItems = [] }) {
         })}
       </div>
 
-      <button
-        className="carousel-btn prev"
-        onClick={prev}
-        aria-label="Previous slide"
-        title="Previous"
-        type="button"
-      >
-        ‹
-      </button>
-
-      <button
-        className="carousel-btn next"
-        onClick={next}
-        aria-label="Next slide"
-        title="Next"
-        type="button"
-      >
-        ›
-      </button>
-
-      <div className="indicators" role="tablist" aria-label="Slide indicators">
-        {slides.map((_, i) => (
+      {liveSlideshowSettings.showArrows && liveSlides.length > 1 && (
+        <>
           <button
-            key={i}
-            className={`indicator ${i === index ? "active" : ""}`}
-            onClick={() => goTo(i)}
-            aria-label={`Go to slide ${i + 1}`}
-            role="tab"
-            aria-selected={i === index}
-            tabIndex={0}
+            className="carousel-btn prev"
+            onClick={prev}
+            aria-label="Previous slide"
+            title="Previous"
             type="button"
-          />
-        ))}
-      </div>
+          >
+            ‹
+          </button>
+
+          <button
+            className="carousel-btn next"
+            onClick={next}
+            aria-label="Next slide"
+            title="Next"
+            type="button"
+          >
+            ›
+          </button>
+        </>
+      )}
+
+      {liveSlideshowSettings.showDots && liveSlides.length > 1 && (
+        <div
+          className="indicators"
+          role="tablist"
+          aria-label="Slide indicators"
+        >
+          {liveSlides.map((_, slideIndex) => (
+            <button
+              key={slideIndex}
+              className={`indicator ${slideIndex === index ? "active" : ""}`}
+              onClick={() => goTo(slideIndex)}
+              aria-label={`Go to slide ${slideIndex + 1}`}
+              role="tab"
+              aria-selected={slideIndex === index}
+              tabIndex={0}
+              type="button"
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 }

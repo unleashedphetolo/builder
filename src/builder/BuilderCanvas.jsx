@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import "../styles/builderCanvas.css";
+import "../styles/builder-media-editor.css";
 
 function normalizePreviewSlug(slug = "/") {
   const raw = String(slug || "/").trim();
@@ -58,6 +59,8 @@ export default function BuilderCanvas({
     return "desktop";
   });
 
+  const [mediaEditorOpen, setMediaEditorOpen] = useState(false);
+
   const previewUrl = useMemo(() => {
     if (!siteId) return "";
 
@@ -76,7 +79,10 @@ export default function BuilderCanvas({
     };
 
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   useEffect(() => {
@@ -159,6 +165,44 @@ export default function BuilderCanvas({
   }, [siteId]);
 
   useEffect(() => {
+    function handleMediaEditorState(event) {
+      const detail = event?.detail || {};
+
+      if (typeof detail.open !== "boolean") return;
+
+      setMediaEditorOpen(detail.open);
+    }
+
+    function handleMediaEditorMessage(event) {
+      const payload = event?.data;
+
+      if (!payload || typeof payload !== "object") return;
+
+      if (payload.type !== "builder:media-editor-state") return;
+
+      setMediaEditorOpen(payload.open === true);
+    }
+
+    window.addEventListener(
+      "builder:media-editor-state",
+      handleMediaEditorState,
+    );
+    window.addEventListener("message", handleMediaEditorMessage);
+
+    return () => {
+      window.removeEventListener(
+        "builder:media-editor-state",
+        handleMediaEditorState,
+      );
+      window.removeEventListener("message", handleMediaEditorMessage);
+    };
+  }, []);
+
+  useEffect(() => {
+    setMediaEditorOpen(false);
+  }, [previewUrl]);
+
+  useEffect(() => {
     if (!page) return;
 
     if (window.previewFrame?.contentWindow) {
@@ -209,7 +253,11 @@ export default function BuilderCanvas({
   };
 
   return (
-    <div className="builder-canvas">
+    <div
+      className={`builder-canvas ${
+        mediaEditorOpen ? "builder-canvas-editor-open" : ""
+      }`}
+    >
       <div className="canvas-toolbar">
         <div className="device-switch">
           <button
@@ -258,24 +306,39 @@ export default function BuilderCanvas({
         </div>
       </div>
 
-      <div className={`canvas-inner ${device}`}>
-        {!previewUrl ? (
-          <div className="placeholder-content">
-            <h2>No page selected</h2>
-            <p>Select a page to preview it.</p>
-          </div>
-        ) : (
-          <div className="builder-preview-frame-wrap">
-            <iframe
-              ref={(el) => (window.previewFrame = el)}
-              src={previewUrl}
-              title="Website Preview"
-              className="builder-preview-frame"
-              loading="lazy"
-              onLoad={handleIframeLoad}
-            />
-          </div>
-        )}
+      <div
+        className={`canvas-workspace ${
+          mediaEditorOpen ? "media-editor-open" : ""
+        }`}
+      >
+        <div className={`canvas-inner ${device}`}>
+          {!previewUrl ? (
+            <div className="placeholder-content">
+              <h2>No page selected</h2>
+              <p>Select a page to preview it.</p>
+            </div>
+          ) : (
+            <div className="builder-preview-frame-wrap">
+              <iframe
+                ref={(el) => (window.previewFrame = el)}
+                src={previewUrl}
+                title="Website Preview"
+                className="builder-preview-frame"
+                loading="lazy"
+                onLoad={handleIframeLoad}
+              />
+            </div>
+          )}
+        </div>
+
+        <aside
+          id="builder-media-editor-dock"
+          className={`builder-media-editor-dock ${
+            mediaEditorOpen ? "open" : ""
+          }`}
+          aria-hidden={!mediaEditorOpen}
+          aria-label="Website editor drawer area"
+        />
       </div>
     </div>
   );

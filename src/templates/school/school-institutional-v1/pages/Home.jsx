@@ -52,7 +52,11 @@ function isVisibleByNav(navItems = [], paths = [], fallbackVisible = true) {
   return matches.some((item) => item.is_visible !== false);
 }
 
-export default function Home({ settings = {}, navItems = [] }) {
+export default function Home({
+  settings = {},
+  navItems = [],
+  builderMode = false,
+}) {
   const showHome = isVisibleByNav(navItems, ["/"]);
 
   const showHero = isVisibleByNav(navItems, ["/home/hero"]);
@@ -87,7 +91,13 @@ export default function Home({ settings = {}, navItems = [] }) {
 
   return (
     <>
-      {showHero && <Hero settings={settings} navItems={navItems} />}
+      {showHero && (
+        <Hero
+          settings={settings}
+          navItems={navItems}
+          builderMode={builderMode}
+        />
+      )}
 
       {showNotices && (
         <NoticeBoard settings={settings} navItems={navItems} />
