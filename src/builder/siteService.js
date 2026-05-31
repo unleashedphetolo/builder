@@ -12,6 +12,15 @@ const templateConfigs = import.meta.glob(
   { eager: true },
 );
 
+const DEFAULT_HERO_SLIDESHOW_SETTINGS = {
+  autoplay: true,
+  intervalSeconds: 5,
+  pauseOnHover: false,
+  showArrows: true,
+  showDots: true,
+  transition: "fade",
+};
+
 // ---------- Helpers ----------
 
 const TEMPLATE_PLACEHOLDERS = new Set([
@@ -276,6 +285,10 @@ function normalizeDefaults(defaults = {}) {
     hero_slides: Array.isArray(defaults?.hero_slides)
       ? defaults.hero_slides
       : [],
+    hero_slideshow_settings: {
+      ...DEFAULT_HERO_SLIDESHOW_SETTINGS,
+      ...(defaults?.hero_slideshow_settings || {}),
+    },
   };
 }
 
@@ -324,6 +337,7 @@ function mapDefaultsToSiteSettings(siteId, defaults = {}, organization = {}) {
 
     hero_slides: safe.hero_slides,
     hero_slides_overridden: false,
+    hero_slideshow_settings: safe.hero_slideshow_settings,
     features: safe.features,
   };
 }

@@ -244,65 +244,133 @@ export default function SitePage() {
   }, [settings]);
 
   useEffect(() => {
-    const handleSettingsUpdate = (event) => {
-      const incoming = event?.detail || {};
-      const organizationPatch = getOrganizationPatch(incoming);
+    /*
+      One stable live-update path for Website Details, Logo, Hero Slideshow,
+      theme and any future settings fields.
 
-      if (Object.keys(organizationPatch).length > 0) {
-        setOrganization((prev) => ({
-          ...(prev || {}),
-          ...organizationPatch,
-        }));
+      BuilderMediaEditor can emit both builder:settings-updated and
+      site-settings-updated for the same saved patch. Returning the previous
+      state when the applied values are already identical prevents duplicate
+      rerenders and protects the preview from update loops.
+    */
+    const applyIncomingSettings = (incoming = {}) => {
+      if (!incoming || typeof incoming !== "object" || Array.isArray(incoming)) {
+        return;
+      }
+
+      const organizationPatch = getOrganizationPatch(incoming);
+      const organizationKeys = Object.keys(organizationPatch);
+      const hasOrganizationPatch = organizationKeys.length > 0;
+
+      if (hasOrganizationPatch) {
+        setOrganization((prev) => {
+          const current = prev || {};
+          const hasChanges = organizationKeys.some(
+            (key) => !Object.is(current[key], organizationPatch[key]),
+          );
+
+          if (!hasChanges) return prev;
+
+          return {
+            ...current,
+            ...organizationPatch,
+          };
+        });
       }
 
       setSettings((prev) => {
-        const nextOrganization =
-          Object.keys(organizationPatch).length > 0
+        const current = prev || {};
+        const currentOrganization = current.organization || null;
+
+        const organizationHasChanges =
+          hasOrganizationPatch &&
+          organizationKeys.some(
+            (key) =>
+              !Object.is(currentOrganization?.[key], organizationPatch[key]),
+          );
+
+        const nextOrganization = hasOrganizationPatch
+          ? organizationHasChanges
             ? {
-                ...(prev?.organization || {}),
+                ...(currentOrganization || {}),
                 ...organizationPatch,
               }
-            : prev?.organization || null;
+            : currentOrganization
+          : currentOrganization;
 
-        return {
-          ...(prev || {}),
-          ...(incoming || {}),
+        const next = {
+          ...current,
+          ...incoming,
           organization: nextOrganization,
           organization_id:
             nextOrganization?.id ||
             incoming?.organization_id ||
-            prev?.organization_id ||
+            current?.organization_id ||
             null,
           organization_name:
             incoming?.organization_name ||
-            prev?.organization_name ||
+            current?.organization_name ||
             nextOrganization?.name ||
             "",
           site_name:
             incoming?.site_name ||
-            prev?.site_name ||
+            current?.site_name ||
             nextOrganization?.name ||
             "Website Preview",
           email:
             incoming?.email ||
-            prev?.email ||
+            current?.email ||
             nextOrganization?.email ||
             "",
           phone:
             incoming?.phone ||
-            prev?.phone ||
+            current?.phone ||
             nextOrganization?.phone ||
             "",
         };
+
+        const fieldsToCompare = new Set([
+          ...Object.keys(incoming),
+          "organization",
+          "organization_id",
+          "organization_name",
+          "site_name",
+          "email",
+          "phone",
+        ]);
+
+        const hasSettingsChanges = Array.from(fieldsToCompare).some(
+          (key) => !Object.is(current[key], next[key]),
+        );
+
+        return hasSettingsChanges ? next : prev;
       });
     };
 
-    const handleNavUpdate = (event) => {
-      const incoming = event?.detail || [];
+    const applyIncomingNavItems = (incoming = []) => {
+      if (!Array.isArray(incoming)) return;
 
-      if (Array.isArray(incoming)) {
-        setNavItems(incoming);
-      }
+      setNavItems((prev) => {
+        if (prev === incoming) return prev;
+
+        if (
+          Array.isArray(prev) &&
+          prev.length === incoming.length &&
+          prev.every((item, index) => item === incoming[index])
+        ) {
+          return prev;
+        }
+
+        return incoming;
+      });
+    };
+
+    const handleSettingsUpdate = (event) => {
+      applyIncomingSettings(event?.detail || {});
+    };
+
+    const handleNavUpdate = (event) => {
+      applyIncomingNavItems(event?.detail || []);
     };
 
     const handleMessage = (event) => {
@@ -314,68 +382,16 @@ export default function SitePage() {
         payload.type === "builder:settings-updated" ||
         payload.type === "site-settings-updated"
       ) {
-        const incoming = payload.settings || payload.payload || {};
-        const organizationPatch = getOrganizationPatch(incoming);
-
-        if (Object.keys(organizationPatch).length > 0) {
-          setOrganization((prev) => ({
-            ...(prev || {}),
-            ...organizationPatch,
-          }));
-        }
-
-        setSettings((prev) => {
-          const nextOrganization =
-            Object.keys(organizationPatch).length > 0
-              ? {
-                  ...(prev?.organization || {}),
-                  ...organizationPatch,
-                }
-              : prev?.organization || null;
-
-          return {
-            ...(prev || {}),
-            ...(incoming || {}),
-            organization: nextOrganization,
-            organization_id:
-              nextOrganization?.id ||
-              incoming?.organization_id ||
-              prev?.organization_id ||
-              null,
-            organization_name:
-              incoming?.organization_name ||
-              prev?.organization_name ||
-              nextOrganization?.name ||
-              "",
-            site_name:
-              incoming?.site_name ||
-              prev?.site_name ||
-              nextOrganization?.name ||
-              "Website Preview",
-            email:
-              incoming?.email ||
-              prev?.email ||
-              nextOrganization?.email ||
-              "",
-            phone:
-              incoming?.phone ||
-              prev?.phone ||
-              nextOrganization?.phone ||
-              "",
-          };
-        });
+        applyIncomingSettings(payload.settings || payload.payload || {});
       }
 
       if (
         payload.type === "builder:nav-updated" ||
         payload.type === "site-nav-updated"
       ) {
-        const incoming =
-          payload.navItems || payload.items || payload.payload || [];
-
-        if (Array.isArray(incoming)) {
-          setNavItems(incoming);
-        }
+        applyIncomingNavItems(
+          payload.navItems || payload.items || payload.payload || [],
+        );
       }
 
       if (
@@ -386,14 +402,18 @@ export default function SitePage() {
 
         if (incomingPage?.id) {
           setPage((prev) => {
-            if (!prev || prev.id === incomingPage.id) {
-              return {
-                ...(prev || {}),
-                ...incomingPage,
-              };
-            }
+            if (!prev || prev.id !== incomingPage.id) return prev;
 
-            return prev;
+            const hasPageChanges = Object.keys(incomingPage).some(
+              (key) => !Object.is(prev[key], incomingPage[key]),
+            );
+
+            if (!hasPageChanges) return prev;
+
+            return {
+              ...prev,
+              ...incomingPage,
+            };
           });
         }
       }

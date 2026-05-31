@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { IoChevronDown } from "react-icons/io5";
+import BuilderMediaEditor from "../../../../../builder/BuilderMediaEditor";
 import "../../styles/navbar.css";
 import logos from "../../assets/institutional.png";
 
@@ -47,11 +48,20 @@ function hrefToSlug(href = "", siteId = "") {
   return normalizeSlug(withoutHash);
 }
 
-export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
+export default function Navbar({
+  settings = {},
+  navItems = [],
+  navigateTo,
+  builderMode = false,
+}) {
+  const logoSectionRef = useRef(null);
+
   const [liveSettings, setLiveSettings] = useState(settings || {});
   const [liveNavItems, setLiveNavItems] = useState(navItems || []);
   const [open, setOpen] = useState(false);
   const [dropdown, setDropdown] = useState(null);
+  const [logoSelected, setLogoSelected] = useState(false);
+  const [logoEditorOpen, setLogoEditorOpen] = useState(false);
 
   useEffect(() => {
     setLiveSettings(settings || {});
@@ -68,6 +78,13 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
       document.body.style.overflow = "";
     };
   }, [open]);
+
+  useEffect(() => {
+    if (!builderMode) {
+      setLogoSelected(false);
+      setLogoEditorOpen(false);
+    }
+  }, [builderMode]);
 
   useEffect(() => {
     const mergeLiveSettings = (incoming = {}) => {
@@ -128,15 +145,119 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
         "builder:settings-updated",
         handleSettingsUpdate,
       );
-      window.removeEventListener(
-        "site-settings-updated",
-        handleSettingsUpdate,
-      );
+      window.removeEventListener("site-settings-updated", handleSettingsUpdate);
       window.removeEventListener("builder:nav-updated", handleNavUpdate);
       window.removeEventListener("site-nav-updated", handleNavUpdate);
       window.removeEventListener("message", handleMessage);
     };
   }, []);
+
+  useEffect(() => {
+    if (!builderMode) return undefined;
+
+    const applyEditorState = (detail = {}) => {
+      if (typeof detail.open !== "boolean") return;
+
+      const isLogoEditor =
+        detail.editorType === "logo" || detail.label === "Edit Logo";
+
+      if (isLogoEditor) {
+        setLogoEditorOpen(detail.open);
+        setLogoSelected(detail.open);
+        return;
+      }
+
+      if (detail.open === true) {
+        setLogoSelected(false);
+        setLogoEditorOpen(false);
+      }
+    };
+
+    const handleEditorState = (event) => {
+      applyEditorState(event?.detail || {});
+    };
+
+    const handleEditorMessage = (event) => {
+      const payload = event?.data;
+
+      if (!payload || typeof payload !== "object") return;
+      if (payload.type !== "builder:media-editor-state") return;
+
+      applyEditorState(payload);
+    };
+
+    window.addEventListener("builder:media-editor-state", handleEditorState);
+    window.addEventListener("message", handleEditorMessage);
+
+    return () => {
+      window.removeEventListener(
+        "builder:media-editor-state",
+        handleEditorState,
+      );
+      window.removeEventListener("message", handleEditorMessage);
+    };
+  }, [builderMode]);
+
+  useEffect(() => {
+    if (!builderMode) return undefined;
+
+    const openLogoEditor = () => {
+      setLogoSelected(true);
+
+      window.requestAnimationFrame(() => {
+        const editLogoButton = logoSectionRef.current?.querySelector(
+          ".navbar-logo-edit-button",
+        );
+
+        editLogoButton?.click();
+      });
+    };
+
+    const handleOpenMediaEditor = (event) => {
+      const detail = event?.detail || {};
+
+      if (detail.editorType !== "logo") return;
+
+      openLogoEditor();
+    };
+
+    const handleOpenMediaEditorMessage = (event) => {
+      const payload = event?.data;
+
+      if (!payload || typeof payload !== "object") return;
+      if (payload.type !== "builder:open-media-editor") return;
+      if (payload.editorType !== "logo") return;
+
+      openLogoEditor();
+    };
+
+    window.addEventListener("builder:open-media-editor", handleOpenMediaEditor);
+    window.addEventListener("message", handleOpenMediaEditorMessage);
+
+    return () => {
+      window.removeEventListener(
+        "builder:open-media-editor",
+        handleOpenMediaEditor,
+      );
+      window.removeEventListener("message", handleOpenMediaEditorMessage);
+    };
+  }, [builderMode]);
+
+  useEffect(() => {
+    if (!builderMode || !logoSelected || logoEditorOpen) return undefined;
+
+    const handleOutsidePointerDown = (event) => {
+      if (!logoSectionRef.current?.contains(event.target)) {
+        setLogoSelected(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handleOutsidePointerDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handleOutsidePointerDown);
+    };
+  }, [builderMode, logoSelected, logoEditorOpen]);
 
   const features = {
     ...DEFAULT_FEATURES,
@@ -147,6 +268,30 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
   const schoolName = liveSettings?.site_name || "School";
   const tagline = liveSettings?.tagline || "Secondary School";
   const siteId = liveSettings?.site_id || "";
+
+  const handleLogoSave = (patch = {}) => {
+    if (!Object.prototype.hasOwnProperty.call(patch, "logo_url")) return;
+
+    setLiveSettings((previous) => ({
+      ...(previous || {}),
+      logo_url: patch.logo_url || "",
+    }));
+  };
+
+  const handleLogoTargetClick = (event) => {
+    if (!builderMode) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    setLogoSelected(true);
+
+    const editLogoButton = logoSectionRef.current?.querySelector(
+      ".navbar-logo-edit-button",
+    );
+
+    editLogoButton?.click();
+  };
 
   const headerNavItems = useMemo(() => {
     return Array.isArray(liveNavItems)
@@ -261,7 +406,10 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
   const menus = useMemo(
     () => ({
       about: [
-        { to: buildSiteHref(siteId, "/about/who-we-are"), label: "Who We Are" },
+        {
+          to: buildSiteHref(siteId, "/about/who-we-are"),
+          label: "Who We Are",
+        },
         {
           to: buildSiteHref(siteId, "/about/vision-mission"),
           label: "Vision & Mission",
@@ -269,7 +417,10 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
         { to: buildSiteHref(siteId, "/staff"), label: "Staff Members" },
         { to: buildSiteHref(siteId, "/sgb"), label: "SGB" },
         { to: buildSiteHref(siteId, "/facilities"), label: "Facilities" },
-        { to: buildSiteHref(siteId, "/about/history"), label: "Our History" },
+        {
+          to: buildSiteHref(siteId, "/about/history"),
+          label: "Our History",
+        },
       ],
       activities: [
         {
@@ -310,7 +461,10 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
           to: buildSiteHref(siteId, "/resources/stationary-list"),
           label: "Stationary List",
         },
-        { to: buildSiteHref(siteId, "/resources/calendar"), label: "Calendar" },
+        {
+          to: buildSiteHref(siteId, "/resources/calendar"),
+          label: "Calendar",
+        },
       ],
       news: [
         { to: buildSiteHref(siteId, "/news"), label: "Newsletters" },
@@ -328,7 +482,10 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
           to: buildSiteHref(siteId, "/admissions/requirements"),
           label: "Entry Requirements",
         },
-        { to: buildSiteHref(siteId, "/admissions/apply"), label: "Apply Now" },
+        {
+          to: buildSiteHref(siteId, "/admissions/apply"),
+          label: "Apply Now",
+        },
       ],
     }),
     [siteId],
@@ -392,6 +549,7 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
     }
 
     const aboutMenu = filterMenuItems(menus.about);
+
     if (
       features.about &&
       isVisibleNavTarget("About", "/about") &&
@@ -407,6 +565,7 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
     }
 
     const activitiesMenu = filterMenuItems(menus.activities);
+
     if (
       features.activities &&
       isVisibleNavTarget("Activities", "/activities") &&
@@ -422,6 +581,7 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
     }
 
     const resourcesMenu = filterMenuItems(menus.resources);
+
     if (
       features.resources &&
       isVisibleNavTarget("Resources", "/resources") &&
@@ -437,6 +597,7 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
     }
 
     const newsMenu = filterMenuItems(menus.news);
+
     if (
       features.news &&
       isVisibleNavTarget("News", "/news") &&
@@ -452,6 +613,7 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
     }
 
     const admissionsMenu = filterMenuItems(menus.admissions);
+
     if (
       features.admissions &&
       isVisibleNavTarget("Admissions", "/admissions") &&
@@ -475,10 +637,7 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
       });
     }
 
-    if (
-      features.robotics &&
-      isVisibleNavTarget("Robotics Club", "/robotics")
-    ) {
+    if (features.robotics && isVisibleNavTarget("Robotics Club", "/robotics")) {
       items.push({
         type: "link",
         key: "robotics",
@@ -510,22 +669,65 @@ export default function Navbar({ settings = {}, navItems = [], navigateTo }) {
   return (
     <header className="site-nav">
       <div className="nav-inner">
-        <div className="logo-section">
-          <a
-            href={buildSiteHref(siteId, "/")}
-            className="logo-link"
-            aria-label="Go to home"
-            onClick={(e) => {
-              e.preventDefault();
-              navigateTo?.("/");
-            }}
+        <div
+          ref={logoSectionRef}
+          className={`logo-section ${
+            builderMode ? "builder-logo-editable" : ""
+          } ${builderMode && logoSelected ? "logo-editor-selected" : ""}`}
+        >
+          <BuilderMediaEditor
+            enabled={builderMode}
+            type="logo"
+            label="Edit Logo"
+            value={logoUrl}
+            settings={liveSettings}
+            triggerLabel="Edit Logo"
+            triggerClassName="navbar-logo-edit-button"
+            triggerTitle="Edit website logo"
+            onSave={handleLogoSave}
           >
-            <img src={logoUrl} alt="School logo" className="logo-image" />
-            <div className="logo-text">
-              <h1 className="brand-name">{schoolName}</h1>
-              <p className="slogan">{tagline}</p>
-            </div>
-          </a>
+            <a
+              href={buildSiteHref(siteId, "/")}
+              className="logo-link"
+              aria-label="Go to home"
+              onClick={(e) => {
+                if (builderMode && logoSelected) {
+                  e.preventDefault();
+                  return;
+                }
+
+                e.preventDefault();
+                navigateTo?.("/");
+              }}
+            >
+              <span
+                className={`builder-logo-target ${
+                  builderMode && logoSelected ? "is-selected" : ""
+                }`}
+                onClick={handleLogoTargetClick}
+              >
+                <img
+                  src={logoUrl}
+                  alt={`${schoolName} logo`}
+                  className="logo-image"
+                />
+
+                {builderMode && logoSelected && (
+                  <>
+                    <span className="builder-logo-handle handle-tl" />
+                    <span className="builder-logo-handle handle-tr" />
+                    <span className="builder-logo-handle handle-bl" />
+                    <span className="builder-logo-handle handle-br" />
+                  </>
+                )}
+              </span>
+
+              <div className="logo-text">
+                <h1 className="brand-name">{schoolName}</h1>
+                <p className="slogan">{tagline}</p>
+              </div>
+            </a>
+          </BuilderMediaEditor>
         </div>
 
         <nav

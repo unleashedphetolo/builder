@@ -1254,6 +1254,42 @@ export default function Builder() {
     }, 250);
   };
 
+  /*
+  =============================
+  Save visual editor updates permanently
+  =============================
+  BuilderMediaEditor is mounted inside the visible template target, such as
+  the navbar logo or hero slideshow. It sends a builder:update-settings patch
+  to this outer builder when Save Changes is clicked.
+
+  This is the missing permanent-save bridge:
+  live preview update -> existing onUpdateSettings -> site_settings database.
+  */
+
+  useEffect(() => {
+    const handleVisualEditorSettingsUpdate = (event) => {
+      if (event.origin && event.origin !== window.location.origin) return;
+
+      const payload = event?.data;
+
+      if (!payload || typeof payload !== "object") return;
+      if (payload.type !== "builder:update-settings") return;
+
+      const patch = payload.patch;
+
+      if (!patch || typeof patch !== "object" || Array.isArray(patch)) return;
+      if (!Object.keys(patch).length) return;
+
+      onUpdateSettings(patch);
+    };
+
+    window.addEventListener("message", handleVisualEditorSettingsUpdate);
+
+    return () => {
+      window.removeEventListener("message", handleVisualEditorSettingsUpdate);
+    };
+  }, [siteId, siteSettings]);
+
   const onUpdateOrganization = async (patch = {}) => {
     if (!organization?.id) {
       setSaveStatus("Organization not found");
@@ -1777,14 +1813,17 @@ export default function Builder() {
             onChooseTemplate={() => setShowTemplateSelector(true)}
           />
         ) : (
-          <BuilderCanvas
-            siteId={siteId}
-            page={currentPage}
-            onUndo={handleUndo}
-            onRedo={handleRedo}
-            canUndo={historyStack.length > 1}
-            canRedo={redoStack.length > 0}
-          />
+          <>
+            <BuilderCanvas
+              siteId={siteId}
+              page={currentPage}
+              onUndo={handleUndo}
+              onRedo={handleRedo}
+              canUndo={historyStack.length > 1}
+              canRedo={redoStack.length > 0}
+            />
+
+          </>
         )}
       </div>
 

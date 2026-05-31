@@ -1,16 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { supabase } from "../supabase/client";
 import "../styles/builder-media-editor.css";
 
 const IMAGE_LIBRARIES = [
-  {
-    name: "Unsplash",
-    description: "High-quality free photographs.",
-    searchUrl: (query) =>
-      `https://unsplash.com/s/photos/${encodeURIComponent(
-        query || "website",
-      )}`,
-  },
+  
   {
     name: "Pexels Images",
     description: "Free website and hero images.",
@@ -26,6 +20,12 @@ const IMAGE_LIBRARIES = [
       `https://pixabay.com/images/search/${encodeURIComponent(
         query || "website",
       )}/`,
+  },
+  {
+    name: "Unsplash",
+    description: "High-quality free photographs.",
+    searchUrl: (query) =>
+      `https://unsplash.com/s/photos/${encodeURIComponent(query || "website")}`,
   },
 ];
 
@@ -71,6 +71,14 @@ const DEFAULT_SLIDESHOW_SETTINGS = {
   transition: "fade",
 };
 
+const MEDIA_EDITOR_ACTIVATE_EVENT = "builder:activate-media-editor";
+const EMPTY_MEDIA_SLIDES = Object.freeze([]);
+const EMPTY_MEDIA_SETTINGS = Object.freeze({});
+const DEFAULT_MEDIA_STORAGE_BUCKET = "site-media";
+const DEFAULT_MEDIA_TABLE = "site_media";
+const DEFAULT_MAX_IMAGE_UPLOAD_MB = 8;
+const DEFAULT_MAX_VIDEO_UPLOAD_MB = 100;
+
 function pickFirstValue(...values) {
   for (const value of values) {
     const clean = String(value || "").trim();
@@ -104,6 +112,12 @@ function getSiteName(settings = {}) {
 
 function createSlideId(index = 0) {
   return `slide-${Date.now()}-${index}`;
+}
+
+function createEditorInstanceId() {
+  return `media-editor-${Date.now()}-${Math.random()
+    .toString(36)
+    .slice(2, 10)}`;
 }
 
 function normalizeSlides(slides = []) {
@@ -156,15 +170,42 @@ function normalizeSlides(slides = []) {
   });
 }
 
-function fileToDataUrl(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
+function safeFileName(fileName = "asset") {
+  const extensionMatch = String(fileName).match(/\.[a-z0-9]+$/i);
+  const extension = extensionMatch ? extensionMatch[0].toLowerCase() : "";
+  const baseName = String(fileName)
+    .replace(/\.[a-z0-9]+$/i, "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 70);
 
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
+  return `${baseName || "asset"}${extension}`;
+}
 
-    reader.readAsDataURL(file);
-  });
+function formatFileSize(bytes = 0) {
+  const safeBytes = Number(bytes) || 0;
+
+  if (safeBytes < 1024) return `${safeBytes} B`;
+  if (safeBytes < 1024 * 1024) return `${(safeBytes / 1024).toFixed(1)} KB`;
+
+  return `${(safeBytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function getMediaKindFromFile(file) {
+  return String(file?.type || "").startsWith("video/") ? "video" : "image";
+}
+
+function getUploadFolder(target = "media") {
+  if (target === "logo") return "logos";
+  if (target === "slide") return "hero-slides";
+  if (target === "background") return "backgrounds";
+  return "media";
+}
+
+function getAssetMediaType(asset = {}) {
+  return asset?.kind === "video" || isVideoUrl(asset?.url) ? "video" : "image";
 }
 
 function getEditorPortalTarget() {
@@ -172,8 +213,9 @@ function getEditorPortalTarget() {
 
   try {
     if (window.parent && window.parent !== window) {
-      const parentDock =
-        window.parent.document.getElementById("builder-media-editor-dock");
+      const parentDock = window.parent.document.getElementById(
+        "builder-media-editor-dock",
+      );
 
       if (parentDock) {
         return parentDock;
@@ -210,19 +252,166 @@ function postSettingsPatch(patch) {
   );
 }
 
-function MediaLibraryPanel({ mediaType = "image", query, setQuery }) {
-  const libraries =
-    mediaType === "video" ? VIDEO_LIBRARIES : IMAGE_LIBRARIES;
+function MediaLibraryPanel({
+  mediaType = "image",
+  query,
+  setQuery,
+  assets = [],
+  loading = false,
+  error = "",
+  uploading = false,
+  onRefresh,
+  onUploadAsset,
+  onUseAsset,
+}) {
+  const libraries = mediaType === "video" ? VIDEO_LIBRARIES : IMAGE_LIBRARIES;
+
+  const filteredAssets = (Array.isArray(assets) ? assets : []).filter(
+    (asset) => getAssetMediaType(asset) === mediaType,
+  );
 
   return (
     <div className="bme-library-panel">
       <div className="bme-library-heading">
         <div>
-          <h4>Free {mediaType === "video" ? "Video" : "Image"} Libraries</h4>
+          <h4>Website Media Library</h4>
 
           <p>
-            Search online, copy a direct media URL, then paste it into the
-            media URL field above.
+            Upload assets once and reuse them safely across website sections.
+          </p>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            flexWrap: "wrap",
+          }}
+        >
+          <button
+            type="button"
+            className="bme-library-button"
+            disabled={uploading}
+            onClick={onUploadAsset}
+          >
+            {uploading ? "Uploading..." : "+ Upload"}
+          </button>
+
+          <button
+            type="button"
+            className="bme-library-button"
+            disabled={loading || uploading}
+            onClick={onRefresh}
+          >
+            {loading ? "Loading..." : "Refresh"}
+          </button>
+        </div>
+      </div>
+
+      {error && (
+        <p
+          role="alert"
+          style={{
+            margin: "10px 0",
+            padding: "10px 12px",
+            borderRadius: 8,
+            border: "1px solid #fecaca",
+            background: "#fef2f2",
+            color: "#b91c1c",
+            fontSize: 12,
+            lineHeight: 1.5,
+          }}
+        >
+          {error}
+        </p>
+      )}
+
+      {loading ? (
+        <p className="bme-helper-text">Loading your media library...</p>
+      ) : filteredAssets.length ? (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+            gap: 10,
+            marginTop: 12,
+          }}
+        >
+          {filteredAssets.map((asset) => (
+            <article
+              key={asset.id || asset.url}
+              className="bme-library-card"
+              style={{ minWidth: 0 }}
+            >
+              {mediaType === "video" ? (
+                <video
+                  src={asset.url}
+                  muted
+                  preload="metadata"
+                  style={{
+                    width: "100%",
+                    height: 84,
+                    objectFit: "cover",
+                    borderRadius: 7,
+                    background: "#0f172a",
+                  }}
+                />
+              ) : (
+                <img
+                  src={asset.url}
+                  alt={asset.alt || asset.name || "Website asset"}
+                  style={{
+                    width: "100%",
+                    height: 84,
+                    objectFit: "contain",
+                    borderRadius: 7,
+                    border: "1px solid #e2e8f0",
+                    background: "#f8fafc",
+                  }}
+                />
+              )}
+
+              <strong
+                title={asset.name || "Media asset"}
+                style={{
+                  marginTop: 7,
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {asset.name || "Media asset"}
+              </strong>
+
+              <span>
+                {getAssetMediaType(asset) === "video" ? "Video" : "Image"}
+              </span>
+
+              <button
+                type="button"
+                className="bme-library-link"
+                onClick={() => onUseAsset?.(asset)}
+              >
+                Use Asset
+              </button>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p className="bme-helper-text">
+          No {mediaType} assets uploaded yet. Use Upload to add your first
+          reusable asset.
+        </p>
+      )}
+
+      <div className="bme-library-heading" style={{ marginTop: 22 }}>
+        <div>
+          <h4>Free {mediaType === "video" ? "Video" : "Image"} Sources</h4>
+
+          <p>
+            Find a suitable free asset, download it, then upload it to your
+            website media library before using it.
           </p>
         </div>
       </div>
@@ -237,9 +426,7 @@ function MediaLibraryPanel({ mediaType = "image", query, setQuery }) {
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         placeholder={
-          mediaType === "video"
-            ? "School campus video"
-            : "Students learning"
+          mediaType === "video" ? "School campus video" : "Students learning"
         }
       />
 
@@ -255,7 +442,7 @@ function MediaLibraryPanel({ mediaType = "image", query, setQuery }) {
               rel="noopener noreferrer"
               className="bme-library-link"
             >
-              Open Library
+              Open Source
             </a>
           </article>
         ))}
@@ -298,8 +485,10 @@ export default function BuilderMediaEditor({
   type = "slideshow",
   label = "Edit Hero Slideshow",
   value = "",
-  slides = [],
-  settings = {},
+  // slides = [],
+  // settings = {},
+  slides = EMPTY_MEDIA_SLIDES,
+  settings = EMPTY_MEDIA_SETTINGS,
   triggerLabel = "Edit",
   triggerClassName = "",
   triggerTitle = "Edit section",
@@ -321,14 +510,27 @@ export default function BuilderMediaEditor({
   saveToBuilder = true,
   allowUpload = true,
   allowOnlineSearch = true,
+
+  mediaTable = DEFAULT_MEDIA_TABLE,
+  storageBucket = DEFAULT_MEDIA_STORAGE_BUCKET,
+  maxImageUploadMb = DEFAULT_MAX_IMAGE_UPLOAD_MB,
+  maxVideoUploadMb = DEFAULT_MAX_VIDEO_UPLOAD_MB,
 }) {
   const fileInputRef = useRef(null);
   const uploadTargetRef = useRef("slide");
   const dragIndexRef = useRef(null);
   const editorOpenBroadcastRef = useRef(false);
+  const editorInstanceIdRef = useRef(null);
+
+  if (!editorInstanceIdRef.current) {
+    editorInstanceIdRef.current = createEditorInstanceId();
+  }
 
   const isLogoMode = type === "logo";
   const isBackgroundMode = type === "background";
+  const editorLabel = isLogoMode ? "Edit Logo" : label;
+  const editorTriggerLabel =
+    isLogoMode && triggerLabel === "Edit" ? "Edit Logo" : triggerLabel;
   const isSlideshowMode =
     type === "slideshow" ||
     type === "slides" ||
@@ -338,6 +540,7 @@ export default function BuilderMediaEditor({
     type === "video" ? "video" : inferMediaType(value, "image");
 
   const siteName = getSiteName(settings);
+  const siteId = settings?.site_id || settings?.siteId || "";
 
   const [open, setOpen] = useState(false);
   const [portalTarget, setPortalTarget] = useState(null);
@@ -360,6 +563,12 @@ export default function BuilderMediaEditor({
     `${siteName.toLowerCase()} education`,
   );
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [editorError, setEditorError] = useState("");
+  const [editorNotice, setEditorNotice] = useState("");
+  const [mediaLibraryItems, setMediaLibraryItems] = useState([]);
+  const [mediaLibraryLoading, setMediaLibraryLoading] = useState(false);
+  const [mediaLibraryError, setMediaLibraryError] = useState("");
 
   const [slideshowSettings, setSlideshowSettings] = useState({
     ...DEFAULT_SLIDESHOW_SETTINGS,
@@ -392,8 +601,7 @@ export default function BuilderMediaEditor({
   const editorPortalTarget =
     portalTarget || (open ? getEditorPortalTarget() : null);
 
-  const isDockedEditor =
-    editorPortalTarget?.id === "builder-media-editor-dock";
+  const isDockedEditor = editorPortalTarget?.id === "builder-media-editor-dock";
 
   const notifyEditorState = (isOpen) => {
     if (editorOpenBroadcastRef.current === isOpen) return;
@@ -403,7 +611,7 @@ export default function BuilderMediaEditor({
     const detail = {
       open: isOpen,
       editorType: type,
-      label,
+      label: editorLabel,
     };
 
     window.dispatchEvent(
@@ -445,22 +653,98 @@ export default function BuilderMediaEditor({
     }
   };
 
+  const activateOnlyThisEditor = () => {
+    const detail = {
+      type: MEDIA_EDITOR_ACTIVATE_EVENT,
+      instanceId: editorInstanceIdRef.current,
+      editorType: type,
+      label: editorLabel,
+    };
+
+    /*
+      All BuilderMediaEditor instances rendered in this website preview hear
+      this request and close themselves before the selected editor opens.
+    */
+    window.dispatchEvent(
+      new CustomEvent(MEDIA_EDITOR_ACTIVATE_EVENT, {
+        detail,
+      }),
+    );
+
+    /*
+      Keep switching reliable if an editable component is rendered in the
+      parent builder document rather than inside the preview iframe.
+    */
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage(detail, "*");
+    }
+
+    /*
+      Keep switching reliable if this component is ever mounted in the outer
+      builder while template editors are inside the live preview frame.
+    */
+    if (window.previewFrame?.contentWindow) {
+      window.previewFrame.contentWindow.postMessage(detail, "*");
+    }
+  };
+
   const openEditor = (event) => {
     event?.preventDefault();
     event?.stopPropagation();
 
+    activateOnlyThisEditor();
     notifyEditorState(true);
     setPortalTarget(getEditorPortalTarget());
     setOpen(true);
   };
 
   const closeEditor = () => {
-    if (saving) return;
+    if (saving || uploading) return;
 
     notifyEditorState(false);
     setOpen(false);
     setPortalTarget(null);
   };
+
+  /*
+    Exclusive editor switching:
+    opening Hero, Logo, Background or any other BuilderMediaEditor closes any
+    different editor already open in the same workspace.
+  */
+  useEffect(() => {
+    if (!enabled) return undefined;
+
+    const closeWhenAnotherEditorOpens = (detail = {}) => {
+      if (detail.instanceId === editorInstanceIdRef.current) return;
+      if (!open) return;
+
+      closeEditor();
+    };
+
+    const handleActivateEditor = (event) => {
+      closeWhenAnotherEditorOpens(event?.detail || {});
+    };
+
+    const handleActivateEditorMessage = (event) => {
+      const payload = event?.data;
+
+      if (!payload || typeof payload !== "object") return;
+      if (payload.type !== MEDIA_EDITOR_ACTIVATE_EVENT) return;
+
+      closeWhenAnotherEditorOpens(payload);
+    };
+
+    window.addEventListener(MEDIA_EDITOR_ACTIVATE_EVENT, handleActivateEditor);
+    window.addEventListener("message", handleActivateEditorMessage);
+
+    return () => {
+      window.removeEventListener(
+        MEDIA_EDITOR_ACTIVATE_EVENT,
+        handleActivateEditor,
+      );
+      window.removeEventListener("message", handleActivateEditorMessage);
+    };
+  }, [enabled, open, saving]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -493,6 +777,15 @@ export default function BuilderMediaEditor({
     };
   }, [open, saving]);
 
+  /*
+    Initialise draft values only when this drawer opens.
+
+    Important:
+    Do not reset the editor again while it is already open when the template
+    sends a freshly-created slides/settings array or object. Resetting state
+    from those changing references causes an update loop and also overwrites
+    work entered in the Slides, Settings, General or Logo tabs.
+  */
   useEffect(() => {
     if (!open) return undefined;
 
@@ -504,6 +797,12 @@ export default function BuilderMediaEditor({
     setMediaType(initialMediaType);
     setLibraryOpen(false);
     setSaving(false);
+    setUploading(false);
+    setEditorError("");
+    setEditorNotice("");
+    setMediaLibraryItems([]);
+    setMediaLibraryLoading(false);
+    setMediaLibraryError("");
 
     setSlideshowSettings({
       ...DEFAULT_SLIDESHOW_SETTINGS,
@@ -536,20 +835,11 @@ export default function BuilderMediaEditor({
     );
 
     return undefined;
-  }, [
-    open,
-    slides,
-    value,
-    initialMediaType,
-    settings,
-    slideshowSettingsKey,
-    backgroundImageKey,
-    backgroundVideoKey,
-    backgroundColorKey,
-    isSlideshowMode,
-    isBackgroundMode,
-    isLogoMode,
-  ]);
+
+    // Copy the current incoming values when opening only. While the drawer is
+    // open, the draft is controlled by this editor until Save or Cancel.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   useEffect(() => {
     if (!open) {
@@ -577,9 +867,7 @@ export default function BuilderMediaEditor({
 
     const targetDocument = editorPortalTarget?.ownerDocument || document;
     const keydownDocuments =
-      targetDocument === document
-        ? [document]
-        : [document, targetDocument];
+      targetDocument === document ? [document] : [document, targetDocument];
 
     const previousBodyOverflow = document.body.style.overflow;
     const previousTargetBodyOverflow =
@@ -626,7 +914,7 @@ export default function BuilderMediaEditor({
         const detail = {
           open: false,
           editorType: type,
-          label,
+          label: editorLabel,
         };
 
         window.dispatchEvent(
@@ -648,7 +936,97 @@ export default function BuilderMediaEditor({
         editorOpenBroadcastRef.current = false;
       }
     };
-  }, [type, label]);
+  }, [type, editorLabel]);
+
+  const loadMediaLibrary = async () => {
+    if (!siteId) {
+      setMediaLibraryItems([]);
+      setMediaLibraryError(
+        "Select and save a website template before adding media assets.",
+      );
+      return;
+    }
+
+    setMediaLibraryLoading(true);
+    setMediaLibraryError("");
+
+    const { data, error } = await supabase
+      .from(mediaTable)
+      .select(
+        "id, site_id, bucket, path, url, name, alt, kind, meta, created_at",
+      )
+      .eq("site_id", siteId)
+      .order("created_at", { ascending: false })
+      .limit(60);
+
+    if (error) {
+      console.error("Media library load failed:", error);
+      setMediaLibraryItems([]);
+      setMediaLibraryError(
+        "Your media library could not be loaded. Check site_media access policies.",
+      );
+      setMediaLibraryLoading(false);
+      return;
+    }
+
+    setMediaLibraryItems(Array.isArray(data) ? data : []);
+    setMediaLibraryLoading(false);
+  };
+
+  const toggleMediaLibrary = () => {
+    const shouldOpen = !libraryOpen;
+
+    setLibraryOpen(shouldOpen);
+
+    if (shouldOpen) {
+      loadMediaLibrary();
+    }
+  };
+
+  const selectMediaAsset = (asset) => {
+    const assetUrl = pickFirstValue(asset?.url);
+    const assetType = getAssetMediaType(asset);
+
+    if (!assetUrl) return;
+
+    if (isLogoMode) {
+      if (assetType === "video") {
+        setEditorError("A logo must be an image file.");
+        return;
+      }
+
+      setDraftValue(assetUrl);
+    } else if (isSlideshowMode && activeSlide) {
+      updateSlide(activeSlideIndex, {
+        type: assetType,
+        src: assetUrl,
+        image: assetType === "image" ? assetUrl : activeSlide.image,
+        url: assetUrl,
+        poster: assetType === "image" ? assetUrl : activeSlide.poster || "",
+      });
+    } else if (isBackgroundMode) {
+      setBackgroundDraft((previous) => ({
+        ...previous,
+        type: assetType,
+        image: assetType === "image" ? assetUrl : previous.image,
+        video: assetType === "video" ? assetUrl : previous.video,
+      }));
+    } else {
+      setMediaType(assetType);
+      setDraftValue(assetUrl);
+    }
+
+    setEditorError("");
+    setEditorNotice("Asset selected. Select Save Changes to publish it.");
+  };
+
+  const currentUploadTarget = isLogoMode
+    ? "logo"
+    : isSlideshowMode
+      ? "slide"
+      : isBackgroundMode
+        ? "background"
+        : "media";
 
   const updateSlide = (slideIndex, patch) => {
     setDraftSlides((previousSlides) =>
@@ -726,30 +1104,161 @@ export default function BuilderMediaEditor({
   const selectUploadTarget = (target) => {
     uploadTargetRef.current = target;
 
-    if (!fileInputRef.current) return;
+    if (!fileInputRef.current || uploading || saving) return;
+
+    const targetUsesVideo =
+      target === "slide"
+        ? activeSlide?.type === "video"
+        : target === "background"
+          ? backgroundDraft.type === "video"
+          : false;
 
     fileInputRef.current.accept =
       target === "logo"
-        ? "image/*"
-        : activeSlide?.type === "video" || backgroundDraft.type === "video"
-          ? "video/*"
-          : "image/*,video/*";
+        ? "image/png,image/jpeg,image/webp"
+        : targetUsesVideo
+          ? "video/mp4,video/webm,video/ogg"
+          : "image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm,video/ogg";
 
     fileInputRef.current.click();
   };
 
+  const recordMediaAsset = async ({ file, target, uploadedUrl, path }) => {
+    if (!siteId || !uploadedUrl) return;
+
+    const mediaTypeForRecord = getMediaKindFromFile(file);
+
+    const { error } = await supabase.from(mediaTable).insert({
+      site_id: siteId,
+      bucket: storageBucket,
+      path,
+      url: uploadedUrl,
+      name: file.name,
+      alt: "",
+      kind: mediaTypeForRecord,
+      meta: {
+        editor_type: type,
+        target,
+        mime_type: file.type || null,
+        size_bytes: file.size || 0,
+      },
+    });
+
+    if (error) {
+      console.warn("Media uploaded but library record failed:", error);
+      setEditorNotice(
+        "File uploaded and selected. It could not be added to your reusable media library.",
+      );
+    }
+  };
+
   const processUploadedFile = async (file, target) => {
+    const uploadedType = getMediaKindFromFile(file);
+    const isLogoUpload = target === "logo";
+
+    if (isLogoUpload && uploadedType !== "image") {
+      throw new Error("Logo upload only supports image files.");
+    }
+
+    const allowedLogoTypes = ["image/png", "image/jpeg", "image/webp"];
+    const allowedImageTypes = [
+      "image/png",
+      "image/jpeg",
+      "image/webp",
+      "image/gif",
+    ];
+    const allowedVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
+
+    if (isLogoUpload && !allowedLogoTypes.includes(file.type)) {
+      throw new Error("Logo files must be PNG, JPG or WebP.");
+    }
+
+    if (
+      uploadedType === "image" &&
+      !isLogoUpload &&
+      !allowedImageTypes.includes(file.type)
+    ) {
+      throw new Error("Image files must be PNG, JPG, WebP or GIF.");
+    }
+
+    if (uploadedType === "video" && !allowedVideoTypes.includes(file.type)) {
+      throw new Error("Video files must be MP4, WebM or OGG.");
+    }
+
+    const maxSizeMb =
+      uploadedType === "video" ? maxVideoUploadMb : maxImageUploadMb;
+    const maxSizeBytes = maxSizeMb * 1024 * 1024;
+
+    if (file.size > maxSizeBytes) {
+      throw new Error(
+        `${uploadedType === "video" ? "Video" : "Image"} files must be ${maxSizeMb} MB or smaller. Selected file is ${formatFileSize(file.size)}.`,
+      );
+    }
+
     if (typeof onUploadFile === "function") {
       const uploadedUrl = await onUploadFile(file, {
         target,
         type,
         activeSlideIndex,
+        siteId,
+        storageBucket,
       });
 
-      if (uploadedUrl) return uploadedUrl;
+      if (uploadedUrl) {
+        return {
+          url: uploadedUrl,
+          uploadedType,
+        };
+      }
     }
 
-    return fileToDataUrl(file);
+    if (!siteId) {
+      throw new Error(
+        "Select a saved website template before uploading media.",
+      );
+    }
+
+    const path = `${siteId}/${getUploadFolder(target)}/${Date.now()}-${safeFileName(
+      file.name,
+    )}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from(storageBucket)
+      .upload(path, file, {
+        cacheControl: "3600",
+        contentType: file.type || undefined,
+        upsert: false,
+      });
+
+    if (uploadError) {
+      throw new Error(
+        `Upload failed. Confirm that the "${storageBucket}" storage bucket and upload policies are configured. ${uploadError.message}`,
+      );
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from(storageBucket)
+      .getPublicUrl(path);
+
+    const uploadedUrl = publicUrlData?.publicUrl || "";
+
+    if (!uploadedUrl) {
+      throw new Error(
+        "Upload succeeded but a public media URL could not be created.",
+      );
+    }
+
+    await recordMediaAsset({
+      file,
+      target,
+      uploadedUrl,
+      path,
+    });
+
+    return {
+      url: uploadedUrl,
+      uploadedType,
+    };
   };
 
   const handleFileUpload = async (event) => {
@@ -758,41 +1267,62 @@ export default function BuilderMediaEditor({
     if (!file) return;
 
     const target = uploadTargetRef.current;
-    const uploadedUrl = await processUploadedFile(file, target);
-    const uploadedType = file.type.startsWith("video/") ? "video" : "image";
 
-    if (target === "logo") {
-      setDraftValue(uploadedUrl);
+    setUploading(true);
+    setEditorError("");
+    setEditorNotice("");
+
+    try {
+      const { url: uploadedUrl, uploadedType } = await processUploadedFile(
+        file,
+        target,
+      );
+
+      if (target === "logo") {
+        setDraftValue(uploadedUrl);
+      }
+
+      if (target === "slide" && activeSlide) {
+        updateSlide(activeSlideIndex, {
+          type: uploadedType,
+          src: uploadedUrl,
+          image: uploadedType === "image" ? uploadedUrl : activeSlide.image,
+          url: uploadedUrl,
+          poster:
+            uploadedType === "image" ? uploadedUrl : activeSlide.poster || "",
+        });
+      }
+
+      if (target === "background") {
+        setBackgroundDraft((previous) => ({
+          ...previous,
+          type: uploadedType,
+          image: uploadedType === "image" ? uploadedUrl : previous.image,
+          video: uploadedType === "video" ? uploadedUrl : previous.video,
+        }));
+      }
+
+      if (target === "media") {
+        setMediaType(uploadedType);
+        setDraftValue(uploadedUrl);
+      }
+
+      setEditorNotice(
+        "Upload successful. Select Save Changes to publish this media.",
+      );
+
+      if (libraryOpen) {
+        await loadMediaLibrary();
+      }
+    } catch (error) {
+      console.error("Media upload failed:", error);
+      setEditorError(
+        error?.message || "Media upload failed. Please try again.",
+      );
+    } finally {
+      setUploading(false);
+      event.target.value = "";
     }
-
-    if (target === "slide" && activeSlide) {
-      updateSlide(activeSlideIndex, {
-        type: uploadedType,
-        src: uploadedUrl,
-        image: uploadedType === "image" ? uploadedUrl : activeSlide.image,
-        url: uploadedUrl,
-        poster:
-          uploadedType === "image"
-            ? uploadedUrl
-            : activeSlide.poster || "",
-      });
-    }
-
-    if (target === "background") {
-      setBackgroundDraft((previous) => ({
-        ...previous,
-        type: uploadedType,
-        image: uploadedType === "image" ? uploadedUrl : previous.image,
-        video: uploadedType === "video" ? uploadedUrl : previous.video,
-      }));
-    }
-
-    if (target === "media") {
-      setMediaType(uploadedType);
-      setDraftValue(uploadedUrl);
-    }
-
-    event.target.value = "";
   };
 
   const buildSavedSlides = () => {
@@ -808,7 +1338,10 @@ export default function BuilderMediaEditor({
   };
 
   const handleSave = async () => {
+    if (uploading) return;
+
     setSaving(true);
+    setEditorError("");
 
     let patch = {};
 
@@ -846,6 +1379,11 @@ export default function BuilderMediaEditor({
       notifyEditorState(false);
       setOpen(false);
       setPortalTarget(null);
+    } catch (error) {
+      console.error("Media settings save failed:", error);
+      setEditorError(
+        error?.message || "Changes could not be saved. Please try again.",
+      );
     } finally {
       setSaving(false);
     }
@@ -895,10 +1433,10 @@ export default function BuilderMediaEditor({
         className="bme-drawer"
         role="dialog"
         aria-modal={!isDockedEditor}
-        aria-label={label}
+        aria-label={editorLabel}
       >
         <header className="bme-drawer-header">
-          <h2>{label}</h2>
+          <h2>{editorLabel}</h2>
 
           <button
             type="button"
@@ -941,19 +1479,77 @@ export default function BuilderMediaEditor({
           </nav>
         )}
 
-        {!isSlideshowMode && (
+        {isLogoMode && (
+          <nav
+            className="bme-tabs"
+            style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}
+            aria-label="Logo editor sections"
+          >
+            <button
+              type="button"
+              className={activeTab === "logo" ? "active" : ""}
+              onClick={() => setActiveTab("logo")}
+            >
+              Logo
+            </button>
+
+            <button
+              type="button"
+              className={activeTab === "logo-settings" ? "active" : ""}
+              onClick={() => setActiveTab("logo-settings")}
+            >
+              Settings
+            </button>
+          </nav>
+        )}
+
+        {!isSlideshowMode && !isLogoMode && (
           <nav className="bme-tabs bme-tabs-simple" aria-label="Editor section">
             <button type="button" className="active">
-              {isLogoMode
-                ? "Logo"
-                : isBackgroundMode
-                  ? "Background"
-                  : "Media"}
+              {isBackgroundMode ? "Background" : "Media"}
             </button>
           </nav>
         )}
 
         <div className="bme-drawer-scroll">
+          {editorError && (
+            <div
+              role="alert"
+              style={{
+                margin: "14px 18px 0",
+                padding: "11px 12px",
+                borderRadius: 9,
+                border: "1px solid #fecaca",
+                background: "#fef2f2",
+                color: "#b91c1c",
+                fontSize: 12,
+                fontWeight: 600,
+                lineHeight: 1.5,
+              }}
+            >
+              {editorError}
+            </div>
+          )}
+
+          {editorNotice && !editorError && (
+            <div
+              role="status"
+              style={{
+                margin: "14px 18px 0",
+                padding: "11px 12px",
+                borderRadius: 9,
+                border: "1px solid #bbf7d0",
+                background: "#f0fdf4",
+                color: "#166534",
+                fontSize: 12,
+                fontWeight: 600,
+                lineHeight: 1.5,
+              }}
+            >
+              {editorNotice}
+            </div>
+          )}
+
           {isSlideshowMode && activeTab === "slides" && (
             <>
               <section className="bme-slides-section">
@@ -1104,6 +1700,7 @@ export default function BuilderMediaEditor({
                           <button
                             type="button"
                             className="bme-change-button"
+                            disabled={uploading || saving}
                             onClick={() => selectUploadTarget("slide")}
                           >
                             Change{" "}
@@ -1115,9 +1712,7 @@ export default function BuilderMediaEditor({
                           <button
                             type="button"
                             className="bme-library-button"
-                            onClick={() =>
-                              setLibraryOpen((previous) => !previous)
-                            }
+                            onClick={toggleMediaLibrary}
                           >
                             Free Library
                           </button>
@@ -1131,6 +1726,15 @@ export default function BuilderMediaEditor({
                       mediaType={activeSlide.type}
                       query={libraryQuery}
                       setQuery={setLibraryQuery}
+                      assets={mediaLibraryItems}
+                      loading={mediaLibraryLoading}
+                      error={mediaLibraryError}
+                      uploading={uploading}
+                      onRefresh={loadMediaLibrary}
+                      onUploadAsset={() =>
+                        selectUploadTarget(currentUploadTarget)
+                      }
+                      onUseAsset={selectMediaAsset}
                     />
                   )}
 
@@ -1230,7 +1834,6 @@ export default function BuilderMediaEditor({
 
                     <label className="bme-label bme-slider-label">
                       Overlay
-
                       <span>
                         {Math.round((activeSlide.overlayOpacity || 0) * 100)}%
                       </span>
@@ -1417,7 +2020,9 @@ export default function BuilderMediaEditor({
               <label className="bme-toggle-row">
                 <span>
                   <strong>Fixed Background</strong>
-                  <small>Keep the slide background fixed while scrolling.</small>
+                  <small>
+                    Keep the slide background fixed while scrolling.
+                  </small>
                 </span>
 
                 <input
@@ -1433,13 +2038,13 @@ export default function BuilderMediaEditor({
             </section>
           )}
 
-          {isLogoMode && (
+          {isLogoMode && activeTab === "logo" && (
             <section className="bme-logo-section">
-              <h3>Logo Settings</h3>
+              <h3>Current Logo Preview</h3>
 
               <div className="bme-logo-preview">
                 {draftValue ? (
-                  <img src={draftValue} alt="Logo preview" />
+                  <img src={draftValue} alt={`${siteName} logo preview`} />
                 ) : (
                   <EmptyMediaPreview text="No logo selected" />
                 )}
@@ -1458,14 +2063,152 @@ export default function BuilderMediaEditor({
                 <button
                   type="button"
                   className="bme-change-button"
+                  style={{ width: "100%", marginTop: 14 }}
+                  disabled={uploading || saving}
                   onClick={() => selectUploadTarget("logo")}
                 >
-                  Upload Logo Image
+                  {uploading ? "Uploading..." : "⇧  Upload New Logo"}
                 </button>
               )}
 
+              {allowOnlineSearch && (
+                <button
+                  type="button"
+                  className="bme-library-button"
+                  style={{ width: "100%", marginTop: 10 }}
+                  onClick={toggleMediaLibrary}
+                >
+                  ▧&nbsp;&nbsp;Choose from Free Library
+                </button>
+              )}
+
+              {allowOnlineSearch && libraryOpen && (
+                <MediaLibraryPanel
+                  mediaType="image"
+                  query={libraryQuery}
+                  setQuery={setLibraryQuery}
+                  assets={mediaLibraryItems}
+                  loading={mediaLibraryLoading}
+                  error={mediaLibraryError}
+                  uploading={uploading}
+                  onRefresh={loadMediaLibrary}
+                  onUploadAsset={() => selectUploadTarget("logo")}
+                  onUseAsset={selectMediaAsset}
+                />
+              )}
+
               <p className="bme-helper-text">
-                Use a transparent PNG, SVG or WebP logo for the best result.
+                Recommended: PNG or WebP with transparent background for best
+                results.
+              </p>
+            </section>
+          )}
+
+          {isLogoMode && activeTab === "logo-settings" && (
+            <section className="bme-settings-section">
+              <h3>Logo Settings</h3>
+
+              <div className="bme-logo-preview">
+                {draftValue ? (
+                  <img src={draftValue} alt={`${siteName} logo preview`} />
+                ) : (
+                  <EmptyMediaPreview text="Template default logo will be used" />
+                )}
+              </div>
+
+              <div className="bme-toggle-row">
+                <span>
+                  <strong>Shared Website Logo</strong>
+                  <small>
+                    The selected logo is saved once and used by supported
+                    header, mobile navigation and footer brand areas.
+                  </small>
+                </span>
+              </div>
+
+              <label className="bme-label">Selected Logo URL</label>
+
+              <input
+                className="bme-input"
+                value={draftValue}
+                onChange={(event) => setDraftValue(event.target.value)}
+                placeholder="Paste logo image URL"
+              />
+
+              <div className="bme-media-buttons" style={{ marginTop: 12 }}>
+                {allowUpload && (
+                  <button
+                    type="button"
+                    className="bme-change-button"
+                    disabled={uploading || saving}
+                    onClick={() => selectUploadTarget("logo")}
+                  >
+                    {uploading ? "Uploading..." : "Upload Replacement"}
+                  </button>
+                )}
+
+                {allowOnlineSearch && (
+                  <button
+                    type="button"
+                    className="bme-library-button"
+                    disabled={uploading || saving}
+                    onClick={toggleMediaLibrary}
+                  >
+                    ▧ Choose from Free Library
+                  </button>
+                )}
+              </div>
+
+              <div className="bme-media-buttons" style={{ marginTop: 10 }}>
+                <button
+                  type="button"
+                  className="bme-library-button"
+                  disabled={uploading || saving}
+                  onClick={() => {
+                    setDraftValue(value || "");
+                    setEditorError("");
+                    setEditorNotice(
+                      "Saved logo restored in the editor. Select Save Changes to apply it.",
+                    );
+                  }}
+                >
+                  Restore Saved Logo
+                </button>
+
+                <button
+                  type="button"
+                  className="bme-library-button"
+                  disabled={uploading || saving}
+                  onClick={() => {
+                    setDraftValue("");
+                    setEditorError("");
+                    setEditorNotice(
+                      "The saved custom logo will be removed. Select Save Changes to use the template default logo.",
+                    );
+                  }}
+                >
+                  Use Template Default
+                </button>
+              </div>
+
+              {allowOnlineSearch && libraryOpen && (
+                <MediaLibraryPanel
+                  mediaType="image"
+                  query={libraryQuery}
+                  setQuery={setLibraryQuery}
+                  assets={mediaLibraryItems}
+                  loading={mediaLibraryLoading}
+                  error={mediaLibraryError}
+                  uploading={uploading}
+                  onRefresh={loadMediaLibrary}
+                  onUploadAsset={() => selectUploadTarget("logo")}
+                  onUseAsset={selectMediaAsset}
+                />
+              )}
+
+              <p className="bme-helper-text">
+                Recommended: PNG or WebP with transparent background for the
+                cleanest result across templates.
               </p>
             </section>
           )}
@@ -1528,6 +2271,7 @@ export default function BuilderMediaEditor({
                 <button
                   type="button"
                   className="bme-change-button"
+                  disabled={uploading || saving}
                   onClick={() => selectUploadTarget("background")}
                 >
                   Replace Background
@@ -1536,7 +2280,6 @@ export default function BuilderMediaEditor({
 
               <label className="bme-label bme-slider-label">
                 Overlay Opacity
-
                 <span>
                   {Math.round((backgroundDraft.overlayOpacity || 0) * 100)}%
                 </span>
@@ -1609,10 +2352,29 @@ export default function BuilderMediaEditor({
               </label>
 
               {allowOnlineSearch && (
+                <button
+                  type="button"
+                  className="bme-library-button"
+                  style={{ width: "100%", marginTop: 12 }}
+                  disabled={uploading || saving}
+                  onClick={toggleMediaLibrary}
+                >
+                  ▧&nbsp;&nbsp;Choose from Free Library
+                </button>
+              )}
+
+              {allowOnlineSearch && libraryOpen && (
                 <MediaLibraryPanel
                   mediaType={backgroundDraft.type}
                   query={libraryQuery}
                   setQuery={setLibraryQuery}
+                  assets={mediaLibraryItems}
+                  loading={mediaLibraryLoading}
+                  error={mediaLibraryError}
+                  uploading={uploading}
+                  onRefresh={loadMediaLibrary}
+                  onUploadAsset={() => selectUploadTarget("background")}
+                  onUseAsset={selectMediaAsset}
                 />
               )}
             </section>
@@ -1653,6 +2415,7 @@ export default function BuilderMediaEditor({
                 <button
                   type="button"
                   className="bme-change-button"
+                  disabled={uploading || saving}
                   onClick={() => selectUploadTarget("media")}
                 >
                   Replace Media
@@ -1660,10 +2423,29 @@ export default function BuilderMediaEditor({
               )}
 
               {allowOnlineSearch && (
+                <button
+                  type="button"
+                  className="bme-library-button"
+                  style={{ width: "100%", marginTop: 12 }}
+                  disabled={uploading || saving}
+                  onClick={toggleMediaLibrary}
+                >
+                  ▧&nbsp;&nbsp;Choose from Free Library
+                </button>
+              )}
+
+              {allowOnlineSearch && libraryOpen && (
                 <MediaLibraryPanel
                   mediaType={mediaType}
                   query={libraryQuery}
                   setQuery={setLibraryQuery}
+                  assets={mediaLibraryItems}
+                  loading={mediaLibraryLoading}
+                  error={mediaLibraryError}
+                  uploading={uploading}
+                  onRefresh={loadMediaLibrary}
+                  onUploadAsset={() => selectUploadTarget("media")}
+                  onUseAsset={selectMediaAsset}
                 />
               )}
             </section>
@@ -1683,9 +2465,9 @@ export default function BuilderMediaEditor({
             type="button"
             className="bme-save-button"
             onClick={handleSave}
-            disabled={saving}
+            disabled={saving || uploading}
           >
-            {saving ? "Saving..." : "Save Changes"}
+            {uploading ? "Uploading..." : saving ? "Saving..." : "Save Changes"}
           </button>
         </footer>
 
@@ -1711,7 +2493,7 @@ export default function BuilderMediaEditor({
           title={triggerTitle}
         >
           <span aria-hidden="true">✎</span>
-          {triggerLabel}
+          {editorTriggerLabel}
         </button>
       )}
 
