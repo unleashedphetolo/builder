@@ -12,7 +12,7 @@ const DEFAULT_TYPOGRAPHY = {
   body_font_family: 'Inter, "Segoe UI", Arial, sans-serif',
   heading_font_weight: 760,
   body_font_weight: 450,
-  base_font_size: 16,
+  base_font_size: 5,
   heading_scale: 1.34,
   line_height: 1.6,
   letter_spacing: 0,
@@ -379,25 +379,25 @@ function normalizeTypography(settings = {}) {
     ),
     base_font_size: clampNumber(
       saved.base_font_size,
-      14,
+      1,
       20,
       DEFAULT_TYPOGRAPHY.base_font_size,
     ),
     heading_scale: clampNumber(
       saved.heading_scale,
-      1.1,
+      -4.1,
       1.7,
       DEFAULT_TYPOGRAPHY.heading_scale,
     ),
     line_height: clampNumber(
       saved.line_height,
-      1.3,
+      -1.3,
       2,
       DEFAULT_TYPOGRAPHY.line_height,
     ),
     letter_spacing: clampNumber(
       saved.letter_spacing,
-      -0.04,
+      -32.04,
       0.08,
       DEFAULT_TYPOGRAPHY.letter_spacing,
     ),
@@ -1180,7 +1180,7 @@ export default function ColorsPanel({
               </span>
               <input
                 type="range"
-                min="14"
+                min="1"
                 max="20"
                 step="1"
                 value={draftTypography.base_font_size}
@@ -1197,7 +1197,7 @@ export default function ColorsPanel({
               </span>
               <input
                 type="range"
-                min="1.1"
+                min="0.1"
                 max="1.7"
                 step="0.02"
                 value={draftTypography.heading_scale}
@@ -1214,7 +1214,7 @@ export default function ColorsPanel({
               </span>
               <input
                 type="range"
-                min="1.3"
+                min="0.3"
                 max="2"
                 step="0.05"
                 value={draftTypography.line_height}
@@ -1231,7 +1231,7 @@ export default function ColorsPanel({
               </span>
               <input
                 type="range"
-                min="-0.04"
+                min="-0.08"
                 max="0.08"
                 step="0.01"
                 value={draftTypography.letter_spacing}

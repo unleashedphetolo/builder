@@ -722,8 +722,8 @@ export default function Navbar({
                 )}
               </span>
 
-              <div className="logo-text">
-                <h1 className="brand-name">{schoolName}</h1>
+              <div className="brand-text">
+                <h1 className="school-name">{schoolName}</h1>
                 <p className="slogan">{tagline}</p>
               </div>
             </a>
