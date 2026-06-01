@@ -1,6 +1,9 @@
 import { useMemo, useState, useEffect } from "react";
 import "../styles/builderCanvas.css";
 import "../styles/builder-media-editor.css";
+import "../styles/builder-section-workspace.css";
+
+const EMPTY_BUILDER_SECTIONS = Object.freeze([]);
 
 function normalizePreviewSlug(slug = "/") {
   const raw = String(slug || "/").trim();
@@ -47,6 +50,9 @@ function extractSlugFromHash(hash = "") {
 export default function BuilderCanvas({
   siteId,
   page,
+  sections = EMPTY_BUILDER_SECTIONS,
+  selectedSectionId = null,
+  sectionEditorOpen = false,
   onUndo,
   onRedo,
   canUndo = false,
@@ -60,6 +66,19 @@ export default function BuilderCanvas({
   });
 
   const [mediaEditorOpen, setMediaEditorOpen] = useState(false);
+
+  const safeSections = useMemo(
+    () => (Array.isArray(sections) ? sections : EMPTY_BUILDER_SECTIONS),
+    [sections],
+  );
+
+  const selectedSection = useMemo(
+    () =>
+      safeSections.find((section) => section?.id === selectedSectionId) || null,
+    [safeSections, selectedSectionId],
+  );
+
+  const anyEditorOpen = mediaEditorOpen || sectionEditorOpen;
 
   const previewUrl = useMemo(() => {
     if (!siteId) return "";
@@ -146,11 +165,32 @@ export default function BuilderCanvas({
       }
     }
 
+    function handleSectionsUpdate(e) {
+      const detail = e.detail || {};
+      const nextSections = Array.isArray(detail)
+        ? detail
+        : detail.sections || detail.items || detail.payload || [];
+
+      if (window.previewFrame?.contentWindow) {
+        window.previewFrame.contentWindow.postMessage(
+          { type: "builder:sections-updated", sections: nextSections },
+          "*",
+        );
+
+        window.previewFrame.contentWindow.postMessage(
+          { type: "site-sections-updated", sections: nextSections },
+          "*",
+        );
+      }
+    }
+
     window.addEventListener("builder:navigate", handleNavigate);
     window.addEventListener("builder:settings-updated", handleSettingsUpdate);
     window.addEventListener("site-settings-updated", handleSettingsUpdate);
     window.addEventListener("builder:nav-updated", handleNavUpdate);
     window.addEventListener("site-nav-updated", handleNavUpdate);
+    window.addEventListener("builder:sections-updated", handleSectionsUpdate);
+    window.addEventListener("site-sections-updated", handleSectionsUpdate);
 
     return () => {
       window.removeEventListener("builder:navigate", handleNavigate);
@@ -161,6 +201,14 @@ export default function BuilderCanvas({
       window.removeEventListener("site-settings-updated", handleSettingsUpdate);
       window.removeEventListener("builder:nav-updated", handleNavUpdate);
       window.removeEventListener("site-nav-updated", handleNavUpdate);
+      window.removeEventListener(
+        "builder:sections-updated",
+        handleSectionsUpdate,
+      );
+      window.removeEventListener(
+        "site-sections-updated",
+        handleSectionsUpdate,
+      );
     };
   }, [siteId]);
 
@@ -201,6 +249,40 @@ export default function BuilderCanvas({
   useEffect(() => {
     setMediaEditorOpen(false);
   }, [previewUrl]);
+
+  useEffect(() => {
+    if (!window.previewFrame?.contentWindow) return;
+
+    window.previewFrame.contentWindow.postMessage(
+      {
+        type: "builder:sections-updated",
+        sections: safeSections,
+      },
+      "*",
+    );
+
+    window.previewFrame.contentWindow.postMessage(
+      {
+        type: "site-sections-updated",
+        sections: safeSections,
+      },
+      "*",
+    );
+  }, [safeSections]);
+
+  useEffect(() => {
+    if (!window.previewFrame?.contentWindow) return;
+
+    const detail = {
+      type: "builder:section-editor-state",
+      open: sectionEditorOpen === true,
+      editorType: "section",
+      sectionId: selectedSectionId,
+      sectionType: selectedSection?.type || null,
+    };
+
+    window.previewFrame.contentWindow.postMessage(detail, "*");
+  }, [sectionEditorOpen, selectedSectionId, selectedSection]);
 
   useEffect(() => {
     if (!page) return;
@@ -246,6 +328,33 @@ export default function BuilderCanvas({
           { type: "builder:request-sync" },
           "*",
         );
+
+        window.previewFrame.contentWindow.postMessage(
+          {
+            type: "builder:sections-updated",
+            sections: safeSections,
+          },
+          "*",
+        );
+
+        window.previewFrame.contentWindow.postMessage(
+          {
+            type: "site-sections-updated",
+            sections: safeSections,
+          },
+          "*",
+        );
+
+        window.previewFrame.contentWindow.postMessage(
+          {
+            type: "builder:section-editor-state",
+            open: sectionEditorOpen === true,
+            editorType: "section",
+            sectionId: selectedSectionId,
+            sectionType: selectedSection?.type || null,
+          },
+          "*",
+        );
       }
     } catch (err) {
       // ignore cross-origin errors
@@ -255,8 +364,8 @@ export default function BuilderCanvas({
   return (
     <div
       className={`builder-canvas ${
-        mediaEditorOpen ? "builder-canvas-editor-open" : ""
-      }`}
+        anyEditorOpen ? "builder-canvas-editor-open" : ""
+      } ${sectionEditorOpen ? "builder-canvas-section-editor-open" : ""}`}
     >
       <div className="canvas-toolbar">
         <div className="device-switch">
@@ -309,7 +418,7 @@ export default function BuilderCanvas({
       <div
         className={`canvas-workspace ${
           mediaEditorOpen ? "media-editor-open" : ""
-        }`}
+        } ${sectionEditorOpen ? "section-editor-open" : ""}`}
       >
         <div className={`canvas-inner ${device}`}>
           {!previewUrl ? (

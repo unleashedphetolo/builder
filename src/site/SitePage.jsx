@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { supabase } from "../supabase/client";
+import { createThemeCssVariables, getSiteTheme } from "../theme/siteThemes";
+import "../styles/site-theme-system.css";
 
 import SchoolLayout from "../layouts/SchoolLayout";
 import BusinessLayout from "../layouts/BusinessLayout";
@@ -228,20 +230,79 @@ export default function SitePage() {
   }, [siteId, pageSlug, isBuilderMode, isPublicPreview]);
 
   useEffect(() => {
-    if (!settings) return;
+    if (!settings) return undefined;
 
+    /*
+      Central site-wide theme application.
+
+      Templates continue receiving the same settings and content as before.
+      This layer applies the saved ThemePanel selection consistently across the
+      full website by resolving theme_name into shared design tokens. The
+      existing colour variables remain available for current template CSS.
+    */
     const root = document.documentElement;
-    root.style.setProperty("--primary", settings.primary_color || "#2563eb");
-    root.style.setProperty(
-      "--secondary",
-      settings.secondary_color || "#111827",
+    const activeTheme = getSiteTheme(settings?.theme_name);
+    const themeVariables = createThemeCssVariables(activeTheme, settings);
+
+    const legacyVariables = {
+      "--primary": settings.primary_color || "#2563eb",
+      "--secondary": settings.secondary_color || "#111827",
+      "--accent": settings.accent_color || settings.primary_color || "#f59e0b",
+      "--background": settings.background_color || "#ffffff",
+      "--font":
+        settings.font_family ||
+        themeVariables["--site-theme-body-font"] ||
+        "Inter, sans-serif",
+      "--heading-font":
+        themeVariables["--site-theme-display-font"] ||
+        settings.font_family ||
+        "Inter, sans-serif",
+    };
+
+    const variablesToApply = {
+      ...themeVariables,
+      ...legacyVariables,
+    };
+
+    const previousValues = Object.fromEntries(
+      Object.keys(variablesToApply).map((name) => [
+        name,
+        root.style.getPropertyValue(name),
+      ]),
     );
-    root.style.setProperty("--accent", settings.accent_color || "#f59e0b");
-    root.style.setProperty(
-      "--font",
-      settings.font_family || "Inter, sans-serif",
-    );
-  }, [settings]);
+
+    const previousThemeName = root.getAttribute("data-site-theme");
+    const previousLayoutName = root.getAttribute("data-site-layout");
+
+    root.setAttribute("data-site-theme", activeTheme.key);
+    root.setAttribute("data-site-layout", site?.layout_key || "");
+
+    Object.entries(variablesToApply).forEach(([name, value]) => {
+      root.style.setProperty(name, value);
+    });
+
+    return () => {
+      Object.entries(previousValues).forEach(([name, value]) => {
+        if (value) {
+          root.style.setProperty(name, value);
+        } else {
+          root.style.removeProperty(name);
+        }
+      });
+
+      if (previousThemeName) {
+        root.setAttribute("data-site-theme", previousThemeName);
+      } else {
+        root.removeAttribute("data-site-theme");
+      }
+
+      if (previousLayoutName) {
+        root.setAttribute("data-site-layout", previousLayoutName);
+      } else {
+        root.removeAttribute("data-site-layout");
+      }
+    };
+  }, [settings, site?.layout_key]);
 
   useEffect(() => {
     /*

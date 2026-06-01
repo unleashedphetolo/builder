@@ -9,6 +9,7 @@ import TemplatePanel from "./panels/TemplatePanel";
 import ThemePanel from "./panels/ThemePanel";
 import ColorsPanel from "./panels/ColorsPanel";
 import PagesPanel from "./panels/PagesPanel";
+import SectionsPanel from "./panels/SectionsPanel";
 import AnalyticsPanel from "./panels/AnalyticsPanel";
 
 export default function BuilderSidebar({
@@ -36,6 +37,16 @@ export default function BuilderSidebar({
   onUpdateAnyPageContent,
   onReorderPages,
   onUpdateTopbar,
+  sections = [],
+  sectionsLoaded = true,
+  selectedSectionId = null,
+  onSelectSection,
+  onUpdateSectionVisibility,
+  onReorderSections,
+  onDuplicateSection,
+  onDeleteSection,
+  onAddSection,
+  onRefreshSections,
 }) {
   const [activeTab, setActiveTab] = useState("announcements");
   const [hoveredTab, setHoveredTab] = useState("announcements");
@@ -60,6 +71,12 @@ export default function BuilderSidebar({
       }
     };
 
+    const handleSectionEditorState = (event) => {
+      if (event?.detail?.open === true) {
+        collapseSidebarForEditor();
+      }
+    };
+
     const handleMessage = (event) => {
       const payload = event?.data;
 
@@ -75,6 +92,14 @@ export default function BuilderSidebar({
         payload.open === true
       ) {
         collapseSidebarForEditor();
+        return;
+      }
+
+      if (
+        payload.type === "builder:section-editor-state" &&
+        payload.open === true
+      ) {
+        collapseSidebarForEditor();
       }
     };
 
@@ -83,6 +108,10 @@ export default function BuilderSidebar({
       "builder:media-editor-state",
       handleMediaEditorState,
     );
+    window.addEventListener(
+      "builder:section-editor-state",
+      handleSectionEditorState,
+    );
     window.addEventListener("message", handleMessage);
 
     return () => {
@@ -90,6 +119,10 @@ export default function BuilderSidebar({
       window.removeEventListener(
         "builder:media-editor-state",
         handleMediaEditorState,
+      );
+      window.removeEventListener(
+        "builder:section-editor-state",
+        handleSectionEditorState,
       );
       window.removeEventListener("message", handleMessage);
     };
@@ -140,6 +173,12 @@ export default function BuilderSidebar({
         subtitle: "Control topbar and page visibility.",
       },
       {
+        key: "sections",
+        label: "Sections",
+        icon: "🧱",
+        subtitle: "Edit content blocks on the current page",
+      },
+      {
         key: "analytics",
         label: "Analytics",
         icon: "📊",
@@ -164,42 +203,62 @@ export default function BuilderSidebar({
   //   setOpenedTab(tabKey);
   // };
   const closeMediaEditorBeforeOpeningPanel = (tabKey) => {
-  const detail = {
-    source: "sidebar",
-    tabKey,
-  };
+    const detail = {
+      source: "sidebar",
+      tabKey,
+    };
 
-  /*
+    /*
     Supports any media editor rendered directly in the builder window.
   */
-  window.dispatchEvent(
-    new CustomEvent("builder:close-media-editor", {
-      detail,
-    }),
-  );
-
-  /*
-    Closes media editors running inside the live website preview iframe.
-    This is the important message for Hero/Navbar/Footer editors.
-  */
-  if (window.previewFrame?.contentWindow) {
-    window.previewFrame.contentWindow.postMessage(
-      {
-        type: "builder:close-media-editor",
-        ...detail,
-      },
-      "*",
+    window.dispatchEvent(
+      new CustomEvent("builder:close-media-editor", {
+        detail,
+      }),
     );
-  }
-};
 
-const handleOpenTab = (tabKey) => {
-  closeMediaEditorBeforeOpeningPanel(tabKey);
+    /*
+    Closes the normal right-side section editor rendered by Builder.jsx.
+    A wide left panel and right editor should not occupy the canvas at the
+    same time.
+  */
+    window.dispatchEvent(
+      new CustomEvent("builder:close-section-editor", {
+        detail,
+      }),
+    );
 
-  setSidebarCollapsed(false);
-  setActiveTab(tabKey);
-  setOpenedTab(tabKey);
-};
+    /*
+    Closes media and selected-section states running inside the live website
+    preview iframe. This keeps template targets visually clean while a left
+    panel is being used.
+  */
+    if (window.previewFrame?.contentWindow) {
+      window.previewFrame.contentWindow.postMessage(
+        {
+          type: "builder:close-media-editor",
+          ...detail,
+        },
+        "*",
+      );
+
+      window.previewFrame.contentWindow.postMessage(
+        {
+          type: "builder:close-section-editor",
+          ...detail,
+        },
+        "*",
+      );
+    }
+  };
+
+  const handleOpenTab = (tabKey) => {
+    closeMediaEditorBeforeOpeningPanel(tabKey);
+
+    setSidebarCollapsed(false);
+    setActiveTab(tabKey);
+    setOpenedTab(tabKey);
+  };
 
   const handleBack = () => {
     setOpenedTab(null);
@@ -250,6 +309,11 @@ const handleOpenTab = (tabKey) => {
     if (tabKey === "themes") {
       return (
         <ThemePanel
+          siteId={siteId}
+          layoutKey={layoutKey}
+          templateKey={templateKey}
+          pages={pages}
+          currentPageData={currentPageData}
           siteSettings={siteSettings}
           onUpdateTheme={onUpdateTheme}
           onUpdateSettings={onUpdateSettings}
@@ -285,6 +349,24 @@ const handleOpenTab = (tabKey) => {
           onUpdateAnyPageContent={onUpdateAnyPageContent}
           onReorderPages={onReorderPages}
           onUpdateTopbar={onUpdateTopbar}
+        />
+      );
+    }
+
+    if (tabKey === "sections") {
+      return (
+        <SectionsPanel
+          sections={sections}
+          sectionsLoaded={sectionsLoaded}
+          selectedSectionId={selectedSectionId}
+          currentPageData={currentPageData}
+          onSelectSection={onSelectSection}
+          onUpdateSectionVisibility={onUpdateSectionVisibility}
+          onReorderSections={onReorderSections}
+          onDuplicateSection={onDuplicateSection}
+          onDeleteSection={onDeleteSection}
+          onAddSection={onAddSection}
+          onRefresh={onRefreshSections}
         />
       );
     }
@@ -379,6 +461,20 @@ const handleOpenTab = (tabKey) => {
           <div className="sidebar-preview-item">Page visibility control</div>
           <div className="sidebar-preview-item">
             Links follow page on/off automatically
+          </div>
+        </>
+      );
+    }
+
+    if (tabKey === "sections") {
+      return (
+        <>
+          <div className="sidebar-preview-item">
+            Content blocks on this page
+          </div>
+          <div className="sidebar-preview-item">Show or hide sections</div>
+          <div className="sidebar-preview-item">
+            Open live right-side section editing
           </div>
         </>
       );

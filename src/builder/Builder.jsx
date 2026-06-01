@@ -3,6 +3,7 @@ import BuilderNavbar from "./BuilderNavbar";
 import BuilderFooter from "./BuilderFooter";
 import BuilderSidebar from "./BuilderSidebar";
 import BuilderCanvas from "./BuilderCanvas";
+import BuilderSectionEditor from "./BuilderSectionEditor";
 import TemplateSelector from "./TemplateSelector";
 import "../styles/builder.css";
 
@@ -512,6 +513,19 @@ export default function Builder() {
   const [organization, setOrganization] = useState(null);
   const [navItems, setNavItems] = useState([]);
 
+  /*
+  =============================
+  Visual section editing
+  =============================
+  These states control the enterprise right-side editor for normal website
+  sections such as Notice Board, Principal Message, Admissions, Calendar,
+  Wall of Fame and Partners.
+  */
+  const [sections, setSections] = useState([]);
+  const [sectionsLoaded, setSectionsLoaded] = useState(false);
+  const [selectedSectionId, setSelectedSectionId] = useState(null);
+  const [sectionEditorOpen, setSectionEditorOpen] = useState(false);
+
   const [templateError, setTemplateError] = useState("");
 
   const [historyStack, setHistoryStack] = useState([]);
@@ -528,6 +542,11 @@ export default function Builder() {
   const currentPage = useMemo(
     () => pages.find((p) => p.id === currentPageId) || null,
     [pages, currentPageId],
+  );
+
+  const selectedSection = useMemo(
+    () => sections.find((section) => section.id === selectedSectionId) || null,
+    [sections, selectedSectionId],
   );
 
   const hasUsablePages =
@@ -557,6 +576,8 @@ export default function Builder() {
       organization,
       pages,
       navItems,
+      sections,
+      selectedSectionId,
       currentPageId,
       layoutKey,
       templateKey,
@@ -566,6 +587,8 @@ export default function Builder() {
       organization,
       pages,
       navItems,
+      sections,
+      selectedSectionId,
       currentPageId,
       layoutKey,
       templateKey,
@@ -627,6 +650,38 @@ export default function Builder() {
       {
         type: "site-nav-updated",
         navItems: nextNavItems || [],
+      },
+      "*",
+    );
+  };
+
+  const emitLiveSectionsUpdate = (nextSections) => {
+    const safeSections = Array.isArray(nextSections) ? nextSections : [];
+
+    window.dispatchEvent(
+      new CustomEvent("builder:sections-updated", {
+        detail: safeSections,
+      }),
+    );
+
+    window.dispatchEvent(
+      new CustomEvent("site-sections-updated", {
+        detail: safeSections,
+      }),
+    );
+
+    window.postMessage(
+      {
+        type: "builder:sections-updated",
+        sections: safeSections,
+      },
+      "*",
+    );
+
+    window.postMessage(
+      {
+        type: "site-sections-updated",
+        sections: safeSections,
       },
       "*",
     );
@@ -895,6 +950,221 @@ export default function Builder() {
 
   /*
   =============================
+  Load editable sections for the current page
+  =============================
+  Builder view intentionally loads visible and hidden sections so a hidden
+  section can be switched back on from the Sections panel.
+  */
+
+  useEffect(() => {
+    if (!siteId || !currentPageId) {
+      setSections([]);
+      setSectionsLoaded(false);
+      setSelectedSectionId(null);
+      setSectionEditorOpen(false);
+      emitLiveSectionsUpdate([]);
+      return;
+    }
+
+    let mounted = true;
+
+    (async () => {
+      setSectionsLoaded(false);
+
+      const { data, error } = await supabase
+        .from("site_sections")
+        .select("*")
+        .eq("site_id", siteId)
+        .eq("page_id", currentPageId)
+        .order("position", { ascending: true });
+
+      if (!mounted) return;
+
+      if (error) {
+        console.error("Builder load page sections error:", error);
+        setSections([]);
+        setSectionsLoaded(true);
+        emitLiveSectionsUpdate([]);
+        return;
+      }
+
+      const nextSections = Array.isArray(data) ? data : [];
+
+      setSections(nextSections);
+      emitLiveSectionsUpdate(nextSections);
+
+      setSelectedSectionId((previousId) => {
+        if (
+          previousId &&
+          nextSections.some((section) => section.id === previousId)
+        ) {
+          return previousId;
+        }
+
+        setSectionEditorOpen(false);
+        return null;
+      });
+
+      setSectionsLoaded(true);
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, [siteId, currentPageId]);
+
+  /*
+  =============================
+  Open a section editor from the live website canvas
+  =============================
+  BuilderSectionTarget sends this request from any template section. Logo
+  and hero media editing remain managed by BuilderMediaEditor.
+  */
+
+  useEffect(() => {
+    const openRequestedSection = (request = {}) => {
+      const requestedId =
+        request.sectionId || request.section_id || request.id || null;
+      const requestedType =
+        request.sectionType || request.section_type || request.type || "";
+
+      const matchingSection =
+        sections.find((section) => section.id === requestedId) ||
+        sections.find((section) => section.type === requestedType);
+
+      if (!matchingSection?.id) return;
+
+      setSelectedSectionId(matchingSection.id);
+      setSectionEditorOpen(true);
+      setSidebarOpen(false);
+
+      window.dispatchEvent(
+        new CustomEvent("builder:close-media-editor", {
+          detail: {
+            source: "section-editor",
+            sectionId: matchingSection.id,
+          },
+        }),
+      );
+
+      window.postMessage(
+        {
+          type: "builder:close-media-editor",
+          source: "section-editor",
+          sectionId: matchingSection.id,
+        },
+        "*",
+      );
+    };
+
+    const closeSelectedSection = () => {
+      setSectionEditorOpen(false);
+      setSelectedSectionId(null);
+    };
+
+    const handleOpenSectionEditor = (event) => {
+      openRequestedSection(event?.detail || {});
+    };
+
+    const handleCloseSectionEditor = () => {
+      closeSelectedSection();
+    };
+
+    const handleSectionEditorMessage = (event) => {
+      if (event.origin && event.origin !== window.location.origin) return;
+
+      const payload = event?.data;
+
+      if (!payload || typeof payload !== "object") return;
+
+      if (
+        payload.type === "builder:open-section-editor" ||
+        payload.type === "builder:edit-section"
+      ) {
+        openRequestedSection(payload);
+      }
+
+      if (payload.type === "builder:close-section-editor") {
+        closeSelectedSection();
+      }
+    };
+
+    window.addEventListener(
+      "builder:open-section-editor",
+      handleOpenSectionEditor,
+    );
+    window.addEventListener("builder:edit-section", handleOpenSectionEditor);
+    window.addEventListener(
+      "builder:close-section-editor",
+      handleCloseSectionEditor,
+    );
+    window.addEventListener("message", handleSectionEditorMessage);
+
+    return () => {
+      window.removeEventListener(
+        "builder:open-section-editor",
+        handleOpenSectionEditor,
+      );
+      window.removeEventListener(
+        "builder:edit-section",
+        handleOpenSectionEditor,
+      );
+      window.removeEventListener(
+        "builder:close-section-editor",
+        handleCloseSectionEditor,
+      );
+      window.removeEventListener("message", handleSectionEditorMessage);
+    };
+  }, [sections]);
+
+  /*
+  =============================
+  Keep only one right-side editor open
+  =============================
+  If a logo, hero or another media editor opens, close the normal section
+  editor so the workspace remains clean and stable.
+  */
+
+  useEffect(() => {
+    const closeForMediaEditor = (payload = {}) => {
+      if (payload.open !== true) return;
+
+      setSectionEditorOpen(false);
+      setSelectedSectionId(null);
+    };
+
+    const handleMediaEditorState = (event) => {
+      closeForMediaEditor(event?.detail || {});
+    };
+
+    const handleMediaEditorMessage = (event) => {
+      if (event.origin && event.origin !== window.location.origin) return;
+
+      const payload = event?.data;
+
+      if (!payload || typeof payload !== "object") return;
+      if (payload.type !== "builder:media-editor-state") return;
+
+      closeForMediaEditor(payload);
+    };
+
+    window.addEventListener(
+      "builder:media-editor-state",
+      handleMediaEditorState,
+    );
+    window.addEventListener("message", handleMediaEditorMessage);
+
+    return () => {
+      window.removeEventListener(
+        "builder:media-editor-state",
+        handleMediaEditorState,
+      );
+      window.removeEventListener("message", handleMediaEditorMessage);
+    };
+  }, []);
+
+  /*
+  =============================
   Listen for page navigation
   =============================
   */
@@ -1029,12 +1299,16 @@ export default function Builder() {
     setOrganization(snapshot.organization || null);
     setPages(snapshot.pages || []);
     setNavItems(snapshot.navItems || []);
+    setSections(snapshot.sections || []);
+    setSelectedSectionId(snapshot.selectedSectionId || null);
+    setSectionEditorOpen(false);
     setCurrentPageId(snapshot.currentPageId || null);
     setLayoutKey(snapshot.layoutKey || null);
     setTemplateKey(snapshot.templateKey || null);
 
     emitLiveSettingsUpdate(snapshot.siteSettings || null);
     emitLiveNavUpdate(snapshot.navItems || []);
+    emitLiveSectionsUpdate(snapshot.sections || []);
 
     setTimeout(() => {
       isRestoringRef.current = false;
@@ -1500,6 +1774,105 @@ export default function Builder() {
 
   /*
   =============================
+  Section editing
+  =============================
+  */
+
+  const handleSelectSection = (sectionOrId) => {
+    const sectionId =
+      typeof sectionOrId === "object" ? sectionOrId?.id : sectionOrId;
+
+    const section = sections.find((item) => item.id === sectionId);
+
+    if (!section?.id) return;
+
+    setSelectedSectionId(section.id);
+    setSectionEditorOpen(true);
+    setSidebarOpen(false);
+
+    window.dispatchEvent(
+      new CustomEvent("builder:close-media-editor", {
+        detail: {
+          source: "section-editor",
+          sectionId: section.id,
+        },
+      }),
+    );
+  };
+
+  const handleCloseSectionEditor = () => {
+    setSectionEditorOpen(false);
+    setSelectedSectionId(null);
+  };
+
+  const onUpdateSection = async (sectionId, patch = {}) => {
+    if (!siteId || !sectionId) return null;
+
+    const safeKeys = [
+      "content",
+      "visible",
+      "style",
+      "animation",
+      "position",
+      "is_locked",
+    ];
+
+    const safePatch = safeKeys.reduce((result, key) => {
+      if (Object.prototype.hasOwnProperty.call(patch, key)) {
+        result[key] = patch[key];
+      }
+
+      return result;
+    }, {});
+
+    if (!Object.keys(safePatch).length) return null;
+
+    setSaveStatus("Saving section...");
+
+    const { data, error } = await supabase
+      .from("site_sections")
+      .update(safePatch)
+      .eq("site_id", siteId)
+      .eq("id", sectionId)
+      .select("*")
+      .single();
+
+    if (error) {
+      console.error("onUpdateSection error:", error);
+      setSaveStatus("Section update failed");
+      return null;
+    }
+
+    const nextSections = sections.map((section) =>
+      section.id === data.id ? data : section,
+    );
+
+    setSections(nextSections);
+    emitLiveSectionsUpdate(nextSections);
+    setSelectedSectionId(data.id);
+    setSaveStatus("Section updated");
+
+    return data;
+  };
+
+  const onUpdateSectionVisibility = async (sectionId, visible) => {
+    const updatedSection = await onUpdateSection(sectionId, {
+      visible: visible !== false,
+    });
+
+    if (updatedSection) {
+      setSaveStatus(
+        updatedSection.visible !== false
+          ? "Section is now On"
+          : "Section is now Off",
+      );
+    }
+
+    return updatedSection;
+  };
+
+  /*
+  =============================
   Page editing
   =============================
   */
@@ -1798,6 +2171,11 @@ export default function Builder() {
             onUpdateAnyPageContent={onUpdateAnyPageContent}
             onReorderPages={onReorderPages}
             onUpdateTopbar={onUpdateTopbar}
+            sections={sections}
+            sectionsLoaded={sectionsLoaded}
+            selectedSectionId={selectedSectionId}
+            onSelectSection={handleSelectSection}
+            onUpdateSectionVisibility={onUpdateSectionVisibility}
           />
         )}
 
@@ -1817,12 +2195,24 @@ export default function Builder() {
             <BuilderCanvas
               siteId={siteId}
               page={currentPage}
+              sections={sections}
+              selectedSectionId={selectedSectionId}
+              sectionEditorOpen={sectionEditorOpen}
               onUndo={handleUndo}
               onRedo={handleRedo}
               canUndo={historyStack.length > 1}
               canRedo={redoStack.length > 0}
             />
 
+            <BuilderSectionEditor
+              enabled={Boolean(sectionEditorOpen && selectedSection)}
+              section={selectedSection}
+              page={currentPage}
+              settings={siteSettings || {}}
+              onClose={handleCloseSectionEditor}
+              onSave={onUpdateSection}
+              onUpdateVisibility={onUpdateSectionVisibility}
+            />
           </>
         )}
       </div>

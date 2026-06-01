@@ -1,0 +1,215 @@
+/* =========================================================
+   SITE THEME SYSTEM
+   Central site-wide theme application for all website layouts.
+
+   This stylesheet is intentionally driven by variables resolved in:
+   src/site/SitePage.jsx + src/theme/siteThemes.js
+
+   It does not define template content or page structure. Templates remain
+   responsible for their own layout. Themes provide the shared visual system:
+   typography, colour surfaces, radii, buttons, cards and content width.
+   ========================================================= */
+
+html[data-site-theme] {
+  --site-theme-primary: var(--primary, #2563eb);
+  --site-theme-secondary: var(--secondary, #0f172a);
+  --site-theme-background: var(--background, #ffffff);
+  --site-theme-surface: #ffffff;
+  --site-theme-soft: #eff6ff;
+  --site-theme-border: #e2e8f0;
+  --site-theme-display-font: var(--heading-font, Inter, "Segoe UI", Arial, sans-serif);
+  --site-theme-body-font: var(--font, Inter, "Segoe UI", Arial, sans-serif);
+  --site-theme-heading-weight: 760;
+  --site-theme-body-weight: 450;
+  --site-theme-base-font-size: 16px;
+  --site-theme-heading-scale: 1.34;
+  --site-theme-line-height: 1.6;
+  --site-theme-letter-spacing: -0.025em;
+  --site-theme-nav-height: 76px;
+  --site-theme-section-radius: 16px;
+  --site-theme-card-radius: 14px;
+  --site-theme-button-radius: 8px;
+  --site-theme-content-width: 1180px;
+  --site-theme-section-gap: 68px;
+  --site-theme-button-transform: none;
+  --site-theme-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+}
+
+/* Global website foundation. */
+html[data-site-theme] body {
+  background-color: var(--site-theme-background);
+  color: var(--site-theme-secondary);
+  font-family: var(--site-theme-body-font);
+  font-size: var(--site-theme-base-font-size);
+  font-weight: var(--site-theme-body-weight);
+  line-height: var(--site-theme-line-height);
+}
+
+html[data-site-theme] body :where(p, li, label, input, textarea, select) {
+  font-family: var(--site-theme-body-font);
+}
+
+html[data-site-theme] body :where(h1, h2, h3, h4, h5, h6) {
+  color: var(--site-theme-secondary);
+  font-family: var(--site-theme-display-font);
+  font-weight: var(--site-theme-heading-weight);
+  letter-spacing: var(--site-theme-letter-spacing);
+  line-height: 1.14;
+}
+
+html[data-site-theme] body :where(h1) {
+  font-size: clamp(2rem, 5vw, calc(var(--site-theme-base-font-size) * var(--site-theme-heading-scale) * 2.15));
+}
+
+html[data-site-theme] body :where(h2) {
+  font-size: clamp(1.6rem, 4vw, calc(var(--site-theme-base-font-size) * var(--site-theme-heading-scale) * 1.65));
+}
+
+html[data-site-theme] body :where(h3) {
+  font-size: clamp(1.25rem, 3vw, calc(var(--site-theme-base-font-size) * var(--site-theme-heading-scale) * 1.25));
+}
+
+/*
+  Existing templates commonly use one or more of these generic containers.
+  Theme width is a maximum only; templates keep their own padding and layout.
+*/
+html[data-site-theme] body :where(.container, .site-container, .content-container) {
+  max-width: var(--site-theme-content-width);
+}
+
+/* Shared visual character for cards across template categories. */
+html[data-site-theme] body :where(
+  .card,
+  [class$="-card"],
+  [class*="-card "],
+  [class*=" card"],
+  article
+) {
+  border-radius: var(--site-theme-card-radius);
+}
+
+/* Shared button character. Colours remain controlled by template classes. */
+html[data-site-theme] body :where(
+  button,
+  .btn,
+  [class$="-btn"],
+  [class*="-btn "],
+  [class*=" button"],
+  a[class*="btn"],
+  a[class*="button"]
+) {
+  border-radius: var(--site-theme-button-radius);
+  text-transform: var(--site-theme-button-transform);
+}
+
+/* Common primary actions inherit the selected site colour. */
+html[data-site-theme] body :where(
+  .btn-primary,
+  .primary-btn,
+  .button-primary,
+  [class*="-btn primary"],
+  [class*="-button primary"],
+  [class*="primary-button"]
+) {
+  background-color: var(--site-theme-primary);
+}
+
+/*
+  Section and panel surfaces receive only reusable variables. Templates can
+  consume these values directly without the central stylesheet controlling
+  their section order, display type or spacing.
+*/
+html[data-site-theme] body :where(
+  .section-title,
+  [class*="section-title"],
+  [class*="section-heading"]
+) {
+  color: var(--site-theme-secondary);
+  font-family: var(--site-theme-display-font);
+  font-weight: var(--site-theme-heading-weight);
+  letter-spacing: var(--site-theme-letter-spacing);
+}
+
+/* Existing theme keys can provide small, deliberate site-wide refinements. */
+html[data-site-theme="heritage"] body :where(
+  .btn,
+  [class$="-btn"],
+  a[class*="button"]
+) {
+  letter-spacing: 0.065em;
+}
+
+html[data-site-theme="editorial"] body :where(
+  .section-title,
+  [class*="section-title"],
+  [class*="section-heading"]
+) {
+  line-height: 1.08;
+}
+
+html[data-site-theme="summit"] body :where(
+  .btn,
+  [class$="-btn"],
+  a[class*="button"]
+) {
+  letter-spacing: 0.055em;
+  font-weight: 750;
+}
+
+html[data-site-theme="verdant"] body :where(
+  .card,
+  [class$="-card"],
+  [class*="-card "],
+  article
+) {
+  box-shadow: var(--site-theme-shadow);
+}
+
+html[data-site-theme="atelier"] body :where(
+  .card,
+  [class$="-card"],
+  [class*="-card "],
+  article
+) {
+  box-shadow: var(--site-theme-shadow);
+}
+
+/*
+  Builder visual controls inside the live site preview must keep their own
+  product UI styling and must not become template-themed.
+*/
+html[data-site-theme] body :where(
+  .bst-edit-button,
+  .navbar-logo-edit-button,
+  .bme-root button,
+  .bme-root input,
+  .bme-root textarea,
+  .bme-root select
+) {
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  text-transform: none;
+}
+
+/*
+  Future template rule:
+  New templates should preferentially use these tokens:
+    var(--site-theme-primary)
+    var(--site-theme-secondary)
+    var(--site-theme-background)
+    var(--site-theme-soft)
+    var(--site-theme-border)
+    var(--site-theme-display-font)
+    var(--site-theme-body-font)
+    var(--site-theme-card-radius)
+    var(--site-theme-button-radius)
+    var(--site-theme-content-width)
+    var(--site-theme-section-gap)
+*/
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-site-theme] *,
+  html[data-site-theme] *::before,
+  html[data-site-theme] *::after {
+    scroll-behavior: auto;
+  }
+}
