@@ -268,8 +268,9 @@ export default function BuilderSidebar({
     if (tabKey === "announcements") {
       return (
         <AnnouncementsPanel
-          siteSettings={siteSettings}
-          onUpdateAnnouncements={onUpdateAnnouncements}
+          announcements={siteSettings?.announcements || []}
+          pages={pages}
+          onChange={onUpdateAnnouncements}
         />
       );
     }
@@ -374,10 +375,8 @@ export default function BuilderSidebar({
     if (tabKey === "analytics") {
       return (
         <AnalyticsPanel
-          siteId={siteId}
-          siteSettings={siteSettings}
-          pages={pages}
-          navItems={navItems}
+          analytics={siteSettings?.analytics || {}}
+          title="Analytics"
         />
       );
     }

@@ -1,0 +1,152 @@
+/* =========================================================
+   INSTITUTIONAL SCHOOL THEME / BRAND STYLES BRIDGE
+   Keeps the template layout and content structure unchanged while allowing
+   global Theme and Brand Styles selections to appear across this template.
+   ========================================================= */
+
+.school-institutional-v1-root {
+  --school-primary: var(--site-theme-primary, var(--primary, #1e40af));
+  --school-secondary: var(--site-theme-secondary, var(--secondary, #0f172a));
+  --school-background: var(--site-theme-background, var(--background, #ffffff));
+  --school-surface: var(--site-theme-surface, #ffffff);
+  --school-soft: var(--site-theme-soft, #f8fafc);
+  --school-border: var(--site-theme-border, #e2e8f0);
+  --school-card-radius: var(--site-theme-card-radius, 14px);
+  --school-button-radius: var(--site-theme-button-radius, 8px);
+  --school-shadow: var(--site-theme-shadow, 0 12px 30px rgba(15, 23, 42, 0.08));
+
+  min-height: 100%;
+  background: var(--school-background);
+  color: var(--school-secondary);
+  font-family: var(--site-theme-body-font, var(--font, Inter, "Segoe UI", Arial, sans-serif));
+  font-size: var(--site-theme-base-font-size, 16px);
+  font-weight: var(--site-theme-body-weight, 450);
+  line-height: var(--site-theme-line-height, 1.6);
+}
+
+.school-institutional-v1-root :where(p, li, label, input, select, textarea) {
+  font-family: var(--site-theme-body-font, var(--font, Inter, "Segoe UI", Arial, sans-serif));
+}
+
+.school-institutional-v1-root :where(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--site-theme-display-font, var(--heading-font, Inter, "Segoe UI", Arial, sans-serif));
+  font-weight: var(--site-theme-heading-weight, 760);
+  letter-spacing: var(--site-theme-letter-spacing, -0.025em);
+}
+
+.school-institutional-v1-root :where(
+  .section-title,
+  .wall-title,
+  .scal-title,
+  .scal-h2,
+  .admissions-page__hero-title,
+  .admissions-page__card-title,
+  .admissions-page__side-title,
+  .about-card h3
+) {
+  color: var(--school-primary);
+  font-family: var(--site-theme-display-font, var(--heading-font, Inter, "Segoe UI", Arial, sans-serif));
+  font-weight: var(--site-theme-heading-weight, 760);
+}
+
+.school-institutional-v1-root :where(
+  .view-all,
+  .scal-btn,
+  .admissions-page__btn--primary,
+  .auth-links a,
+  .btn-primary,
+  .primary-btn
+) {
+  border-radius: var(--school-button-radius);
+  background-color: var(--school-primary);
+}
+
+.school-institutional-v1-root :where(
+  .about-card,
+  .honour-card,
+  .sponsor-card,
+  .stats-card,
+  .scal-card,
+  .admissions-page__card,
+  .admissions-page__side-card,
+  .gallery-card
+) {
+  border-radius: var(--school-card-radius);
+}
+
+.school-institutional-v1-root :where(
+  .about-card,
+  .honour-card,
+  .sponsor-card,
+  .stats-card,
+  .scal-card,
+  .admissions-page__card,
+  .admissions-page__side-card
+) {
+  box-shadow: var(--school-shadow);
+}
+
+.school-institutional-v1-root .about,
+.school-institutional-v1-root .wall-container,
+.school-institutional-v1-root .sponsors-section {
+  background-color: var(--school-soft);
+}
+
+.school-institutional-v1-root .about-card {
+  border-top-color: var(--school-primary);
+}
+
+.school-institutional-v1-root .values-list li::before,
+.school-institutional-v1-root .stat .num,
+.school-institutional-v1-root .scal-link {
+  color: var(--school-primary);
+}
+
+.school-institutional-v1-root .principal {
+  background: var(--school-secondary);
+  color: #ffffff;
+}
+
+.school-institutional-v1-root .principal :where(h1, h2, h3, p) {
+  color: inherit;
+}
+
+.school-institutional-v1-root .notice-board {
+  background: var(--school-secondary);
+  border-radius: var(--school-card-radius);
+}
+
+.school-institutional-v1-root .badge {
+  background: var(--school-primary);
+}
+
+.school-institutional-v1-root .scal-pill {
+  border-color: rgba(30, 64, 175, 0.18);
+  background: var(--school-soft);
+  color: var(--school-primary);
+}
+
+.school-institutional-v1-root .principal-role {
+  display: block;
+  margin-top: 4px;
+  opacity: 0.74;
+  font-size: 0.86rem;
+  font-weight: 500;
+}
+
+/*
+  Keep the product editing UI controlled by builder styles, not the selected
+  school website theme.
+*/
+.school-institutional-v1-root :where(
+  .bst-edit-button,
+  .navbar-logo-edit-button,
+  .bme-root,
+  .bme-root button,
+  .bme-root input,
+  .bme-root textarea,
+  .bme-root select
+) {
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  text-transform: none;
+}

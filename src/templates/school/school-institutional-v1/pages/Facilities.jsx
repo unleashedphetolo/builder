@@ -1,4 +1,5 @@
 import React from "react";
+import BuilderSectionTarget from "../../../../builder/BuilderSectionTarget";
 import "../styles/facilities.css";
 
 const FACILITIES = [
@@ -40,29 +41,42 @@ const FACILITIES = [
   },
 ];
 
-export default function Facilities() {
-  return (
+export default function Facilities({
+  section = null,
+  content = {},
+  builderMode = false,
+}) {
+  const facilities =
+    Array.isArray(content?.items) && content.items.length > 0
+      ? content.items
+      : FACILITIES;
+
+  const pageContent = (
     <main className="fac container">
       {/* Hero */}
       <header className="fac-hero">
         <div>
-          <h1 className="fac-title">School Facilities</h1>
+          <h1 className="fac-title">
+            {content?.section_title || "School Facilities"}
+          </h1>
           <p className="fac-subtitle">
-            Our facilities are designed to provide a safe, structured, and
-            resource-rich environment that supports both academic and
-            extracurricular excellence.
+            {content?.subtitle ||
+              "Our facilities are designed to provide a safe, structured, and resource-rich environment that supports both academic and extracurricular excellence."}
           </p>
         </div>
       </header>
 
       {/* Grid */}
       <section className="fac-grid">
-        {FACILITIES.map((item) => (
-          <div key={item.title} className="fac-card">
+        {facilities.map((item, index) => (
+          <div
+            key={item.id || item.title || `facility-${index}`}
+            className="fac-card"
+          >
             <div className="fac-img-wrap">
               <img
-                src={item.image}
-                alt={item.title}
+                src={item.image_url || item.image || ""}
+                alt={item.title || ""}
                 onError={(e) =>
                   (e.currentTarget.src = "/images/teachers.jpeg")
                 }
@@ -70,12 +84,31 @@ export default function Facilities() {
             </div>
 
             <div className="fac-card-body">
-              <h3 className="fac-card-title">{item.title}</h3>
-              <p className="fac-card-text">{item.description}</p>
+              <h3 className="fac-card-title">{item.title || ""}</h3>
+              <p className="fac-card-text">
+                {item.body || item.description || ""}
+              </p>
             </div>
           </div>
         ))}
       </section>
     </main>
+  );
+
+  if (!section) {
+    return pageContent;
+  }
+
+  return (
+    <BuilderSectionTarget
+      builderMode={builderMode}
+      section={section}
+      sectionType="services"
+      label={content?.section_title || "School Facilities"}
+      templateCategory="school"
+      templateKey="school-institutional-v1"
+    >
+      {pageContent}
+    </BuilderSectionTarget>
   );
 }

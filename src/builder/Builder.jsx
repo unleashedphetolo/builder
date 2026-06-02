@@ -24,6 +24,9 @@ import {
   updatePageVisibilityEverywhere,
   updateTopbarVisibility,
   normalizePageSlug,
+  loadPageSections,
+  updateSiteSection,
+  reorderPageSections,
 } from "./siteService";
 
 function NoTemplateSelected({ onChooseTemplate }) {
@@ -956,6 +959,48 @@ export default function Builder() {
   section can be switched back on from the Sections panel.
   */
 
+  const applyLoadedSections = (nextSections = []) => {
+    const safeSections = Array.isArray(nextSections) ? nextSections : [];
+
+    setSections(safeSections);
+    emitLiveSectionsUpdate(safeSections);
+
+    setSelectedSectionId((previousId) => {
+      if (
+        previousId &&
+        safeSections.some((section) => section.id === previousId)
+      ) {
+        return previousId;
+      }
+
+      setSectionEditorOpen(false);
+      return null;
+    });
+
+    return safeSections;
+  };
+
+  const onRefreshSections = async () => {
+    if (!siteId || !currentPageId) {
+      applyLoadedSections([]);
+      setSectionsLoaded(true);
+      return [];
+    }
+
+    setSectionsLoaded(false);
+
+    const nextSections = await loadPageSections({
+      siteId,
+      pageId: currentPageId,
+      includeHidden: true,
+    });
+
+    const appliedSections = applyLoadedSections(nextSections);
+    setSectionsLoaded(true);
+
+    return appliedSections;
+  };
+
   useEffect(() => {
     if (!siteId || !currentPageId) {
       setSections([]);
@@ -971,40 +1016,19 @@ export default function Builder() {
     (async () => {
       setSectionsLoaded(false);
 
-      const { data, error } = await supabase
-        .from("site_sections")
-        .select("*")
-        .eq("site_id", siteId)
-        .eq("page_id", currentPageId)
-        .order("position", { ascending: true });
+      /*
+        Builder view intentionally requests hidden sections as well, so a
+        section switched Off can still be shown again from the Sections panel.
+      */
+      const nextSections = await loadPageSections({
+        siteId,
+        pageId: currentPageId,
+        includeHidden: true,
+      });
 
       if (!mounted) return;
 
-      if (error) {
-        console.error("Builder load page sections error:", error);
-        setSections([]);
-        setSectionsLoaded(true);
-        emitLiveSectionsUpdate([]);
-        return;
-      }
-
-      const nextSections = Array.isArray(data) ? data : [];
-
-      setSections(nextSections);
-      emitLiveSectionsUpdate(nextSections);
-
-      setSelectedSectionId((previousId) => {
-        if (
-          previousId &&
-          nextSections.some((section) => section.id === previousId)
-        ) {
-          return previousId;
-        }
-
-        setSectionEditorOpen(false);
-        return null;
-      });
-
+      applyLoadedSections(nextSections);
       setSectionsLoaded(true);
     })();
 
@@ -1829,30 +1853,30 @@ export default function Builder() {
 
     setSaveStatus("Saving section...");
 
-    const { data, error } = await supabase
-      .from("site_sections")
-      .update(safePatch)
-      .eq("site_id", siteId)
-      .eq("id", sectionId)
-      .select("*")
-      .single();
+    const updatedSection = await updateSiteSection({
+      siteId,
+      sectionId,
+      patch: safePatch,
+    });
 
-    if (error) {
-      console.error("onUpdateSection error:", error);
+    if (!updatedSection) {
       setSaveStatus("Section update failed");
       return null;
     }
 
-    const nextSections = sections.map((section) =>
-      section.id === data.id ? data : section,
-    );
+    setSections((previousSections) => {
+      const nextSections = previousSections.map((section) =>
+        section.id === updatedSection.id ? updatedSection : section,
+      );
 
-    setSections(nextSections);
-    emitLiveSectionsUpdate(nextSections);
-    setSelectedSectionId(data.id);
+      emitLiveSectionsUpdate(nextSections);
+      return nextSections;
+    });
+
+    setSelectedSectionId(updatedSection.id);
     setSaveStatus("Section updated");
 
-    return data;
+    return updatedSection;
   };
 
   const onUpdateSectionVisibility = async (sectionId, visible) => {
@@ -1869,6 +1893,64 @@ export default function Builder() {
     }
 
     return updatedSection;
+  };
+
+  const onReorderSections = async (sectionIds = []) => {
+    if (
+      !siteId ||
+      !currentPageId ||
+      !Array.isArray(sectionIds) ||
+      !sectionIds.length
+    ) {
+      return false;
+    }
+
+    setSaveStatus("Saving section order...");
+
+    const currentSections = Array.isArray(sections) ? sections : [];
+    const sectionById = new Map(
+      currentSections.map((section) => [section.id, section]),
+    );
+
+    const reorderedSections = sectionIds
+      .map((sectionId, position) => {
+        const section = sectionById.get(sectionId);
+        return section ? { ...section, position } : null;
+      })
+      .filter(Boolean);
+
+    const untouchedSections = currentSections.filter(
+      (section) => !sectionIds.includes(section.id),
+    );
+
+    const optimisticSections = [...reorderedSections, ...untouchedSections].sort(
+      (first, second) => (first.position ?? 0) - (second.position ?? 0),
+    );
+
+    setSections(optimisticSections);
+    emitLiveSectionsUpdate(optimisticSections);
+
+    const savedSections = await reorderPageSections({
+      siteId,
+      pageId: currentPageId,
+      sectionIds,
+    });
+
+    if (!savedSections) {
+      await onRefreshSections();
+      setSaveStatus("Section order update failed");
+      return false;
+    }
+
+    const finalSections = Array.isArray(savedSections)
+      ? savedSections
+      : optimisticSections;
+
+    setSections(finalSections);
+    emitLiveSectionsUpdate(finalSections);
+    setSaveStatus("Section order updated");
+
+    return true;
   };
 
   /*
@@ -2176,6 +2258,8 @@ export default function Builder() {
             selectedSectionId={selectedSectionId}
             onSelectSection={handleSelectSection}
             onUpdateSectionVisibility={onUpdateSectionVisibility}
+            onReorderSections={onReorderSections}
+            onRefreshSections={onRefreshSections}
           />
         )}
 

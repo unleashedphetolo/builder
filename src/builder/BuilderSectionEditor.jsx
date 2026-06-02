@@ -40,12 +40,6 @@ const ANIMATION_OPTIONS = [
 
 const MEDIA_SOURCES = [
   {
-    name: "Unsplash",
-    text: "Professional free photographs",
-    url: (query) =>
-      `https://unsplash.com/s/photos/${encodeURIComponent(query || "website")}`,
-  },
-  {
     name: "Pexels",
     text: "Photos and videos",
     url: (query) =>
@@ -56,6 +50,12 @@ const MEDIA_SOURCES = [
     text: "Images and illustrations",
     url: (query) =>
       `https://pixabay.com/images/search/${encodeURIComponent(query || "website")}/`,
+  },
+  {
+    name: "Unsplash",
+    text: "Professional free photographs",
+    url: (query) =>
+      `https://unsplash.com/s/photos/${encodeURIComponent(query || "website")}`,
   },
 ];
 
@@ -72,7 +72,7 @@ function clone(value) {
 
   try {
     return JSON.parse(JSON.stringify(value));
-  } catch (error) {
+  } catch {
     return value;
   }
 }

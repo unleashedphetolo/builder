@@ -9,7 +9,7 @@ function cloneValue(value) {
 
   try {
     return JSON.parse(JSON.stringify(value));
-  } catch (error) {
+  } catch {
     return value;
   }
 }
@@ -58,7 +58,7 @@ function getSectionLabel(section = EMPTY_SECTION, fallbackLabel = "", fallbackTy
 function stableSerialize(value) {
   try {
     return JSON.stringify(value || {});
-  } catch (error) {
+  } catch {
     return "";
   }
 }

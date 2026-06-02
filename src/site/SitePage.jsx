@@ -426,12 +426,52 @@ export default function SitePage() {
       });
     };
 
+    /*
+      Normal content sections are edited by BuilderSectionEditor in the outer
+      builder. BuilderCanvas posts the complete current-page section array into
+      this live site iframe after a save, visibility change or reorder.
+      Applying that array here updates the website immediately without reload.
+    */
+    const applyIncomingSections = (incoming) => {
+      if (!isBuilderMode) return;
+
+      const nextSections = Array.isArray(incoming)
+        ? incoming
+        : Array.isArray(incoming?.sections)
+          ? incoming.sections
+          : Array.isArray(incoming?.items)
+            ? incoming.items
+            : Array.isArray(incoming?.payload)
+              ? incoming.payload
+              : null;
+
+      if (!nextSections) return;
+
+      setSections((prev) => {
+        if (prev === nextSections) return prev;
+
+        if (
+          Array.isArray(prev) &&
+          prev.length === nextSections.length &&
+          prev.every((section, index) => section === nextSections[index])
+        ) {
+          return prev;
+        }
+
+        return nextSections;
+      });
+    };
+
     const handleSettingsUpdate = (event) => {
       applyIncomingSettings(event?.detail || {});
     };
 
     const handleNavUpdate = (event) => {
       applyIncomingNavItems(event?.detail || []);
+    };
+
+    const handleSectionsUpdate = (event) => {
+      applyIncomingSections(event?.detail);
     };
 
     const handleMessage = (event) => {
@@ -452,6 +492,15 @@ export default function SitePage() {
       ) {
         applyIncomingNavItems(
           payload.navItems || payload.items || payload.payload || [],
+        );
+      }
+
+      if (
+        payload.type === "builder:sections-updated" ||
+        payload.type === "site-sections-updated"
+      ) {
+        applyIncomingSections(
+          payload.sections || payload.items || payload.payload || [],
         );
       }
 
@@ -484,6 +533,8 @@ export default function SitePage() {
     window.addEventListener("site-settings-updated", handleSettingsUpdate);
     window.addEventListener("builder:nav-updated", handleNavUpdate);
     window.addEventListener("site-nav-updated", handleNavUpdate);
+    window.addEventListener("builder:sections-updated", handleSectionsUpdate);
+    window.addEventListener("site-sections-updated", handleSectionsUpdate);
     window.addEventListener("message", handleMessage);
 
     return () => {
@@ -497,9 +548,17 @@ export default function SitePage() {
       );
       window.removeEventListener("builder:nav-updated", handleNavUpdate);
       window.removeEventListener("site-nav-updated", handleNavUpdate);
+      window.removeEventListener(
+        "builder:sections-updated",
+        handleSectionsUpdate,
+      );
+      window.removeEventListener(
+        "site-sections-updated",
+        handleSectionsUpdate,
+      );
       window.removeEventListener("message", handleMessage);
     };
-  }, []);
+  }, [isBuilderMode]);
 
   useEffect(() => {
     const siteName =

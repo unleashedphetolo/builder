@@ -31,12 +31,21 @@
   background: white;
   cursor: pointer;
   border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 }
 
 .device-switch button.active {
   background: #111827;
   color: white;
   border-color: #111827;
+}
+
+.canvas-toolbar-icon {
+  display: block;
+  flex: 0 0 auto;
 }
 
 .canvas-history-actions {
@@ -60,6 +69,10 @@
   font-weight: 600;
   line-height: 1;
   transition: color 0.2s ease, opacity 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 
 .history-btn:hover {
@@ -147,6 +160,7 @@
     margin-right: 1px;
   }
 }
+
 
 /* =========================================================
    DOCKED MEDIA EDITOR WORKSPACE
@@ -254,4 +268,19 @@
 .canvas-workspace.media-editor-open {
   min-height: 0;
   overflow: hidden;
+}
+
+/* Tablet: hide Desktop from the main toolbar */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .device-switch button:first-child {
+    display: none;
+  }
+}
+
+/* Mobile: show Mobile only in the main toolbar */
+@media (max-width: 768px) {
+  .device-switch button:nth-child(1),
+  .device-switch button:nth-child(2) {
+    display: none;
+  }
 }

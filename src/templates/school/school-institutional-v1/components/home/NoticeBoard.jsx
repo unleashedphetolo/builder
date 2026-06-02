@@ -1,5 +1,9 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import "../../styles/notice.css";
+import {
+  convertAnnouncementToNotice,
+  getActiveAnnouncements,
+} from "../../utils/announcements";
 
 export const NOTICES = [
   {
@@ -47,7 +51,13 @@ function buildSiteHref(siteId, path = "") {
 
 function formatDateTime(iso) {
   if (!iso) return "";
+
   const d = new Date(iso);
+
+  if (Number.isNaN(d.getTime())) {
+    return "";
+  }
+
   return d.toLocaleString(undefined, {
     weekday: "short",
     day: "2-digit",
@@ -63,6 +73,10 @@ function formatRange(startIso, endIso) {
 
   const start = new Date(startIso);
   const end = new Date(endIso);
+
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return "";
+  }
 
   const sameDay =
     start.getFullYear() === end.getFullYear() &&
@@ -98,22 +112,39 @@ function formatRange(startIso, endIso) {
   return `${startDate} ${startTime} → ${endDate} ${endTime}`;
 }
 
-export default function NoticeBoard({ settings = {}, notices = [] }) {
+export default function NoticeBoard({
+  settings = {},
+  notices = [],
+  content = {},
+}) {
   const scrollRef = useRef(null);
   const siteId = settings?.site_id || "";
 
   const items = useMemo(() => {
-    return Array.isArray(notices) && notices.length > 0 ? notices : NOTICES;
-  }, [notices]);
+    const activeAnnouncementItems = getActiveAnnouncements(
+      settings?.announcements || [],
+      "notice_board",
+      "/",
+    ).map(convertAnnouncementToNotice);
+
+    const sectionItems =
+      Array.isArray(content?.items) && content.items.length > 0
+        ? content.items
+        : Array.isArray(notices) && notices.length > 0
+          ? notices
+          : NOTICES;
+
+    return [...activeAnnouncementItems, ...sectionItems];
+  }, [settings?.announcements, content?.items, notices]);
 
   useEffect(() => {
     const box = scrollRef.current;
-    if (!box) return;
+    if (!box) return undefined;
 
     let scroll = 0;
     let paused = false;
 
-    const interval = setInterval(() => {
+    const interval = window.setInterval(() => {
       if (paused) return;
 
       scroll += 0.5;
@@ -124,48 +155,60 @@ export default function NoticeBoard({ settings = {}, notices = [] }) {
       }
     }, 20);
 
-    const pause = () => (paused = true);
-    const resume = () => (paused = false);
+    const pause = () => {
+      paused = true;
+    };
+
+    const resume = () => {
+      paused = false;
+    };
 
     box.addEventListener("mouseenter", pause);
     box.addEventListener("mouseleave", resume);
 
     return () => {
-      clearInterval(interval);
+      window.clearInterval(interval);
       box.removeEventListener("mouseenter", pause);
       box.removeEventListener("mouseleave", resume);
     };
   }, [items]);
 
-  const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  const viewAllPath = content?.button_href || "/notices";
+  const viewAllLabel = content?.button_label || "View All";
+  const title = content?.section_title || "Notice Board";
 
   return (
     <section className="notice-wrapper container">
       <div className="notice-board">
         <div className="notice-header">
-          <h2>Notice Board</h2>
+          <h2 style={{ color: "#fff" }}>{title}</h2>
 
           <a
-            href={buildSiteHref(siteId, "/notices")}
+            href={buildSiteHref(siteId, viewAllPath)}
             className="view-all"
-            onClick={(e) => {
-              e.preventDefault();
+            onClick={(event) => {
+              event.preventDefault();
               window.dispatchEvent(
-                new CustomEvent("builder:navigate", { detail: "/notices" }),
+                new CustomEvent("builder:navigate", { detail: viewAllPath }),
               );
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
           >
-            View All
+            {viewAllLabel}
           </a>
         </div>
 
         <div className="notice-scroll" ref={scrollRef}>
           <div className="notice-list">
             {[...items, ...items].map((item, index) => (
-              <div key={`${item.id}-${index}`} className="notice-row">
+              <div
+                key={`${item.id || item.title}-${index}`}
+                className="notice-row"
+              >
                 <span className="notice-date">
-                  Published: {formatDateTime(item.publishedAt)}
+                  {item.publishedAt
+                    ? `Published: ${formatDateTime(item.publishedAt)}`
+                    : ""}
                 </span>
 
                 <span className="notice-title">{item.title}</span>

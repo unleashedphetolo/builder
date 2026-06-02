@@ -1,6 +1,33 @@
 import React from "react";
+import BuilderSectionTarget from "../../../../builder/BuilderSectionTarget";
 import "../styles/admissions.css";
 import SchoolStats from "../components/home/SchoolStats";
+
+const DEFAULT_PROCESS = [
+  {
+    id: "download",
+    title: "Download",
+    body: "Get the official admission form (PDF).",
+  },
+  {
+    id: "complete",
+    title: "Complete",
+    body:
+      "Fill guardian details and attach required documents (ID, proof of residence, reports).",
+  },
+  {
+    id: "submit",
+    title: "Submit",
+    body:
+      "Upload online or hand-deliver to the school office during working hours.",
+  },
+  {
+    id: "await",
+    title: "Await",
+    body:
+      "You will receive confirmation via email or SMS about assessment and intake.",
+  },
+];
 
 function buildSiteHref(siteId, path = "") {
   const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
@@ -75,28 +102,45 @@ function pickFirstValue(...values) {
   return "";
 }
 
-export default function Admissions({ settings = {}, navItems = [] }) {
+export default function Admissions({
+  settings = {},
+  navItems = [],
+  section = null,
+  content = {},
+  builderMode = false,
+}) {
   const siteId = settings?.site_id || "";
 
   const admissionsPhone = pickFirstValue(
+    content?.phone,
     settings?.admissions_phone,
     settings?.phone,
     "+27 11 345 6789",
   );
 
   const admissionsEmail = pickFirstValue(
+    content?.email,
     settings?.admissions_email,
     settings?.email,
     "admissions@school.org",
   );
 
   const admissionsFormUrl = pickFirstValue(
+    content?.secondary_button_href,
     settings?.admissions_form_url,
     settings?.admission_form_url,
     settings?.application_form_url,
     settings?.download_form_url,
     settings?.admissions_pdf_url,
   );
+
+  const applicationPath =
+    content?.primary_button_href || "/admissions/apply";
+
+  const process =
+    Array.isArray(content?.process) && content.process.length > 0
+      ? content.process
+      : DEFAULT_PROCESS;
 
   const showApplyButton =
     isFeatureEnabled(
@@ -155,13 +199,16 @@ export default function Admissions({ settings = {}, navItems = [] }) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  return (
+  const pageContent = (
     <main className="admissions-page admissions-page__container">
       <header className="admissions-page__hero">
         <div className="admissions-page__hero-left">
-          <h1 className="admissions-page__hero-title">Admission</h1>
+          <h1 className="admissions-page__hero-title">
+            {content?.section_title || "Admission"}
+          </h1>
           <p className="admissions-page__hero-sub">
-            Join a school that shapes character, curiosity and leadership.
+            {content?.subtitle ||
+              "Join a school that shapes character, curiosity and leadership."}
           </p>
         </div>
 
@@ -169,13 +216,13 @@ export default function Admissions({ settings = {}, navItems = [] }) {
           <div className="admissions-page__hero-cta">
             <a
               className="admissions-page__btn admissions-page__btn--primary admissions-page__apply-cta"
-              href={buildSiteHref(siteId, "/admissions/apply")}
-              onClick={(e) => {
-                e.preventDefault();
-                navigate("/admissions/apply");
+              href={buildSiteHref(siteId, applicationPath)}
+              onClick={(event) => {
+                event.preventDefault();
+                navigate(applicationPath);
               }}
             >
-              Start Application
+              {content?.primary_button_label || "Start Application"}
             </a>
           </div>
         )}
@@ -184,33 +231,23 @@ export default function Admissions({ settings = {}, navItems = [] }) {
       <section className="admissions-page__grid">
         <article className="admissions-page__card">
           <h2 className="admissions-page__card-title">
-            Are you ready for the adventure of your life?
+            {content?.heading ||
+              "Are you ready for the adventure of your life?"}
           </h2>
 
           <p className="admissions-page__lead">
-            View the admissions process and requirements. We admit learners from
-            Grade 8 through Grade 12. Follow the clear steps below to apply — we
-            review each application with care.
+            {content?.description ||
+              "View the admissions process and requirements. We admit learners from Grade 8 through Grade 12. Follow the clear steps below to apply — we review each application with care."}
           </p>
 
           <div className="admissions-page__process">
             <ol>
-              <li>
-                <strong>Download:</strong> Get the official admission form
-                (PDF).
-              </li>
-              <li>
-                <strong>Complete:</strong> Fill guardian details and attach
-                required documents (ID, proof of residence, reports).
-              </li>
-              <li>
-                <strong>Submit:</strong> Upload online or hand-deliver to the
-                school office during working hours.
-              </li>
-              <li>
-                <strong>Await:</strong> You will receive confirmation via email
-                or SMS about assessment and intake.
-              </li>
+              {process.map((step, index) => (
+                <li key={step.id || `${step.title || "step"}-${index}`}>
+                  <strong>{step.title || `Step ${index + 1}`}:</strong>{" "}
+                  {step.body || ""}
+                </li>
+              ))}
             </ol>
           </div>
 
@@ -222,18 +259,18 @@ export default function Admissions({ settings = {}, navItems = [] }) {
                   href={downloadHref}
                   target={downloadIsExternal ? "_blank" : undefined}
                   rel={downloadIsExternal ? "noopener noreferrer" : undefined}
-                  onClick={(e) => {
+                  onClick={(event) => {
                     if (downloadIsExternal) return;
 
                     if (downloadHref === "#download") {
                       return;
                     }
 
-                    e.preventDefault();
+                    event.preventDefault();
                     navigate(normalizeHref(downloadHref));
                   }}
                 >
-                  Download Form
+                  {content?.secondary_button_label || "Download Form"}
                 </a>
               )}
 
@@ -241,13 +278,13 @@ export default function Admissions({ settings = {}, navItems = [] }) {
                 <a
                   className="admissions-page__btn admissions-page__btn--primary"
                   id="apply"
-                  href={buildSiteHref(siteId, "/admissions/apply")}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    navigate("/admissions/apply");
+                  href={buildSiteHref(siteId, applicationPath)}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    navigate(applicationPath);
                   }}
                 >
-                  Start Application
+                  {content?.primary_button_label || "Start Application"}
                 </a>
               )}
             </div>
@@ -255,8 +292,9 @@ export default function Admissions({ settings = {}, navItems = [] }) {
 
           <div className="admissions-page__notes">
             <p>
-              <strong>Eligibility:</strong> Learners must be between ages 12 — 20
-              for secondary placements. Special assessments may apply.
+              <strong>Eligibility:</strong>{" "}
+              {content?.eligibility ||
+                "Learners must be between ages 12 — 20 for secondary placements. Special assessments may apply."}
             </p>
 
             {(admissionsPhone || admissionsEmail) && (
@@ -277,14 +315,20 @@ export default function Admissions({ settings = {}, navItems = [] }) {
 
         <aside className="admissions-page__side">
           <div className="admissions-page__side-card">
-            <h3 className="admissions-page__side-title">School Overview</h3>
+            <h3 className="admissions-page__side-title">
+              {content?.overview_title || "School Overview"}
+            </h3>
             <p className="admissions-page__small admissions-page__muted">
-              Established 1990 • Co-educational • Grades 8–12
+              {content?.overview_subtitle ||
+                "Established 1990 • Co-educational • Grades 8–12"}
             </p>
 
             {showSchoolStats && (
               <div className="admissions-page__stats-wrapper">
-                <SchoolStats settings={settings} />
+                <SchoolStats
+                  settings={settings}
+                  items={content?.stats || []}
+                />
               </div>
             )}
 
@@ -294,12 +338,12 @@ export default function Admissions({ settings = {}, navItems = [] }) {
                   <a
                     className="admissions-page__link"
                     href={buildSiteHref(siteId, "/contact")}
-                    onClick={(e) => {
-                      e.preventDefault();
+                    onClick={(event) => {
+                      event.preventDefault();
                       navigate("/contact");
                     }}
                   >
-                    Book a Visit
+                    {content?.book_visit_label || "Book a Visit"}
                   </a>
                 )}
 
@@ -307,12 +351,12 @@ export default function Admissions({ settings = {}, navItems = [] }) {
                   <a
                     className="admissions-page__link"
                     href={buildSiteHref(siteId, "/admissions/requirements")}
-                    onClick={(e) => {
-                      e.preventDefault();
+                    onClick={(event) => {
+                      event.preventDefault();
                       navigate("/admissions/requirements");
                     }}
                   >
-                    Policies
+                    {content?.requirements_label || "Policies"}
                   </a>
                 )}
               </div>
@@ -321,5 +365,22 @@ export default function Admissions({ settings = {}, navItems = [] }) {
         </aside>
       </section>
     </main>
+  );
+
+  if (!section) {
+    return pageContent;
+  }
+
+  return (
+    <BuilderSectionTarget
+      builderMode={builderMode}
+      section={section}
+      sectionType="admissions"
+      label={content?.section_title || "Admission"}
+      templateCategory="school"
+      templateKey="school-institutional-v1"
+    >
+      {pageContent}
+    </BuilderSectionTarget>
   );
 }

@@ -1,4 +1,5 @@
 import React from "react";
+import BuilderSectionTarget from "../../../../builder/BuilderSectionTarget";
 
 import Hero from "../components/home/Hero";
 import NoticeBoard from "../components/home/NoticeBoard";
@@ -52,9 +53,68 @@ function isVisibleByNav(navItems = [], paths = [], fallbackVisible = true) {
   return matches.some((item) => item.is_visible !== false);
 }
 
+function normalizeSectionType(value = "") {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_")
+    .replace(/_+/g, "_");
+}
+
+function findSection(sections = [], acceptedTypes = []) {
+  const matchingTypes = new Set(acceptedTypes.map(normalizeSectionType));
+
+  return (
+    (Array.isArray(sections) ? sections : []).find((section) =>
+      matchingTypes.has(
+        normalizeSectionType(section?.type || section?.section_type),
+      ),
+    ) || null
+  );
+}
+
+function sectionContent(section) {
+  return section?.content && typeof section.content === "object"
+    ? section.content
+    : {};
+}
+
+function canRenderSection(showFromNavigation, section, builderMode) {
+  if (!showFromNavigation) return false;
+  if (!section) return true;
+
+  return builderMode || section.visible !== false;
+}
+
+function EditableSection({
+  section,
+  sectionType,
+  label,
+  builderMode,
+  children,
+}) {
+  if (!section) {
+    return children;
+  }
+
+  return (
+    <BuilderSectionTarget
+      builderMode={builderMode}
+      section={section}
+      sectionType={sectionType}
+      label={label}
+      templateCategory="school"
+      templateKey="school-institutional-v1"
+    >
+      {children}
+    </BuilderSectionTarget>
+  );
+}
+
 export default function Home({
   settings = {},
   navItems = [],
+  sections = [],
   builderMode = false,
 }) {
   const showHome = isVisibleByNav(navItems, ["/"]);
@@ -85,6 +145,51 @@ export default function Home({
 
   const showSponsors = isVisibleByNav(navItems, ["/sponsors"]);
 
+  const noticeSection = findSection(sections, [
+    "notice_board",
+    "notices",
+    "announcements",
+  ]);
+
+  const aboutSection = findSection(sections, [
+    "about_section",
+    "about",
+    "vision_mission",
+  ]);
+
+  const gallerySection = findSection(sections, [
+    "gallery",
+    "gallery_preview",
+  ]);
+
+  const principalSection = findSection(sections, [
+    "principal_message",
+    "principal",
+  ]);
+
+  const admissionsSection = findSection(sections, [
+    "admissions",
+    "admission",
+  ]);
+
+  const calendarSection = findSection(sections, [
+    "calendar",
+    "school_calendar",
+    "events",
+  ]);
+
+  const wallOfFameSection = findSection(sections, [
+    "wall_of_fame",
+    "recognition",
+    "awards",
+  ]);
+
+  const sponsorsSection = findSection(sections, [
+    "partners",
+    "sponsors",
+    "supporters",
+  ]);
+
   if (!showHome) {
     return null;
   }
@@ -99,37 +204,127 @@ export default function Home({
         />
       )}
 
-      {showNotices && (
-        <NoticeBoard settings={settings} navItems={navItems} />
+      {canRenderSection(showNotices, noticeSection, builderMode) && (
+        <EditableSection
+          section={noticeSection}
+          sectionType="notice_board"
+          label="Notice Board"
+          builderMode={builderMode}
+        >
+          <NoticeBoard
+            settings={settings}
+            navItems={navItems}
+            content={sectionContent(noticeSection)}
+          />
+        </EditableSection>
       )}
 
       <div className="container">
-        {showAboutSection && (
-          <AboutSection settings={settings} navItems={navItems} />
+        {canRenderSection(showAboutSection, aboutSection, builderMode) && (
+          <EditableSection
+            section={aboutSection}
+            sectionType="about_section"
+            label="Vision, Mission & Values"
+            builderMode={builderMode}
+          >
+            <AboutSection
+              settings={settings}
+              navItems={navItems}
+              content={sectionContent(aboutSection)}
+            />
+          </EditableSection>
         )}
 
-        {showGalleryPreview && (
-          <GalleryPreview settings={settings} navItems={navItems} />
+        {canRenderSection(showGalleryPreview, gallerySection, builderMode) && (
+          <EditableSection
+            section={gallerySection}
+            sectionType="gallery"
+            label="Gallery Preview"
+            builderMode={builderMode}
+          >
+            <GalleryPreview
+              settings={settings}
+              navItems={navItems}
+              content={sectionContent(gallerySection)}
+            />
+          </EditableSection>
         )}
       </div>
 
-      {showPrincipalMessage && (
-        <PrincipalMessage settings={settings} navItems={navItems} />
+      {canRenderSection(showPrincipalMessage, principalSection, builderMode) && (
+        <EditableSection
+          section={principalSection}
+          sectionType="principal_message"
+          label="Principal's Message"
+          builderMode={builderMode}
+        >
+          <PrincipalMessage
+            settings={settings}
+            navItems={navItems}
+            content={sectionContent(principalSection)}
+          />
+        </EditableSection>
       )}
 
-      {showAdmissions && (
-        <Admissions settings={settings} navItems={navItems} />
+      {canRenderSection(showAdmissions, admissionsSection, builderMode) && (
+        <EditableSection
+          section={admissionsSection}
+          sectionType="admissions"
+          label="Admissions"
+          builderMode={builderMode}
+        >
+          <Admissions
+            settings={settings}
+            navItems={navItems}
+            content={sectionContent(admissionsSection)}
+          />
+        </EditableSection>
       )}
 
-      {showCalendar && (
-        <SchoolCalendar settings={settings} navItems={navItems} />
+      {canRenderSection(showCalendar, calendarSection, builderMode) && (
+        <EditableSection
+          section={calendarSection}
+          sectionType="calendar"
+          label="School Calendar"
+          builderMode={builderMode}
+        >
+          <SchoolCalendar
+            settings={settings}
+            navItems={navItems}
+            content={sectionContent(calendarSection)}
+          />
+        </EditableSection>
       )}
 
-      {showWallOfFame && (
-        <WallOfFame settings={settings} navItems={navItems} />
+      {canRenderSection(showWallOfFame, wallOfFameSection, builderMode) && (
+        <EditableSection
+          section={wallOfFameSection}
+          sectionType="wall_of_fame"
+          label="Academic Wall of Fame"
+          builderMode={builderMode}
+        >
+          <WallOfFame
+            settings={settings}
+            navItems={navItems}
+            content={sectionContent(wallOfFameSection)}
+          />
+        </EditableSection>
       )}
 
-      {showSponsors && <Sponsors settings={settings} navItems={navItems} />}
+      {canRenderSection(showSponsors, sponsorsSection, builderMode) && (
+        <EditableSection
+          section={sponsorsSection}
+          sectionType="partners"
+          label="Partners & Supporters"
+          builderMode={builderMode}
+        >
+          <Sponsors
+            settings={settings}
+            navItems={navItems}
+            content={sectionContent(sponsorsSection)}
+          />
+        </EditableSection>
+      )}
     </>
   );
 }

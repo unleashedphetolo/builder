@@ -21,6 +21,18 @@ const DEFAULT_HERO_SLIDESHOW_SETTINGS = {
   transition: "fade",
 };
 
+const DEFAULT_TYPOGRAPHY_SETTINGS = {
+  heading_font_family: 'Inter, "Segoe UI", Arial, sans-serif',
+  body_font_family: 'Inter, "Segoe UI", Arial, sans-serif',
+  heading_font_weight: 760,
+  body_font_weight: 450,
+  base_font_size: 16,
+  heading_scale: 1.34,
+  line_height: 1.6,
+  letter_spacing: 0,
+  button_text_transform: "none",
+};
+
 // ---------- Helpers ----------
 
 const TEMPLATE_PLACEHOLDERS = new Set([
@@ -270,6 +282,15 @@ function buildAbsoluteHref(href = "") {
 function normalizeDefaults(defaults = {}) {
   return {
     ...defaults,
+    background_color: defaults?.background_color || "#ffffff",
+    theme_name: defaults?.theme_name || "signature",
+    typography_settings: {
+      ...DEFAULT_TYPOGRAPHY_SETTINGS,
+      ...(defaults?.typography_settings || {}),
+    },
+    announcements: Array.isArray(defaults?.announcements)
+      ? defaults.announcements
+      : [],
     social_links: defaults?.social_links || {},
     social_display: defaults?.social_display || {},
     topbar_links: Array.isArray(defaults?.topbar_links)
@@ -324,8 +345,13 @@ function mapDefaultsToSiteSettings(siteId, defaults = {}, organization = {}) {
 
     primary_color: safe.primary_color || "#1e40af",
     secondary_color: safe.secondary_color || "#0f172a",
+    background_color: safe.background_color || "#ffffff",
     accent_color: safe.accent_color || "#f59e0b",
-    font_family: safe.font_family || "Inter, sans-serif",
+    font_family:
+      safe.font_family || 'Inter, "Segoe UI", Arial, sans-serif',
+    theme_name: safe.theme_name || "signature",
+    typography_settings: safe.typography_settings,
+    announcements: safe.announcements,
 
     social_links: safe.social_links,
     social_display: safe.social_display,
@@ -967,6 +993,39 @@ export async function syncSitePagesForTemplate({
     }
 
     const defaults = normalizeDefaults(config.defaults);
+
+    if (defaults?.features?.visualSections === true) {
+      const { data: currentSettings, error: currentSettingsError } =
+        await supabase
+          .from("site_settings")
+          .select("features")
+          .eq("site_id", siteId)
+          .maybeSingle();
+
+      if (!currentSettingsError && currentSettings) {
+        const currentFeatures = currentSettings.features || {};
+
+        if (currentFeatures.visualSections !== true) {
+          const { error: featureUpdateError } = await supabase
+            .from("site_settings")
+            .update({
+              features: {
+                ...currentFeatures,
+                visualSections: true,
+              },
+            })
+            .eq("site_id", siteId);
+
+          if (featureUpdateError) {
+            console.error(
+              "syncSitePagesForTemplate visualSections update error:",
+              featureUpdateError,
+            );
+          }
+        }
+      }
+    }
+
     const templatePages = Array.isArray(config.pages)
       ? config.pages.filter((page) => page?.enabled !== false)
       : [];
@@ -1416,14 +1475,29 @@ export async function loadVisibleSitePages(siteId) {
   return data || [];
 }
 
-export async function loadPageSections({ siteId, pageId }) {
-  const { data, error } = await supabase
+export async function loadPageSections({
+  siteId,
+  pageId,
+  includeHidden = false,
+} = {}) {
+  if (!siteId || !pageId) return [];
+
+  let query = supabase
     .from("site_sections")
     .select("*")
     .eq("site_id", siteId)
-    .eq("page_id", pageId)
-    .eq("visible", true)
-    .order("position", { ascending: true });
+    .eq("page_id", pageId);
+
+  /*
+    Published pages load visible sections only.
+    The builder requests includeHidden: true so sections switched Off can
+    remain available in SectionsPanel and be switched On again.
+  */
+  if (!includeHidden) {
+    query = query.eq("visible", true);
+  }
+
+  const { data, error } = await query.order("position", { ascending: true });
 
   if (error) {
     console.error("loadPageSections error", error);
@@ -1494,6 +1568,100 @@ export async function loadVisibleSiteNav(siteId) {
 }
 
 // ---------- Section editing ----------
+
+export async function updateSiteSection({
+  siteId,
+  sectionId,
+  patch = {},
+} = {}) {
+  if (!siteId || !sectionId) return null;
+  if (!patch || typeof patch !== "object" || Array.isArray(patch)) return null;
+
+  const allowedFields = [
+    "content",
+    "visible",
+    "style",
+    "animation",
+    "position",
+    "is_locked",
+  ];
+
+  const safePatch = allowedFields.reduce((result, field) => {
+    if (Object.prototype.hasOwnProperty.call(patch, field)) {
+      result[field] = patch[field];
+    }
+
+    return result;
+  }, {});
+
+  if (Object.prototype.hasOwnProperty.call(safePatch, "position")) {
+    const numericPosition = Number(safePatch.position);
+
+    if (!Number.isFinite(numericPosition)) {
+      delete safePatch.position;
+    } else {
+      safePatch.position = Math.max(0, Math.round(numericPosition));
+    }
+  }
+
+  if (!Object.keys(safePatch).length) return null;
+
+  const { data, error } = await supabase
+    .from("site_sections")
+    .update(safePatch)
+    .eq("site_id", siteId)
+    .eq("id", sectionId)
+    .select("*")
+    .single();
+
+  if (error) {
+    console.error("updateSiteSection error", error);
+    return null;
+  }
+
+  return data;
+}
+
+export async function reorderPageSections({
+  siteId,
+  pageId,
+  sectionIds = [],
+} = {}) {
+  if (!siteId || !pageId || !Array.isArray(sectionIds)) return null;
+
+  const orderedIds = [...new Set(sectionIds.filter(Boolean))];
+
+  if (!orderedIds.length) return [];
+
+  const results = await Promise.all(
+    orderedIds.map((sectionId, position) =>
+      supabase
+        .from("site_sections")
+        .update({ position })
+        .eq("site_id", siteId)
+        .eq("page_id", pageId)
+        .eq("id", sectionId)
+        .select("id")
+        .maybeSingle(),
+    ),
+  );
+
+  const failedResult = results.find((result) => result.error || !result.data?.id);
+
+  if (failedResult) {
+    console.error(
+      "reorderPageSections error",
+      failedResult.error || "A section could not be reordered.",
+    );
+    return null;
+  }
+
+  return loadPageSections({
+    siteId,
+    pageId,
+    includeHidden: true,
+  });
+}
 
 export async function persistSectionOrder(updatedSections) {
   await Promise.all(

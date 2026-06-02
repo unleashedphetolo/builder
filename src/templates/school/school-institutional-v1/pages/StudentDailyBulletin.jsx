@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import BuilderSectionTarget from "../../../../builder/BuilderSectionTarget";
 import "../styles/bulletin.css";
 
 const BULLETINS = [
@@ -40,31 +41,81 @@ const BULLETINS = [
   },
 ];
 
-export default function StudentDailyBulletin() {
+function formatBulletinDate(item = {}) {
+  if (item.date) {
+    return item.date;
+  }
+
+  if (!item.publishedAt) {
+    return "";
+  }
+
+  const date = new Date(item.publishedAt);
+
+  if (Number.isNaN(date.getTime())) {
+    return item.publishedAt;
+  }
+
+  return date.toLocaleDateString(undefined, {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function normalizeBulletin(item = {}, index = 0) {
+  return {
+    id: item.id || `bulletin-${index + 1}`,
+    date: formatBulletinDate(item),
+    title: item.title || "",
+    category: item.category || "General",
+    urgent: item.urgent === true,
+    content: item.content || item.body || item.message || "",
+  };
+}
+
+export default function StudentDailyBulletin({
+  section = null,
+  content = {},
+  builderMode = false,
+}) {
   const [search, setSearch] = useState("");
 
+  const bulletins = useMemo(() => {
+    const source =
+      Array.isArray(content?.items) && content.items.length > 0
+        ? content.items
+        : BULLETINS;
+
+    return source.map(normalizeBulletin);
+  }, [content?.items]);
+
   const filtered = useMemo(() => {
-    if (!search) return BULLETINS;
-    return BULLETINS.filter(
+    if (!search) return bulletins;
+
+    return bulletins.filter(
       (item) =>
         item.title.toLowerCase().includes(search.toLowerCase()) ||
-        item.content.toLowerCase().includes(search.toLowerCase())
+        item.content.toLowerCase().includes(search.toLowerCase()),
     );
-  }, [search]);
+  }, [bulletins, search]);
 
-  return (
+  const pageContent = (
     <main className="bulletin-page container">
       <header className="bulletin-header">
         <div>
-          <h1 className="bulletin-title">Student Daily Bulletin</h1>
+          <h1 className="bulletin-title">
+            {content?.section_title || "Student Daily Bulletin"}
+          </h1>
           <p className="bulletin-subtitle">
-            Official daily announcements for learners at M.O.M Sebone Secondary School.
+            {content?.subtitle ||
+              "Official daily announcements for learners at M.O.M Sebone Secondary School."}
           </p>
         </div>
 
         <input
           type="text"
-          placeholder="Search bulletin..."
+          placeholder={content?.search_placeholder || "Search bulletin..."}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="bulletin-search"
@@ -90,10 +141,27 @@ export default function StudentDailyBulletin() {
 
         {filtered.length === 0 && (
           <div className="bulletin-empty">
-            No announcements matched your search.
+            {content?.empty_message || "No announcements matched your search."}
           </div>
         )}
       </section>
     </main>
+  );
+
+  if (!section) {
+    return pageContent;
+  }
+
+  return (
+    <BuilderSectionTarget
+      builderMode={builderMode}
+      section={section}
+      sectionType="notice_board"
+      label={content?.section_title || "Student Daily Bulletin"}
+      templateCategory="school"
+      templateKey="school-institutional-v1"
+    >
+      {pageContent}
+    </BuilderSectionTarget>
   );
 }

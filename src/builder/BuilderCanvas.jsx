@@ -5,6 +5,112 @@ import "../styles/builder-section-workspace.css";
 
 const EMPTY_BUILDER_SECTIONS = Object.freeze([]);
 
+function DesktopIcon() {
+  return (
+    <svg
+      className="canvas-toolbar-icon"
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <rect x="3.5" y="4.5" width="17" height="11.5" rx="1.6" />
+      <path d="M9 20h6" />
+      <path d="M12 16v4" />
+    </svg>
+  );
+}
+
+function TabletIcon() {
+  return (
+    <svg
+      className="canvas-toolbar-icon"
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <rect x="6" y="3" width="12" height="18" rx="2" />
+      <path d="M10.5 17.8h3" />
+    </svg>
+  );
+}
+
+function MobileIcon() {
+  return (
+    <svg
+      className="canvas-toolbar-icon"
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <rect x="7.3" y="2.5" width="9.4" height="19" rx="2" />
+      <path d="M10.7 18.2h2.6" />
+    </svg>
+  );
+}
+
+function UndoIcon() {
+  return (
+    <svg
+      className="canvas-toolbar-icon"
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M9 7 4 12l5 5" />
+      <path d="M4 12h10a6 6 0 0 1 6 6v1" />
+    </svg>
+  );
+}
+
+function RedoIcon() {
+  return (
+    <svg
+      className="canvas-toolbar-icon"
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="m15 7 5 5-5 5" />
+      <path d="M20 12H10a6 6 0 0 0-6 6v1" />
+    </svg>
+  );
+}
+
 function normalizePreviewSlug(slug = "/") {
   const raw = String(slug || "/").trim();
 
@@ -65,7 +171,15 @@ export default function BuilderCanvas({
     return "desktop";
   });
 
-  const [mediaEditorOpen, setMediaEditorOpen] = useState(false);
+  /*
+    The editor is scoped to the current preview URL. When another page opens,
+    the previous page's media editor is no longer displayed, without requiring
+    a state update effect during navigation.
+  */
+  const [mediaEditorState, setMediaEditorState] = useState({
+    open: false,
+    previewUrl: "",
+  });
 
   const safeSections = useMemo(
     () => (Array.isArray(sections) ? sections : EMPTY_BUILDER_SECTIONS),
@@ -78,13 +192,17 @@ export default function BuilderCanvas({
     [safeSections, selectedSectionId],
   );
 
-  const anyEditorOpen = mediaEditorOpen || sectionEditorOpen;
-
   const previewUrl = useMemo(() => {
     if (!siteId) return "";
 
     return buildPreviewUrl(siteId, page?.slug || "/");
   }, [siteId, page]);
+
+  const mediaEditorOpen =
+    mediaEditorState.open === true &&
+    mediaEditorState.previewUrl === previewUrl;
+
+  const anyEditorOpen = mediaEditorOpen || sectionEditorOpen;
 
   useEffect(() => {
     const handleResize = () => {
@@ -218,7 +336,10 @@ export default function BuilderCanvas({
 
       if (typeof detail.open !== "boolean") return;
 
-      setMediaEditorOpen(detail.open);
+      setMediaEditorState({
+        open: detail.open,
+        previewUrl,
+      });
     }
 
     function handleMediaEditorMessage(event) {
@@ -228,7 +349,10 @@ export default function BuilderCanvas({
 
       if (payload.type !== "builder:media-editor-state") return;
 
-      setMediaEditorOpen(payload.open === true);
+      setMediaEditorState({
+        open: payload.open === true,
+        previewUrl,
+      });
     }
 
     window.addEventListener(
@@ -244,10 +368,6 @@ export default function BuilderCanvas({
       );
       window.removeEventListener("message", handleMediaEditorMessage);
     };
-  }, []);
-
-  useEffect(() => {
-    setMediaEditorOpen(false);
   }, [previewUrl]);
 
   useEffect(() => {
@@ -356,8 +476,8 @@ export default function BuilderCanvas({
           "*",
         );
       }
-    } catch (err) {
-      // ignore cross-origin errors
+    } catch {
+      // Ignore cross-origin preview access errors.
     }
   };
 
@@ -373,24 +493,33 @@ export default function BuilderCanvas({
             type="button"
             className={device === "desktop" ? "active" : ""}
             onClick={() => setDevice("desktop")}
+            aria-pressed={device === "desktop"}
+            aria-label="Preview desktop screen"
           >
-            Desktop
+            <DesktopIcon />
+            <span>Desktop</span>
           </button>
 
           <button
             type="button"
             className={device === "tablet" ? "active" : ""}
             onClick={() => setDevice("tablet")}
+            aria-pressed={device === "tablet"}
+            aria-label="Preview tablet screen"
           >
-            Tablet
+            <TabletIcon />
+            <span>Tablet</span>
           </button>
 
           <button
             type="button"
             className={device === "mobile" ? "active" : ""}
             onClick={() => setDevice("mobile")}
+            aria-pressed={device === "mobile"}
+            aria-label="Preview mobile screen"
           >
-            Mobile
+            <MobileIcon />
+            <span>Mobile</span>
           </button>
         </div>
 
@@ -400,8 +529,10 @@ export default function BuilderCanvas({
             className="history-btn"
             onClick={onUndo}
             disabled={!canUndo}
+            aria-label="Undo last change"
           >
-            Undo
+            <UndoIcon />
+            <span>Undo</span>
           </button>
 
           <button
@@ -409,8 +540,10 @@ export default function BuilderCanvas({
             className="history-btn"
             onClick={onRedo}
             disabled={!canRedo}
+            aria-label="Redo last change"
           >
-            Redo
+            <RedoIcon />
+            <span>Redo</span>
           </button>
         </div>
       </div>

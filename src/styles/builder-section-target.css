@@ -248,3 +248,96 @@
     transition: none;
   }
 }
+
+/* =========================================================
+   HOME NOTICE BOARD OVER HERO — BUILDER POSITION FIX
+   The public template overlap is controlled by notice.css.
+   Inside the builder, BuilderSectionTarget is the outer section wrapper,
+   so the overlap must move with this wrapper for:
+   - the selected outline,
+   - Edit Notice Board action,
+   - correct stacking above the Hero.
+   ========================================================= */
+
+.bst-root.bst-is-builder:has(.notice-wrapper) {
+  margin-top: 30px !important;
+  z-index: 1000;
+}
+
+/*
+  Prevent double movement inside builder preview only.
+  notice.css keeps the public/live page overlap unchanged.
+*/
+.bst-root.bst-is-builder:has(.notice-wrapper) .notice-wrapper {
+  margin-top: 0;
+}
+
+/*
+  Place Edit Notice Board over the upper-right area of the centred
+  notice card instead of at the far edge of the full preview section.
+*/
+.bst-root.bst-is-builder:has(.notice-wrapper) > .bst-edit-button {
+  top: 12px;
+  right: max(24px, calc((100% - 1200px) / 2 + 12px));
+}
+
+@media (max-width: 900px) {
+  .bst-root.bst-is-builder:has(.notice-wrapper) {
+    margin-top: -46px;
+  }
+}
+
+@media (max-width: 680px) {
+  .bst-root.bst-is-builder:has(.notice-wrapper) {
+    margin-top: -34px;
+  }
+
+  .bst-root.bst-is-builder:has(.notice-wrapper) > .bst-edit-button {
+    top: 8px;
+    right: 24px;
+  }
+}
+
+@media (max-width: 420px) {
+  .bst-root.bst-is-builder:has(.notice-wrapper) {
+    margin-top: -22px;
+  }
+
+  .bst-root.bst-is-builder:has(.notice-wrapper) > .bst-edit-button {
+    right: 20px;
+  }
+}
+
+/* =========================================================
+   NOTICE BOARD — EDIT BUTTON ON TOP EDGE ONLY
+   ========================================================= */
+
+.bst-root.bst-is-builder:has(.notice-wrapper) > .bst-edit-button {
+  top: -17px;
+  right: max(24px, calc((100% - 1200px) / 2 + 18px));
+  z-index: 1100;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .bst-root.bst-is-builder:has(.notice-wrapper) > .bst-edit-button {
+    top: -16px;
+    right: 24px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 680px) {
+  .bst-root.bst-is-builder:has(.notice-wrapper) > .bst-edit-button {
+    top: -15px;
+    right: 20px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 420px) {
+  .bst-root.bst-is-builder:has(.notice-wrapper) > .bst-edit-button {
+    top: -14px;
+    right: 16px;
+  }
+}

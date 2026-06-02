@@ -501,7 +501,7 @@ export default function Hero({
               />
 
               <div className="slide-caption container">
-                <h2>{slide.title}</h2>
+                <h2 style={{ color: "#fff" }}>{slide.title}</h2>
                 <p className="subtitle">{slide.subtitle}</p>
 
                 {showCtaRow && (

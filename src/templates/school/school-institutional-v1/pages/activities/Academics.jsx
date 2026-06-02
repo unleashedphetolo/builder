@@ -1,4 +1,5 @@
 import React from "react";
+import BuilderSectionTarget from "../../../../../builder/BuilderSectionTarget";
 import "../../styles/life-academics.css";
 
 const ACADEMIC_SECTIONS = [
@@ -28,27 +29,37 @@ const ACADEMIC_SECTIONS = [
   },
 ];
 
-export default function LifeAcademics() {
-  return (
+export default function LifeAcademics({
+  section = null,
+  content = {},
+  builderMode = false,
+}) {
+  const academicSections =
+    Array.isArray(content?.items) && content.items.length > 0
+      ? content.items
+      : ACADEMIC_SECTIONS;
+
+  const pageContent = (
     <main className="la container">
       {/* Hero Section */}
       <header className="la-hero">
         <div className="la-hero-grid">
           {/* Left: Text */}
           <div className="la-hero-copy">
-            <h1 className="la-title">Academic Programme</h1>
+            <h1 className="la-title">
+              {content?.section_title || "Academic Programme"}
+            </h1>
             <p className="la-subtitle">
-              M.O.M Sebone Secondary School is committed to maintaining high
-              academic standards, fostering discipline, and preparing learners
-              for tertiary education and responsible citizenship.
+              {content?.subtitle ||
+                "M.O.M Sebone Secondary School is committed to maintaining high academic standards, fostering discipline, and preparing learners for tertiary education and responsible citizenship."}
             </p>
           </div>
 
           {/* Right: Academic Image (from gallery22.jpg) */}
           <div className="la-hero-media" aria-hidden="true">
             <img
-              src="/images/gallery22.jpg"
-              alt="Classroom Activity"
+              src={content?.image_url || "/images/gallery22.jpg"}
+              alt={content?.image_alt || "Classroom Activity"}
               className="la-hero-img"
               onError={(e) => (e.currentTarget.src = "/images/gallery1.jpg")}
             />
@@ -58,10 +69,15 @@ export default function LifeAcademics() {
 
       {/* Academic Grid */}
       <section className="la-grid">
-        {ACADEMIC_SECTIONS.map((item) => (
-          <div key={item.title} className="la-card">
-            <h3 className="la-card-title">{item.title}</h3>
-            <p className="la-card-text">{item.text}</p>
+        {academicSections.map((item, index) => (
+          <div
+            key={item.id || item.title || `academic-section-${index}`}
+            className="la-card"
+          >
+            <h3 className="la-card-title">{item.title || ""}</h3>
+            <p className="la-card-text">
+              {item.body || item.text || ""}
+            </p>
           </div>
         ))}
       </section>
@@ -69,14 +85,32 @@ export default function LifeAcademics() {
       {/* Academic Commitment */}
       <section className="la-commitment">
         <div className="la-commitment-box">
-          <h3 className="la-commitment-title">Our Academic Commitment</h3>
+          <h3 className="la-commitment-title">
+            {content?.commitment_title || "Our Academic Commitment"}
+          </h3>
           <p className="la-commitment-text">
-            We strive to cultivate disciplined, confident, and high-performing
-            learners through structured teaching, academic support, and strong
-            school–parent partnerships.
+            {content?.commitment_body ||
+              "We strive to cultivate disciplined, confident, and high-performing learners through structured teaching, academic support, and strong school–parent partnerships."}
           </p>
         </div>
       </section>
     </main>
+  );
+
+  if (!section) {
+    return pageContent;
+  }
+
+  return (
+    <BuilderSectionTarget
+      builderMode={builderMode}
+      section={section}
+      sectionType="services"
+      label={content?.section_title || "Academic Programme"}
+      templateCategory="school"
+      templateKey="school-institutional-v1"
+    >
+      {pageContent}
+    </BuilderSectionTarget>
   );
 }

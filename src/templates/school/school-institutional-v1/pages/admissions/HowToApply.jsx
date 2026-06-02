@@ -1,5 +1,29 @@
 import React from "react";
+import BuilderSectionTarget from "../../../../../builder/BuilderSectionTarget";
 import "../../styles/howtoapply.css";
+
+const DEFAULT_ONLINE_STEPS = [
+  "Fill in learner details and parent/guardian details.",
+  "Provide previous school information if applicable.",
+  "Upload required documents in PDF, JPG, or PNG format.",
+  "Review and submit your application.",
+];
+
+const DEFAULT_MANUAL_STEPS = [
+  "Download and print the form.",
+  "Complete clearly in block letters.",
+  "Attach certified supporting documents.",
+  "Submit to the Administration Office during school hours.",
+];
+
+const DEFAULT_REQUIRED_DOCUMENTS = [
+  "Certified copy of learner Birth Certificate / ID",
+  "Certified copy of parent/guardian ID",
+  "Latest school report",
+  "Proof of address",
+  "Transfer letter if applicable",
+  "Immunisation card / clinic card if applicable",
+];
 
 function buildSiteHref(siteId, path = "") {
   const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
@@ -62,7 +86,13 @@ function pickFirstValue(...values) {
   return "";
 }
 
-export default function HowToApply({ settings = {}, navItems = [] }) {
+export default function HowToApply({
+  settings = {},
+  navItems = [],
+  section = null,
+  content = {},
+  builderMode = false,
+}) {
   const organization = settings?.organization || {};
   const siteId = settings?.site_id || "";
 
@@ -74,14 +104,37 @@ export default function HowToApply({ settings = {}, navItems = [] }) {
     "the school",
   );
 
+  /*
+    Keep the existing organisation/settings-driven form source first.
+    The editable-section value is only a fallback when no saved school
+    application-form URL exists yet.
+  */
   const admissionsFormUrl = pickFirstValue(
     settings?.admissions_form_url,
     settings?.admission_form_url,
     settings?.application_form_url,
     settings?.download_form_url,
     settings?.admissions_pdf_url,
+    content?.form_url,
+    content?.pdf_url,
     "/site/docs/admission-form.pdf",
   );
+
+  const onlineSteps =
+    Array.isArray(content?.online_steps) && content.online_steps.length > 0
+      ? content.online_steps
+      : DEFAULT_ONLINE_STEPS;
+
+  const manualSteps =
+    Array.isArray(content?.manual_steps) && content.manual_steps.length > 0
+      ? content.manual_steps
+      : DEFAULT_MANUAL_STEPS;
+
+  const requiredDocuments =
+    Array.isArray(content?.required_documents) &&
+    content.required_documents.length > 0
+      ? content.required_documents
+      : DEFAULT_REQUIRED_DOCUMENTS;
 
   const showApplyOnline = isVisibleByNav(navItems, ["/admissions/apply"], true);
   const showRequirements = isVisibleByNav(
@@ -101,7 +154,7 @@ export default function HowToApply({ settings = {}, navItems = [] }) {
     scrollTop();
   };
 
-  return (
+  const pageContent = (
     <main
       className="howtoapply container"
       style={{ paddingTop: 10, paddingBottom: 40 }}
@@ -109,17 +162,27 @@ export default function HowToApply({ settings = {}, navItems = [] }) {
       {/* HERO */}
       <header className="howtoapply-hero">
         <div className="howtoapply-left">
-          <h1 className="howtoapply-title">How to Apply</h1>
+          <h1 className="howtoapply-title">
+            {content?.section_title || "How to Apply"}
+          </h1>
 
           <p className="howtoapply-sub">
-            Apply to {schoolName} using the online application or submit a
-            manual form at the school. Please ensure all supporting documents
-            are certified where required.
+            {content?.subtitle || (
+              <>
+                Apply to {schoolName} using the online application or submit a
+                manual form at the school. Please ensure all supporting documents
+                are certified where required.
+              </>
+            )}
           </p>
 
           <div className="howtoapply-badges">
-            <span className="howtoapply-pill">Admissions</span>
-            <span className="howtoapply-pill ghost">Grade 8–12</span>
+            <span className="howtoapply-pill">
+              {content?.primary_badge || "Admissions"}
+            </span>
+            <span className="howtoapply-pill ghost">
+              {content?.secondary_badge || "Grade 8–12"}
+            </span>
           </div>
         </div>
 
@@ -134,7 +197,7 @@ export default function HowToApply({ settings = {}, navItems = [] }) {
               }}
               className="howtoapply-btn primary"
             >
-              Apply Online
+              {content?.apply_button_label || "Apply Online"}
             </a>
           )}
 
@@ -147,7 +210,7 @@ export default function HowToApply({ settings = {}, navItems = [] }) {
               className="howtoapply-btn ghost"
               aria-label="Download manual admission form PDF"
             >
-              Download Manual Form (PDF)
+              {content?.hero_download_label || "Download Manual Form (PDF)"}
             </a>
           )}
 
@@ -160,7 +223,7 @@ export default function HowToApply({ settings = {}, navItems = [] }) {
               }}
               className="howtoapply-btn outline"
             >
-              Need Help?
+              {content?.help_button_label || "Need Help?"}
             </a>
           )}
         </div>
@@ -170,18 +233,19 @@ export default function HowToApply({ settings = {}, navItems = [] }) {
       <section className="howtoapply-grid">
         {showApplyOnline && (
           <article className="howtoapply-card">
-            <h2 className="howtoapply-card-title">Option A: Apply Online</h2>
+            <h2 className="howtoapply-card-title">
+              {content?.online_title || "Option A: Apply Online"}
+            </h2>
 
             <p className="howtoapply-text">
-              Complete the online form and upload the required documents. You
-              will receive an application reference number.
+              {content?.online_description ||
+                "Complete the online form and upload the required documents. You will receive an application reference number."}
             </p>
 
             <ol className="howtoapply-steps">
-              <li>Fill in learner details and parent/guardian details.</li>
-              <li>Provide previous school information if applicable.</li>
-              <li>Upload required documents in PDF, JPG, or PNG format.</li>
-              <li>Review and submit your application.</li>
+              {onlineSteps.map((step, index) => (
+                <li key={`${step}-${index}`}>{step}</li>
+              ))}
             </ol>
 
             <div className="howtoapply-actions">
@@ -193,7 +257,7 @@ export default function HowToApply({ settings = {}, navItems = [] }) {
                 }}
                 className="howtoapply-btn primary"
               >
-                Start Online Application
+                {content?.online_start_label || "Start Online Application"}
               </a>
 
               {showRequirements && (
@@ -205,7 +269,7 @@ export default function HowToApply({ settings = {}, navItems = [] }) {
                   }}
                   className="howtoapply-btn ghost"
                 >
-                  View Requirements
+                  {content?.requirements_button_label || "View Requirements"}
                 </a>
               )}
             </div>
@@ -215,19 +279,18 @@ export default function HowToApply({ settings = {}, navItems = [] }) {
         {showDownloadForm && (
           <article className="howtoapply-card">
             <h2 className="howtoapply-card-title">
-              Option B: Manual Application
+              {content?.manual_title || "Option B: Manual Application"}
             </h2>
 
             <p className="howtoapply-text">
-              Download the manual application form, complete it and submit it at
-              the school office with certified copies.
+              {content?.manual_description ||
+                "Download the manual application form, complete it and submit it at the school office with certified copies."}
             </p>
 
             <ul className="howtoapply-list">
-              <li>Download and print the form.</li>
-              <li>Complete clearly in block letters.</li>
-              <li>Attach certified supporting documents.</li>
-              <li>Submit to the Administration Office during school hours.</li>
+              {manualSteps.map((step, index) => (
+                <li key={`${step}-${index}`}>{step}</li>
+              ))}
             </ul>
 
             <div className="howtoapply-actions">
@@ -238,7 +301,7 @@ export default function HowToApply({ settings = {}, navItems = [] }) {
                 rel={downloadIsExternal ? "noopener noreferrer" : undefined}
                 className="howtoapply-btn primary"
               >
-                Download Manual Form
+                {content?.manual_download_label || "Download Manual Form"}
               </a>
 
               {showContact && (
@@ -250,7 +313,7 @@ export default function HowToApply({ settings = {}, navItems = [] }) {
                   }}
                   className="howtoapply-btn ghost"
                 >
-                  Contact the School
+                  {content?.contact_button_label || "Contact the School"}
                 </a>
               )}
             </div>
@@ -260,31 +323,45 @@ export default function HowToApply({ settings = {}, navItems = [] }) {
 
       {/* DOCUMENTS QUICK LIST */}
       <section className="howtoapply-card howtoapply-card-wide">
-        <h2 className="howtoapply-card-title">Required Documents Summary</h2>
+        <h2 className="howtoapply-card-title">
+          {content?.documents_title || "Required Documents Summary"}
+        </h2>
 
         <p className="howtoapply-text">
-          The documents below are typically required. Please confirm on the Entry
-          Requirements page for the latest list.
+          {content?.documents_description ||
+            "The documents below are typically required. Please confirm on the Entry Requirements page for the latest list."}
         </p>
 
         <div className="docs-grid">
-          <div className="doc-item">
-            Certified copy of learner Birth Certificate / ID
-          </div>
-          <div className="doc-item">Certified copy of parent/guardian ID</div>
-          <div className="doc-item">Latest school report</div>
-          <div className="doc-item">Proof of address</div>
-          <div className="doc-item">Transfer letter if applicable</div>
-          <div className="doc-item">
-            Immunisation card / clinic card if applicable
-          </div>
+          {requiredDocuments.map((document, index) => (
+            <div key={`${document}-${index}`} className="doc-item">
+              {document}
+            </div>
+          ))}
         </div>
 
         <div className="howtoapply-note">
-          For official confirmation of placement and deadlines, please contact
-          the Administration Office.
+          {content?.footer_note ||
+            "For official confirmation of placement and deadlines, please contact the Administration Office."}
         </div>
       </section>
     </main>
+  );
+
+  if (!section) {
+    return pageContent;
+  }
+
+  return (
+    <BuilderSectionTarget
+      builderMode={builderMode}
+      section={section}
+      sectionType="admissions"
+      label={content?.section_title || "How to Apply"}
+      templateCategory="school"
+      templateKey="school-institutional-v1"
+    >
+      {pageContent}
+    </BuilderSectionTarget>
   );
 }

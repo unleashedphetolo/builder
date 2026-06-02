@@ -5,6 +5,8 @@ import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 import ScrollToTop from "./components/layout/ScrollToTop";
 import ScrollTopButton from "./components/common/ScrollTopButton";
+import SiteAnnouncementPopup from "./components/common/SiteAnnouncementPopup";
+import BuilderSectionTarget from "../../../builder/BuilderSectionTarget";
 
 import SGB from "./components/governance/SGB";
 import AboutLanding from "./pages/About";
@@ -41,18 +43,33 @@ import AllEvents from "./pages/AllEvents";
 import Apply from "./pages/admissions/Apply";
 import Requirements from "./pages/admissions/Requirements";
 import HowToApply from "./pages/admissions/HowToApply";
-import Hero from "./components/home/Hero";
-
 
 import Home from "./pages/Home";
+import WallOfFame from "./components/home/WallOfFame";
+import Sponsors from "./components/home/Sponsors";
 import Breadcrumbs from "./components/common/Breadcrumbs";
 
 import "./index.css";
 import "./App.css";
+import "./styles/announcements.css";
+import "./styles/template-theme-bridge.css";
 import StudentDailyBulletin from "./pages/StudentDailyBulletin";
 
 const PAGE_COMPONENTS = {
   "/": Home,
+
+  /*
+    Home-area records remain previewable from the builder Pages panel while
+    their actual content sections are rendered by Home.jsx.
+  */
+  "/home/hero": Home,
+  "/home/about-section": Home,
+  "/home/gallery-preview": Home,
+  "/home/principal-message": Home,
+  "/home/quick-links": Home,
+  "/home/latest-news": Home,
+  "/home/events": Home,
+  "/home/school-stats": Home,
 
   "/about": AboutLanding,
   "/about/who-we-are": WhoWeAre,
@@ -87,6 +104,8 @@ const PAGE_COMPONENTS = {
   "/notices": Notices,
   "/gallery": Gallery,
   "/robotics": RoboticsClub,
+  "/wall-of-fame": WallOfFame,
+  "/sponsors": Sponsors,
   "/contact": Contact,
   "/digital-library": DigitalLibrary,
   "/bulletin": StudentDailyBulletin,
@@ -96,7 +115,7 @@ const PAGE_COMPONENTS = {
 
 /* ---------- FALLBACK PAGE ---------- */
 
-function DefaultPageFallback({ sections = [] }) {
+function DefaultPageFallback({ sections = [], builderMode = false }) {
   if (!sections.length) {
     return (
       <section className="builder-empty-page">
@@ -108,17 +127,31 @@ function DefaultPageFallback({ sections = [] }) {
   return (
     <>
       {sections.map((section) => (
-        <div
-          key={section.id}
-          data-builder-section-id={section.id}
-          data-builder-section-type={section.type}
+        <BuilderSectionTarget
+          key={section.id || section.section_key}
+          builderMode={builderMode}
+          section={section}
+          sectionType={section.type}
+          label={
+            section?.content?.section_title ||
+            section?.content?.title ||
+            section?.type ||
+            "Section"
+          }
+          templateCategory="school"
+          templateKey="school-institutional-v1"
           className="builder-section-anchor"
         >
           <section className="builder-fallback-section">
-            <h2>{section?.content?.title || section?.type || "Section"}</h2>
+            <h2>
+              {section?.content?.section_title ||
+                section?.content?.title ||
+                section?.type ||
+                "Section"}
+            </h2>
             <p>{section?.content?.subtitle || ""}</p>
           </section>
-        </div>
+        </BuilderSectionTarget>
       ))}
     </>
   );
@@ -128,8 +161,8 @@ function DefaultPageFallback({ sections = [] }) {
 
 export default function App(props) {
   const {
-    settings,
-    navItems,
+    settings = {},
+    navItems = [],
     page,
     sections = [],
     builderMode = false,
@@ -186,7 +219,7 @@ export default function App(props) {
 
   useEffect(() => {
     if (page?.slug) {
-      // setCurrentSlug(page.slug);
+      setCurrentSlug(page.slug);
     }
   }, [page?.slug]);
 
@@ -194,12 +227,27 @@ export default function App(props) {
 
   const PageComponent = PAGE_COMPONENTS[slug] || DefaultPageFallback;
 
+  /*
+    In builder mode, hidden sections remain available so the Sections panel can
+    turn them back on. On the public website, hidden sections are not rendered.
+  */
+  const renderableSections = builderMode
+    ? sections
+    : sections.filter((section) => section?.visible !== false);
+
+  const primarySection = renderableSections[0] || null;
+
   const pageContent =
     PageComponent === DefaultPageFallback ? (
-      <DefaultPageFallback sections={sections} />
+      <DefaultPageFallback
+        sections={renderableSections}
+        builderMode={builderMode}
+      />
     ) : (
       <PageComponent
-        sections={sections}
+        section={primarySection}
+        content={primarySection?.content || {}}
+        sections={renderableSections}
         builderMode={builderMode}
         previewMode={previewMode}
         settings={settings}
@@ -220,6 +268,7 @@ export default function App(props) {
         socialDisplay={settings?.social_display}
         topbarLinks={settings?.topbar_links || []}
         navigateTo={navigateTo}
+        currentSlug={slug}
         builderMode={builderMode}
         previewMode={previewMode}
       />
@@ -248,6 +297,12 @@ export default function App(props) {
         navigateTo={navigateTo}
         builderMode={builderMode}
         previewMode={previewMode}
+      />
+
+      <SiteAnnouncementPopup
+        settings={settings}
+        currentSlug={slug}
+        navigateTo={navigateTo}
       />
 
       <ScrollTopButton />

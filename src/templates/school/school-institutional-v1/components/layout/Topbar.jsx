@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "../../styles/topbar.css";
+import SiteAnnouncementBar from "../common/SiteAnnouncementBar";
+import { getActiveAnnouncements } from "../../utils/announcements";
 import {
   FaFacebookF,
   FaInstagram,
@@ -47,6 +49,7 @@ export default function Topbar({
   socialDisplay,
   topbarLinks = [],
   navigateTo,
+  currentSlug = "/",
 }) {
   const [liveSettings, setLiveSettings] = useState(settings || {});
   const [liveNavItems, setLiveNavItems] = useState(navItems || []);
@@ -294,6 +297,16 @@ export default function Topbar({
   const email = liveSettings?.email || "info@school.co.za";
   const siteId = liveSettings?.site_id || "";
 
+  const activeHeaderAnnouncement = useMemo(
+    () =>
+      getActiveAnnouncements(
+        liveSettings?.announcements || [],
+        "header_bar",
+        currentSlug,
+      )[0] || null,
+    [liveSettings?.announcements, currentSlug],
+  );
+
   const applyNowVisible = isLinkVisibleByPage("/admissions/apply");
 
   const getIconColor = (data = {}) => {
@@ -324,12 +337,22 @@ export default function Topbar({
     window.location.hash = fullHref.replace(/^#/, "");
   };
 
-  if (!topbarEnabled) {
+  if (!topbarEnabled && !activeHeaderAnnouncement) {
     return null;
   }
 
   return (
-    <div className="topbar" role="banner" aria-label="Top information bar">
+    <>
+      {activeHeaderAnnouncement && (
+        <SiteAnnouncementBar
+          announcement={activeHeaderAnnouncement}
+          siteId={siteId}
+          navigateTo={goTo}
+        />
+      )}
+
+      {topbarEnabled && (
+        <div className="topbar" role="banner" aria-label="Top information bar">
       <div className="container topbar-inner">
         <div className="left">
           <button
@@ -455,6 +478,8 @@ export default function Topbar({
           )}
         </div>
       </div>
-    </div>
+        </div>
+      )}
+    </>
   );
 }

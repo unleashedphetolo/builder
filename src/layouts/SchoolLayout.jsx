@@ -2,7 +2,19 @@ import React, { Suspense, lazy, useMemo } from "react";
 
 const schoolTemplates = import.meta.glob("../templates/school/*/App.{js,jsx}");
 
-function resolveTemplateImporter(templateKey) {
+/*
+  Create lazy template components once at module level.
+  This keeps the existing dynamic-template loading behaviour, while avoiding
+  the creation of a new lazy component during a SchoolLayout render.
+*/
+const schoolTemplateComponents = Object.fromEntries(
+  Object.entries(schoolTemplates).map(([path, importer]) => [
+    path,
+    lazy(importer),
+  ]),
+);
+
+function resolveTemplateComponent(templateKey) {
   const candidates = [
     `../templates/school/${templateKey}/App.jsx`,
     `../templates/school/${templateKey}/App.js`,
@@ -11,10 +23,10 @@ function resolveTemplateImporter(templateKey) {
   ];
 
   for (const key of candidates) {
-    if (schoolTemplates[key]) return schoolTemplates[key];
+    if (schoolTemplateComponents[key]) return schoolTemplateComponents[key];
   }
 
-  const firstAvailable = Object.values(schoolTemplates)[0];
+  const firstAvailable = Object.values(schoolTemplateComponents)[0];
 
   if (!firstAvailable) {
     console.error("No school templates found.");
@@ -74,7 +86,7 @@ function MissingTemplate({ templateKey }) {
 }
 
 function TemplateLoader({
-  importer,
+  Template,
   settings,
   navItems,
   page,
@@ -83,8 +95,6 @@ function TemplateLoader({
   previewMode,
   children,
 }) {
-  const Template = useMemo(() => lazy(importer), [importer]);
-
   return (
     <Suspense
       fallback={<div style={{ padding: 24 }}>Loading school template...</div>}
@@ -115,18 +125,18 @@ export default function SchoolLayout({
   const safeSettings = useMemo(() => normalizeSettings(settings), [settings]);
   const safeNavItems = useMemo(() => normalizeNavItems(navItems), [navItems]);
 
-  const importer = useMemo(
-    () => resolveTemplateImporter(safeSettings.template_key),
+  const Template = useMemo(
+    () => resolveTemplateComponent(safeSettings.template_key),
     [safeSettings.template_key],
   );
 
-  if (!importer) {
+  if (!Template) {
     return <MissingTemplate templateKey={safeSettings.template_key} />;
   }
 
   return (
     <TemplateLoader
-      importer={importer}
+      Template={Template}
       settings={safeSettings}
       navItems={safeNavItems}
       page={page}

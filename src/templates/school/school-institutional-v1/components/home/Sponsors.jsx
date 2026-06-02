@@ -22,35 +22,44 @@ const sponsors = [
   },
   {
     id: 4,
-    name: "Sebone Alumni Association",
+    name: "Institutional Alumni Association",
     logo: "/images/alumni.png",
     link: "#",
   },
 ];
 
-export default function Sponsors({ settings = {} }) {
+export default function Sponsors({ content = {} }) {
+  const items =
+    Array.isArray(content?.items) && content.items.length > 0
+      ? content.items
+      : sponsors;
+
   return (
     <section className="sponsors-section">
       <div className="container">
-        <h2 className="section-title">Our Partners & Supporters</h2>
+        <h2 className="section-title">
+          {content?.section_title || "Our Partners & Supporters"}
+        </h2>
 
         <p className="sponsors-intro">
-          M.O.M Sebone Secondary School appreciates the continued support of our
-          partners, community stakeholders, and organisations that contribute to
-          learner development and school growth.
+          {content?.subtitle ||
+            "{school_name} appreciates the continued support of our partners, community stakeholders, and organisations that contribute to learner development and school growth."}
         </p>
 
         <div className="sponsors-grid">
-          {sponsors.map((sponsor) => (
+          {items.map((sponsor, index) => (
             <a
-              key={sponsor.id}
-              href={sponsor.link}
+              key={sponsor.id || `${sponsor.name || "sponsor"}-${index}`}
+              href={sponsor.link || "#"}
               target="_blank"
               rel="noopener noreferrer"
               className="sponsor-card"
             >
-              <img src={sponsor.logo} alt={sponsor.name} />
-              <p>{sponsor.name}</p>
+              <img
+                src={sponsor.logo || sponsor.image_url || ""}
+                alt={sponsor.name || ""}
+              />
+              <p>{sponsor.name || ""}</p>
             </a>
           ))}
         </div>

@@ -1,28 +1,32 @@
 import React from "react";
+import BuilderSectionTarget from "../../../../../builder/BuilderSectionTarget";
 import Card from "../../components/common/Card";
 import termPlanPdf from "../../assets/term-plan.pdf";
 
-export default function TermPlan() {
-  const pdfPath = termPlanPdf;
+export default function TermPlan({
+  section = null,
+  content = {},
+  builderMode = false,
+}) {
+  const pdfPath = content?.pdf_url || termPlanPdf;
 
-  return (
+  const pageContent = (
     <section className="container" style={{ paddingTop: 10, paddingBottom: 40 }}>
-
-      <h2 className="section-title">Academic Term Plan</h2>
+      <h2 className="section-title">
+        {content?.section_title || "Academic Term Plan"}
+      </h2>
 
       <Card>
         <div style={{ maxWidth: 900 }}>
-
           <p style={{ opacity: 0.9, lineHeight: 1.6 }}>
-            The Academic Term Plan provides important information about the
-            school academic year including term dates, examination periods,
-            school holidays, and other key academic activities.
+            {content?.description ||
+              content?.subtitle ||
+              "The Academic Term Plan provides important information about the school academic year including term dates, examination periods, school holidays, and other key academic activities."}
           </p>
 
           <p style={{ opacity: 0.9, lineHeight: 1.6 }}>
-            Learners, parents, and educators are encouraged to review the
-            official term plan regularly to stay informed about important
-            academic dates and school events.
+            {content?.supporting_text ||
+              "Learners, parents, and educators are encouraged to review the official term plan regularly to stay informed about important academic dates and school events."}
           </p>
 
           {/* Buttons */}
@@ -46,7 +50,7 @@ export default function TermPlan() {
                 fontWeight: 700,
               }}
             >
-              View Term Plan
+              {content?.view_button_label || "View Term Plan"}
             </a>
 
             <a
@@ -60,7 +64,7 @@ export default function TermPlan() {
                 fontWeight: 700,
               }}
             >
-              Download PDF
+              {content?.download_button_label || "Download PDF"}
             </a>
           </div>
 
@@ -68,7 +72,7 @@ export default function TermPlan() {
           <div style={{ marginTop: 28 }}>
             <iframe
               src={pdfPath}
-              title="Academic Term Plan"
+              title={content?.pdf_title || "Academic Term Plan"}
               style={{
                 width: "100%",
                 height: "600px",
@@ -77,9 +81,25 @@ export default function TermPlan() {
               }}
             />
           </div>
-
         </div>
       </Card>
     </section>
+  );
+
+  if (!section) {
+    return pageContent;
+  }
+
+  return (
+    <BuilderSectionTarget
+      builderMode={builderMode}
+      section={section}
+      sectionType="calendar"
+      label={content?.section_title || "Academic Term Plan"}
+      templateCategory="school"
+      templateKey="school-institutional-v1"
+    >
+      {pageContent}
+    </BuilderSectionTarget>
   );
 }

@@ -1,11 +1,12 @@
 import React, { useMemo, useState } from "react";
+import BuilderSectionTarget from "../../../../../builder/BuilderSectionTarget";
 // import "../../styles/admissions.css";
 import "../../styles/admissions-form.css";
 import Button from "../../components/common/Button";
 
 const GRADES = ["Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12"];
-const GENDERS = ["Female", "Male", "Prefer not to say"];
-const RELATIONSHIPS = ["Mother", "Father", "Guardian", "Other"];
+const GENDERS = ["Male", "Female", "Prefer not to say"];
+const RELATIONSHIPS = ["Father", "Mother", "Guardian", "Other"];
 const HOME_LANGS = [
   "English",
   "Xitsonga",
@@ -46,7 +47,11 @@ function requiredMissing(fields) {
   return fields.some((v) => !String(v ?? "").trim());
 }
 
-export default function Apply() {
+export default function Apply({
+  section = null,
+  content = {},
+  builderMode = false,
+}) {
   const [stepIndex, setStepIndex] = useState(0);
   const step = steps[stepIndex]?.key;
 
@@ -212,7 +217,7 @@ export default function Apply() {
     }
   };
 
-  return (
+  const pageContent = (
     <main
       className="admissions container"
       style={{ paddingTop: 10, paddingBottom: 40 }}
@@ -220,23 +225,27 @@ export default function Apply() {
       {/* HERO */}
       <header className="admissions-hero">
         <div className="hero-left">
-          <h1 className="hero-title">Online Application</h1>
+          <h1 className="hero-title">
+            {content?.form_title || "Online Application"}
+          </h1>
           <p className="hero-sub">
-            Complete the form below and upload required documents. Fields marked{" "}
-            <span className="req">*</span> are mandatory.
+            {content?.form_subtitle ||
+              "Complete the form below and upload required documents. Fields marked"}{" "}
+            <span className="req">*</span>{" "}
+            {content?.required_fields_label || "are mandatory."}
           </p>
         </div>
 
         <div className="hero-cta">
-          <a href="/docs/admission-form.pdf" download className="af-ghost-link">
-            Download Manual Form
+          <a href={content?.manual_form_url || "/docs/admission-form.pdf"} download className="af-ghost-link">
+            {content?.manual_form_label || "Download Manual Form"}
           </a>
           <Button
             style={{ fontSize: "medium" }}
-            to="/contact"
+            to={content?.help_href || "/contact"}
             variant="outline"
           >
-            Need Help?
+            {content?.help_label || "Need Help?"}
           </Button>
         </div>
       </header>
@@ -246,7 +255,7 @@ export default function Apply() {
         {/* Progress */}
         <div className="af-progress">
           <div className="af-progress-top">
-            <div className="af-progress-title">Application Progress</div>
+            <div className="af-progress-title">{content?.progress_title || "Application Progress"}</div>
             <div className="af-progress-pct">{progress}%</div>
           </div>
 
@@ -662,10 +671,12 @@ export default function Apply() {
               </div>
 
               <div className="af-callout">
-                <div className="af-callout-title">Tip</div>
+                <div className="af-callout-title">
+                  {content?.uploads_tip_title || "Tip"}
+                </div>
                 <div className="af-callout-text">
-                  If you cannot upload documents, you may submit the manual form
-                  in person with certified copies.
+                  {content?.uploads_tip_text ||
+                    "If you cannot upload documents, you may submit the manual form in person with certified copies."}
                 </div>
               </div>
             </>
@@ -763,8 +774,8 @@ export default function Apply() {
               </div>
 
               <div className="af-submit-note">
-                By submitting, your application will be sent to the
-                Administration Office for review.
+                {content?.submit_note ||
+                  "By submitting, your application will be sent to the Administration Office for review."}
               </div>
             </>
           )}
@@ -812,10 +823,27 @@ export default function Apply() {
       </section>
 
       <p className="af-help">
-        If you experience any difficulty, contact the school office or submit
-        your manual application form with certified copies.
+        {content?.help_text ||
+          "If you experience any difficulty, contact the school office or submit your manual application form with certified copies."}
       </p>
     </main>
+  );
+
+  if (!section) {
+    return pageContent;
+  }
+
+  return (
+    <BuilderSectionTarget
+      builderMode={builderMode}
+      section={section}
+      sectionType="admissions"
+      label={content?.section_title || "Online Application"}
+      templateCategory="school"
+      templateKey="school-institutional-v1"
+    >
+      {pageContent}
+    </BuilderSectionTarget>
   );
 }
 

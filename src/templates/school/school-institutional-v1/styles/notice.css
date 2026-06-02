@@ -1,10 +1,14 @@
 /* =========================
    Notice Board (Responsive + Institutional)
-   File: src/styles/notice.css
+   File: src/templates/school/school-institutional-v1/styles/notice.css
    ========================= */
 
 .notice-wrapper {
-  margin-top: 0;
+  /*
+    The overlap belongs to the full notice-board section.
+    This keeps the entire section positioned above the Hero on the live website.
+  */
+  margin-top: -60px !important;
   position: relative;
   z-index: 1000;
 }
@@ -12,11 +16,11 @@
 /* Board container */
 .notice-board {
   background: #0b0b0f; /* softer than pure black */
-  color: #fff;
+  color: #fff!important;
   border-radius: 16px;
   padding: 26px 28px;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
-  margin-top: -60px;
+  margin-top: 0;
   border: 1px solid rgba(255, 255, 255, 0.06);
 
   font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
@@ -63,7 +67,7 @@
 .view-all:hover {
   background: rgba(255, 255, 255, 0.16);
   transform: translateY(-1px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.35);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
 }
 
 /* Scroll container */
@@ -76,7 +80,6 @@
 .notice-scroll:hover {
   overflow-y: auto;
 }
-
 
 /* Notice list */
 .notice-list {
@@ -135,9 +138,12 @@
    ========================= */
 
 @media (max-width: 900px) {
+  .notice-wrapper {
+    margin-top: -46px;
+  }
+
   .notice-board {
     padding: 22px 20px;
-    margin-top: -46px;
   }
 
   .notice-header h2 {
@@ -150,10 +156,13 @@
 }
 
 @media (max-width: 680px) {
+  .notice-wrapper {
+    margin-top: -34px;
+  }
+
   .notice-board {
     padding: 18px 16px;
     border-radius: 14px;
-    margin-top: -34px;
   }
 
   .notice-header {
@@ -181,6 +190,10 @@
 }
 
 @media (max-width: 420px) {
+  .notice-wrapper {
+    margin-top: -22px;
+  }
+
   .notice-header h2 {
     font-size: 1.12rem;
   }
