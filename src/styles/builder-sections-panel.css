@@ -678,3 +678,84 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* =========================================================
+   SECTION EDITOR — INTERNAL SCROLL AREA ONLY
+   Keeps header, tabs and save actions visible while editing.
+   Applies only when the section editor is open.
+   ========================================================= */
+
+.bse-root {
+  height: 100%;
+  max-height: 95dvh;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Keep editor controls fixed in place */
+.bse-header,
+.bse-tabs,
+.bse-footer {
+  flex: 0 0 auto;
+}
+
+/* Scroll only the editable fields/content */
+.bse-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding-right: 4px;
+}
+
+/* Enterprise scrollbar — Firefox */
+.bse-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+/* Enterprise scrollbar — Chrome, Edge, Safari */
+.bse-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.bse-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.bse-scroll::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.bse-scroll::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+/* Keep Save Changes accessible above the scrolling fields */
+.bse-footer {
+  position: relative;
+  z-index: 2;
+  background: #ffffff;
+}
+
+/* Full-screen editor on smaller screens */
+@media (max-width: 1180px) {
+  .bse-root {
+    height: 100dvh;
+    max-height: 100dvh;
+  }
+
+  .bse-scroll {
+    -webkit-overflow-scrolling: touch;
+  }
+}
