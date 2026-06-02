@@ -115,6 +115,41 @@ function classifySection(type = "") {
 
   if (
     isSectionType(normalized, [
+      "latest_news",
+      "news",
+      "news_listing",
+      "school_news",
+      "articles",
+    ])
+  ) {
+    return "news";
+  }
+
+  if (
+    isSectionType(normalized, [
+      "policy",
+      "policies",
+      "code_of_conduct",
+      "attendance_policy",
+      "school_policy",
+    ])
+  ) {
+    return "policy";
+  }
+
+  if (
+    isSectionType(normalized, [
+      "quick_links",
+      "links",
+      "resource_links",
+      "useful_links",
+    ])
+  ) {
+    return "links";
+  }
+
+  if (
+    isSectionType(normalized, [
       "aboutsection",
       "about_section",
       "about",
@@ -382,6 +417,9 @@ function sectionDisplayName(section = EMPTY_SECTION) {
 
   const labels = {
     notices: "Notices & Updates",
+    news: "Latest News",
+    policy: "Policy Document",
+    links: "Quick Links",
     about: "About Us",
     principal: "Principal's Message",
     leadership: "Leadership Message",
@@ -589,6 +627,39 @@ function defaultContentFor(section = EMPTY_SECTION) {
       button_href: existing.button_href || "/gallery",
       ...existing,
       items: firstCollection(existing, ["items", "images", "photos"]),
+    };
+  }
+
+  if (kind === "news") {
+    return {
+      section_title: existing.section_title || "Latest News",
+      subtitle:
+        existing.subtitle ||
+        "Latest stories and achievements from our community.",
+      ...existing,
+      items: firstCollection(existing, ["items", "articles", "stories", "news"]),
+    };
+  }
+
+  if (kind === "policy") {
+    return {
+      section_title: existing.section_title || "Policy",
+      introduction: existing.introduction || existing.description || "",
+      closing_text: existing.closing_text || existing.footer_note || "",
+      pdf_url: existing.pdf_url || "",
+      view_button_label: existing.view_button_label || "View Full Document",
+      download_button_label: existing.download_button_label || "Download PDF",
+      ...existing,
+      rules: firstCollection(existing, ["rules", "items", "sections"]),
+    };
+  }
+
+  if (kind === "links") {
+    return {
+      section_title: existing.section_title || "Quick Links",
+      subtitle: existing.subtitle || "",
+      ...existing,
+      items: firstCollection(existing, ["items", "links"]),
     };
   }
 
@@ -913,6 +984,36 @@ function ToggleRow({ title, text, checked, onChange, disabled = false }) {
   );
 }
 
+function splitTextList(value = "") {
+  return String(value || "")
+    .split("\n")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function TextListField({
+  label,
+  items = [],
+  onChange,
+  placeholder = "One item per line",
+  hint = "",
+  rows = 5,
+}) {
+  return (
+    <label className="bse-field">
+      <span className="bse-field-label">{label}</span>
+      <textarea
+        className="bse-textarea"
+        rows={rows}
+        value={Array.isArray(items) ? items.join("\n") : ""}
+        placeholder={placeholder}
+        onChange={(event) => onChange(splitTextList(event.target.value))}
+      />
+      {hint && <small className="bse-field-hint">{hint}</small>}
+    </label>
+  );
+}
+
 function ItemField({ definition, value, onChange }) {
   if (definition.type === "textarea") {
     return (
@@ -925,6 +1026,40 @@ function ItemField({ definition, value, onChange }) {
           placeholder={definition.placeholder || ""}
           onChange={(event) => onChange(event.target.value)}
         />
+      </label>
+    );
+  }
+
+  if (definition.type === "list") {
+    return (
+      <label className="bse-item-field">
+        <span>{definition.label}</span>
+        <textarea
+          className="bse-textarea"
+          rows={definition.rows || 3}
+          value={Array.isArray(value) ? value.join("\n") : ""}
+          placeholder={definition.placeholder || "One item per line"}
+          onChange={(event) => onChange(splitTextList(event.target.value))}
+        />
+      </label>
+    );
+  }
+
+  if (definition.type === "checkbox") {
+    return (
+      <label className="bse-toggle-row">
+        <span>
+          <strong>{definition.label}</strong>
+          {definition.hint && <small>{definition.hint}</small>}
+        </span>
+        <span className={`bse-switch ${value === true ? "is-on" : ""}`}>
+          <input
+            type="checkbox"
+            checked={value === true}
+            onChange={(event) => onChange(event.target.checked)}
+          />
+          <span aria-hidden="true" />
+        </span>
       </label>
     );
   }
@@ -1537,7 +1672,28 @@ export default function BuilderSectionEditor({
               value={draftContent.button_href || ""}
               onChange={(value) => updateContent("button_href", value)}
             />
+            <ContentField
+              label="Search Placeholder"
+              value={draftContent.search_placeholder || ""}
+              placeholder="Search notices..."
+              onChange={(value) => updateContent("search_placeholder", value)}
+            />
+            <ContentField
+              label="Badge Label"
+              value={draftContent.badge_label || ""}
+              placeholder="Official Notice Board"
+              onChange={(value) => updateContent("badge_label", value)}
+            />
           </div>
+
+          <ContentField
+            label="Footer Note"
+            type="textarea"
+            rows={2}
+            value={draftContent.footer_note || ""}
+            placeholder="Optional confirmation note displayed below notices."
+            onChange={(value) => updateContent("footer_note", value)}
+          />
 
           <ItemCollection
             title="Notice Items"
@@ -1552,6 +1708,7 @@ export default function BuilderSectionEditor({
               endAt: "",
               location: "",
               category: "",
+              status: "Active",
             })}
             fields={[
               { key: "title", label: "Title", placeholder: "Notice title" },
@@ -1560,6 +1717,46 @@ export default function BuilderSectionEditor({
               { key: "endAt", label: "End Date & Time", type: "datetime-local" },
               { key: "location", label: "Location", placeholder: "Venue or location" },
               { key: "category", label: "Category", placeholder: "Announcement" },
+              { key: "status", label: "Status", placeholder: "Active" },
+            ]}
+            onChange={(items) => updateContent("items", items)}
+          />
+        </>
+      );
+    }
+
+    if (sectionKind === "news") {
+      return (
+        <>
+          {contentHeaderFields}
+
+          <ItemCollection
+            title="News Stories"
+            items={draftContent.items || []}
+            emptyText="No news stories configured."
+            addLabel="Add News Story"
+            createItem={() => ({
+              id: createKey("news"),
+              title: "New Story",
+              image_url: "",
+              image_alt: "",
+              date: "",
+              category: "School News",
+              summary: "",
+              body: "",
+              link: "",
+              button_label: "Read More",
+            })}
+            fields={[
+              { key: "title", label: "Story Title", placeholder: "News title" },
+              { key: "date", label: "Published Date", placeholder: "Jun 2026" },
+              { key: "category", label: "Category", placeholder: "School News" },
+              { key: "summary", label: "Card Summary", type: "textarea", rows: 2 },
+              { key: "body", label: "Article Content", type: "textarea", rows: 4 },
+              { key: "image_url", label: "Image URL", placeholder: "https://..." },
+              { key: "image_alt", label: "Alternative Text", placeholder: "Describe the image" },
+              { key: "link", label: "Optional Link", placeholder: "/news/article" },
+              { key: "button_label", label: "Button Label", placeholder: "Read More" },
             ]}
             onChange={(items) => updateContent("items", items)}
           />
@@ -1587,11 +1784,30 @@ export default function BuilderSectionEditor({
               { key: "eyebrow", label: "Small Label", placeholder: "VALUE" },
               { key: "title", label: "Title", placeholder: "Our Vision" },
               { key: "body", label: "Content", type: "textarea", rows: 4 },
+              {
+                key: "values",
+                label: "Values / Bullet Items",
+                type: "list",
+                rows: 4,
+                placeholder: "One value per line",
+              },
             ]}
             onChange={(cards) => updateContent("cards", cards)}
           />
         </>
       );
+    }
+
+    if (sectionKind === "news") {
+      return (draftContent.items || []).map((item, index) => ({
+        path: `items.${index}.image_url`,
+        label: item.title || `News Image ${index + 1}`,
+        kind: "image",
+      }));
+    }
+
+    if (sectionKind === "policy") {
+      return [{ path: "pdf_url", label: "Policy PDF Document", kind: "document" }];
     }
 
     if (sectionKind === "principal") {
@@ -1658,6 +1874,234 @@ export default function BuilderSectionEditor({
       );
     }
 
+    if (
+      sectionKind === "admissions" &&
+      ("online_steps" in draftContent || "manual_steps" in draftContent)
+    ) {
+      return (
+        <>
+          {contentHeaderFields}
+
+          <div className="bse-two-column">
+            <ContentField
+              label="Primary Badge"
+              value={draftContent.primary_badge || ""}
+              onChange={(value) => updateContent("primary_badge", value)}
+            />
+            <ContentField
+              label="Secondary Badge"
+              value={draftContent.secondary_badge || ""}
+              onChange={(value) => updateContent("secondary_badge", value)}
+            />
+            <ContentField
+              label="Apply Button"
+              value={draftContent.apply_button_label || ""}
+              onChange={(value) => updateContent("apply_button_label", value)}
+            />
+            <ContentField
+              label="Download Button"
+              value={draftContent.hero_download_label || ""}
+              onChange={(value) => updateContent("hero_download_label", value)}
+            />
+          </div>
+
+          <ContentField
+            label="Online Application Heading"
+            value={draftContent.online_title || ""}
+            onChange={(value) => updateContent("online_title", value)}
+          />
+          <ContentField
+            label="Online Application Description"
+            type="textarea"
+            rows={3}
+            value={draftContent.online_description || ""}
+            onChange={(value) => updateContent("online_description", value)}
+          />
+          <TextListField
+            label="Online Application Steps"
+            items={draftContent.online_steps || []}
+            onChange={(value) => updateContent("online_steps", value)}
+          />
+
+          <ContentField
+            label="Manual Application Heading"
+            value={draftContent.manual_title || ""}
+            onChange={(value) => updateContent("manual_title", value)}
+          />
+          <ContentField
+            label="Manual Application Description"
+            type="textarea"
+            rows={3}
+            value={draftContent.manual_description || ""}
+            onChange={(value) => updateContent("manual_description", value)}
+          />
+          <TextListField
+            label="Manual Application Steps"
+            items={draftContent.manual_steps || []}
+            onChange={(value) => updateContent("manual_steps", value)}
+          />
+
+          <ContentField
+            label="Documents Heading"
+            value={draftContent.documents_title || ""}
+            onChange={(value) => updateContent("documents_title", value)}
+          />
+          <TextListField
+            label="Required Documents"
+            items={draftContent.required_documents || []}
+            onChange={(value) => updateContent("required_documents", value)}
+          />
+          <ContentField
+            label="Footer Note"
+            type="textarea"
+            rows={2}
+            value={draftContent.footer_note || ""}
+            onChange={(value) => updateContent("footer_note", value)}
+          />
+        </>
+      );
+    }
+
+    if (
+      sectionKind === "admissions" &&
+      "required_documents" in draftContent
+    ) {
+      return (
+        <>
+          {contentHeaderFields}
+
+          <ContentField
+            label="Introduction"
+            type="textarea"
+            rows={4}
+            value={draftContent.introduction || ""}
+            placeholder="Leave empty to keep the school-name based introduction."
+            onChange={(value) => updateContent("introduction", value)}
+          />
+
+          <ContentField
+            label="Documents Heading"
+            value={draftContent.documents_title || ""}
+            onChange={(value) => updateContent("documents_title", value)}
+          />
+          <ContentField
+            label="Documents Description"
+            type="textarea"
+            rows={2}
+            value={draftContent.documents_description || ""}
+            onChange={(value) => updateContent("documents_description", value)}
+          />
+          <TextListField
+            label="Required Documents"
+            items={draftContent.required_documents || []}
+            onChange={(value) => updateContent("required_documents", value)}
+          />
+
+          <ContentField
+            label="Grade Admissions Heading"
+            value={draftContent.grades_title || ""}
+            onChange={(value) => updateContent("grades_title", value)}
+          />
+          <ContentField
+            label="Grade Admissions Description"
+            type="textarea"
+            rows={3}
+            value={draftContent.grades_description || ""}
+            onChange={(value) => updateContent("grades_description", value)}
+          />
+
+          <TextListField
+            label="Application Process"
+            items={draftContent.application_process || []}
+            onChange={(value) => updateContent("application_process", value)}
+          />
+
+          <TextListField
+            label="Important Notes"
+            items={draftContent.important_notes || []}
+            onChange={(value) => updateContent("important_notes", value)}
+          />
+
+          <ContentField
+            label="Footer Note"
+            type="textarea"
+            rows={2}
+            value={draftContent.footer_note || ""}
+            onChange={(value) => updateContent("footer_note", value)}
+          />
+        </>
+      );
+    }
+
+    if (
+      sectionKind === "admissions" &&
+      ("form_title" in draftContent || "manual_form_label" in draftContent)
+    ) {
+      return (
+        <>
+          {contentHeaderFields}
+
+          <ContentField
+            label="Form Heading"
+            value={draftContent.form_title || ""}
+            onChange={(value) => updateContent("form_title", value)}
+          />
+          <ContentField
+            label="Form Introduction"
+            type="textarea"
+            rows={3}
+            value={draftContent.form_subtitle || ""}
+            onChange={(value) => updateContent("form_subtitle", value)}
+          />
+
+          <div className="bse-two-column">
+            <ContentField
+              label="Manual Form Label"
+              value={draftContent.manual_form_label || ""}
+              onChange={(value) => updateContent("manual_form_label", value)}
+            />
+            <ContentField
+              label="Manual Form URL"
+              value={draftContent.manual_form_url || ""}
+              onChange={(value) => updateContent("manual_form_url", value)}
+            />
+            <ContentField
+              label="Help Label"
+              value={draftContent.help_label || ""}
+              onChange={(value) => updateContent("help_label", value)}
+            />
+            <ContentField
+              label="Help Link"
+              value={draftContent.help_href || ""}
+              onChange={(value) => updateContent("help_href", value)}
+            />
+          </div>
+
+          <ContentField
+            label="Upload Tip"
+            type="textarea"
+            rows={3}
+            value={draftContent.uploads_tip_text || ""}
+            onChange={(value) => updateContent("uploads_tip_text", value)}
+          />
+          <ContentField
+            label="Submission Note"
+            type="textarea"
+            rows={3}
+            value={draftContent.submit_note || ""}
+            onChange={(value) => updateContent("submit_note", value)}
+          />
+          <ContentField
+            label="Help Text"
+            type="textarea"
+            rows={3}
+            value={draftContent.help_text || ""}
+            onChange={(value) => updateContent("help_text", value)}
+          />
+        </>
+      );
+    }
+
     if (sectionKind === "admissions") {
       return (
         <>
@@ -1709,6 +2153,23 @@ export default function BuilderSectionEditor({
           </div>
 
           <ItemCollection
+            title="Admission Process"
+            items={draftContent.process || []}
+            emptyText="No process steps added."
+            addLabel="Add Process Step"
+            createItem={() => ({
+              id: createKey("admission-step"),
+              title: "New Step",
+              body: "",
+            })}
+            fields={[
+              { key: "title", label: "Step Title", placeholder: "Apply" },
+              { key: "body", label: "Description", type: "textarea", rows: 2 },
+            ]}
+            onChange={(items) => updateContent("process", items)}
+          />
+
+          <ItemCollection
             title="Overview Statistics"
             items={draftContent.stats || []}
             emptyText="No statistics added."
@@ -1750,7 +2211,25 @@ export default function BuilderSectionEditor({
               value={draftContent.pdf_url || ""}
               onChange={(value) => updateContent("pdf_url", value)}
             />
+            <ContentField
+              label="Search Placeholder"
+              value={draftContent.search_placeholder || ""}
+              onChange={(value) => updateContent("search_placeholder", value)}
+            />
+            <ContentField
+              label="Empty Results Message"
+              value={draftContent.empty_message || ""}
+              onChange={(value) => updateContent("empty_message", value)}
+            />
           </div>
+
+          <ContentField
+            label="Footer Note"
+            type="textarea"
+            rows={2}
+            value={draftContent.footer_note || ""}
+            onChange={(value) => updateContent("footer_note", value)}
+          />
 
           <ItemCollection
             title="Upcoming Events"
@@ -1761,12 +2240,14 @@ export default function BuilderSectionEditor({
               id: createKey("event"),
               title: "New Event",
               startAt: "",
+              endAt: "",
               location: "",
               category: "Event",
             })}
             fields={[
               { key: "title", label: "Event", placeholder: "New Event" },
-              { key: "startAt", label: "Date & Time", type: "datetime-local" },
+              { key: "startAt", label: "Start Date & Time", type: "datetime-local" },
+              { key: "endAt", label: "End Date & Time", type: "datetime-local" },
               { key: "location", label: "Location", placeholder: "Venue" },
               { key: "category", label: "Category", placeholder: "Event" },
             ]}
@@ -1792,13 +2273,21 @@ export default function BuilderSectionEditor({
               description: "",
               year: String(new Date().getFullYear()),
               image_url: "",
+              gallery: [],
               link: "",
             })}
             fields={[
               { key: "title", label: "Title", placeholder: "Award or certification" },
               { key: "description", label: "Description", type: "textarea", rows: 2 },
               { key: "year", label: "Year", placeholder: "2026" },
-              { key: "image_url", label: "Image URL", placeholder: "https://..." },
+              { key: "image_url", label: "Cover Image URL", placeholder: "https://..." },
+              {
+                key: "gallery",
+                label: "Preview Image URLs",
+                type: "list",
+                rows: 3,
+                placeholder: "One image URL per line",
+              },
               { key: "link", label: "Link", placeholder: "https://..." },
             ]}
             onChange={(items) => updateContent("items", items)}
@@ -1861,16 +2350,298 @@ export default function BuilderSectionEditor({
             addLabel="Add Image"
             createItem={() => ({
               id: createKey("image"),
+              title: "New Image",
               image_url: "",
-              alt: "",
+              image_alt: "",
               caption: "",
+              link: "",
             })}
             fields={[
+              { key: "title", label: "Title", placeholder: "ACADEMICS" },
               { key: "image_url", label: "Image URL", placeholder: "https://..." },
-              { key: "alt", label: "Alternative Text", placeholder: "Describe the image" },
+              { key: "image_alt", label: "Alternative Text", placeholder: "Describe the image" },
               { key: "caption", label: "Caption", placeholder: "Optional caption" },
+              { key: "link", label: "Link", placeholder: "/activities/academics" },
             ]}
             onChange={(items) => updateContent("items", items)}
+          />
+        </>
+      );
+    }
+
+    if (sectionKind === "policy") {
+      return (
+        <>
+          <ContentField
+            label="Section Title"
+            value={draftContent.section_title || ""}
+            onChange={(value) => updateContent("section_title", value)}
+          />
+          <ContentField
+            label="Introduction"
+            type="textarea"
+            rows={4}
+            value={draftContent.introduction || ""}
+            onChange={(value) => updateContent("introduction", value)}
+          />
+
+          <ItemCollection
+            title="Policy Rules"
+            items={draftContent.rules || []}
+            emptyText="No policy rules configured."
+            addLabel="Add Rule"
+            createItem={() => ({
+              id: createKey("rule"),
+              title: "New Rule",
+              body: "",
+            })}
+            fields={[
+              { key: "title", label: "Heading", placeholder: "Rule heading" },
+              { key: "body", label: "Content", type: "textarea", rows: 4 },
+            ]}
+            onChange={(rules) => updateContent("rules", rules)}
+          />
+
+          <ContentField
+            label="Closing Text"
+            type="textarea"
+            rows={3}
+            value={draftContent.closing_text || ""}
+            onChange={(value) => updateContent("closing_text", value)}
+          />
+
+          <div className="bse-two-column">
+            <ContentField
+              label="PDF URL"
+              value={draftContent.pdf_url || ""}
+              onChange={(value) => updateContent("pdf_url", value)}
+            />
+            <ContentField
+              label="View Button Label"
+              value={draftContent.view_button_label || ""}
+              onChange={(value) => updateContent("view_button_label", value)}
+            />
+            <ContentField
+              label="Download Button Label"
+              value={draftContent.download_button_label || ""}
+              onChange={(value) => updateContent("download_button_label", value)}
+            />
+          </div>
+        </>
+      );
+    }
+
+    if (sectionKind === "links") {
+      return (
+        <>
+          {contentHeaderFields}
+
+          <ItemCollection
+            title="Quick Links"
+            items={draftContent.items || []}
+            emptyText="No links configured."
+            addLabel="Add Link"
+            createItem={() => ({
+              id: createKey("link"),
+              label: "New Link",
+              href: "/",
+              description: "",
+            })}
+            fields={[
+              { key: "label", label: "Label", placeholder: "Link label" },
+              { key: "href", label: "Destination", placeholder: "/resources" },
+              { key: "description", label: "Description", type: "textarea", rows: 2 },
+            ]}
+            onChange={(items) => updateContent("items", items)}
+          />
+        </>
+      );
+    }
+
+    if (
+      sectionKind === "services" &&
+      ("learning_items" in draftContent || "projects_title" in draftContent)
+    ) {
+      return (
+        <>
+          {contentHeaderFields}
+
+          <ContentField
+            label="Learning Card Heading"
+            value={draftContent.learning_title || ""}
+            onChange={(value) => updateContent("learning_title", value)}
+          />
+          <TextListField
+            label="What Learners Learn"
+            items={draftContent.learning_items || []}
+            onChange={(value) => updateContent("learning_items", value)}
+          />
+
+          <ContentField
+            label="Projects Heading"
+            value={draftContent.projects_title || ""}
+            onChange={(value) => updateContent("projects_title", value)}
+          />
+          <ContentField
+            label="Projects Content"
+            type="textarea"
+            rows={3}
+            value={draftContent.projects_body || ""}
+            onChange={(value) => updateContent("projects_body", value)}
+          />
+
+          <ContentField
+            label="Competitions Heading"
+            value={draftContent.competitions_title || ""}
+            onChange={(value) => updateContent("competitions_title", value)}
+          />
+          <ContentField
+            label="Competitions Content"
+            type="textarea"
+            rows={3}
+            value={draftContent.competitions_body || ""}
+            onChange={(value) => updateContent("competitions_body", value)}
+          />
+
+          <div className="bse-two-column">
+            <ContentField
+              label="Primary Button"
+              value={draftContent.primary_button_label || ""}
+              onChange={(value) => updateContent("primary_button_label", value)}
+            />
+            <ContentField
+              label="Primary Link"
+              value={draftContent.primary_button_href || ""}
+              onChange={(value) => updateContent("primary_button_href", value)}
+            />
+            <ContentField
+              label="Secondary Button"
+              value={draftContent.secondary_button_label || ""}
+              onChange={(value) => updateContent("secondary_button_label", value)}
+            />
+            <ContentField
+              label="Secondary Link"
+              value={draftContent.secondary_button_href || ""}
+              onChange={(value) => updateContent("secondary_button_href", value)}
+            />
+          </div>
+        </>
+      );
+    }
+
+    if (
+      sectionKind === "services" &&
+      ("subject_groups" in draftContent || "portal_title" in draftContent)
+    ) {
+      return (
+        <>
+          {contentHeaderFields}
+
+          <div className="bse-two-column">
+            <ContentField
+              label="Search Placeholder"
+              value={draftContent.search_placeholder || ""}
+              onChange={(value) => updateContent("search_placeholder", value)}
+            />
+            <ContentField
+              label="Clear Filters Label"
+              value={draftContent.clear_button_label || ""}
+              onChange={(value) => updateContent("clear_button_label", value)}
+            />
+          </div>
+
+          <ContentField
+            label="NSC Portal Heading"
+            value={draftContent.portal_title || ""}
+            onChange={(value) => updateContent("portal_title", value)}
+          />
+          <ContentField
+            label="NSC Portal Description"
+            type="textarea"
+            rows={3}
+            value={draftContent.portal_body || ""}
+            onChange={(value) => updateContent("portal_body", value)}
+          />
+
+          <ItemCollection
+            title="Library Documents"
+            items={draftContent.items || []}
+            emptyText="No documents uploaded."
+            addLabel="Add Library Document"
+            createItem={() => ({
+              id: createKey("resource"),
+              title: "New Resource",
+              grade: "12",
+              term: "",
+              subject: "",
+              type: "Notes",
+              year: String(new Date().getFullYear()),
+              province: "National",
+              pdf: "",
+            })}
+            fields={[
+              { key: "title", label: "Document Title", placeholder: "Learning resource" },
+              { key: "grade", label: "Grade", placeholder: "12" },
+              { key: "term", label: "Term", placeholder: "Term 1" },
+              { key: "subject", label: "Subject", placeholder: "Mathematics" },
+              { key: "type", label: "Document Type", placeholder: "Exam / Memo / Notes" },
+              { key: "year", label: "Year", placeholder: "2026" },
+              { key: "province", label: "Province", placeholder: "National" },
+              { key: "pdf", label: "PDF URL", placeholder: "/pdfs/resource.pdf" },
+            ]}
+            onChange={(items) => updateContent("items", items)}
+          />
+        </>
+      );
+    }
+
+    if (
+      sectionKind === "services" &&
+      Array.isArray(draftContent.items) &&
+      draftContent.items.some((item) => "grade" in item && "subject" in item && "items" in item)
+    ) {
+      return (
+        <>
+          {contentHeaderFields}
+
+          <div className="bse-two-column">
+            <ContentField
+              label="PDF URL"
+              value={draftContent.pdf_url || ""}
+              onChange={(value) => updateContent("pdf_url", value)}
+            />
+            <ContentField
+              label="Download Button Label"
+              value={draftContent.download_button_label || ""}
+              onChange={(value) => updateContent("download_button_label", value)}
+            />
+          </div>
+
+          <ItemCollection
+            title="Stationery Rows"
+            items={draftContent.items || []}
+            emptyText="No stationery requirements configured."
+            addLabel="Add Requirement"
+            createItem={() => ({
+              id: createKey("stationery"),
+              grade: "Grade 8",
+              subject: "All Subjects",
+              items: "",
+            })}
+            fields={[
+              { key: "grade", label: "Grade", placeholder: "Grade 8" },
+              { key: "subject", label: "Subject", placeholder: "All Subjects" },
+              { key: "items", label: "Required Stationery", type: "textarea", rows: 3 },
+            ]}
+            onChange={(items) => updateContent("items", items)}
+          />
+
+          <ContentField
+            label="Footer Note"
+            type="textarea"
+            rows={2}
+            value={draftContent.footer_note || ""}
+            onChange={(value) => updateContent("footer_note", value)}
           />
         </>
       );
@@ -2358,6 +3129,17 @@ export default function BuilderSectionEditor({
         path: `items.${index}.image_url`,
         label: item.caption || `Gallery Image ${index + 1}`,
         kind: "image",
+      }));
+    }
+
+    if (
+      sectionKind === "services" &&
+      ("subject_groups" in draftContent || "portal_title" in draftContent)
+    ) {
+      return (draftContent.items || []).map((item, index) => ({
+        path: `items.${index}.pdf`,
+        label: item.title || `Library Document ${index + 1}`,
+        kind: "document",
       }));
     }
 
