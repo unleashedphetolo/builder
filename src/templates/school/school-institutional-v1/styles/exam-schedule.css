@@ -44,7 +44,7 @@
 
 .exam-schedule-title {
   margin: 0 0 10px;
-  color: #ffffff;
+  color: #ffffff !important;
   font-size: clamp(2rem, 4vw, 2.72rem);
   line-height: 1.07;
 }

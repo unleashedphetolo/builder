@@ -38,7 +38,7 @@ export default function Contact({ settings = {}, organization = null }) {
 
   const phone = settings?.phone || org?.phone || "0XX XXX XXXX";
 
-  const email = settings?.email || org?.email || "info@sebone-school.co.za";
+  const email = settings?.email || org?.email || "info@new-school.co.za";
 
   /*
     IMPORTANT:

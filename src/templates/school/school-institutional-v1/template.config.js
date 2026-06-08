@@ -447,7 +447,7 @@ export const templateConfig = {
         editableSection("home-partners", "partners", {
           section_title: "Our Partners & Supporters",
           subtitle:
-            "M.O.M Sebone Secondary School appreciates the continued support of our partners, community stakeholders, and organisations that contribute to learner development and school growth.",
+            "{site_name} appreciates the continued support of our partners, community stakeholders, and organisations that contribute to learner development and school growth.",
           items: [
             {
               id: "partner-dbe",
@@ -469,7 +469,7 @@ export const templateConfig = {
             },
             {
               id: "partner-alumni",
-              name: "Sebone Alumni Association",
+              name: "Institutional Alumni Association",
               logo: "/images/alumni.png",
               link: "#",
             },
@@ -1194,7 +1194,7 @@ export const templateConfig = {
         editableSection("activity-facilities-gallery", "gallery", {
           section_title: "Campus Facilities",
           subtitle:
-            "M.O.M Sebone Secondary School provides facilities that support academic excellence, discipline, learner wellbeing, and participation in sport and culture.",
+            "{site_name} provides facilities that support academic excellence, discipline, learner wellbeing, and participation in sport and culture.",
           primary_button_label: "Full Facilities Page",
           primary_button_href: "/facilities",
           secondary_button_label: "View Photos",
@@ -2576,7 +2576,7 @@ export const templateConfig = {
         editableSection("sponsors-main", "partners", {
           section_title: "Our Partners & Supporters",
           subtitle:
-            "M.O.M Sebone Secondary School appreciates the continued support of our partners, community stakeholders, and organisations that contribute to learner development and school growth.",
+            "School Name appreciates the continued support of our partners, community stakeholders, and organisations that contribute to learner development and school growth.",
           items: [
             {
               id: "partner-dbe",

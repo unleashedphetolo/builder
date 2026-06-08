@@ -43,7 +43,7 @@
 }
 
 .gallery-overlay h3 {
-  color: #fff;
+  color: #fff !important;
   font-size: 1.3rem;
   font-weight: 800;
   letter-spacing: 1px;
