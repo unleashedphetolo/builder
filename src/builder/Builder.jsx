@@ -3,7 +3,7 @@ import BuilderNavbar from "./BuilderNavbar";
 import BuilderFooter from "./BuilderFooter";
 import BuilderSidebar from "./BuilderSidebar";
 import BuilderCanvas from "./BuilderCanvas";
-import BuilderSectionEditor from "./BuilderSectionEditor";
+import BuilderSectionEditor from "./section-editor/BuilderSectionEditor";
 import TemplateSelector from "./TemplateSelector";
 import "../styles/builder.css";
 
@@ -347,8 +347,7 @@ function SelectedTemplateLoading({
                 width: `${safeProgress}%`,
                 height: "100%",
                 borderRadius: "999px",
-                background:
-                  "linear-gradient(90deg, #2563eb, #22c55e, #06b6d4)",
+                background: "linear-gradient(90deg, #2563eb, #22c55e, #06b6d4)",
                 transition: "width 280ms ease",
               }}
             />
@@ -888,11 +887,7 @@ export default function Builder() {
 
       let p = await loadSitePages(siteId);
 
-      if (
-        (!Array.isArray(p) || p.length === 0) &&
-        layoutKey &&
-        templateKey
-      ) {
+      if ((!Array.isArray(p) || p.length === 0) && layoutKey && templateKey) {
         setSaveStatus("Preparing selected template...");
         setLoadingProgress((prev) => Math.max(prev, 78));
 
@@ -935,8 +930,7 @@ export default function Builder() {
         const firstVisiblePage =
           Array.isArray(p) &&
           p.find(
-            (page) =>
-              page.is_visible !== false && page.is_published !== false,
+            (page) => page.is_visible !== false && page.is_published !== false,
           );
 
         return firstVisiblePage?.id || p?.[0]?.id || null;
@@ -1060,7 +1054,31 @@ export default function Builder() {
 
       setSelectedSectionId(matchingSection.id);
       setSectionEditorOpen(true);
-      setSidebarOpen(false);
+      setSidebarOpen(true);
+
+      window.dispatchEvent(
+        new CustomEvent("builder:section-editor-state", {
+          detail: {
+            open: true,
+            editorType: "section",
+            sectionId: matchingSection.id,
+            sectionType: matchingSection.type,
+            sidebarPanel: "sections",
+          },
+        }),
+      );
+
+      window.postMessage(
+        {
+          type: "builder:section-editor-state",
+          open: true,
+          editorType: "section",
+          sectionId: matchingSection.id,
+          sectionType: matchingSection.type,
+          sidebarPanel: "sections",
+        },
+        "*",
+      );
 
       window.dispatchEvent(
         new CustomEvent("builder:close-media-editor", {
@@ -1084,6 +1102,26 @@ export default function Builder() {
     const closeSelectedSection = () => {
       setSectionEditorOpen(false);
       setSelectedSectionId(null);
+
+      window.dispatchEvent(
+        new CustomEvent("builder:section-editor-state", {
+          detail: {
+            open: false,
+            editorType: "section",
+            sidebarPanel: "sections",
+          },
+        }),
+      );
+
+      window.postMessage(
+        {
+          type: "builder:section-editor-state",
+          open: false,
+          editorType: "section",
+          sidebarPanel: "sections",
+        },
+        "*",
+      );
     };
 
     const handleOpenSectionEditor = (event) => {
@@ -1217,7 +1255,7 @@ export default function Builder() {
   // =============================
   useEffect(() => {
     function handleCloseSidebar() {
-      setSidebarOpen(false);
+      setSidebarOpen(true);
     }
 
     window.addEventListener("builder:close-sidebar", handleCloseSidebar);
@@ -1812,7 +1850,31 @@ export default function Builder() {
 
     setSelectedSectionId(section.id);
     setSectionEditorOpen(true);
-    setSidebarOpen(false);
+    setSidebarOpen(true);
+
+    window.dispatchEvent(
+      new CustomEvent("builder:section-editor-state", {
+        detail: {
+          open: true,
+          editorType: "section",
+          sectionId: section.id,
+          sectionType: section.type,
+          sidebarPanel: "sections",
+        },
+      }),
+    );
+
+    window.postMessage(
+      {
+        type: "builder:section-editor-state",
+        open: true,
+        editorType: "section",
+        sectionId: section.id,
+        sectionType: section.type,
+        sidebarPanel: "sections",
+      },
+      "*",
+    );
 
     window.dispatchEvent(
       new CustomEvent("builder:close-media-editor", {
@@ -1827,6 +1889,26 @@ export default function Builder() {
   const handleCloseSectionEditor = () => {
     setSectionEditorOpen(false);
     setSelectedSectionId(null);
+
+    window.dispatchEvent(
+      new CustomEvent("builder:section-editor-state", {
+        detail: {
+          open: false,
+          editorType: "section",
+          sidebarPanel: "sections",
+        },
+      }),
+    );
+
+    window.postMessage(
+      {
+        type: "builder:section-editor-state",
+        open: false,
+        editorType: "section",
+        sidebarPanel: "sections",
+      },
+      "*",
+    );
   };
 
   const onUpdateSection = async (sectionId, patch = {}) => {
@@ -1923,9 +2005,10 @@ export default function Builder() {
       (section) => !sectionIds.includes(section.id),
     );
 
-    const optimisticSections = [...reorderedSections, ...untouchedSections].sort(
-      (first, second) => (first.position ?? 0) - (second.position ?? 0),
-    );
+    const optimisticSections = [
+      ...reorderedSections,
+      ...untouchedSections,
+    ].sort((first, second) => (first.position ?? 0) - (second.position ?? 0));
 
     setSections(optimisticSections);
     emitLiveSectionsUpdate(optimisticSections);

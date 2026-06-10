@@ -51,14 +51,19 @@ export default function BuilderSidebar({
   const [activeTab, setActiveTab] = useState("announcements");
   const [hoveredTab, setHoveredTab] = useState("announcements");
   const [openedTab, setOpenedTab] = useState(null);
+  const [activeRailItem, setActiveRailItem] = useState("");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(
     typeof window !== "undefined" ? window.innerWidth <= 1024 : false,
   );
 
   useEffect(() => {
-    const collapseSidebarForEditor = () => {
+    const collapseSidebarForEditor = (nextActiveRailItem = "") => {
       setOpenedTab(null);
       setSidebarCollapsed(true);
+
+      if (nextActiveRailItem) {
+        setActiveRailItem(nextActiveRailItem);
+      }
     };
 
     const handleCloseSidebar = () => {
@@ -72,8 +77,17 @@ export default function BuilderSidebar({
     };
 
     const handleSectionEditorState = (event) => {
-      if (event?.detail?.open === true) {
-        collapseSidebarForEditor();
+      const detail = event?.detail || {};
+
+      if (detail.open === true) {
+        const panelKey = detail.sidebarPanel || "sections";
+        setActiveTab(panelKey);
+        collapseSidebarForEditor(panelKey);
+        return;
+      }
+
+      if (detail.open === false) {
+        setActiveRailItem("");
       }
     };
 
@@ -95,11 +109,17 @@ export default function BuilderSidebar({
         return;
       }
 
-      if (
-        payload.type === "builder:section-editor-state" &&
-        payload.open === true
-      ) {
-        collapseSidebarForEditor();
+      if (payload.type === "builder:section-editor-state") {
+        if (payload.open === true) {
+          const panelKey = payload.sidebarPanel || "sections";
+          setActiveTab(panelKey);
+          collapseSidebarForEditor(panelKey);
+          return;
+        }
+
+        if (payload.open === false) {
+          setActiveRailItem("");
+        }
       }
     };
 
@@ -197,11 +217,6 @@ export default function BuilderSidebar({
     return tabs.find((tab) => tab.key === keyToUse) || tabs[0];
   }, [tabs, openedTab, hoveredTab, activeTab]);
 
-  // const handleOpenTab = (tabKey) => {
-  //   setSidebarCollapsed(false);
-  //   setActiveTab(tabKey);
-  //   setOpenedTab(tabKey);
-  // };
   const closeMediaEditorBeforeOpeningPanel = (tabKey) => {
     const detail = {
       source: "sidebar",
@@ -257,6 +272,7 @@ export default function BuilderSidebar({
 
     setSidebarCollapsed(false);
     setActiveTab(tabKey);
+    setActiveRailItem(tabKey);
     setOpenedTab(tabKey);
   };
 
@@ -503,13 +519,17 @@ export default function BuilderSidebar({
           {tabs.map((tab) => {
             const isActive = activeTab === tab.key;
             const isOpen = openedTab === tab.key;
+            const isRailActive = activeRailItem === tab.key;
+            const shouldHighlight = activeRailItem
+              ? isRailActive || isOpen
+              : isActive || isOpen;
 
             return (
               <button
                 key={tab.key}
                 type="button"
                 className={`sidebar-rail-button ${
-                  isActive || isOpen ? "active" : ""
+                  shouldHighlight ? "active" : ""
                 }`}
                 onMouseEnter={() => setHoveredTab(tab.key)}
                 onFocus={() => setHoveredTab(tab.key)}

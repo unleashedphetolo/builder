@@ -1,6 +1,6 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
-import { supabase } from "../supabase/client";
-import "../styles/builder-section-editor.css";
+import { supabase } from "../../supabase/client";
+import "../../styles/builder-section-editor.css";
 
 const SECTION_TABS = [
   { id: "content", label: "Content", icon: "▤" },
@@ -150,6 +150,17 @@ function classifySection(type = "") {
 
   if (
     isSectionType(normalized, [
+      "who_we_are",
+      "who_we_are_page",
+      "school_profile",
+      "institution_profile",
+    ])
+  ) {
+    return "who_we_are";
+  }
+
+  if (
+    isSectionType(normalized, [
       "aboutsection",
       "about_section",
       "about",
@@ -160,7 +171,6 @@ function classifySection(type = "") {
       "company_profile",
       "business_profile",
       "farm_profile",
-      "who_we_are",
     ])
   ) {
     return "about";
@@ -406,6 +416,31 @@ function classifySection(type = "") {
   return "generic";
 }
 
+function resolveEditorSectionKind(section = EMPTY_SECTION, page = EMPTY_PAGE) {
+  const classified = classifySection(section?.type);
+  const content = isObject(section?.content) ? section.content : {};
+  const pageSlug = normalizeType(page?.slug || "");
+
+  const isWhoWeArePage =
+    pageSlug === "_about_who_we_are" ||
+    pageSlug === "about_who_we_are" ||
+    String(page?.slug || "").toLowerCase() === "/about/who-we-are";
+
+  const hasWhoWeAreContent =
+    "commitment_title" in content ||
+    "commitment_body" in content ||
+    "badge_label" in content ||
+    "pills" in content ||
+    "left_image_url" in content ||
+    "right_image_url" in content;
+
+  if ((classified === "about" || classified === "generic") && (isWhoWeArePage || hasWhoWeAreContent)) {
+    return "who_we_are";
+  }
+
+  return classified;
+}
+
 function sectionDisplayName(section = EMPTY_SECTION) {
   const type = classifySection(section?.type);
   const storedTitle =
@@ -421,6 +456,7 @@ function sectionDisplayName(section = EMPTY_SECTION) {
     policy: "Policy Document",
     links: "Quick Links",
     about: "About Us",
+    who_we_are: "Who We Are",
     principal: "Principal's Message",
     leadership: "Leadership Message",
     admissions: "Admissions",
@@ -468,7 +504,21 @@ function firstCollection(existing = {}, keys = [], fallback = []) {
   return normalizeCollection(fallback, []);
 }
 
-function defaultContentFor(section = EMPTY_SECTION) {
+function firstNonEmptyCollection(existing = {}, keys = [], fallback = []) {
+  for (const key of keys) {
+    if (Array.isArray(existing?.[key]) && existing[key].length > 0) {
+      return normalizeCollection(existing[key], fallback);
+    }
+  }
+
+  return normalizeCollection(fallback, []);
+}
+
+function defaultContentFor(
+  section = EMPTY_SECTION,
+  settings = EMPTY_SETTINGS,
+  page = EMPTY_PAGE,
+) {
   const existing = isObject(section?.content) ? clone(section.content) : {};
   const kind = classifySection(section?.type);
   const originalType = normalizeType(section?.type);
@@ -485,6 +535,88 @@ function defaultContentFor(section = EMPTY_SECTION) {
       layout: existing.layout || "cards",
       ...existing,
       items: firstCollection(existing, ["items", "notices", "announcements", "updates"]),
+    };
+  }
+
+  if (kind === "who_we_are") {
+    const schoolName =
+      existing.school_name || settings?.school_name || "Institutional School";
+
+    const schoolImage =
+      existing.image_url || "/images/school/school.jpg";
+
+    const introduction =
+      existing.body ||
+      existing.subtitle ||
+      `${schoolName} is a learner-centred institution committed to academic excellence, discipline, and holistic development—supported by educators, parents, and community partners.`;
+
+    return {
+      ...existing,
+      section_title: existing.section_title || "Who We Are",
+      subtitle: existing.subtitle || introduction,
+      body: introduction,
+      school_name: existing.school_name || "",
+      image_url: schoolImage,
+      left_image_url: existing.left_image_url || schoolImage,
+      right_image_url: existing.right_image_url || schoolImage,
+      image_alt: existing.image_alt || schoolName,
+      badge_label: existing.badge_label || "Official School Profile",
+      commitment_title: existing.commitment_title || "Our Commitment",
+      commitment_body:
+        existing.commitment_body ||
+        "We are committed to developing responsible, confident learners who are prepared for further education, training, and active citizenship.",
+      pills: firstNonEmptyCollection(existing, ["pills", "tags", "highlights"], [
+        "Learner Support",
+        "Academic Excellence",
+        "Discipline & Values",
+      ]),
+      stats: firstNonEmptyCollection(existing, ["stats", "figures"], [
+        {
+          id: "grades",
+          value: "8–12",
+          label: "Grades Offered",
+        },
+        {
+          id: "community",
+          value: "Community",
+          label: "Partnership & Involvement",
+        },
+      ]),
+      cards: firstNonEmptyCollection(existing, ["cards"], [
+        {
+          id: "community",
+          title: "Our Community",
+          body:
+            "We are a learner-centred secondary school committed to discipline, respect, and academic achievement—supported by teachers, parents, and community partners.",
+          items: [
+            "Safe, supportive learning environment",
+            "Strong parent and community participation",
+            "Respect, accountability, and growth",
+          ],
+        },
+        {
+          id: "leadership",
+          title: "Our Leadership",
+          body:
+            "Our leadership promotes quality teaching, structured learner support, and transparent collaboration with parents and stakeholders.",
+          items: [
+            "Academic planning and performance monitoring",
+            "Clear communication and accountability",
+            "Support for educators and learners",
+          ],
+        },
+        {
+          id: "belief",
+          title: "What We Believe",
+          body:
+            "Every learner can succeed with the right guidance, consistent effort, and a safe environment that builds confidence and character.",
+          items: [
+            "High expectations with learner support",
+            "Values-driven behaviour and discipline",
+            "Opportunities in academics, sport, and culture",
+          ],
+        },
+      ]),
     };
   }
 
@@ -551,6 +683,183 @@ function defaultContentFor(section = EMPTY_SECTION) {
   }
 
   if (kind === "admissions") {
+    const pageSlug = String(page?.slug || "").trim().toLowerCase();
+    const organization = settings?.organization || {};
+    const schoolName =
+      safeText(settings?.site_name) ||
+      safeText(settings?.organization_name) ||
+      safeText(organization?.name) ||
+      safeText(settings?.name) ||
+      "the school";
+
+    const isHowToApplyPage =
+      pageSlug === "/admissions/howtoapply" ||
+      pageSlug === "/admissions/how-to-apply" ||
+      "online_steps" in existing ||
+      "manual_steps" in existing;
+
+    const isRequirementsPage =
+      pageSlug === "/admissions/requirements" ||
+      ("required_documents" in existing &&
+        !("online_steps" in existing) &&
+        !("manual_steps" in existing));
+
+    const isApplyPage =
+      pageSlug === "/admissions/apply" ||
+      "form_title" in existing ||
+      "manual_form_label" in existing;
+
+    if (isHowToApplyPage) {
+      return {
+        ...existing,
+        section_title: existing.section_title || "How to Apply",
+        subtitle:
+          existing.subtitle ||
+          `Apply to ${schoolName} using the online application or submit a manual form at the school. Please ensure all supporting documents are certified where required.`,
+        primary_badge: existing.primary_badge || "Admissions",
+        secondary_badge: existing.secondary_badge || "Grade 8–12",
+        apply_button_label: existing.apply_button_label || "Apply Online",
+        hero_download_label:
+          existing.hero_download_label || "Download Manual Form (PDF)",
+        help_button_label: existing.help_button_label || "Need Help?",
+        form_url: existing.form_url || existing.pdf_url || "",
+        online_title: existing.online_title || "Option A: Apply Online",
+        online_description:
+          existing.online_description ||
+          "Complete the online form and upload the required documents. You will receive an application reference number.",
+        online_start_label:
+          existing.online_start_label || "Start Online Application",
+        requirements_button_label:
+          existing.requirements_button_label || "View Requirements",
+        manual_title: existing.manual_title || "Option B: Manual Application",
+        manual_description:
+          existing.manual_description ||
+          "Download the manual application form, complete it and submit it at the school office with certified copies.",
+        manual_download_label:
+          existing.manual_download_label || "Download Manual Form",
+        contact_button_label:
+          existing.contact_button_label || "Contact the School",
+        documents_title:
+          existing.documents_title || "Required Documents Summary",
+        documents_description:
+          existing.documents_description ||
+          "The documents below are typically required. Please confirm on the Entry Requirements page for the latest list.",
+        footer_note:
+          existing.footer_note ||
+          "For official confirmation of placement and deadlines, please contact the Administration Office.",
+        online_steps: firstNonEmptyCollection(existing, ["online_steps"], [
+          "Fill in learner details and parent/guardian details.",
+          "Provide previous school information if applicable.",
+          "Upload required documents in PDF, JPG, or PNG format.",
+          "Review and submit your application.",
+        ]),
+        manual_steps: firstNonEmptyCollection(existing, ["manual_steps"], [
+          "Download and print the form.",
+          "Complete clearly in block letters.",
+          "Attach certified supporting documents.",
+          "Submit to the Administration Office during school hours.",
+        ]),
+        required_documents: firstNonEmptyCollection(
+          existing,
+          ["required_documents"],
+          [
+            "Certified copy of learner Birth Certificate / ID",
+            "Certified copy of parent/guardian ID",
+            "Latest school report",
+            "Proof of address",
+            "Transfer letter if applicable",
+            "Immunisation card / clinic card if applicable",
+          ],
+        ),
+      };
+    }
+
+    if (isRequirementsPage) {
+      return {
+        ...existing,
+        section_title: existing.section_title || "Entry Requirements",
+        introduction:
+          existing.introduction ||
+          `${schoolName} welcomes applications from learners who are committed to academic excellence, discipline, and positive participation in school life. Admission is subject to available space and compliance with the school's admission policy.`,
+        documents_title: existing.documents_title || "Required Documents",
+        documents_description:
+          existing.documents_description ||
+          "All applications must include the following certified documents:",
+        grades_title: existing.grades_title || "Grade Admissions",
+        grades_description:
+          existing.grades_description ||
+          "Applications are primarily accepted for Grade 8, which is the entry level for the school. Applications for higher grades, Grades 9–12, may be considered depending on space availability.",
+        process_title: existing.process_title || "Application Process",
+        notes_title: existing.notes_title || "Important Notes",
+        apply_button_label: existing.apply_button_label || "Apply Online",
+        download_button_label:
+          existing.download_button_label || "Manual Application PDF",
+        view_button_label: existing.view_button_label || "View Form",
+        form_url: existing.form_url || existing.pdf_url || "",
+        footer_note:
+          existing.footer_note ||
+          "You can apply online, or download the manual form, complete it, and submit it to the school office with the required certified documents.",
+        required_documents: firstNonEmptyCollection(
+          existing,
+          ["required_documents"],
+          [
+            "Certified copy of learner's birth certificate or ID",
+            "Certified copy of parent/guardian ID",
+            "Latest school report",
+            "Proof of residential address",
+            "Transfer letter from previous school if applicable",
+            "Immunisation card if available",
+          ],
+        ),
+        application_process: firstNonEmptyCollection(
+          existing,
+          ["application_process"],
+          [
+            "Complete the official school application form.",
+            "Submit all required supporting documents.",
+            "Applications may be submitted online or at the school office.",
+            "Parents will be contacted once the application has been reviewed.",
+          ],
+        ),
+        important_notes: firstNonEmptyCollection(existing, ["important_notes"], [
+          "All documents must be certified.",
+          "Incomplete applications may not be processed.",
+          "Submission of an application does not guarantee admission.",
+          "Admission decisions are subject to the school's capacity.",
+        ]),
+      };
+    }
+
+    if (isApplyPage) {
+      return {
+        ...existing,
+        section_title: existing.section_title || "Online Application",
+        form_title: existing.form_title || "Online Application",
+        form_subtitle:
+          existing.form_subtitle ||
+          "Complete the form below and upload required documents. Fields marked",
+        required_fields_label:
+          existing.required_fields_label || "are mandatory.",
+        manual_form_url:
+          existing.manual_form_url || "/docs/admission-form.pdf",
+        manual_form_label:
+          existing.manual_form_label || "Download Manual Form",
+        help_href: existing.help_href || "/contact",
+        help_label: existing.help_label || "Need Help?",
+        progress_title: existing.progress_title || "Application Progress",
+        uploads_tip_title: existing.uploads_tip_title || "Tip",
+        uploads_tip_text:
+          existing.uploads_tip_text ||
+          "If you cannot upload documents, you may submit the manual form in person with certified copies.",
+        submit_note:
+          existing.submit_note ||
+          "By submitting, your application will be sent to the Administration Office for review.",
+        help_text:
+          existing.help_text ||
+          "If you experience any difficulty, contact the school office or submit your manual application form with certified copies.",
+      };
+    }
+
     return {
       section_title: existing.section_title || "Admissions",
       subtitle:
@@ -1274,8 +1583,9 @@ export default function BuilderSectionEditor({
   const fileInputRef = useRef(null);
   const activeMediaTargetRef = useRef(null);
 
-  const sectionKind = classifySection(section?.type);
-  const sectionName = sectionDisplayName(section);
+  const sectionKind = resolveEditorSectionKind(section, page);
+  const sectionName =
+    sectionKind === "who_we_are" ? "Who We Are" : sectionDisplayName(section);
 
   const [activeTab, setActiveTab] = useState("content");
   const [draftContent, setDraftContent] = useState({});
@@ -1314,7 +1624,11 @@ export default function BuilderSectionEditor({
   const isDirty = Boolean(initialSnapshot && currentSnapshot !== initialSnapshot);
 
   const hydrateDraft = (sourceSection = section) => {
-    const content = defaultContentFor(sourceSection);
+    const editorSourceSection =
+      resolveEditorSectionKind(sourceSection, page) === "who_we_are"
+        ? { ...sourceSection, type: "who_we_are" }
+        : sourceSection;
+    const content = defaultContentFor(editorSourceSection, settings, page);
     const style = defaultStyleFor(sourceSection);
     const animation = defaultAnimationFor(sourceSection);
     const visible = sourceSection?.visible !== false;
@@ -1536,7 +1850,7 @@ export default function BuilderSectionEditor({
     const target = activeMediaTargetRef.current || activeMediaTarget;
 
     if (!target?.path || !asset?.url) {
-      setError("Select an image field first, then choose a media asset.");
+      setError("Select an image or document field first, then choose a media asset.");
       return;
     }
 
@@ -1764,6 +2078,102 @@ export default function BuilderSectionEditor({
       );
     }
 
+    if (sectionKind === "who_we_are") {
+      return (
+        <>
+          {contentHeaderFields}
+
+          <ContentField
+            label="Introduction"
+            type="textarea"
+            rows={4}
+            value={draftContent.body || draftContent.subtitle || ""}
+            placeholder="Describe the school and its community."
+            onChange={(value) => updateContent("body", value)}
+          />
+
+          <div className="bse-two-column">
+            <ContentField
+              label="School Name Override"
+              value={draftContent.school_name || ""}
+              placeholder="Leave empty to use saved school name"
+              onChange={(value) => updateContent("school_name", value)}
+            />
+            <ContentField
+              label="Profile Badge"
+              value={draftContent.badge_label || ""}
+              placeholder="Official School Profile"
+              onChange={(value) => updateContent("badge_label", value)}
+            />
+          </div>
+
+          <TextListField
+            label="Profile Pills"
+            items={draftContent.pills || []}
+            onChange={(value) => updateContent("pills", value)}
+            placeholder="One label per line"
+            hint="Displayed under the Who We Are introduction."
+          />
+
+          <ItemCollection
+            title="Profile Statistics"
+            items={draftContent.stats || []}
+            emptyText="No profile statistics configured."
+            addLabel="Add Statistic"
+            createItem={() => ({
+              id: createKey("stat"),
+              value: "0",
+              label: "New Statistic",
+            })}
+            fields={[
+              { key: "value", label: "Value", placeholder: "8–12" },
+              { key: "label", label: "Label", placeholder: "Grades Offered" },
+            ]}
+            onChange={(items) => updateContent("stats", items)}
+          />
+
+          <ItemCollection
+            title="Who We Are Cards"
+            items={draftContent.cards || []}
+            emptyText="No profile cards configured."
+            addLabel="Add Profile Card"
+            createItem={() => ({
+              id: createKey("card"),
+              title: "New Card",
+              body: "",
+              items: [],
+            })}
+            fields={[
+              { key: "title", label: "Title", placeholder: "Our Community" },
+              { key: "body", label: "Content", type: "textarea", rows: 4 },
+              {
+                key: "items",
+                label: "Bullet Items",
+                type: "list",
+                rows: 4,
+                placeholder: "One item per line",
+              },
+            ]}
+            onChange={(items) => updateContent("cards", items)}
+          />
+
+          <ContentField
+            label="Commitment Heading"
+            value={draftContent.commitment_title || ""}
+            placeholder="Our Commitment"
+            onChange={(value) => updateContent("commitment_title", value)}
+          />
+          <ContentField
+            label="Commitment Content"
+            type="textarea"
+            rows={4}
+            value={draftContent.commitment_body || ""}
+            onChange={(value) => updateContent("commitment_body", value)}
+          />
+        </>
+      );
+    }
+
     if (sectionKind === "about") {
       return (
         <>
@@ -1796,18 +2206,6 @@ export default function BuilderSectionEditor({
           />
         </>
       );
-    }
-
-    if (sectionKind === "news") {
-      return (draftContent.items || []).map((item, index) => ({
-        path: `items.${index}.image_url`,
-        label: item.title || `News Image ${index + 1}`,
-        kind: "image",
-      }));
-    }
-
-    if (sectionKind === "policy") {
-      return [{ path: "pdf_url", label: "Policy PDF Document", kind: "document" }];
     }
 
     if (sectionKind === "principal") {
@@ -1903,6 +2301,17 @@ export default function BuilderSectionEditor({
               value={draftContent.hero_download_label || ""}
               onChange={(value) => updateContent("hero_download_label", value)}
             />
+            <ContentField
+              label="Help Button"
+              value={draftContent.help_button_label || ""}
+              onChange={(value) => updateContent("help_button_label", value)}
+            />
+            <ContentField
+              label="Manual Form PDF / Link"
+              value={draftContent.form_url || ""}
+              placeholder="Upload in Media or paste PDF/document link"
+              onChange={(value) => updateContent("form_url", value)}
+            />
           </div>
 
           <ContentField
@@ -1923,6 +2332,21 @@ export default function BuilderSectionEditor({
             onChange={(value) => updateContent("online_steps", value)}
           />
 
+          <div className="bse-two-column">
+            <ContentField
+              label="Start Online Application Button"
+              value={draftContent.online_start_label || ""}
+              onChange={(value) => updateContent("online_start_label", value)}
+            />
+            <ContentField
+              label="View Requirements Button"
+              value={draftContent.requirements_button_label || ""}
+              onChange={(value) =>
+                updateContent("requirements_button_label", value)
+              }
+            />
+          </div>
+
           <ContentField
             label="Manual Application Heading"
             value={draftContent.manual_title || ""}
@@ -1941,10 +2365,30 @@ export default function BuilderSectionEditor({
             onChange={(value) => updateContent("manual_steps", value)}
           />
 
+          <div className="bse-two-column">
+            <ContentField
+              label="Download Manual Form Button"
+              value={draftContent.manual_download_label || ""}
+              onChange={(value) => updateContent("manual_download_label", value)}
+            />
+            <ContentField
+              label="Contact the School Button"
+              value={draftContent.contact_button_label || ""}
+              onChange={(value) => updateContent("contact_button_label", value)}
+            />
+          </div>
+
           <ContentField
             label="Documents Heading"
             value={draftContent.documents_title || ""}
             onChange={(value) => updateContent("documents_title", value)}
+          />
+          <ContentField
+            label="Documents Description"
+            type="textarea"
+            rows={3}
+            value={draftContent.documents_description || ""}
+            onChange={(value) => updateContent("documents_description", value)}
           />
           <TextListField
             label="Required Documents"
@@ -2010,17 +2454,53 @@ export default function BuilderSectionEditor({
             onChange={(value) => updateContent("grades_description", value)}
           />
 
+          <ContentField
+            label="Application Process Heading"
+            value={draftContent.process_title || ""}
+            onChange={(value) => updateContent("process_title", value)}
+          />
           <TextListField
             label="Application Process"
             items={draftContent.application_process || []}
             onChange={(value) => updateContent("application_process", value)}
           />
 
+          <ContentField
+            label="Important Notes Heading"
+            value={draftContent.notes_title || ""}
+            onChange={(value) => updateContent("notes_title", value)}
+          />
           <TextListField
             label="Important Notes"
             items={draftContent.important_notes || []}
             onChange={(value) => updateContent("important_notes", value)}
           />
+
+          <div className="bse-two-column">
+            <ContentField
+              label="Apply Online Button"
+              value={draftContent.apply_button_label || ""}
+              onChange={(value) => updateContent("apply_button_label", value)}
+            />
+            <ContentField
+              label="Manual Application PDF Button"
+              value={draftContent.download_button_label || ""}
+              onChange={(value) =>
+                updateContent("download_button_label", value)
+              }
+            />
+            <ContentField
+              label="View Form Button"
+              value={draftContent.view_button_label || ""}
+              onChange={(value) => updateContent("view_button_label", value)}
+            />
+            <ContentField
+              label="Application Form PDF / Link"
+              value={draftContent.form_url || ""}
+              placeholder="Upload in Media or paste PDF/document link"
+              onChange={(value) => updateContent("form_url", value)}
+            />
+          </div>
 
           <ContentField
             label="Footer Note"
@@ -2053,6 +2533,11 @@ export default function BuilderSectionEditor({
             value={draftContent.form_subtitle || ""}
             onChange={(value) => updateContent("form_subtitle", value)}
           />
+          <ContentField
+            label="Required Fields Text"
+            value={draftContent.required_fields_label || ""}
+            onChange={(value) => updateContent("required_fields_label", value)}
+          />
 
           <div className="bse-two-column">
             <ContentField
@@ -2061,8 +2546,9 @@ export default function BuilderSectionEditor({
               onChange={(value) => updateContent("manual_form_label", value)}
             />
             <ContentField
-              label="Manual Form URL"
+              label="Manual Form PDF / Link"
               value={draftContent.manual_form_url || ""}
+              placeholder="Upload in Media or paste PDF/document link"
               onChange={(value) => updateContent("manual_form_url", value)}
             />
             <ContentField
@@ -2075,10 +2561,20 @@ export default function BuilderSectionEditor({
               value={draftContent.help_href || ""}
               onChange={(value) => updateContent("help_href", value)}
             />
+            <ContentField
+              label="Progress Heading"
+              value={draftContent.progress_title || ""}
+              onChange={(value) => updateContent("progress_title", value)}
+            />
+            <ContentField
+              label="Upload Tip Heading"
+              value={draftContent.uploads_tip_title || ""}
+              onChange={(value) => updateContent("uploads_tip_title", value)}
+            />
           </div>
 
           <ContentField
-            label="Upload Tip"
+            label="Upload Tip Content"
             type="textarea"
             rows={3}
             value={draftContent.uploads_tip_text || ""}
@@ -3104,63 +3600,216 @@ export default function BuilderSectionEditor({
   };
 
   const mediaTargets = useMemo(() => {
+    const targets = [];
+
+    const addTarget = (path, label, kind = "image") => {
+      if (!path || targets.some((target) => target.path === path)) return;
+
+      targets.push({
+        path,
+        label: label || "Section Media",
+        kind,
+      });
+    };
+
+    const addItemImageTargets = (items = [], pathKey = "image_url", fallbackLabel = "Item Image") => {
+      (Array.isArray(items) ? items : []).forEach((item, index) => {
+        addTarget(
+          `items.${index}.${pathKey}`,
+          item?.title || item?.name || `${fallbackLabel} ${index + 1}`,
+          "image",
+        );
+      });
+    };
+
+    if (sectionKind === "who_we_are") {
+      addTarget("left_image_url", "Who We Are Left Image", "image");
+      addTarget("right_image_url", "Who We Are Feature Image", "image");
+    }
+
     if (sectionKind === "principal") {
-      return [{ path: "image_url", label: "Principal Photo", kind: "image" }];
+      addTarget("image_url", "Principal Photo", "image");
     }
 
     if (sectionKind === "leadership") {
-      return [{ path: "image_url", label: "Leadership Photo", kind: "image" }];
+      addTarget("image_url", "Leadership Photo", "image");
     }
 
     if (sectionKind === "admissions") {
-      return [{ path: "hero_image", label: "Admissions Image", kind: "image" }];
+      if (
+        "hero_image" in draftContent ||
+        !("manual_form_url" in draftContent) &&
+          !("form_url" in draftContent) &&
+          !("pdf_url" in draftContent)
+      ) {
+        addTarget("hero_image", "Admissions Image", "image");
+      }
+
+      if ("manual_form_url" in draftContent) {
+        addTarget("manual_form_url", "Manual Application PDF", "document");
+      }
+
+      if ("form_url" in draftContent) {
+        addTarget("form_url", "Application Form PDF", "document");
+      }
+
+      if ("pdf_url" in draftContent) {
+        addTarget("pdf_url", "Admissions PDF Document", "document");
+      }
+
+      if (
+        "secondary_button_href" in draftContent &&
+        /download|form|pdf/i.test(
+          `${draftContent.secondary_button_label || ""} ${draftContent.secondary_button_href || ""}`,
+        )
+      ) {
+        addTarget("secondary_button_href", "Download Button PDF / Link", "document");
+      }
     }
 
     if (sectionKind === "calendar") {
-      return [{ path: "pdf_url", label: "Calendar PDF Document", kind: "document" }];
+      addTarget("pdf_url", "Calendar PDF Document", "document");
+    }
+
+    if (sectionKind === "policy") {
+      addTarget("pdf_url", "Policy PDF Document", "document");
     }
 
     if (sectionKind === "cta") {
-      return [{ path: "background_image", label: "Call-to-Action Background", kind: "image" }];
+      addTarget("background_image", "Call-to-Action Background", "image");
+    }
+
+    if (sectionKind === "news") {
+      addItemImageTargets(draftContent.items, "image_url", "News Image");
     }
 
     if (sectionKind === "gallery") {
-      return (draftContent.items || []).map((item, index) => ({
-        path: `items.${index}.image_url`,
-        label: item.caption || `Gallery Image ${index + 1}`,
-        kind: "image",
-      }));
+      addItemImageTargets(draftContent.items, "image_url", "Gallery Image");
     }
 
     if (
       sectionKind === "services" &&
       ("subject_groups" in draftContent || "portal_title" in draftContent)
     ) {
-      return (draftContent.items || []).map((item, index) => ({
-        path: `items.${index}.pdf`,
-        label: item.title || `Library Document ${index + 1}`,
-        kind: "document",
-      }));
+      (draftContent.items || []).forEach((item, index) => {
+        addTarget(
+          `items.${index}.pdf`,
+          item?.title || `Library Document ${index + 1}`,
+          "document",
+        );
+      });
     }
 
-    if (["recognition", "projects", "products", "services", "team", "testimonials"].includes(sectionKind)) {
-      return (draftContent.items || []).map((item, index) => ({
-        path: `items.${index}.image_url`,
-        label: item.title || item.name || `Item Image ${index + 1}`,
-        kind: "image",
-      }));
+    if (sectionKind === "recognition") {
+      addItemImageTargets(draftContent.items, "image_url", "Recognition Image");
+
+      (draftContent.items || []).forEach((item, itemIndex) => {
+        (Array.isArray(item?.gallery) ? item.gallery : []).forEach(
+          (_, galleryIndex) => {
+            addTarget(
+              `items.${itemIndex}.gallery.${galleryIndex}`,
+              `${item?.title || "Recognition"} Preview Image ${galleryIndex + 1}`,
+              "image",
+            );
+          },
+        );
+      });
+    }
+
+    if (["projects", "products", "services", "team", "testimonials"].includes(sectionKind)) {
+      addItemImageTargets(draftContent.items, "image_url", "Item Image");
     }
 
     if (sectionKind === "partners") {
-      return (draftContent.items || []).map((item, index) => ({
-        path: `items.${index}.logo`,
-        label: item.name || `Organisation Logo ${index + 1}`,
-        kind: "image",
-      }));
+      (draftContent.items || []).forEach((item, index) => {
+        addTarget(
+          `items.${index}.logo`,
+          item?.name || `Organisation Logo ${index + 1}`,
+          "image",
+        );
+      });
     }
 
-    return [{ path: "image_url", label: "Section Image", kind: "image" }];
-  }, [sectionKind, draftContent.items]);
+    /*
+      Discover compatible saved fields on other current or future pages.
+      This keeps page buttons/documents and image fields usable without
+      requiring a new hard-coded editor branch for every template page.
+    */
+    const visitContent = (value, path = "") => {
+      if (Array.isArray(value)) {
+        value.forEach((entry, index) => visitContent(entry, `${path}.${index}`));
+        return;
+      }
+
+      if (!isObject(value)) return;
+
+      Object.entries(value).forEach(([key, nestedValue]) => {
+        const nextPath = path ? `${path}.${key}` : key;
+        const normalizedKey = normalizeType(key);
+
+        if (
+          typeof nestedValue === "string" &&
+          [
+            "image",
+            "image_url",
+            "logo",
+            "logo_url",
+            "photo",
+            "photo_url",
+            "cover",
+            "cover_image",
+            "thumbnail",
+            "thumbnail_url",
+            "hero_image",
+            "background_image",
+            "left_image_url",
+            "right_image_url",
+            "principal_image",
+          ].includes(normalizedKey)
+        ) {
+          addTarget(
+            nextPath,
+            normalizedKey.replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase()),
+            "image",
+          );
+        }
+
+        if (
+          typeof nestedValue === "string" &&
+          [
+            "pdf",
+            "pdf_url",
+            "document",
+            "document_url",
+            "file_url",
+            "manual_form_url",
+            "application_form_url",
+            "admissions_form_url",
+            "download_pdf_url",
+            "download_document_url",
+          ].includes(normalizedKey)
+        ) {
+          addTarget(
+            nextPath,
+            normalizedKey.replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase()),
+            "document",
+          );
+        }
+
+        if (Array.isArray(nestedValue) || isObject(nestedValue)) {
+          visitContent(nestedValue, nextPath);
+        }
+      });
+    };
+
+    visitContent(draftContent);
+
+    if (!targets.length) {
+      addTarget("image_url", "Section Image", "image");
+    }
+
+    return targets;
+  }, [sectionKind, draftContent]);
 
   const renderMediaTab = () => (
     <>
@@ -3206,8 +3855,10 @@ export default function BuilderSectionEditor({
                 value={currentValue || ""}
                 placeholder={
                   target.kind === "document"
-                    ? "Paste PDF URL"
-                    : "Paste image URL"
+                    ? "Paste PDF or document URL"
+                    : target.kind === "video"
+                      ? "Paste video URL"
+                      : "Paste image URL"
                 }
                 onFocus={() => chooseTarget(target)}
                 onChange={(event) => {
@@ -3222,7 +3873,9 @@ export default function BuilderSectionEditor({
                 disabled={uploading}
                 onClick={() => requestUpload(target)}
               >
-                {uploading && selected ? "Uploading..." : `Upload ${target.kind === "document" ? "Document" : "Image"}`}
+                {uploading && selected
+                  ? "Uploading..."
+                  : `Upload ${target.kind === "document" ? "PDF / Document" : target.kind === "video" ? "Video" : "Image"}`}
               </button>
             </article>
           );
