@@ -1,11 +1,12 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { IoChevronDown } from "react-icons/io5";
+import BuilderMediaEditor from "../../../../../builder/BuilderMediaEditor";
 import "../../styles/navbar.css";
-import logos from "../../assets/sebone.jpeg";
+import logos from "../../assets/institutional.png";
 
 const DEFAULT_FEATURES = {
   about: true,
+  digitalLibrary: false,
   activities: true,
   resources: true,
   news: true,
@@ -13,196 +14,749 @@ const DEFAULT_FEATURES = {
   gallery: true,
   robotics: true,
   contact: true,
-  digitalLibrary: true,
 };
 
-function mergeSchoolFeatures(features) {
-  return {
-    ...DEFAULT_FEATURES,
-    ...(features || {}),
-  };
+function buildSiteHref(siteId, path = "") {
+  const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
+  return `#/site/${siteId || ""}${clean}`;
 }
 
-function getRoutePrefix(settings) {
-  if (settings?.site_id) return `/site/${settings.site_id}`;
-  return "/site";
+function normalizeSlug(slug = "/") {
+  const raw = String(slug || "/").trim();
+
+  const cleanRaw = raw
+    .split("?")[0]
+    .split("#")[0]
+    .replace(/^\/+|\/+$/g, "");
+
+  if (!cleanRaw || cleanRaw.toLowerCase() === "home") return "/";
+
+  return `/${cleanRaw}`;
 }
 
-function buildLink(routePrefix, path) {
-  if (!path) return routePrefix;
-  if (path === "/") return `${routePrefix}/`;
-  return `${routePrefix}${path}`;
+function hrefToSlug(href = "", siteId = "") {
+  if (!href) return "/";
+  if (String(href).startsWith("http")) return href;
+
+  const withoutHash = String(href).replace(/^#/, "");
+  const sitePrefix = `/site/${siteId || ""}`;
+
+  if (withoutHash.startsWith(sitePrefix)) {
+    return normalizeSlug(withoutHash.replace(sitePrefix, "") || "/");
+  }
+
+  return normalizeSlug(withoutHash);
 }
 
-export default function Navbar({ settings = {}, navItems = [] }) {
-  const f = mergeSchoolFeatures(settings?.features);
-  const logoUrl = settings?.logo_url || logos;
-  const schoolName = settings?.site_name || "School";
-  const tagline = settings?.tagline || "Secondary School";
-  const routePrefix = getRoutePrefix(settings);
+export default function Navbar({
+  settings = {},
+  navItems = [],
+  navigateTo,
+  builderMode = false,
+}) {
+  const logoSectionRef = useRef(null);
 
+  const [liveSettings, setLiveSettings] = useState(settings || {});
+  const [liveNavItems, setLiveNavItems] = useState(navItems || []);
   const [open, setOpen] = useState(false);
   const [dropdown, setDropdown] = useState(null);
-  const loc = useLocation();
+  const [logoSelected, setLogoSelected] = useState(false);
+  const [logoEditorOpen, setLogoEditorOpen] = useState(false);
+
+  useEffect(() => {
+    setLiveSettings(settings || {});
+  }, [settings]);
+
+  useEffect(() => {
+    setLiveNavItems(Array.isArray(navItems) ? navItems : []);
+  }, [navItems]);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
+
     return () => {
       document.body.style.overflow = "";
     };
   }, [open]);
 
   useEffect(() => {
-    setOpen(false);
-    setDropdown(null);
-  }, [loc.pathname]);
+    if (!builderMode) {
+      setLogoSelected(false);
+      setLogoEditorOpen(false);
+    }
+  }, [builderMode]);
 
-  const isActive = (path) => {
-    const fullPath = buildLink(routePrefix, path);
-    return loc.pathname === fullPath;
+  useEffect(() => {
+    const mergeLiveSettings = (incoming = {}) => {
+      setLiveSettings((prev) => ({
+        ...(prev || {}),
+        ...(incoming || {}),
+        features: {
+          ...((prev && prev.features) || {}),
+          ...((incoming && incoming.features) || {}),
+        },
+      }));
+    };
+
+    const updateLiveNav = (incoming = []) => {
+      if (Array.isArray(incoming)) {
+        setLiveNavItems(incoming);
+      }
+    };
+
+    const handleSettingsUpdate = (event) => {
+      mergeLiveSettings(event?.detail || {});
+    };
+
+    const handleNavUpdate = (event) => {
+      updateLiveNav(event?.detail || []);
+    };
+
+    const handleMessage = (event) => {
+      const payload = event?.data;
+
+      if (!payload || typeof payload !== "object") return;
+
+      if (
+        payload.type === "builder:settings-updated" ||
+        payload.type === "site-settings-updated"
+      ) {
+        mergeLiveSettings(payload.settings || payload.payload || {});
+      }
+
+      if (
+        payload.type === "builder:nav-updated" ||
+        payload.type === "site-nav-updated"
+      ) {
+        updateLiveNav(
+          payload.navItems || payload.items || payload.payload || [],
+        );
+      }
+    };
+
+    window.addEventListener("builder:settings-updated", handleSettingsUpdate);
+    window.addEventListener("site-settings-updated", handleSettingsUpdate);
+    window.addEventListener("builder:nav-updated", handleNavUpdate);
+    window.addEventListener("site-nav-updated", handleNavUpdate);
+    window.addEventListener("message", handleMessage);
+
+    return () => {
+      window.removeEventListener(
+        "builder:settings-updated",
+        handleSettingsUpdate,
+      );
+      window.removeEventListener("site-settings-updated", handleSettingsUpdate);
+      window.removeEventListener("builder:nav-updated", handleNavUpdate);
+      window.removeEventListener("site-nav-updated", handleNavUpdate);
+      window.removeEventListener("message", handleMessage);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!builderMode) return undefined;
+
+    const applyEditorState = (detail = {}) => {
+      if (typeof detail.open !== "boolean") return;
+
+      const isLogoEditor =
+        detail.editorType === "logo" || detail.label === "Edit Logo";
+
+      if (isLogoEditor) {
+        setLogoEditorOpen(detail.open);
+        setLogoSelected(detail.open);
+        return;
+      }
+
+      if (detail.open === true) {
+        setLogoSelected(false);
+        setLogoEditorOpen(false);
+      }
+    };
+
+    const handleEditorState = (event) => {
+      applyEditorState(event?.detail || {});
+    };
+
+    const handleEditorMessage = (event) => {
+      const payload = event?.data;
+
+      if (!payload || typeof payload !== "object") return;
+      if (payload.type !== "builder:media-editor-state") return;
+
+      applyEditorState(payload);
+    };
+
+    window.addEventListener("builder:media-editor-state", handleEditorState);
+    window.addEventListener("message", handleEditorMessage);
+
+    return () => {
+      window.removeEventListener(
+        "builder:media-editor-state",
+        handleEditorState,
+      );
+      window.removeEventListener("message", handleEditorMessage);
+    };
+  }, [builderMode]);
+
+  useEffect(() => {
+    if (!builderMode) return undefined;
+
+    const openLogoEditor = () => {
+      setLogoSelected(true);
+
+      window.requestAnimationFrame(() => {
+        const editLogoButton = logoSectionRef.current?.querySelector(
+          ".navbar-logo-edit-button",
+        );
+
+        editLogoButton?.click();
+      });
+    };
+
+    const handleOpenMediaEditor = (event) => {
+      const detail = event?.detail || {};
+
+      if (detail.editorType !== "logo") return;
+
+      openLogoEditor();
+    };
+
+    const handleOpenMediaEditorMessage = (event) => {
+      const payload = event?.data;
+
+      if (!payload || typeof payload !== "object") return;
+      if (payload.type !== "builder:open-media-editor") return;
+      if (payload.editorType !== "logo") return;
+
+      openLogoEditor();
+    };
+
+    window.addEventListener("builder:open-media-editor", handleOpenMediaEditor);
+    window.addEventListener("message", handleOpenMediaEditorMessage);
+
+    return () => {
+      window.removeEventListener(
+        "builder:open-media-editor",
+        handleOpenMediaEditor,
+      );
+      window.removeEventListener("message", handleOpenMediaEditorMessage);
+    };
+  }, [builderMode]);
+
+  useEffect(() => {
+    if (!builderMode || !logoSelected || logoEditorOpen) return undefined;
+
+    const handleOutsidePointerDown = (event) => {
+      if (!logoSectionRef.current?.contains(event.target)) {
+        setLogoSelected(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handleOutsidePointerDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handleOutsidePointerDown);
+    };
+  }, [builderMode, logoSelected, logoEditorOpen]);
+
+  const features = {
+    ...DEFAULT_FEATURES,
+    ...(liveSettings?.features || {}),
+  };
+
+  const logoUrl = liveSettings?.logo_url || logos;
+  const schoolName = liveSettings?.site_name || "School";
+  const tagline = liveSettings?.tagline || "Secondary School";
+  const siteId = liveSettings?.site_id || "";
+
+  const handleLogoSave = (patch = {}) => {
+    if (!Object.prototype.hasOwnProperty.call(patch, "logo_url")) return;
+
+    setLiveSettings((previous) => ({
+      ...(previous || {}),
+      logo_url: patch.logo_url || "",
+    }));
+  };
+
+  const handleLogoTargetClick = (event) => {
+    if (!builderMode) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    setLogoSelected(true);
+
+    const editLogoButton = logoSectionRef.current?.querySelector(
+      ".navbar-logo-edit-button",
+    );
+
+    editLogoButton?.click();
+  };
+
+  const headerNavItems = useMemo(() => {
+    return Array.isArray(liveNavItems)
+      ? liveNavItems
+          .filter((item) => item && (item.location || "header") === "header")
+          .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+      : [];
+  }, [liveNavItems]);
+
+  const visibleHeaderNavItems = useMemo(() => {
+    return headerNavItems.filter((item) => item.is_visible !== false);
+  }, [headerNavItems]);
+
+  const visibleNavByLabel = useMemo(() => {
+    const map = new Map();
+
+    visibleHeaderNavItems.forEach((item) => {
+      const key = String(item.label || "")
+        .trim()
+        .toLowerCase();
+
+      if (key) {
+        map.set(key, item);
+      }
+    });
+
+    return map;
+  }, [visibleHeaderNavItems]);
+
+  const visibleNavBySlug = useMemo(() => {
+    const map = new Map();
+
+    visibleHeaderNavItems.forEach((item) => {
+      const slug = hrefToSlug(item.href || "/", siteId);
+
+      if (slug) {
+        map.set(slug, item);
+      }
+    });
+
+    return map;
+  }, [visibleHeaderNavItems, siteId]);
+
+  const allNavByLabel = useMemo(() => {
+    const map = new Map();
+
+    headerNavItems.forEach((item) => {
+      const key = String(item.label || "")
+        .trim()
+        .toLowerCase();
+
+      if (key) {
+        map.set(key, item);
+      }
+    });
+
+    return map;
+  }, [headerNavItems]);
+
+  const allNavBySlug = useMemo(() => {
+    const map = new Map();
+
+    headerNavItems.forEach((item) => {
+      const slug = hrefToSlug(item.href || "/", siteId);
+
+      if (slug) {
+        map.set(slug, item);
+      }
+    });
+
+    return map;
+  }, [headerNavItems, siteId]);
+
+  const isVisibleNavTarget = (label, fallbackPath) => {
+    const labelKey = String(label || "")
+      .trim()
+      .toLowerCase();
+
+    const slugKey = normalizeSlug(fallbackPath || "/");
+
+    const found = allNavByLabel.get(labelKey) || allNavBySlug.get(slugKey);
+
+    if (!found) return false;
+
+    return found.is_visible !== false;
+  };
+
+  const getDbHref = (label, fallbackPath) => {
+    const labelKey = String(label || "")
+      .trim()
+      .toLowerCase();
+
+    const slugKey = normalizeSlug(fallbackPath || "/");
+
+    const found =
+      visibleNavByLabel.get(labelKey) || visibleNavBySlug.get(slugKey);
+
+    if (found?.href) {
+      return buildSiteHref(siteId, found.href);
+    }
+
+    return buildSiteHref(siteId, fallbackPath);
+  };
+
+  const filterMenuItems = (items = []) => {
+    return items.filter((item) => {
+      const slug = hrefToSlug(item.to, siteId);
+      return isVisibleNavTarget(item.label, slug);
+    });
   };
 
   const menus = useMemo(
     () => ({
       about: [
-        { to: buildLink(routePrefix, "/about"), label: "Who We Are" },
-        { to: buildLink(routePrefix, "/about"), label: "Vision & Mission" },
-        { to: buildLink(routePrefix, "/staff"), label: "Staff Members" },
-        { to: buildLink(routePrefix, "/sgb"), label: "SGB" },
-        { to: buildLink(routePrefix, "/facilities"), label: "Facilities" },
-        { to: buildLink(routePrefix, "/about"), label: "Our History" },
+        {
+          to: buildSiteHref(siteId, "/about/who-we-are"),
+          label: "Who We Are",
+        },
+        {
+          to: buildSiteHref(siteId, "/about/vision-mission"),
+          label: "Vision & Mission",
+        },
+        { to: buildSiteHref(siteId, "/staff"), label: "Staff Members" },
+        { to: buildSiteHref(siteId, "/sgb"), label: "SGB" },
+        { to: buildSiteHref(siteId, "/facilities"), label: "Facilities" },
+        {
+          to: buildSiteHref(siteId, "/about/history"),
+          label: "Our History",
+        },
       ],
       activities: [
-        { to: buildLink(routePrefix, "/activities/academics"), label: "Academics" },
-        { to: buildLink(routePrefix, "/activities/sports"), label: "Sports & Recreation" },
-        { to: buildLink(routePrefix, "/activities/culture"), label: "Culture & Activities" },
-        { to: buildLink(routePrefix, "/activities/facilities"), label: "Campus Facilities" },
+        {
+          to: buildSiteHref(siteId, "/activities/academics"),
+          label: "Academics",
+        },
+        {
+          to: buildSiteHref(siteId, "/activities/sports"),
+          label: "Sports & Recreation",
+        },
+        {
+          to: buildSiteHref(siteId, "/activities/culture"),
+          label: "Culture & Activities",
+        },
+        {
+          to: buildSiteHref(siteId, "/activities/facilities"),
+          label: "Campus Facilities",
+        },
       ],
       resources: [
-        { to: buildLink(routePrefix, "/resources/subject-choices"), label: "Subject Choices" },
-        { to: buildLink(routePrefix, "/resources/term-plan"), label: "Term Plan" },
-        { to: buildLink(routePrefix, "/resources/exam-schedule"), label: "Exam Schedule" },
-        { to: buildLink(routePrefix, "/resources/code-of-conduct"), label: "Code of Conduct" },
-        { to: buildLink(routePrefix, "/resources/stationary-list"), label: "Stationary List" },
-        { to: buildLink(routePrefix, "/calendar"), label: "Calendar" },
+        {
+          to: buildSiteHref(siteId, "/resources/subject-choices"),
+          label: "Subject Choices",
+        },
+        {
+          to: buildSiteHref(siteId, "/resources/term-plan"),
+          label: "Term Plan",
+        },
+        {
+          to: buildSiteHref(siteId, "/resources/exam-schedule"),
+          label: "Exam Schedule",
+        },
+        {
+          to: buildSiteHref(siteId, "/resources/code-of-conduct"),
+          label: "Code of Conduct",
+        },
+        {
+          to: buildSiteHref(siteId, "/resources/stationary-list"),
+          label: "Stationary List",
+        },
+        {
+          to: buildSiteHref(siteId, "/resources/calendar"),
+          label: "Calendar",
+        },
       ],
       news: [
-        { to: buildLink(routePrefix, "/news"), label: "Newsletters" },
-        { to: buildLink(routePrefix, "/schoolcalendar"), label: "School Calendar" },
+        { to: buildSiteHref(siteId, "/news"), label: "Newsletters" },
+        {
+          to: buildSiteHref(siteId, "/schoolcalendar"),
+          label: "School Calendar",
+        },
       ],
       admissions: [
-        { to: buildLink(routePrefix, "/admissions"), label: "How to Apply" },
-        { to: buildLink(routePrefix, "/admissions"), label: "Entry Requirements" },
-        { to: buildLink(routePrefix, "/admissions"), label: "Apply Now" },
+        {
+          to: buildSiteHref(siteId, "/admissions/howtoapply"),
+          label: "How to Apply",
+        },
+        {
+          to: buildSiteHref(siteId, "/admissions/requirements"),
+          label: "Entry Requirements",
+        },
+        {
+          to: buildSiteHref(siteId, "/admissions/apply"),
+          label: "Apply Now",
+        },
       ],
     }),
-    [routePrefix]
+    [siteId],
   );
 
   const toggleDropdown = (key) => {
     setDropdown((cur) => (cur === key ? null : key));
   };
 
-  const Drop = ({ id, label, items }) => (
+  const Drop = ({ id, label, items, href }) => (
     <div
       className="dropdown parent"
       onMouseEnter={() => setDropdown(id)}
       onMouseLeave={() => setDropdown(null)}
-      onClick={() => toggleDropdown(id)}
     >
-      <span className="drop-btn">
+      <button
+        type="button"
+        className="drop-btn"
+        onClick={() => {
+          if (window.innerWidth <= 880) {
+            toggleDropdown(id);
+          } else if (href) {
+            const slug = href.replace(`#/site/${siteId}`, "") || "/";
+            navigateTo?.(slug);
+          }
+        }}
+        aria-expanded={dropdown === id}
+      >
         {label} <IoChevronDown />
-      </span>
+      </button>
 
       <div className={`drop-menu ${dropdown === id ? "show" : ""}`}>
         {items.map((it) => (
-          <Link key={`${it.to}-${it.label}`} to={it.to}>
+          <a
+            key={`${it.to}-${it.label}`}
+            href={it.to}
+            onClick={(e) => {
+              e.preventDefault();
+              const slug = it.to.replace(`#/site/${siteId}`, "") || "/";
+              navigateTo?.(slug);
+              setOpen(false);
+            }}
+          >
             {it.label}
-          </Link>
+          </a>
         ))}
       </div>
     </div>
   );
 
-  const visibleNavItems = Array.isArray(navItems)
-    ? navItems
-        .filter((item) => item && item.is_visible !== false && item.location !== "footer")
-        .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
-    : [];
+  const topNav = useMemo(() => {
+    const items = [];
+
+    if (isVisibleNavTarget("Home", "/")) {
+      items.push({
+        type: "link",
+        key: "home",
+        label: "Home",
+        href: getDbHref("Home", "/"),
+      });
+    }
+
+    const aboutMenu = filterMenuItems(menus.about);
+
+    if (
+      features.about &&
+      isVisibleNavTarget("About", "/about") &&
+      aboutMenu.length
+    ) {
+      items.push({
+        type: "drop",
+        key: "about",
+        label: "About Us",
+        href: getDbHref("About", "/about"),
+        menu: aboutMenu,
+      });
+    }
+
+    const activitiesMenu = filterMenuItems(menus.activities);
+
+    if (
+      features.activities &&
+      isVisibleNavTarget("Activities", "/activities") &&
+      activitiesMenu.length
+    ) {
+      items.push({
+        type: "drop",
+        key: "activities",
+        label: "Activities",
+        href: getDbHref("Activities", "/activities"),
+        menu: activitiesMenu,
+      });
+    }
+
+    const resourcesMenu = filterMenuItems(menus.resources);
+
+    if (
+      features.resources &&
+      isVisibleNavTarget("Resources", "/resources") &&
+      resourcesMenu.length
+    ) {
+      items.push({
+        type: "drop",
+        key: "resources",
+        label: "Resources",
+        href: getDbHref("Resources", "/resources"),
+        menu: resourcesMenu,
+      });
+    }
+
+    const newsMenu = filterMenuItems(menus.news);
+
+    if (
+      features.news &&
+      isVisibleNavTarget("News", "/news") &&
+      newsMenu.length
+    ) {
+      items.push({
+        type: "drop",
+        key: "news",
+        label: "News",
+        href: getDbHref("News", "/news"),
+        menu: newsMenu,
+      });
+    }
+
+    const admissionsMenu = filterMenuItems(menus.admissions);
+
+    if (
+      features.admissions &&
+      isVisibleNavTarget("Admissions", "/admissions") &&
+      admissionsMenu.length
+    ) {
+      items.push({
+        type: "drop",
+        key: "admissions",
+        label: "Admissions",
+        href: getDbHref("Admissions", "/admissions"),
+        menu: admissionsMenu,
+      });
+    }
+
+    if (features.gallery && isVisibleNavTarget("Gallery", "/gallery")) {
+      items.push({
+        type: "link",
+        key: "gallery",
+        label: "Gallery",
+        href: getDbHref("Gallery", "/gallery"),
+      });
+    }
+
+    if (features.robotics && isVisibleNavTarget("Robotics Club", "/robotics")) {
+      items.push({
+        type: "link",
+        key: "robotics",
+        label: "Robotics Club",
+        href: getDbHref("Robotics Club", "/robotics"),
+      });
+    }
+
+    if (features.contact && isVisibleNavTarget("Contact", "/contact")) {
+      items.push({
+        type: "link",
+        key: "contact",
+        label: "Contact",
+        href: getDbHref("Contact", "/contact"),
+      });
+    }
+
+    return items;
+  }, [
+    features,
+    menus,
+    siteId,
+    allNavByLabel,
+    allNavBySlug,
+    visibleNavByLabel,
+    visibleNavBySlug,
+  ]);
 
   return (
     <header className="site-nav">
       <div className="nav-inner">
-        <div className="logo-section">
-          <Link to={buildLink(routePrefix, "/")} className="logo-link" aria-label="Go to home">
-            <img src={logoUrl} alt={`${schoolName} logo`} className="logo-image" />
-            <div className="logo-text">
-              <h1 className="brand-name">{schoolName}</h1>
-              <p className="slogan">{tagline}</p>
-            </div>
-          </Link>
+        <div
+          ref={logoSectionRef}
+          className={`logo-section ${
+            builderMode ? "builder-logo-editable" : ""
+          } ${builderMode && logoSelected ? "logo-editor-selected" : ""}`}
+        >
+          <BuilderMediaEditor
+            enabled={builderMode}
+            type="logo"
+            label="Edit Logo"
+            value={logoUrl}
+            settings={liveSettings}
+            triggerLabel="Edit Logo"
+            triggerClassName="navbar-logo-edit-button"
+            triggerTitle="Edit website logo"
+            onSave={handleLogoSave}
+          >
+            <a
+              href={buildSiteHref(siteId, "/")}
+              className="logo-link"
+              aria-label="Go to home"
+              onClick={(e) => {
+                if (builderMode && logoSelected) {
+                  e.preventDefault();
+                  return;
+                }
+
+                e.preventDefault();
+                navigateTo?.("/");
+              }}
+            >
+              <span
+                className={`builder-logo-target ${
+                  builderMode && logoSelected ? "is-selected" : ""
+                }`}
+                onClick={handleLogoTargetClick}
+              >
+                <img
+                  src={logoUrl}
+                  alt={`${schoolName} logo`}
+                  className="logo-image"
+                />
+
+                {builderMode && logoSelected && (
+                  <>
+                    <span className="builder-logo-handle handle-tl" />
+                    <span className="builder-logo-handle handle-tr" />
+                    <span className="builder-logo-handle handle-bl" />
+                    <span className="builder-logo-handle handle-br" />
+                  </>
+                )}
+              </span>
+
+              <div className="brand-text">
+                <h1 className="school-name">{schoolName}</h1>
+                <p className="slogan">{tagline}</p>
+              </div>
+            </a>
+          </BuilderMediaEditor>
         </div>
 
-        <nav className={`nav-links ${open ? "open" : ""}`} aria-label="Main navigation">
-          {visibleNavItems.length > 0 ? (
-            visibleNavItems.map((item) => (
-              <Link
-                key={item.id}
-                className={isActive(item.href || "/") ? "active" : ""}
-                to={buildLink(routePrefix, item.href || "/")}
+        <nav
+          className={`nav-links ${open ? "open" : ""}`}
+          aria-label="Main navigation"
+        >
+          {topNav.map((item) =>
+            item.type === "drop" ? (
+              <Drop
+                key={item.key}
+                id={item.key}
+                label={item.label}
+                href={item.href}
+                items={item.menu}
+              />
+            ) : (
+              <a
+                key={item.key}
+                href={item.href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  const slug = item.href.replace(`#/site/${siteId}`, "") || "/";
+                  navigateTo?.(slug);
+                  setOpen(false);
+                }}
               >
                 {item.label}
-              </Link>
-            ))
-          ) : (
-            <>
-              <Link className={isActive("/") ? "active" : ""} to={buildLink(routePrefix, "/")}>
-                Home
-              </Link>
-
-              {f.about && <Drop id="about" label="About Us" items={menus.about} />}
-
-              {f.digitalLibrary && (
-                <Link
-                  className={isActive("/digital-library") ? "active" : ""}
-                  to={buildLink(routePrefix, "/digital-library")}
-                >
-                  Digital Library
-                </Link>
-              )}
-
-              {f.activities && <Drop id="activities" label="Activities" items={menus.activities} />}
-              {f.resources && <Drop id="resources" label="Resources" items={menus.resources} />}
-              {f.news && <Drop id="news" label="News" items={menus.news} />}
-              {f.admissions && <Drop id="adm" label="Admissions" items={menus.admissions} />}
-
-              {f.gallery && (
-                <Link
-                  className={isActive("/gallery") ? "active" : ""}
-                  to={buildLink(routePrefix, "/gallery")}
-                >
-                  Gallery
-                </Link>
-              )}
-
-              {f.robotics && (
-                <Link
-                  className={isActive("/robotics") ? "active" : ""}
-                  to={buildLink(routePrefix, "/robotics")}
-                >
-                  Robotics Club
-                </Link>
-              )}
-
-              {f.contact && (
-                <Link
-                  className={isActive("/contact") ? "active" : ""}
-                  to={buildLink(routePrefix, "/contact")}
-                >
-                  Contact
-                </Link>
-              )}
-            </>
+              </a>
+            ),
           )}
         </nav>
 

@@ -1,6 +1,6 @@
 import React from "react";
+import BuilderSectionTarget from "../../../../../builder/BuilderSectionTarget";
 import "../../styles/life-sports.css";
-import Breadcrumbs from "../../components/common/Breadcrumbs";
 
 const SPORTS = [
   {
@@ -21,28 +21,37 @@ const SPORTS = [
   },
 ];
 
-export default function LifeSports() {
-  return (
+export default function LifeSports({
+  section = null,
+  content = {},
+  builderMode = false,
+}) {
+  const sports =
+    Array.isArray(content?.items) && content.items.length > 0
+      ? content.items
+      : SPORTS;
+
+  const pageContent = (
     <main className="ls container">
-      <Breadcrumbs />
       {/* Hero */}
       <header className="ls-hero">
         <div className="ls-hero-grid">
           {/* Left Text */}
           <div className="ls-hero-copy">
-            <h1 className="ls-title">Sports & Recreation</h1>
+            <h1 className="ls-title">
+              {content?.section_title || "Sports & Recreation"}
+            </h1>
             <p className="ls-subtitle">
-              Our sports programme promotes teamwork, discipline, and
-              excellence—developing confident learners through structured
-              training and competitive participation.
+              {content?.subtitle ||
+                "Our sports programme promotes teamwork, discipline, and excellence—developing confident learners through structured training and competitive participation."}
             </p>
           </div>
 
           {/* Right Image */}
           <div className="ls-hero-media" aria-hidden="true">
             <img
-              src="/images/gallery2.avif"
-              alt="Soccer Team 2025"
+              src={content?.image_url || "/images/gallery2.avif"}
+              alt={content?.image_alt || "Soccer Team 2025"}
               className="ls-hero-img"
               onError={(e) =>
                 (e.currentTarget.src = "/images/gallery1.jpg")
@@ -54,13 +63,35 @@ export default function LifeSports() {
 
       {/* Sports Grid */}
       <section className="ls-grid">
-        {SPORTS.map((item) => (
-          <div key={item.title} className="ls-card">
-            <h3 className="ls-card-title">{item.title}</h3>
-            <p className="ls-card-text">{item.text}</p>
+        {sports.map((item, index) => (
+          <div
+            key={item.id || item.title || `sport-section-${index}`}
+            className="ls-card"
+          >
+            <h3 className="ls-card-title">{item.title || ""}</h3>
+            <p className="ls-card-text">
+              {item.body || item.text || ""}
+            </p>
           </div>
         ))}
       </section>
     </main>
+  );
+
+  if (!section) {
+    return pageContent;
+  }
+
+  return (
+    <BuilderSectionTarget
+      builderMode={builderMode}
+      section={section}
+      sectionType="services"
+      label={content?.section_title || "Sports & Recreation"}
+      templateCategory="school"
+      templateKey="school-modern-v1"
+    >
+      {pageContent}
+    </BuilderSectionTarget>
   );
 }

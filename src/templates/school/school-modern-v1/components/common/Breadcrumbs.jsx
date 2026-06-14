@@ -1,5 +1,4 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
 import "../../styles/breadcrumbs.css";
 
 const LABELS = {
@@ -18,10 +17,6 @@ const LABELS = {
 
   resources: "Resources",
   "subject-choices": "Subject Choices",
-  "term-plan": "Term Plan",
-  "exam-schedule": "Exam Schedule",
-  "code-of-conduct": "Code of Conduct",
-  "stationary-list": "Stationary List",
   calendar: "Calendar",
 
   admissions: "Admissions",
@@ -29,62 +24,78 @@ const LABELS = {
   howtoapply: "How to Apply",
   requirements: "Entry Requirements",
 
-  schoolcalendar: "School Calendar",
-  bulletin: "Student Daily Bulletin",
   contact: "Contact",
   gallery: "Gallery",
   robotics: "Robotics Club",
-  "digital-library": "Digital Library",
+  notices: "Notices",
+  news: "News",
+  events: "Events",
 };
 
 function prettify(seg) {
-  if (!seg) return "";
   if (LABELS[seg]) return LABELS[seg];
+
   return seg
     .replace(/-/g, " ")
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-export default function Breadcrumbs({ className = "" }) {
-  const { pathname } = useLocation();
+export default function Breadcrumbs({ slug = "/" }) {
 
-  const segments = pathname.split("/").filter(Boolean);
+  const segments = slug.split("/").filter(Boolean);
 
-  // Hide on home page
-  if (segments.length === 0) return null;
+  let path = "";
 
-  const crumbs = [
-    { label: "Home", to: "/site/" },
-    ...segments.map((seg, idx) => {
-      const to = "/" + segments.slice(0, idx + 1).join("/");
-      return { label: prettify(seg), to };
-    }),
-  ];
+  const crumbs = [{ label: "Home", slug: "/" }];
+
+  segments.forEach((seg) => {
+    path += `/${seg}`;
+
+    crumbs.push({
+      label: prettify(seg),
+      slug: path,
+    });
+  });
+
+  const navigate = (slug) => {
+    window.dispatchEvent(
+      new CustomEvent("builder:navigate", { detail: slug })
+    );
+  };
 
   return (
-    <nav className={`bc ${className}`} aria-label="Breadcrumb">
+    <nav className="bc" aria-label="Breadcrumb">
       <ol className="bc-list">
+
         {crumbs.map((c, i) => {
-          const isLast = i === crumbs.length - 1;
+          const last = i === crumbs.length - 1;
+
           return (
-            <li className="bc-item" key={c.to}>
-              {isLast ? (
-                <span className="bc-current" aria-current="page">
-                  {c.label}
-                </span>
+            <li key={c.slug} className="bc-item">
+
+              {last ? (
+                <span className="bc-current">{c.label}</span>
               ) : (
                 <>
-                  <Link className="bc-link" to={c.to}>
+                  <a
+                    href="#"
+                    className="bc-link"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate(c.slug);
+                    }}
+                  >
                     {c.label}
-                  </Link>
-                  <span className="bc-sep" aria-hidden="true">
-                    /
-                  </span>
+                  </a>
+
+                  <span className="bc-sep">/</span>
                 </>
               )}
+
             </li>
           );
         })}
+
       </ol>
     </nav>
   );

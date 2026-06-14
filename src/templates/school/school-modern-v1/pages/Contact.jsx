@@ -1,67 +1,336 @@
-import React, { useState } from "react";
+import React from "react";
+import {
+  FiPhone,
+  FiMail,
+  FiMapPin,
+  FiNavigation,
+} from "react-icons/fi";
 import Card from "../components/common/Card";
-import Button from "../components/common/Button";
-import Breadcrumbs from "../components/common/Breadcrumbs";
 
-export default function Contact() {
-  const [status, setStatus] = useState("");
+function hasOrganisationData(value = {}) {
+  return Boolean(
+    value?.id ||
+      value?.name ||
+      value?.email ||
+      value?.phone ||
+      value?.address_line1 ||
+      value?.city ||
+      value?.province ||
+      value?.postal_code ||
+      value?.country,
+  );
+}
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    // Placeholder: connect to email service / form backend later
-    setStatus("Thanks! Your message is ready. Connect this form to email or a backend when you're ready.");
-    e.currentTarget.reset();
-  };
+export default function Contact({ settings = {}, organization = null }) {
+  const org = hasOrganisationData(organization)
+    ? organization
+    : hasOrganisationData(settings?.organization)
+      ? settings.organization
+      : hasOrganisationData(settings?.organisation)
+        ? settings.organisation
+        : {};
+
+  const organisationName =
+    settings?.site_name ||
+    settings?.organization_name ||
+    org?.name ||
+    "School";
+
+  const phone = settings?.phone || org?.phone || "0XX XXX XXXX";
+
+  const email = settings?.email || org?.email || "info@new-school.co.za";
+
+  /*
+    IMPORTANT:
+    Address is taken ONLY from the organisation table object.
+    It does NOT use settings.address_line1, settings.city, settings.province,
+    or any example address.
+  */
+  const addressParts = [
+    org?.address_line1 || "",
+    org?.city || "",
+    org?.province || "",
+    org?.postal_code || "",
+    org?.country || "",
+  ].filter(Boolean);
+
+  const address = addressParts.join(", ");
+  const hasAddress = addressParts.length > 0;
+
+  const mapEmbedUrl = hasAddress
+    ? `https://www.google.com/maps?q=${encodeURIComponent(
+        address,
+      )}&output=embed`
+    : "";
 
   return (
-    <section className="container" style={{ paddingTop: 10, paddingBottom: 40 }}>
-      <Breadcrumbs />
+    <section
+      className="container"
+      style={{ paddingTop: 10, paddingBottom: 40 }}
+    >
       <h2 className="section-title">Contact Us</h2>
+
       <p style={{ opacity: 0.85, maxWidth: 900, marginBottom: 18 }}>
-        For admissions, school information, events and learner support — reach out and we’ll respond as soon as possible.
+        For admissions, school information, events and learner support — reach
+        out to the school using the official contact details below.
       </p>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+          gap: 16,
+          alignItems: "stretch",
+        }}
+      >
         <Card>
-          <h3 style={{ marginBottom: 10 }}>Send a Message</h3>
-          <form onSubmit={onSubmit} style={{ display: "grid", gap: 10 }}>
-            <input required name="name" placeholder="Full name" style={inputStyle} />
-            <input required type="email" name="email" placeholder="Email address" style={inputStyle} />
-            <input name="phone" placeholder="Phone number (optional)" style={inputStyle} />
-            <textarea required name="message" placeholder="Your message" rows={5} style={inputStyle} />
-            <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-              <Button variant="primary">Send</Button>
-              {status ? <span style={{ opacity: 0.85 }}>{status}</span> : null}
+          <div style={detailsHeaderStyle}>
+            <div style={detailsIconStyle}>
+              <FiNavigation />
             </div>
-          </form>
+
+            <div>
+              <h3 style={{ margin: 0 }}>{organisationName}</h3>
+              <p style={subtitleStyle}>Official contact information</p>
+            </div>
+          </div>
+
+          <div style={detailsGridStyle}>
+            <div style={detailItemStyle}>
+              <span style={detailIconStyle}>
+                <FiPhone />
+              </span>
+
+              <div>
+                <span style={labelStyle}>Phone</span>
+                <a href={`tel:${phone}`} style={linkStyle}>
+                  {phone}
+                </a>
+              </div>
+            </div>
+
+            <div style={detailItemStyle}>
+              <span style={detailIconStyle}>
+                <FiMail />
+              </span>
+
+              <div>
+                <span style={labelStyle}>Email</span>
+                <a href={`mailto:${email}`} style={linkStyle}>
+                  {email}
+                </a>
+              </div>
+            </div>
+
+            <div style={detailItemStyle}>
+              <span style={detailIconStyle}>
+                <FiMapPin />
+              </span>
+
+              <div>
+                <span style={labelStyle}>Address</span>
+                <strong
+                  style={{
+                    ...addressStyle,
+                    color: hasAddress ? "#0f172a" : "#94a3b8",
+                    fontStyle: hasAddress ? "normal" : "italic",
+                  }}
+                >
+                  {hasAddress
+                    ? address
+                    : "No organisation address saved yet."}
+                </strong>
+              </div>
+            </div>
+          </div>
         </Card>
 
         <Card>
-          <h3 style={{ marginBottom: 10 }}>School Details</h3>
-          <p style={{ opacity: 0.85 }}>
-            Add your official contact details here (phone, email, address, office hours).
-          </p>
+          <div style={mapHeaderStyle}>
+            <div>
+              <h3 style={{ margin: 0 }}>Location Map</h3>
+              <p style={subtitleStyle}>
+                {hasAddress
+                  ? "Find us using the official address"
+                  : "Save an organisation address to show the map"}
+              </p>
+            </div>
 
-          <div style={{ marginTop: 12, opacity: 0.9 }}>
-            <p><strong>Phone:</strong> 0XX XXX XXXX</p>
-            <p><strong>Email:</strong> info@sebone-school.co.za</p>
-            <p><strong>Address:</strong> Your school address, Province</p>
+            <span style={mapBadgeStyle}>
+              <FiMapPin /> Map
+            </span>
           </div>
 
-          <div style={{ marginTop: 14 }}>
-            <Button href="https://www.google.com/maps" variant="outline">Open map</Button>
-          </div>
+          {hasAddress ? (
+            <div style={mapFrameWrapStyle}>
+              <iframe
+                title={`${organisationName} location map`}
+                src={mapEmbedUrl}
+                style={mapFrameStyle}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                allowFullScreen
+              />
+            </div>
+          ) : (
+            <div style={mapPlaceholderStyle}>
+              <span style={mapPlaceholderIconStyle}>
+                <FiMapPin />
+              </span>
+              <strong>No location available</strong>
+              <p>
+                Add the organisation address in Website Details to display the
+                live map here.
+              </p>
+            </div>
+          )}
         </Card>
       </div>
     </section>
   );
 }
 
-const inputStyle = {
-  width: "100%",
-  padding: ".75rem .9rem",
-  borderRadius: 10,
+const detailsHeaderStyle = {
+  display: "flex",
+  alignItems: "center",
+  gap: 12,
+  marginBottom: 16,
+};
+
+const detailsIconStyle = {
+  width: 44,
+  height: 44,
+  borderRadius: 14,
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  background: "linear-gradient(135deg, #eff6ff, #dbeafe)",
+  color: "#1d4ed8",
+  fontSize: 21,
+  border: "1px solid #bfdbfe",
+};
+
+const subtitleStyle = {
+  margin: "4px 0 0",
+  opacity: 0.72,
+  fontSize: 13,
+};
+
+const detailsGridStyle = {
+  display: "grid",
+  gap: 12,
+  marginTop: 12,
+};
+
+const detailItemStyle = {
+  display: "grid",
+  gridTemplateColumns: "38px 1fr",
+  gap: 12,
+  alignItems: "flex-start",
+  padding: 12,
+  borderRadius: 14,
+  background: "#f8fafc",
   border: "1px solid #e5e7eb",
-  outline: "none",
-  fontSize: "1rem",
+};
+
+const detailIconStyle = {
+  width: 38,
+  height: 38,
+  borderRadius: 12,
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  background: "#ffffff",
+  color: "#1d4ed8",
+  border: "1px solid #dbeafe",
+  fontSize: 18,
+};
+
+const labelStyle = {
+  display: "block",
+  fontSize: 12,
+  fontWeight: 800,
+  color: "#64748b",
+  marginBottom: 3,
+};
+
+const linkStyle = {
+  color: "#0f172a",
+  textDecoration: "none",
+  fontWeight: 850,
+  wordBreak: "break-word",
+};
+
+const addressStyle = {
+  display: "block",
+  fontWeight: 850,
+  lineHeight: 1.45,
+};
+
+const mapHeaderStyle = {
+  display: "flex",
+  alignItems: "flex-start",
+  justifyContent: "space-between",
+  gap: 12,
+  marginBottom: 14,
+};
+
+const mapBadgeStyle = {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 6,
+  padding: "7px 10px",
+  borderRadius: 999,
+  background: "#eff6ff",
+  color: "#1d4ed8",
+  border: "1px solid #bfdbfe",
+  fontSize: 12,
+  fontWeight: 900,
+  whiteSpace: "nowrap",
+};
+
+const mapFrameWrapStyle = {
+  width: "100%",
+  height: 340,
+  overflow: "hidden",
+  borderRadius: 18,
+  border: "1px solid #dbeafe",
+  background: "#f8fafc",
+  boxShadow: "0 14px 34px rgba(15, 23, 42, 0.12)",
+};
+
+const mapFrameStyle = {
+  width: "100%",
+  height: "100%",
+  border: 0,
+  display: "block",
+};
+
+const mapPlaceholderStyle = {
+  width: "100%",
+  minHeight: 340,
+  borderRadius: 18,
+  border: "1px dashed #bfdbfe",
+  background: "linear-gradient(135deg, #f8fafc, #eff6ff)",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  textAlign: "center",
+  padding: 24,
+  color: "#475569",
+};
+
+const mapPlaceholderIconStyle = {
+  width: 48,
+  height: 48,
+  borderRadius: 16,
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  background: "#ffffff",
+  color: "#1d4ed8",
+  border: "1px solid #dbeafe",
+  fontSize: 22,
+  marginBottom: 12,
 };

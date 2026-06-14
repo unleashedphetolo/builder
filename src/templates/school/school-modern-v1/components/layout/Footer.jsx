@@ -1,7 +1,8 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
 import "../../styles/footer.css";
-import logoz from "../../assets/sebone.jpeg";
+import logoz from "../../assets/institutional.png";
+import logo from "../../../../../assets/logo.gif";
+
 import {
   FaFacebookF,
   FaInstagram,
@@ -10,6 +11,7 @@ import {
   FaWhatsapp,
   FaYoutube,
 } from "react-icons/fa";
+
 import { FaXTwitter } from "react-icons/fa6";
 
 const ICONS = {
@@ -22,301 +24,503 @@ const ICONS = {
   whatsapp: FaWhatsapp,
 };
 
+const DEFAULT_SOCIAL = {
+  facebook: {
+    enabled: true,
+    url: "https://facebook.com",
+    colorMode: "original",
+    originalColor: "#1877f2",
+    monoColor: "#ffffff",
+    color: "#1877f2",
+  },
+  instagram: {
+    enabled: true,
+    url: "https://instagram.com",
+    colorMode: "original",
+    originalColor: "#e4405f",
+    monoColor: "#ffffff",
+    color: "#e4405f",
+  },
+  tiktok: {
+    enabled: true,
+    url: "https://tiktok.com",
+    colorMode: "original",
+    originalColor: "#ffffff",
+    monoColor: "#ffffff",
+    color: "#ffffff",
+  },
+  linkedin: {
+    enabled: true,
+    url: "https://linkedin.com",
+    colorMode: "original",
+    originalColor: "#0a66c2",
+    monoColor: "#ffffff",
+    color: "#0a66c2",
+  },
+  x: {
+    enabled: true,
+    url: "https://x.com",
+    colorMode: "original",
+    originalColor: "#ffffff",
+    monoColor: "#ffffff",
+    color: "#ffffff",
+  },
+  youtube: {
+    enabled: true,
+    url: "https://youtube.com",
+    colorMode: "original",
+    originalColor: "#ff0000",
+    monoColor: "#ffffff",
+    color: "#ff0000",
+  },
+  whatsapp: {
+    enabled: true,
+    url: "https://wa.me/",
+    colorMode: "original",
+    originalColor: "#25d366",
+    monoColor: "#ffffff",
+    color: "#25d366",
+  },
+
+  topbar: true,
+  footer: true,
+  order: [
+    "facebook",
+    "instagram",
+    "tiktok",
+    "linkedin",
+    "x",
+    "youtube",
+    "whatsapp",
+  ],
+};
+
 const DEFAULT_FEATURES = {
   activities: true,
   admissions: true,
-  resources: true,
-  digitalLibrary: true,
-  bulletin: true,
-  attendancePolicy: true,
-  staff: true,
-  governance: true,
-  facilities: true,
   contact: true,
-  events: true,
+  digitalLibrary: true,
 };
 
-const DEFAULT_SOCIAL_LINKS = {
-  facebook: "https://facebook.com",
-  x: "https://x.com",
-  instagram: "https://instagram.com",
-  youtube: "https://youtube.com",
-  tiktok: "https://tiktok.com",
-  linkedin: "https://linkedin.com",
-  whatsapp: "https://wa.me/",
-};
-
-const DEFAULT_SOCIAL_DISPLAY = {
-  facebook: true,
-  x: true,
-  instagram: true,
-  youtube: true,
-  tiktok: true,
-  linkedin: true,
-  whatsapp: true,
-  topbar: true,
-  footer: true,
-};
-
-const groups = [
-  {
-    title: "Learners",
-    items: [
-      { name: "Calendars", path: "/resources/calendar" },
-      { name: "Term dates", path: "/resources/term-plan" },
-      { name: "Student Daily Bulletin", path: "/bulletin" },
-      { name: "Subject Choices", path: "/resources/subject-choices" },
-      { name: "Past Matric Papers", path: "/digital-library" },
-      {
-        name: "Matric Results",
-        path: "https://www.education.gov.za/MatricResults/ExamResults.aspx",
-        external: true,
-      },
-    ],
-  },
-  {
-    title: "Staff",
-    items: [
-      { name: "Staff Members", path: "/staff" },
-      { name: "SGB", path: "/sgb" },
-      { name: "Term dates", path: "/resources/term-plan" },
-      { name: "Attendance Policy", path: "/attendance" },
-    ],
-  },
-  {
-    title: "Parents",
-    items: [
-      { name: "Admissions", path: "/admissions" },
-      { name: "Term dates", path: "/resources/term-plan" },
-      { name: "School Calendar", path: "/schoolcalendar" },
-      { name: "Stationary requirements", path: "/resources/stationary-list" },
-      { name: "Contact us", path: "/contact" },
-    ],
-  },
-  {
-    title: "Activities",
-    items: [
-      { name: "Academics", path: "/activities/academics" },
-      { name: "Sports & Recreation", path: "/activities/sports" },
-      { name: "Culture & Activities", path: "/activities/culture" },
-      { name: "Campus Facilities", path: "/activities/facilities" },
-    ],
-  },
-];
-
-function mergeFeatures(features) {
-  return {
-    ...DEFAULT_FEATURES,
-    ...(features || {}),
-  };
+function buildSiteHref(siteId, path = "") {
+  const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
+  return `#/site/${siteId || ""}${clean}`;
 }
 
-function mergeSocialLinks(links) {
-  return {
-    ...DEFAULT_SOCIAL_LINKS,
-    ...(links || {}),
-  };
-}
+function normalizeHref(href = "/") {
+  if (!href) return "/";
+  if (String(href).startsWith("http")) return href;
 
-function normalizeSocialDisplay(display) {
-  return {
-    ...DEFAULT_SOCIAL_DISPLAY,
-    ...(display || {}),
-  };
-}
+  const clean = String(href)
+    .replace(/^#/, "")
+    .split("?")[0]
+    .split("#")[0]
+    .replace(/^\/+|\/+$/g, "");
 
-function getRoutePrefix(settings) {
-  if (settings?.site_id) return `/site/${settings.site_id}`;
-  return "/site";
+  const withoutSitePrefix = clean.replace(/^site\/[^/]+\/?/, "");
+
+  if (!withoutSitePrefix || withoutSitePrefix.toLowerCase() === "home") {
+    return "/";
+  }
+
+  return `/${withoutSitePrefix.replace(/^\/+|\/+$/g, "")}`;
 }
 
 export default function Footer({
   settings = {},
-  socialLinks = {},
-  socialDisplay = {},
-  footerLinks = [],
+  navItems = [],
+  navigateTo: navigateToProp,
 }) {
-  const f = mergeFeatures(settings?.features);
-  const links = mergeSocialLinks(socialLinks || settings?.social_links);
-  const display = normalizeSocialDisplay(socialDisplay || settings?.social_display);
+  const [liveSettings, setLiveSettings] = useState(settings || {});
+  const [liveNavItems, setLiveNavItems] = useState(
+    Array.isArray(navItems) ? navItems : [],
+  );
 
-  const logoUrl = settings?.logo_url || logoz;
-  const schoolName = settings?.site_name || "School";
-  const phone = settings?.phone || "";
-  const email = settings?.email || "";
-  const slogan = settings?.tagline || "Nurturing Excellence • Inspiring Tomorrow";
-  const motto = settings?.motto || "";
+  useEffect(() => {
+    setLiveSettings(settings || {});
+  }, [settings]);
+
+  useEffect(() => {
+    setLiveNavItems(Array.isArray(navItems) ? navItems : []);
+  }, [navItems]);
+
+  useEffect(() => {
+    const mergeLiveSettings = (incoming = {}) => {
+      setLiveSettings((prev) => ({
+        ...(prev || {}),
+        ...(incoming || {}),
+        social_links: {
+          ...((prev && prev.social_links) || {}),
+          ...((incoming && incoming.social_links) || {}),
+        },
+        social_display: {
+          ...((prev && prev.social_display) || {}),
+          ...((incoming && incoming.social_display) || {}),
+        },
+        features: {
+          ...((prev && prev.features) || {}),
+          ...((incoming && incoming.features) || {}),
+        },
+      }));
+    };
+
+    const updateLiveNav = (incoming = []) => {
+      if (Array.isArray(incoming)) {
+        setLiveNavItems(incoming);
+      }
+    };
+
+    const handleCustomSettingsUpdate = (event) => {
+      mergeLiveSettings(event?.detail || {});
+    };
+
+    const handleNavUpdate = (event) => {
+      updateLiveNav(event?.detail || []);
+    };
+
+    const handleMessage = (event) => {
+      const payload = event?.data;
+
+      if (!payload || typeof payload !== "object") return;
+
+      if (
+        payload.type === "builder:settings-updated" ||
+        payload.type === "site-settings-updated"
+      ) {
+        mergeLiveSettings(payload.settings || payload.payload || {});
+      }
+
+      if (
+        payload.type === "builder:nav-updated" ||
+        payload.type === "site-nav-updated"
+      ) {
+        updateLiveNav(
+          payload.navItems || payload.items || payload.payload || [],
+        );
+      }
+    };
+
+    window.addEventListener(
+      "builder:settings-updated",
+      handleCustomSettingsUpdate,
+    );
+    window.addEventListener(
+      "site-settings-updated",
+      handleCustomSettingsUpdate,
+    );
+    window.addEventListener("builder:nav-updated", handleNavUpdate);
+    window.addEventListener("site-nav-updated", handleNavUpdate);
+    window.addEventListener("message", handleMessage);
+
+    return () => {
+      window.removeEventListener(
+        "builder:settings-updated",
+        handleCustomSettingsUpdate,
+      );
+      window.removeEventListener(
+        "site-settings-updated",
+        handleCustomSettingsUpdate,
+      );
+      window.removeEventListener("builder:nav-updated", handleNavUpdate);
+      window.removeEventListener("site-nav-updated", handleNavUpdate);
+      window.removeEventListener("message", handleMessage);
+    };
+  }, []);
+
+  const features = {
+    ...DEFAULT_FEATURES,
+    ...(liveSettings?.features || {}),
+  };
+
+  const socialLinks = liveSettings?.social_links || liveSettings?.social || {};
+  const socialDisplay = liveSettings?.social_display || {};
+
+  const social = useMemo(
+    () => ({
+      ...DEFAULT_SOCIAL,
+      ...socialLinks,
+      topbar: socialDisplay.topbar ?? DEFAULT_SOCIAL.topbar,
+      footer: socialDisplay.footer ?? DEFAULT_SOCIAL.footer,
+      order: Array.isArray(socialDisplay.order)
+        ? socialDisplay.order
+        : DEFAULT_SOCIAL.order,
+    }),
+    [socialLinks, socialDisplay],
+  );
+
+  const logoUrl = liveSettings?.logo_url || logoz;
+  const schoolName = liveSettings?.site_name || "School";
+  const phone = liveSettings?.phone || "";
+  const email = liveSettings?.email || "";
+  const slogan =
+    liveSettings?.tagline || "Nurturing Excellence • Inspiring Tomorrow";
+  const motto = liveSettings?.motto || "";
+  const siteId = liveSettings?.site_id || "";
   const year = new Date().getFullYear();
-  const routePrefix = getRoutePrefix(settings);
 
-  const scrollTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+  const isLinkVisibleByPage = (href = "/") => {
+    const cleanHref = normalizeHref(href);
+
+    if (String(cleanHref).startsWith("http")) {
+      return true;
+    }
+
+    const matched = (Array.isArray(liveNavItems) ? liveNavItems : []).find(
+      (item) => {
+        if (!item?.href) return false;
+        return normalizeHref(item.href) === cleanHref;
+      },
+    );
+
+    if (!matched) return false;
+
+    return matched.is_visible !== false;
   };
 
-  const renderInternalLink = (path) => {
-    const to = `${routePrefix}${path}`;
-    return to;
+  const getIconColor = (data = {}) => {
+    const mode = data.colorMode || "original";
+
+    if (mode === "mono") {
+      return data.monoColor || "#ffffff";
+    }
+
+    return data.originalColor || data.color || "#ffffff";
   };
+
+  const navigateTo = (href) => {
+    const slug = normalizeHref(href);
+
+    if (navigateToProp) {
+      navigateToProp(slug);
+      return;
+    }
+
+    window.dispatchEvent(new CustomEvent("builder:navigate", { detail: slug }));
+  };
+
+  const groups = [
+    {
+      title: "Learners",
+      items: [
+        {
+          name: "Calendars",
+          path: buildSiteHref(siteId, "/resources/calendar"),
+        },
+        {
+          name: "Term dates",
+          path: buildSiteHref(siteId, "/resources/term-plan"),
+        },
+        {
+          name: "Student Daily Bulletin",
+          path: buildSiteHref(siteId, "/bulletin"),
+        },
+        {
+          name: "Subject Choices",
+          path: buildSiteHref(siteId, "/resources/subject-choices"),
+        },
+        {
+          name: "Past Matric Papers",
+          path: buildSiteHref(siteId, "/digital-library"),
+        },
+      ],
+    },
+    {
+      title: "Staff",
+      items: [
+        { name: "Staff Members", path: buildSiteHref(siteId, "/staff") },
+        { name: "SGB", path: buildSiteHref(siteId, "/sgb") },
+        {
+          name: "Term dates",
+          path: buildSiteHref(siteId, "/resources/term-plan"),
+        },
+        {
+          name: "Attendance Policy",
+          path: buildSiteHref(siteId, "/attendance"),
+        },
+      ],
+    },
+    {
+      title: "Parents",
+      items: [
+        { name: "Admissions", path: buildSiteHref(siteId, "/admissions") },
+        {
+          name: "Term dates",
+          path: buildSiteHref(siteId, "/resources/term-plan"),
+        },
+        {
+          name: "School Calendar",
+          path: buildSiteHref(siteId, "/schoolcalendar"),
+        },
+        {
+          name: "Stationary requirements",
+          path: buildSiteHref(siteId, "/resources/stationary-list"),
+        },
+        { name: "Contact us", path: buildSiteHref(siteId, "/contact") },
+      ],
+    },
+    {
+      title: "Activities",
+      items: [
+        {
+          name: "Academics",
+          path: buildSiteHref(siteId, "/activities/academics"),
+        },
+        {
+          name: "Sports & Recreation",
+          path: buildSiteHref(siteId, "/activities/sports"),
+        },
+        {
+          name: "Culture & Activities",
+          path: buildSiteHref(siteId, "/activities/culture"),
+        },
+        {
+          name: "Campus Facilities",
+          path: buildSiteHref(siteId, "/activities/facilities"),
+        },
+      ],
+    },
+  ];
+
+  const visibleGroups = groups
+    .filter((g) => {
+      if (g.title === "Activities") return features.activities;
+      if (g.title === "Parents") return features.admissions || features.contact;
+      return true;
+    })
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => isLinkVisibleByPage(item.path)),
+    }))
+    .filter((group) => group.items.length > 0);
 
   return (
     <footer className="site-footer" role="contentinfo">
       <div className="footer-top container">
-        <div className="brand">
-          <div className="logoz" aria-hidden="true">
-            <img src={logoUrl || logoz} alt="School logo" className="logo-image" />
+        <div className="brand brand-stacked">
+          <div className="brand-identity-row">
+            <a
+              href={buildSiteHref(siteId, "/")}
+              className="logo-link"
+              aria-label="Go to home"
+              onClick={(e) => {
+                e.preventDefault();
+                navigateTo("/");
+              }}
+            >
+              <div className="logoz">
+                <img src={logoUrl} alt="School logo" className="logo-image" />
+              </div>
+            </a>
+
+            <div className="brand-text">
+              <div className="school-name">{schoolName}</div>
+
+              {slogan && (
+                <div className="slogan" style={{ opacity: 0.9 }}>
+                  {slogan}
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="brand-text">
-            <div className="school-name">{schoolName}</div>
-            <div className="slogan">{slogan}</div>
-            {motto ? <div className="slogan" style={{ opacity: 0.9 }}>{motto}</div> : null}
+          {motto && <div className="motto">{motto}</div>}
 
-            <div className="contact small">
-              {phone ? (
-                <a
-                  href={`tel:${phone}`}
-                  aria-label="Call school"
-                  style={{ textDecoration: "none", color: "#2a1b6b" }}
-                >
-                  ☎ {phone}
-                </a>
-              ) : null}
+          <div className="contact small">
+            {phone && (
+              <a
+                href={`tel:${phone}`}
+                style={{ textDecoration: "none", color: "#2a1b6b" }}
+              >
+                ☎ {phone}
+              </a>
+            )}
 
-              {phone && email ? <span className="sep">|</span> : null}
+            {phone && email && <span className="sep">|</span>}
 
-              {email ? (
-                <a
-                  href={`mailto:${email}`}
-                  aria-label="Email school"
-                  style={{ textDecoration: "none", color: "#2a1b6b" }}
-                >
-                  {email}
-                </a>
-              ) : null}
-            </div>
+            {email && (
+              <a
+                href={`mailto:${email}`}
+                style={{ textDecoration: "none", color: "#2a1b6b" }}
+              >
+                {email}
+              </a>
+            )}
           </div>
         </div>
 
         <nav className="footer-links">
-          {groups
-            .filter((g) => {
-              if (g.title === "Activities") return f.activities;
-              if (g.title === "Parents") return f.admissions || f.contact;
-              return true;
-            })
-            .map((group) => (
-              <div key={group.title} className="link-group">
-                <h4>{group.title}</h4>
-
-                <ul>
-                  {group.items
-                    .filter((item) => {
-                      const p = item.path;
-
-                      if (p.includes("digital-library")) return f.digitalLibrary;
-                      if (p.includes("/admissions")) return f.admissions;
-                      if (p.includes("/bulletin")) return f.bulletin;
-                      if (p.includes("/attendance")) return f.attendancePolicy;
-                      if (p.includes("/activities")) return f.activities;
-                      if (p.includes("/resources")) return f.resources;
-                      if (p.includes("/staff")) return f.staff;
-                      if (p.includes("/sgb")) return f.governance;
-                      if (p.includes("/facilities")) return f.facilities;
-                      if (p.includes("/contact")) return f.contact;
-                      if (p.includes("/schoolcalendar")) return f.events;
-
-                      return true;
-                    })
-                    .map((item) => (
-                      <li key={item.name}>
-                        {item.external ? (
-                          <a href={item.path} target="_blank" rel="noopener noreferrer">
-                            {item.name}
-                          </a>
-                        ) : (
-                          <Link to={renderInternalLink(item.path)} onClick={scrollTop}>
-                            {item.name}
-                          </Link>
-                        )}
-                      </li>
-                    ))}
-                </ul>
-              </div>
-            ))}
-        </nav>
-      </div>
-
-      {footerLinks?.length ? (
-        <div className="footer-top container" style={{ paddingTop: 0 }}>
-          <nav className="footer-links">
-            <div className="link-group">
-              <h4>Quick Links</h4>
+          {visibleGroups.map((group) => (
+            <div key={group.title} className="link-group">
+              <h4>{group.title}</h4>
               <ul>
-                {footerLinks.map((item, idx) => (
-                  <li key={`${item?.label || "link"}-${idx}`}>
-                    {item?.href?.startsWith("http") ? (
-                      <a href={item.href} target="_blank" rel="noopener noreferrer">
-                        {item.label || "Link"}
-                      </a>
-                    ) : (
-                      <Link to={item?.href || "#"} onClick={scrollTop}>
-                        {item?.label || "Link"}
-                      </Link>
-                    )}
+                {group.items.map((item) => (
+                  <li key={item.name}>
+                    <a
+                      href={item.path}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigateTo(item.path);
+                      }}
+                    >
+                      {item.name}
+                    </a>
                   </li>
                 ))}
               </ul>
             </div>
-          </nav>
-        </div>
-      ) : null}
+          ))}
+        </nav>
+      </div>
 
       <div className="footer-bottom container">
         <div className="copyright small">
           © {year} {schoolName}. All rights reserved.
         </div>
 
-        {display.footer ? (
+        {social.footer && (
           <div className="social">
             <span className="small">Follow us</span>
 
-            {Object.keys(ICONS).map((key) => {
+            {(Array.isArray(social.order)
+              ? social.order
+              : Object.keys(ICONS)
+            ).map((key) => {
               const Icon = ICONS[key];
-              const visible = display?.[key] ?? true;
+              if (!Icon) return null;
 
-              if (!visible) return null;
+              const data = {
+                ...(DEFAULT_SOCIAL[key] || {}),
+                ...(social[key] || {}),
+              };
 
-              const href = links?.[key] || "#";
+              if (!data?.enabled) return null;
 
               return (
                 <a
                   key={key}
-                  href={href}
-                  target={href === "#" ? undefined : "_blank"}
+                  href={data.url || "#"}
+                  onClick={(e) => !data.url && e.preventDefault()}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="social-icon"
-                  title={key}
-                  onClick={(e) => href === "#" && e.preventDefault()}
                 >
-                  <Icon />
+                  <Icon style={{ color: getIconColor(data) }} />
                 </a>
               );
             })}
           </div>
-        ) : null}
+        )}
 
         <div className="powered-by">
-          <span>Powered by</span>{" "}
+          <span>Powered by</span>
+
           <a
             href="https://ulterspace.vercel.app"
             target="_blank"
             rel="noopener noreferrer"
             className="ulterspace-link"
           >
-            <img src="/ult2.gif" alt="Ulterspace Logo" className="ulterspace-logo" />
+            <img src={logo} alt="Ulterspace Logo" className="ulterspace-logo" />
             <span>Ulterspace</span>
           </a>
         </div>

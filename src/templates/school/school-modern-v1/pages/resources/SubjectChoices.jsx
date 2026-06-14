@@ -1,7 +1,7 @@
 import React from "react";
+import BuilderSectionTarget from "../../../../../builder/BuilderSectionTarget";
 import Card from "../../components/common/Card";
 import "../../styles/subject-choices.css";
-import Breadcrumbs from "../../components/common/Breadcrumbs";
 
 const GRADE_8_9_CORE = [
   "Home Language",
@@ -67,35 +67,77 @@ const ELECTIVES = [
   { name: "Agricultural Sciences", desc: "Agriculture and life sciences focus (if offered)." },
 ];
 
-export default function SubjectChoices() {
-  return (
+const DOWNLOADS = [
+  {
+    id: "subject-choice-form",
+    label: "Subject Choice Form (PDF) →",
+    href: "/site/docs/subject-choice-form.pdf",
+  },
+  {
+    id: "grade-10-subject-guide",
+    label: "Grade 10 Subject Guide (PDF) →",
+    href: "/site/docs/grade-10-subject-guide.pdf",
+  },
+];
+
+export default function SubjectChoices({
+  section = null,
+  content = {},
+  builderMode = false,
+}) {
+  const coreSubjects =
+    Array.isArray(content?.core_subjects) && content.core_subjects.length > 0
+      ? content.core_subjects
+      : GRADE_8_9_CORE;
+
+  const streams =
+    Array.isArray(content?.streams) && content.streams.length > 0
+      ? content.streams
+      : STREAMS;
+
+  const electives =
+    Array.isArray(content?.electives) && content.electives.length > 0
+      ? content.electives
+      : ELECTIVES;
+
+  const downloads =
+    Array.isArray(content?.downloads) && content.downloads.length > 0
+      ? content.downloads
+      : DOWNLOADS;
+
+  const pageContent = (
     <main className="subject-choices-page container">
-      <Breadcrumbs />
       <header className="sc-hero">
-        <h1 className="sc-title">Subject Choices</h1>
+        <h1 className="sc-title">
+          {content?.section_title || "Subject Choices"}
+        </h1>
         <p className="sc-subtitle">
-          Use this guide to understand subject options by grade and choose the best pathway based on interests,
-          strengths and career goals.
+          {content?.subtitle ||
+            "Use this guide to understand subject options by grade and choose the best pathway based on interests, strengths and career goals."}
         </p>
       </header>
 
       {/* Grade 8-9 */}
       <section className="sc-section">
         <div className="sc-section-head">
-          <h2 className="sc-h2">Grade 8–9 Core Subjects</h2>
+          <h2 className="sc-h2">
+            {content?.core_title || "Grade 8–9 Core Subjects"}
+          </h2>
           <p className="sc-desc">
-            These are the standard compulsory subjects offered in the Senior Phase.
+            {content?.core_description ||
+              "These are the standard compulsory subjects offered in the Senior Phase."}
           </p>
         </div>
 
         <Card>
           <ul className="sc-list">
-            {GRADE_8_9_CORE.map((s) => (
-              <li key={s}>{s}</li>
+            {coreSubjects.map((subject, index) => (
+              <li key={`${subject}-${index}`}>{subject}</li>
             ))}
           </ul>
           <p className="sc-note">
-            Note: Exact subjects may vary depending on school offerings. Update this list to match Sebone’s official curriculum.
+            {content?.core_note ||
+              "Note: Exact subjects may vary depending on school offerings. Update this list to match Sebone’s official curriculum."}
           </p>
         </Card>
       </section>
@@ -103,25 +145,33 @@ export default function SubjectChoices() {
       {/* Grade 10-12 */}
       <section className="sc-section">
         <div className="sc-section-head">
-          <h2 className="sc-h2">Grade 10–12 Streams</h2>
+          <h2 className="sc-h2">
+            {content?.streams_title || "Grade 10–12 Streams"}
+          </h2>
           <p className="sc-desc">
-            In Grade 10–12, learners usually select a stream (pathway). The final subject package should meet promotion
-            and NSC requirements.
+            {content?.streams_description ||
+              "In Grade 10–12, learners usually select a stream (pathway). The final subject package should meet promotion and NSC requirements."}
           </p>
         </div>
 
         <div className="sc-grid">
-          {STREAMS.map((stream) => (
-            <Card key={stream.title}>
-              <h3 className="sc-h3">{stream.title}</h3>
-              <p className="sc-summary">{stream.summary}</p>
+          {streams.map((stream, index) => (
+            <Card key={stream.id || stream.title || `stream-${index}`}>
+              <h3 className="sc-h3">{stream.title || ""}</h3>
+              <p className="sc-summary">
+                {stream.summary || stream.body || ""}
+              </p>
 
               <div className="sc-subjects">
-                <div className="sc-subjects-title">Typical subject package:</div>
+                <div className="sc-subjects-title">
+                  {stream.subjects_title || "Typical subject package:"}
+                </div>
                 <ul className="sc-list compact">
-                  {stream.subjects.map((s) => (
-                    <li key={s}>{s}</li>
-                  ))}
+                  {(Array.isArray(stream.subjects) ? stream.subjects : []).map(
+                    (subject, subjectIndex) => (
+                      <li key={`${subject}-${subjectIndex}`}>{subject}</li>
+                    ),
+                  )}
                 </ul>
               </div>
 
@@ -134,24 +184,35 @@ export default function SubjectChoices() {
       {/* Electives */}
       <section className="sc-section">
         <div className="sc-section-head">
-          <h2 className="sc-h2">Electives & Additional Options</h2>
+          <h2 className="sc-h2">
+            {content?.electives_title || "Electives & Additional Options"}
+          </h2>
           <p className="sc-desc">
-            These subjects depend on availability and class capacity. Confirm with the school before selecting.
+            {content?.electives_description ||
+              "These subjects depend on availability and class capacity. Confirm with the school before selecting."}
           </p>
         </div>
 
         <Card>
           <div className="sc-electives">
-            {ELECTIVES.map((e) => (
-              <div className="sc-elective" key={e.name}>
-                <div className="sc-elective-name">{e.name}</div>
-                <div className="sc-elective-desc">{e.desc}</div>
+            {electives.map((elective, index) => (
+              <div
+                className="sc-elective"
+                key={elective.id || elective.name || `elective-${index}`}
+              >
+                <div className="sc-elective-name">
+                  {elective.name || elective.title || ""}
+                </div>
+                <div className="sc-elective-desc">
+                  {elective.desc || elective.body || elective.description || ""}
+                </div>
               </div>
             ))}
           </div>
 
           <p className="sc-note">
-            If your school does not offer some options above, remove them and replace with Sebone’s real electives.
+            {content?.electives_note ||
+              "If your school does not offer some options above, remove them and replace with Sebone’s real electives."}
           </p>
         </Card>
       </section>
@@ -159,27 +220,57 @@ export default function SubjectChoices() {
       {/* Downloads */}
       <section className="sc-section">
         <div className="sc-section-head">
-          <h2 className="sc-h2">Downloads</h2>
+          <h2 className="sc-h2">
+            {content?.downloads_title || "Downloads"}
+          </h2>
           <p className="sc-desc">
-            You can upload PDF documents to the <code>public</code> folder and link them here.
+            {content?.downloads_description || (
+              <>
+                You can upload PDF documents to the <code>public</code> folder
+                and link them here.
+              </>
+            )}
           </p>
         </div>
 
         <Card>
           <div className="sc-downloads">
-            <a className="sc-download" href="/site/docs/subject-choice-form.pdf" target="_blank" rel="noreferrer">
-              Subject Choice Form (PDF) →
-            </a>
-            <a className="sc-download" href="/site/docs/grade-10-subject-guide.pdf" target="_blank" rel="noreferrer">
-              Grade 10 Subject Guide (PDF) →
-            </a>
+            {downloads.map((download, index) => (
+              <a
+                key={download.id || download.href || `download-${index}`}
+                className="sc-download"
+                href={download.href || download.link || "#"}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {download.label || download.title || "Download →"}
+              </a>
+            ))}
           </div>
 
           <p className="sc-note">
-            If you don’t have PDFs yet, keep the section and remove these links until documents are available.
+            {content?.downloads_note ||
+              "If you don’t have PDFs yet, keep the section and remove these links until documents are available."}
           </p>
         </Card>
       </section>
     </main>
+  );
+
+  if (!section) {
+    return pageContent;
+  }
+
+  return (
+    <BuilderSectionTarget
+      builderMode={builderMode}
+      section={section}
+      sectionType="process"
+      label={content?.section_title || "Subject Choices"}
+      templateCategory="school"
+      templateKey="school-modern-v1"
+    >
+      {pageContent}
+    </BuilderSectionTarget>
   );
 }

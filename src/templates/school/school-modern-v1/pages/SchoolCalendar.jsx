@@ -1,8 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import "../styles/school-calendar.css";
 import CalendarWidget from "../components/common/CalendarWidget";
-import Breadcrumbs from "../components/common/Breadcrumbs";
 
 export const EVENTS = [
   {
@@ -40,7 +38,14 @@ export const EVENTS = [
 ];
 
 function formatDateTime(iso) {
+  if (!iso) return "";
+
   const d = new Date(iso);
+
+  if (Number.isNaN(d.getTime())) {
+    return "";
+  }
+
   return d.toLocaleString(undefined, {
     weekday: "short",
     day: "2-digit",
@@ -51,66 +56,115 @@ function formatDateTime(iso) {
   });
 }
 
-export default function SchoolCalendar() {
-  const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+export default function SchoolCalendar({ content = {} }) {
+  const navigate = (slug) => {
+    window.dispatchEvent(new CustomEvent("builder:navigate", { detail: slug }));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
-  // show a few upcoming items (simple preview)
-  const preview = [...EVENTS]
-    .sort((a, b) => new Date(a.start) - new Date(b.start))
+  const events =
+    Array.isArray(content?.items) && content.items.length > 0
+      ? content.items
+      : EVENTS;
+
+  const preview = [...events]
+    .sort(
+      (a, b) =>
+        new Date(a.startAt || a.start) - new Date(b.startAt || b.start),
+    )
     .slice(0, 6);
+
+  const viewAllHref = content?.view_all_href || "/calendar/events";
+  const pdfHref = content?.pdf_url || "/docs/school-calendar.pdf";
 
   return (
     <main className="scal-page container">
-      <Breadcrumbs />
       <header className="scal-hero">
         <div>
-          <h1 className="scal-title">School Calendar</h1>
+          <h1 className="scal-title">
+            {content?.section_title || "School Calendar"}
+          </h1>
           <p className="scal-subtitle">
-            Key academic dates, examinations, school activities, and public holidays.
+            {content?.subtitle ||
+              "Key academic dates, examinations, school activities, and public holidays."}
           </p>
         </div>
 
         <div className="scal-actions">
-          <Link to="/site/calendar/events" className="scal-btn" onClick={scrollTop}>
-            View All Events
-          </Link>
-          <a className="scal-btn ghost" href="/site/docs/school-calendar.pdf" target="_blank" rel="noreferrer">
-            Download PDF
+          <a
+            href="#"
+            className="scal-btn"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate(viewAllHref);
+            }}
+          >
+            {content?.view_all_label || "View All Events"}
+          </a>
+
+          <a
+            className="scal-btn ghost"
+            href={pdfHref}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {content?.download_label || "Download PDF"}
           </a>
         </div>
       </header>
 
       <section className="scal-grid">
-        {/* Left: calendar widget */}
         <div className="scal-left">
           <div className="scal-card">
             <div className="scal-card-head">
-              <div className="scal-tag">Calendar</div>
-              <div className="scal-headline">Monthly Overview</div>
-              <div className="scal-muted">Tap days to view events (optional upgrade).</div>
+              <div className="scal-tag">
+                {content?.calendar_label || "Calendar"}
+              </div>
+              <div className="scal-headline">
+                {content?.calendar_heading || "Monthly Overview"}
+              </div>
+              <div className="scal-muted">
+                {content?.calendar_note ||
+                  "Tap days to view events (optional upgrade)."}
+              </div>
             </div>
 
             <CalendarWidget />
           </div>
         </div>
 
-        {/* Right: events table preview */}
         <div className="scal-right">
           <div className="scal-right-head">
             <div>
-              <div className="scal-tag"># Upcoming</div>
-              <h2 className="scal-h2">Upcoming Events</h2>
+              <div className="scal-tag">
+                {content?.upcoming_label || "# Upcoming"}
+              </div>
+              <h2 className="scal-h2">
+                {content?.upcoming_heading || "Upcoming Events"}
+              </h2>
               <p className="scal-muted">
-                This is a preview. Use “View All Events” for the full calendar list.
+                {content?.upcoming_note ||
+                  "This is a preview. Use “View All Events” for the full calendar list."}
               </p>
             </div>
 
-            <Link to="/site/calendar/events" className="scal-link" onClick={scrollTop}>
-              View All →
-            </Link>
+            <a
+              href="#"
+              className="scal-link"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate(viewAllHref);
+              }}
+            >
+              {content?.view_all_link_label || "View All →"}
+            </a>
           </div>
 
-          <div className="scal-table-wrap" role="region" aria-label="School events preview">
+          <div
+            className="scal-table-wrap"
+            role="region"
+            aria-label="School events preview"
+          >
             <table className="scal-table">
               <thead>
                 <tr>
@@ -122,9 +176,11 @@ export default function SchoolCalendar() {
               </thead>
 
               <tbody>
-                {preview.map((ev) => (
-                  <tr key={ev.id}>
-                    <td className="td-dt">{formatDateTime(ev.start)}</td>
+                {preview.map((ev, index) => (
+                  <tr key={ev.id || `${ev.title || "event"}-${index}`}>
+                    <td className="td-dt">
+                      {formatDateTime(ev.startAt || ev.start)}
+                    </td>
                     <td className="td-title">{ev.title}</td>
                     <td className="td-loc">{ev.location}</td>
                     <td>
@@ -145,7 +201,8 @@ export default function SchoolCalendar() {
           </div>
 
           <div className="scal-note">
-            For official confirmation of dates, please contact the Administration Office.
+            {content?.footer_note ||
+              "For official confirmation of dates, please contact the Administration Office."}
           </div>
         </div>
       </section>

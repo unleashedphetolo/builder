@@ -1,17 +1,69 @@
 import React from "react";
+import BuilderSectionTarget from "../../../../builder/BuilderSectionTarget";
 import Card from "../components/common/Card";
 import Button from "../components/common/Button";
-import Breadcrumbs from "../components/common/Breadcrumbs";
 
-export default function ResourcesLanding() {
-  return (
-    <section className="container" style={{ paddingTop: 10, paddingBottom: 40 }}>
-      <Breadcrumbs />
-      <h2 className="section-title">Resources</h2>
+const RESOURCE_CARDS = [
+  {
+    id: "subject-choices",
+    title: "Subject Choices",
+    body: "Guidance on subject selection and academic pathways.",
+    href: "/resources/subject-choices",
+  },
+  {
+    id: "term-plan",
+    title: "Term Plan",
+    body: "Official academic calendar and term activities.",
+    href: "/resources/term-plan",
+  },
+  {
+    id: "exam-schedule",
+    title: "Exam Schedule",
+    body: "Examination dates and assessment planning.",
+    href: "/resources/exam-schedule",
+  },
+  {
+    id: "code-of-conduct",
+    title: "Code of Conduct",
+    body: "Learner behaviour guidelines and discipline policy.",
+    href: "/resources/code-of-conduct",
+  },
+  {
+    id: "stationary-list",
+    title: "Stationary List",
+    body: "Required stationery items per grade.",
+    href: "/resources/stationary-list",
+  },
+  {
+    id: "school-calendar",
+    title: "School Calendar",
+    body: "Important academic and school activity dates.",
+    href: "/resources/calendar",
+  },
+];
+
+export default function ResourcesLanding({
+  section = null,
+  content = {},
+  builderMode = false,
+}) {
+  const resources =
+    Array.isArray(content?.items) && content.items.length > 0
+      ? content.items
+      : RESOURCE_CARDS;
+
+  const pageContent = (
+    <section
+      className="container"
+      style={{ paddingTop: 10, paddingBottom: 40 }}
+    >
+      <h2 className="section-title">
+        {content?.section_title || "Resources"}
+      </h2>
 
       <p style={{ opacity: 0.85, maxWidth: 900, marginBottom: 18 }}>
-        Important academic documents, learner support materials, school policies, and official
-        information for learners and parents.
+        {content?.subtitle ||
+          "Important academic documents, learner support materials, school policies, and official information for learners and parents."}
       </p>
 
       <div
@@ -21,54 +73,35 @@ export default function ResourcesLanding() {
           gap: 16,
         }}
       >
-        <Card>
-          <h3>Subject Choices</h3>
-          <p style={{ opacity: 0.85, marginBottom: 12 }}>
-            Guidance on subject selection and academic pathways.
-          </p>
-          <Button to="/site/resources/subject-choices" variant="outline">View</Button>
-        </Card>
-
-        <Card>
-          <h3>Term Plan</h3>
-          <p style={{ opacity: 0.85, marginBottom: 12 }}>
-            Official academic calendar and term activities.
-          </p>
-          <Button to="/site/resources/term-plan" variant="outline">View</Button>
-        </Card>
-
-        <Card>
-          <h3>Exam Schedule</h3>
-          <p style={{ opacity: 0.85, marginBottom: 12 }}>
-            Examination dates and assessment planning.
-          </p>
-          <Button to="/site/resources/exam-schedule" variant="outline">View</Button>
-        </Card>
-
-        <Card>
-          <h3>Code of Conduct</h3>
-          <p style={{ opacity: 0.85, marginBottom: 12 }}>
-            Learner behaviour guidelines and discipline policy.
-          </p>
-          <Button to="/site/resources/code-of-conduct" variant="outline">View</Button>
-        </Card>
-
-        <Card>
-          <h3>Stationary List</h3>
-          <p style={{ opacity: 0.85, marginBottom: 12 }}>
-            Required stationery items per grade.
-          </p>
-          <Button to="/site/resources/stationary-list" variant="outline">View</Button>
-        </Card>
-
-        <Card>
-          <h3>School Calendar</h3>
-          <p style={{ opacity: 0.85, marginBottom: 12 }}>
-            Important academic and school activity dates.
-          </p>
-          <Button to="/site/resources/calendar" variant="outline">View</Button>
-        </Card>
+        {resources.map((item, index) => (
+          <Card key={item.id || item.title || `resource-${index}`}>
+            <h3>{item.title || ""}</h3>
+            <p style={{ opacity: 0.85, marginBottom: 12 }}>
+              {item.body || item.description || ""}
+            </p>
+            <Button to={item.href || item.link || "#"} variant="outline">
+              {item.button_label || "View"}
+            </Button>
+          </Card>
+        ))}
       </div>
     </section>
+  );
+
+  if (!section) {
+    return pageContent;
+  }
+
+  return (
+    <BuilderSectionTarget
+      builderMode={builderMode}
+      section={section}
+      sectionType="services"
+      label={content?.section_title || "Resources"}
+      templateCategory="school"
+      templateKey="school-modern-v1"
+    >
+      {pageContent}
+    </BuilderSectionTarget>
   );
 }

@@ -12,7 +12,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 0;
+  /* padding: 14px 0; */
+    padding: 8px 0;
 }
 
 /* LOGO */
@@ -106,7 +107,7 @@
 /* DROPDOWN MENU */
 .drop-menu {
   position: absolute;
-  top: 44px;
+  top: 40px;
   left: 0;
   background: #ffffff;
   width: 220px;
@@ -261,4 +262,170 @@ body {
 
 }
 
+.drop-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  font: inherit;
+  padding: 10px 11px;
+  border-radius: 6px;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+
+/* =========================================================
+   BUILDER LOGO EDITABLE TARGET
+   Selects only the image, not the school name/tagline
+   ========================================================= */
+
+.logo-section.builder-logo-editable {
+  position: relative;
+}
+
+.logo-section .logo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.builder-logo-target {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.builder-logo-target.is-selected {
+  min-width: 72px;
+  min-height: 72px;
+  padding: 8px;
+  border: 2px solid #3b82f6;
+  border-radius: 4px;
+  background: #ffffff;
+}
+
+.builder-logo-target .logo-image {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 56px;
+  max-height: 56px;
+  object-fit: contain;
+}
+
+/* Selection handles around logo image only */
+.builder-logo-handle {
+  position: absolute;
+  z-index: 3;
+  width: 8px;
+  height: 8px;
+  border: 2px solid #2563eb;
+  border-radius: 1px;
+  background: #ffffff;
+  pointer-events: none;
+}
+
+.builder-logo-handle.handle-tl {
+  top: -5px;
+  left: -5px;
+}
+
+.builder-logo-handle.handle-tr {
+  top: -5px;
+  right: -5px;
+}
+
+.builder-logo-handle.handle-bl {
+  bottom: -5px;
+  left: -5px;
+}
+
+.builder-logo-handle.handle-br {
+  right: -5px;
+  bottom: -5px;
+}
+
+/*
+  Edit button attached to the logo image.
+  It sits inside the logo's top area so it cannot cover the school name.
+*/
+/*
+  Edit Logo button stays hidden until the logo is selected.
+  This keeps the normal website preview clean.
+*/
+.logo-section.builder-logo-editable .navbar-logo-edit-button {
+  top: 4px;
+  left: 4px;
+  right: auto;
+  z-index: 45;
+  height: 27px;
+  padding: 0 8px;
+  gap: 5px;
+  border-radius: 5px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 5px 12px rgba(37, 99, 235, 0.22);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.16s ease,
+    visibility 0.16s ease,
+    background 0.16s ease;
+}
+
+.logo-section.builder-logo-editable.logo-editor-selected
+  .navbar-logo-edit-button {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.logo-section.builder-logo-editable.logo-editor-selected
+  .navbar-logo-edit-button:hover {
+  background: #1d4ed8;
+}
+
+/* The image receives additional top breathing space in builder mode */
+.logo-section.builder-logo-editable .builder-logo-target.is-selected {
+  padding-top: 29px;
+  min-height: 88px;
+}
+
+/* Keep database-driven name and slogan unaffected */
+.logo-section.builder-logo-editable .logo-text {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 880px) {
+  .builder-logo-target.is-selected {
+    min-width: 62px;
+    min-height: 78px;
+    padding: 27px 6px 6px;
+  }
+
+  .builder-logo-target .logo-image {
+    max-width: 48px;
+    max-height: 48px;
+  }
+
+  .logo-section.builder-logo-editable.logo-editor-selected
+  .navbar-logo-edit-button {
+  height: 25px;
+  padding: 0 7px;
+  font-size: 9px;
+}
+}
 

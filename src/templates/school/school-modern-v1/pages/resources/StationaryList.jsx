@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
+import BuilderSectionTarget from "../../../../../builder/BuilderSectionTarget";
 import Card from "../../components/common/Card";
 import "../../styles/stationary.css";
-import Breadcrumbs from "../../components/common/Breadcrumbs";
 
 const STATIONERY = [
   // Grade 8
@@ -20,37 +20,60 @@ const STATIONERY = [
   { id: 9, grade: "Grade 10–12", subject: "Physical Sciences", items: "Scientific calculator, A4 hard cover book, practical file/folder" },
 ];
 
-export default function StationaryList() {
+export default function StationaryList({
+  section = null,
+  content = {},
+  builderMode = false,
+}) {
   const [grade, setGrade] = useState("All");
   const [q, setQ] = useState("");
 
+  const stationeryItems =
+    Array.isArray(content?.items) && content.items.length > 0
+      ? content.items
+      : STATIONERY;
+
+  const gradeOptions = useMemo(() => {
+    return [...new Set(stationeryItems.map((item) => item.grade).filter(Boolean))];
+  }, [stationeryItems]);
+
   const rows = useMemo(() => {
     const query = q.trim().toLowerCase();
-    return STATIONERY.filter((r) => {
-      const gradeOk = grade === "All" ? true : r.grade === grade;
+
+    return stationeryItems.filter((r) => {
+      const rowGrade = String(r.grade || "");
+      const rowSubject = String(r.subject || "");
+      const rowItems = String(r.items || r.body || "");
+
+      const gradeOk = grade === "All" ? true : rowGrade === grade;
       const queryOk =
         !query ||
-        r.grade.toLowerCase().includes(query) ||
-        r.subject.toLowerCase().includes(query) ||
-        r.items.toLowerCase().includes(query);
+        rowGrade.toLowerCase().includes(query) ||
+        rowSubject.toLowerCase().includes(query) ||
+        rowItems.toLowerCase().includes(query);
+
       return gradeOk && queryOk;
     });
-  }, [grade, q]);
+  }, [stationeryItems, grade, q]);
 
-  return (
+  const pdfPath = content?.pdf_url || "/site/docs/stationary-list.pdf";
+
+  const pageContent = (
     <section className="stationary-page container">
-      <Breadcrumbs />
       <header className="stationary-head">
         <div>
-          <h2 className="section-title">Stationery Requirements</h2>
+          <h2 className="section-title">
+            {content?.section_title || "Stationery Requirements"}
+          </h2>
           <p className="stationary-sub">
-            Official stationery items per grade and subject. Please ensure learners have the required materials.
+            {content?.subtitle ||
+              "Official stationery items per grade and subject. Please ensure learners have the required materials."}
           </p>
         </div>
 
         <div className="stationary-actions">
-          <a className="stationary-btn" href="/site/docs/stationary-list.pdf" download>
-            Download PDF
+          <a className="stationary-btn" href={pdfPath} download>
+            {content?.download_button_label || "Download PDF"}
           </a>
         </div>
       </header>
@@ -61,9 +84,11 @@ export default function StationaryList() {
             <label className="st-label">Filter by Grade</label>
             <select value={grade} onChange={(e) => setGrade(e.target.value)}>
               <option value="All">All Grades</option>
-              <option value="Grade 8">Grade 8</option>
-              <option value="Grade 9">Grade 9</option>
-              <option value="Grade 10–12">Grade 10–12</option>
+              {gradeOptions.map((gradeOption) => (
+                <option key={gradeOption} value={gradeOption}>
+                  {gradeOption}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -89,11 +114,13 @@ export default function StationaryList() {
             </thead>
 
             <tbody>
-              {rows.map((r) => (
-                <tr key={r.id}>
-                  <td className="st-grade" data-label="Grade">{r.grade}</td>
-                  <td className="st-subject" data-label="Subject">{r.subject}</td>
-                  <td className="st-items" data-label="Required Stationery">{r.items}</td>
+              {rows.map((r, index) => (
+                <tr key={r.id || `${r.grade || "grade"}-${r.subject || "subject"}-${index}`}>
+                  <td className="st-grade" data-label="Grade">{r.grade || ""}</td>
+                  <td className="st-subject" data-label="Subject">{r.subject || ""}</td>
+                  <td className="st-items" data-label="Required Stationery">
+                    {r.items || r.body || ""}
+                  </td>
                 </tr>
               ))}
 
@@ -109,9 +136,27 @@ export default function StationaryList() {
         </div>
 
         <p className="stationary-note">
-          Note: Teachers may issue additional subject-specific requirements during the first week of school.
+          {content?.footer_note ||
+            "Note: Teachers may issue additional subject-specific requirements during the first week of school."}
         </p>
       </Card>
     </section>
+  );
+
+  if (!section) {
+    return pageContent;
+  }
+
+  return (
+    <BuilderSectionTarget
+      builderMode={builderMode}
+      section={section}
+      sectionType="services"
+      label={content?.section_title || "Stationery Requirements"}
+      templateCategory="school"
+      templateKey="school-modern-v1"
+    >
+      {pageContent}
+    </BuilderSectionTarget>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "../../styles/stats.css";
 
 const ITEMS = [
@@ -10,43 +10,81 @@ const ITEMS = [
   { label: "EMIS Number", value: 600112192 },
 ];
 
-export default function SchoolStats() {
-  const items = ITEMS;
+function getNumericValue(value) {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (
+    typeof value === "string" &&
+    value.trim() !== "" &&
+    Number.isFinite(Number(value))
+  ) {
+    return Number(value);
+  }
+
+  return null;
+}
+
+export default function SchoolStats({ items = [] }) {
+  const displayItems = useMemo(() => {
+    return Array.isArray(items) && items.length > 0 ? items : ITEMS;
+  }, [items]);
 
   const [counts, setCounts] = useState(
-    items.map((it) => (typeof it.value === "number" ? 0 : it.value))
+    displayItems.map((item) =>
+      getNumericValue(item.value) !== null ? 0 : item.value,
+    ),
   );
 
   useEffect(() => {
-    items.forEach((item, index) => {
-      if (typeof item.value !== "number") return; // Skip text values
+    const timers = [];
+
+    setCounts(
+      displayItems.map((item) =>
+        getNumericValue(item.value) !== null ? 0 : item.value,
+      ),
+    );
+
+    displayItems.forEach((item, index) => {
+      const numericValue = getNumericValue(item.value);
+
+      if (numericValue === null) return; // Skip text values
 
       let start = 0;
-      const end = item.value;
+      const end = numericValue;
       const duration = 1500; // ms
       const increment = end / (duration / 16); // 60fps
 
-      const timer = setInterval(() => {
+      const timer = window.setInterval(() => {
         start += increment;
+
         if (start >= end) {
           start = end;
-          clearInterval(timer);
+          window.clearInterval(timer);
         }
-        setCounts((prev) => {
-          const copy = [...prev];
+
+        setCounts((previousCounts) => {
+          const copy = [...previousCounts];
           copy[index] = Math.floor(start);
           return copy;
         });
       }, 16);
+
+      timers.push(timer);
     });
-  }, [items]);
+
+    return () => {
+      timers.forEach((timer) => window.clearInterval(timer));
+    };
+  }, [displayItems]);
 
   return (
     <div className="stats-card">
-      {items.map((it, idx) => (
-        <div key={it.label} className="stat">
-          <div className="num">{counts[idx]}</div>
-          <div className="lbl">{it.label}</div>
+      {displayItems.map((item, index) => (
+        <div key={item.id || item.label} className="stat">
+          <div className="num">{counts[index]}</div>
+          <div className="lbl">{item.label}</div>
         </div>
       ))}
     </div>

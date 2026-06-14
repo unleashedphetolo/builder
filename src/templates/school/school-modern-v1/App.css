@@ -36,3 +36,31 @@
     transform: rotate(360deg);
   }
 }
+
+.school-modern-v1-root {
+  font-family: Inter, sans-serif;
+}
+
+.school-modern-v1-root .container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.school-modern-v1-root .site-nav {
+  background: white;
+}
+
+.school-modern-v1-root .builder-fallback-section {
+  padding: 32px 24px;
+}
+
+.builder-section-anchor {
+  position: relative;
+}
+
+/* Modern Academy enterprise token bridge */
+.school-modern-v1-root {
+  --modern-school-primary: var(--primary, #2563eb);
+  --modern-school-secondary: var(--secondary, #0f172a);
+  --modern-school-accent: var(--accent, #06b6d4);
+}

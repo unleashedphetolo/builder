@@ -1,49 +1,172 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import BuilderSectionTarget from "../../../../builder/BuilderSectionTarget";
 import AboutSection from "../components/home/AboutSection";
 import Card from "../components/common/Card";
 import Button from "../components/common/Button";
-import Breadcrumbs from "../components/common/Breadcrumbs";
 
-export default function AboutLanding() {
+const DEFAULT_LINK_CARDS = [
+  {
+    id: "who-we-are",
+    title: "Who We Are",
+    body:
+      "Our identity, community, leadership and what makes Sebone a trusted school.",
+    href: "/about/who-we-are",
+  },
+  {
+    id: "vision-mission",
+    title: "Vision & Mission",
+    body: "The purpose that guides how we teach, lead and grow learners.",
+    href: "/about/vision-mission",
+  },
+  {
+    id: "history",
+    title: "Our History",
+    body: "The journey of our school and how we built a culture of excellence.",
+    href: "/about/history",
+  },
+];
+
+function buildSiteHref(siteId, path = "") {
+  const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
+  return `/#/site/${siteId || ""}${clean}`;
+}
+
+function findSectionByKey(sections = [], sectionKey = "") {
+  return (
+    (Array.isArray(sections) ? sections : []).find(
+      (section) =>
+        section?.section_key === sectionKey ||
+        section?.key === sectionKey ||
+        section?.content?.section_key === sectionKey,
+    ) || null
+  );
+}
+
+function sectionContent(section) {
+  return section?.content && typeof section.content === "object"
+    ? section.content
+    : {};
+}
+
+function canRenderSection(section, builderMode) {
+  if (!section) return true;
+
+  return builderMode || section.visible !== false;
+}
+
+function EditableSection({
+  section,
+  sectionType,
+  label,
+  builderMode,
+  children,
+}) {
+  if (!section) {
+    return children;
+  }
+
+  return (
+    <BuilderSectionTarget
+      builderMode={builderMode}
+      section={section}
+      sectionType={sectionType}
+      label={label}
+      templateCategory="school"
+      templateKey="school-modern-v1"
+    >
+      {children}
+    </BuilderSectionTarget>
+  );
+}
+
+export default function AboutLanding({
+  settings = {},
+  sections = [],
+  builderMode = false,
+}) {
+  const siteId = settings?.site_id || "";
+
+  const overviewSection =
+    findSectionByKey(sections, "about-introduction") || sections[0] || null;
+
+  const valuesSection =
+    findSectionByKey(sections, "about-values") || sections[1] || null;
+
+  const overviewContent = sectionContent(overviewSection);
+  const valuesContent = sectionContent(valuesSection);
+
+  const linkCards =
+    Array.isArray(overviewContent?.link_cards) &&
+    overviewContent.link_cards.length > 0
+      ? overviewContent.link_cards
+      : DEFAULT_LINK_CARDS;
+
   return (
     <div className="container" style={{ paddingTop: 28, paddingBottom: 40 }}>
-      <Breadcrumbs />
-      <h2 className="section-title">About M.O.M Sebone Secondary School</h2>
+      {canRenderSection(valuesSection, builderMode) && (
+        <EditableSection
+          section={valuesSection}
+          sectionType="about_section"
+          label="Vision, Mission & Values"
+          builderMode={builderMode}
+        >
+          <h2 className="section-title">
+            {valuesContent?.page_title ||
+              "About M.O.M Sebone Secondary School"}
+          </h2>
 
-      <AboutSection />
+          <AboutSection settings={settings} content={valuesContent} />
+        </EditableSection>
+      )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
-        <Card>
-          <h3 style={{ marginBottom: 8 }}>Who We Are</h3>
-          <p style={{ opacity: 0.85, marginBottom: 12 }}>
-            Our identity, community, leadership and what makes Sebone a trusted school.
-          </p>
-          <Button to="/site/about/who-we-are" variant="outline">Read more</Button>
-        </Card>
+      {canRenderSection(overviewSection, builderMode) && (
+        <EditableSection
+          section={overviewSection}
+          sectionType="about_section"
+          label="About Page Links"
+          builderMode={builderMode}
+        >
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+              gap: 16,
+            }}
+          >
+            {linkCards.map((card, index) => (
+              <Card key={card.id || `${card.title || "about-link"}-${index}`}>
+                <h3 style={{ marginBottom: 8 }}>
+                  {card.title || ""}
+                </h3>
+                <p style={{ opacity: 0.85, marginBottom: 12 }}>
+                  {card.body || ""}
+                </p>
+                <Button
+                  to={buildSiteHref(siteId, card.href || "/")}
+                  variant="outline"
+                >
+                  {card.button_label || "Read more"}
+                </Button>
+              </Card>
+            ))}
+          </div>
 
-        <Card>
-          <h3 style={{ marginBottom: 8 }}>Vision & Mission</h3>
-          <p style={{ opacity: 0.85, marginBottom: 12 }}>
-            The purpose that guides how we teach, lead and grow learners.
-          </p>
-          <Button to="/site/about/vision-mission" variant="outline">Read more</Button>
-        </Card>
-
-        <Card>
-          <h3 style={{ marginBottom: 8 }}>Our History</h3>
-          <p style={{ opacity: 0.85, marginBottom: 12 }}>
-            The journey of our school and how we built a culture of excellence.
-          </p>
-          <Button to="/site/about/history" variant="outline">Read more</Button>
-        </Card>
-      </div>
-
-      <div style={{ marginTop: 20 }}>
-        <p style={{ opacity: 0.85 }}>
-          Looking for staff and governance? Visit <Link to="/site/staff">Staff</Link> and <Link to="/site/sgb">SGB</Link>.
-        </p>
-      </div>
+          <div style={{ marginTop: 20 }}>
+            <p style={{ opacity: 0.85 }}>
+              {overviewContent?.footer_prefix ||
+                "Looking for staff and governance? Visit"}{" "}
+              <a href={buildSiteHref(siteId, "/staff")}>
+                {overviewContent?.staff_label || "Staff"}
+              </a>{" "}
+              {overviewContent?.footer_joiner || "and"}{" "}
+              <a href={buildSiteHref(siteId, "/sgb")}>
+                {overviewContent?.sgb_label || "SGB"}
+              </a>
+              .
+            </p>
+          </div>
+        </EditableSection>
+      )}
     </div>
   );
 }

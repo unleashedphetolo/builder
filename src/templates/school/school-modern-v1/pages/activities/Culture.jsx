@@ -1,6 +1,6 @@
 import React from "react";
+import BuilderSectionTarget from "../../../../../builder/BuilderSectionTarget";
 import "../../styles/life-culture.css";
-import Breadcrumbs from "../../components/common/Breadcrumbs";
 
 const CULTURE_SECTIONS = [
   {
@@ -21,28 +21,37 @@ const CULTURE_SECTIONS = [
   },
 ];
 
-export default function LifeCulture() {
-  return (
+export default function LifeCulture({
+  section = null,
+  content = {},
+  builderMode = false,
+}) {
+  const cultureSections =
+    Array.isArray(content?.items) && content.items.length > 0
+      ? content.items
+      : CULTURE_SECTIONS;
+
+  const pageContent = (
     <main className="lc container">
-      <Breadcrumbs />
       {/* Hero Section */}
       <header className="lc-hero">
         <div className="lc-hero-grid">
           {/* Left Text */}
           <div className="lc-hero-copy">
-            <h1 className="lc-title">Culture & Activities</h1>
+            <h1 className="lc-title">
+              {content?.section_title || "Culture & Activities"}
+            </h1>
             <p className="lc-subtitle">
-              Our cultural and co-curricular programmes build confident,
-              responsible learners through leadership, creativity, and
-              community participation.
+              {content?.subtitle ||
+                "Our cultural and co-curricular programmes build confident, responsible learners through leadership, creativity, and community participation."}
             </p>
           </div>
 
           {/* Right Image (from gallery4.jpg) */}
           <div className="lc-hero-media" aria-hidden="true">
             <img
-              src="/images/gallery4.jpg"
-              alt="School Culture Activities"
+              src={content?.image_url || "/images/gallery4.jpg"}
+              alt={content?.image_alt || "School Culture Activities"}
               className="lc-hero-img"
               onError={(e) =>
                 (e.currentTarget.src = "/images/gallery5.jpg")
@@ -54,13 +63,35 @@ export default function LifeCulture() {
 
       {/* Culture Grid */}
       <section className="lc-grid">
-        {CULTURE_SECTIONS.map((item) => (
-          <div key={item.title} className="lc-card">
-            <h3 className="lc-card-title">{item.title}</h3>
-            <p className="lc-card-text">{item.text}</p>
+        {cultureSections.map((item, index) => (
+          <div
+            key={item.id || item.title || `culture-section-${index}`}
+            className="lc-card"
+          >
+            <h3 className="lc-card-title">{item.title || ""}</h3>
+            <p className="lc-card-text">
+              {item.body || item.text || ""}
+            </p>
           </div>
         ))}
       </section>
     </main>
+  );
+
+  if (!section) {
+    return pageContent;
+  }
+
+  return (
+    <BuilderSectionTarget
+      builderMode={builderMode}
+      section={section}
+      sectionType="services"
+      label={content?.section_title || "Culture & Activities"}
+      templateCategory="school"
+      templateKey="school-modern-v1"
+    >
+      {pageContent}
+    </BuilderSectionTarget>
   );
 }

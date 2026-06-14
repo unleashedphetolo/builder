@@ -1,76 +1,100 @@
 import React from "react";
+import BuilderSectionTarget from "../../../../../builder/BuilderSectionTarget";
 import Card from "../../components/common/Card";
-import Breadcrumbs from "../../components/common/Breadcrumbs";
 
-export default function CodeOfConduct() {
-  const pdfFile = "/docs/code-of-conduct.pdf";
+const DEFAULT_RULES = [
+  {
+    id: "respect-behaviour",
+    title: "Respect and Behaviour",
+    body:
+      "Learners must treat teachers, staff members, fellow learners, and visitors with respect and dignity at all times. Bullying, discrimination, harassment, or any form of violence is strictly prohibited.",
+  },
+  {
+    id: "attendance",
+    title: "Attendance",
+    body:
+      "Regular attendance is essential for academic success. Learners must attend school daily, arrive on time, and participate fully in all learning activities unless a valid reason is provided.",
+  },
+  {
+    id: "school-uniform",
+    title: "School Uniform",
+    body:
+      "Learners are required to wear the correct school uniform at all times during school hours and official school activities. The uniform must be clean, neat, and worn in accordance with school policy.",
+  },
+  {
+    id: "academic-responsibility",
+    title: "Academic Responsibility",
+    body:
+      "Learners are expected to complete all assignments, homework, and assessments honestly and on time. Cheating, plagiarism, or academic dishonesty will not be tolerated.",
+  },
+  {
+    id: "safety-property",
+    title: "Safety and School Property",
+    body:
+      "Learners must respect school property and maintain a clean environment. Any damage to school facilities or equipment may result in disciplinary action.",
+  },
+  {
+    id: "discipline",
+    title: "Discipline",
+    body:
+      "Failure to comply with school rules may result in disciplinary action in accordance with the school's disciplinary procedures and national education regulations.",
+  },
+];
 
-  return (
+export default function CodeOfConduct({
+  section = null,
+  content = {},
+  builderMode = false,
+}) {
+  const pdfFile = content?.pdf_url || "/docs/code-of-conduct.pdf";
+
+  const rules =
+    Array.isArray(content?.rules) && content.rules.length > 0
+      ? content.rules
+      : Array.isArray(content?.items) && content.items.length > 0
+        ? content.items
+        : DEFAULT_RULES;
+
+  const pageContent = (
     <section className="container" style={{ paddingTop: 10, paddingBottom: 40 }}>
-      <Breadcrumbs />
-      <h2 className="section-title">Learner Code of Conduct</h2>
+      <h2 className="section-title">
+        {content?.section_title || "Learner Code of Conduct"}
+      </h2>
 
       <Card>
         <div style={{ lineHeight: 1.7, maxWidth: 900 }}>
-
           <p>
-            The Learner Code of Conduct of <strong>M.O.M Sebone Secondary School </strong>
-            sets out the standards of behaviour expected from every learner.
-            These rules are designed to create a safe, disciplined, and respectful
-            environment that supports effective teaching and learning.
+            {content?.body || content?.introduction ? (
+              content?.body || content?.introduction
+            ) : (
+              <>
+                The Learner Code of Conduct of{" "}
+                <strong>{content?.school_name || "the school"}{" "}</strong>
+                sets out the standards of behaviour expected from every learner.
+                These rules are designed to create a safe, disciplined, and respectful
+                environment that supports effective teaching and learning.
+              </>
+            )}
           </p>
 
-          <h3>1. Respect and Behaviour</h3>
-          <p>
-            Learners must treat teachers, staff members, fellow learners,
-            and visitors with respect and dignity at all times. Bullying,
-            discrimination, harassment, or any form of violence is strictly prohibited.
-          </p>
-
-          <h3>2. Attendance</h3>
-          <p>
-            Regular attendance is essential for academic success. Learners
-            must attend school daily, arrive on time, and participate fully
-            in all learning activities unless a valid reason is provided.
-          </p>
-
-          <h3>3. School Uniform</h3>
-          <p>
-            Learners are required to wear the correct school uniform at all
-            times during school hours and official school activities. The
-            uniform must be clean, neat, and worn in accordance with school policy.
-          </p>
-
-          <h3>4. Academic Responsibility</h3>
-          <p>
-            Learners are expected to complete all assignments, homework,
-            and assessments honestly and on time. Cheating, plagiarism,
-            or academic dishonesty will not be tolerated.
-          </p>
-
-          <h3>5. Safety and School Property</h3>
-          <p>
-            Learners must respect school property and maintain a clean
-            environment. Any damage to school facilities or equipment may
-            result in disciplinary action.
-          </p>
-
-          <h3>6. Discipline</h3>
-          <p>
-            Failure to comply with school rules may result in disciplinary
-            action in accordance with the school's disciplinary procedures
-            and national education regulations.
-          </p>
+          {rules.map((rule, index) => (
+            <React.Fragment
+              key={rule.id || rule.title || `conduct-rule-${index}`}
+            >
+              <h3>
+                {index + 1}. {rule.title || ""}
+              </h3>
+              <p>{rule.body || rule.text || rule.description || ""}</p>
+            </React.Fragment>
+          ))}
 
           <p>
-            Parents and guardians are encouraged to review this policy
-            together with learners to ensure that all expectations are
-            clearly understood.
+            {content?.closing_text ||
+              "Parents and guardians are encouraged to review this policy together with learners to ensure that all expectations are clearly understood."}
           </p>
 
           {/* Buttons */}
           <div style={{ marginTop: 24, display: "flex", gap: 12, flexWrap: "wrap" }}>
-            
             <a
               href={pdfFile}
               target="_blank"
@@ -84,7 +108,7 @@ export default function CodeOfConduct() {
                 textDecoration: "none",
               }}
             >
-              View Full Document
+              {content?.view_button_label || "View Full Document"}
             </a>
 
             <a
@@ -99,13 +123,28 @@ export default function CodeOfConduct() {
                 textDecoration: "none",
               }}
             >
-              Download Code of Conduct (PDF)
+              {content?.download_button_label || "Download Code of Conduct (PDF)"}
             </a>
-
           </div>
-
         </div>
       </Card>
     </section>
+  );
+
+  if (!section) {
+    return pageContent;
+  }
+
+  return (
+    <BuilderSectionTarget
+      builderMode={builderMode}
+      section={section}
+      sectionType="policy"
+      label={content?.section_title || "Learner Code of Conduct"}
+      templateCategory="school"
+      templateKey="school-modern-v1"
+    >
+      {pageContent}
+    </BuilderSectionTarget>
   );
 }

@@ -1,10 +1,25 @@
 import React, { useMemo, useState } from "react";
+import BuilderSectionTarget from "../../../../builder/BuilderSectionTarget";
 import { EVENTS } from "./SchoolCalendar";
 import "../styles/school-calendar.css";
-import Breadcrumbs from "../components/common/Breadcrumbs";
+
+function getStartDate(event = {}) {
+  return event.startAt || event.start || "";
+}
+
+function getEndDate(event = {}) {
+  return event.endAt || event.end || "";
+}
 
 function formatDateTime(iso) {
+  if (!iso) return "";
+
   const d = new Date(iso);
+
+  if (Number.isNaN(d.getTime())) {
+    return "";
+  }
+
   return d.toLocaleString(undefined, {
     weekday: "short",
     day: "2-digit",
@@ -15,31 +30,45 @@ function formatDateTime(iso) {
   });
 }
 
-export default function AllEvents() {
+export default function AllEvents({
+  section = null,
+  content = {},
+  builderMode = false,
+}) {
   const [q, setQ] = useState("");
+
+  const events =
+    Array.isArray(content?.items) && content.items.length > 0
+      ? content.items
+      : EVENTS;
 
   const list = useMemo(() => {
     const query = q.trim().toLowerCase();
-    const sorted = [...EVENTS].sort((a, b) => new Date(a.start) - new Date(b.start));
+    const sorted = [...events].sort(
+      (a, b) => new Date(getStartDate(a)) - new Date(getStartDate(b)),
+    );
+
     if (!query) return sorted;
 
     return sorted.filter((ev) => {
       return (
-        ev.title.toLowerCase().includes(query) ||
-        ev.location.toLowerCase().includes(query) ||
-        ev.category.toLowerCase().includes(query)
+        String(ev.title || "").toLowerCase().includes(query) ||
+        String(ev.location || "").toLowerCase().includes(query) ||
+        String(ev.category || "").toLowerCase().includes(query)
       );
     });
-  }, [q]);
+  }, [events, q]);
 
-  return (
+  const pageContent = (
     <main className="scal-page container">
-      <Breadcrumbs />
       <header className="scal-hero">
         <div>
-          <h1 className="scal-title">All Calendar Events</h1>
+          <h1 className="scal-title">
+            {content?.section_title || "All Calendar Events"}
+          </h1>
           <p className="scal-subtitle">
-            Browse and search all school events, academic dates, and public holidays.
+            {content?.subtitle ||
+              "Browse and search all school events, academic dates, and public holidays."}
           </p>
         </div>
 
@@ -47,7 +76,10 @@ export default function AllEvents() {
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Search events (e.g. exams, awards, term 1)"
+            placeholder={
+              content?.search_placeholder ||
+              "Search events (e.g. exams, awards, term 1)"
+            }
             aria-label="Search events"
           />
         </div>
@@ -66,14 +98,14 @@ export default function AllEvents() {
           </thead>
 
           <tbody>
-            {list.map((ev) => (
-              <tr key={ev.id}>
-                <td className="td-title">{ev.title}</td>
-                <td className="td-dt">{formatDateTime(ev.start)}</td>
-                <td className="td-dt">{formatDateTime(ev.end)}</td>
-                <td className="td-loc">{ev.location}</td>
+            {list.map((ev, index) => (
+              <tr key={ev.id || `${ev.title || "event"}-${index}`}>
+                <td className="td-title">{ev.title || ""}</td>
+                <td className="td-dt">{formatDateTime(getStartDate(ev))}</td>
+                <td className="td-dt">{formatDateTime(getEndDate(ev))}</td>
+                <td className="td-loc">{ev.location || ""}</td>
                 <td>
-                  <span className="scal-pill">{ev.category}</span>
+                  <span className="scal-pill">{ev.category || ""}</span>
                 </td>
               </tr>
             ))}
@@ -81,7 +113,7 @@ export default function AllEvents() {
             {list.length === 0 && (
               <tr>
                 <td colSpan={5} className="scal-empty">
-                  No events matched your search.
+                  {content?.empty_message || "No events matched your search."}
                 </td>
               </tr>
             )}
@@ -90,8 +122,30 @@ export default function AllEvents() {
       </div>
 
       <div className="scal-note">
-        Tip: Upload a PDF to <code>public/docs/school-calendar.pdf</code> and the download button will work.
+        {content?.footer_note || (
+          <>
+            Tip: Upload a PDF to <code>public/docs/school-calendar.pdf</code>{" "}
+            and the download button will work.
+          </>
+        )}
       </div>
     </main>
+  );
+
+  if (!section) {
+    return pageContent;
+  }
+
+  return (
+    <BuilderSectionTarget
+      builderMode={builderMode}
+      section={section}
+      sectionType="calendar"
+      label={content?.section_title || "All Calendar Events"}
+      templateCategory="school"
+      templateKey="school-modern-v1"
+    >
+      {pageContent}
+    </BuilderSectionTarget>
   );
 }

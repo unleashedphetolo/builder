@@ -1,6 +1,9 @@
-import React, { useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useMemo, useRef } from "react";
 import "../../styles/notice.css";
+import {
+  convertAnnouncementToNotice,
+  getActiveAnnouncements,
+} from "../../utils/announcements";
 
 export const NOTICES = [
   {
@@ -41,9 +44,20 @@ export const NOTICES = [
   },
 ];
 
+function buildSiteHref(siteId, path = "") {
+  const clean = path ? `/${String(path).replace(/^\/+/, "")}` : "";
+  return `/#/site/${siteId || ""}${clean}`;
+}
+
 function formatDateTime(iso) {
   if (!iso) return "";
+
   const d = new Date(iso);
+
+  if (Number.isNaN(d.getTime())) {
+    return "";
+  }
+
   return d.toLocaleString(undefined, {
     weekday: "short",
     day: "2-digit",
@@ -56,8 +70,13 @@ function formatDateTime(iso) {
 
 function formatRange(startIso, endIso) {
   if (!startIso || !endIso) return "";
+
   const start = new Date(startIso);
   const end = new Date(endIso);
+
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return "";
+  }
 
   const sameDay =
     start.getFullYear() === end.getFullYear() &&
@@ -88,49 +107,108 @@ function formatRange(startIso, endIso) {
     minute: "2-digit",
   });
 
-  // Same day: "Tue, 25 Nov 2025 • 10:00 – 12:30"
   if (sameDay) return `${startDate} • ${startTime} – ${endTime}`;
 
-  // Multi-day: "Mon, 10 Nov 2025 08:00 → Fri, 28 Nov 2025 13:30"
   return `${startDate} ${startTime} → ${endDate} ${endTime}`;
 }
 
-export default function NoticeBoard() {
+export default function NoticeBoard({
+  settings = {},
+  notices = [],
+  content = {},
+}) {
   const scrollRef = useRef(null);
+  const siteId = settings?.site_id || "";
+
+  const items = useMemo(() => {
+    const activeAnnouncementItems = getActiveAnnouncements(
+      settings?.announcements || [],
+      "notice_board",
+      "/",
+    ).map(convertAnnouncementToNotice);
+
+    const sectionItems =
+      Array.isArray(content?.items) && content.items.length > 0
+        ? content.items
+        : Array.isArray(notices) && notices.length > 0
+          ? notices
+          : NOTICES;
+
+    return [...activeAnnouncementItems, ...sectionItems];
+  }, [settings?.announcements, content?.items, notices]);
 
   useEffect(() => {
     const box = scrollRef.current;
-    if (!box) return;
+    if (!box) return undefined;
 
     let scroll = 0;
-    const scrollInterval = setInterval(() => {
+    let paused = false;
+
+    const interval = window.setInterval(() => {
+      if (paused) return;
+
       scroll += 0.5;
       box.scrollTop = scroll;
-      if (scroll >= box.scrollHeight / 2) scroll = 0;
+
+      if (scroll >= box.scrollHeight / 2) {
+        scroll = 0;
+      }
     }, 20);
 
-    return () => clearInterval(scrollInterval);
-  }, []);
+    const pause = () => {
+      paused = true;
+    };
 
-  const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+    const resume = () => {
+      paused = false;
+    };
+
+    box.addEventListener("mouseenter", pause);
+    box.addEventListener("mouseleave", resume);
+
+    return () => {
+      window.clearInterval(interval);
+      box.removeEventListener("mouseenter", pause);
+      box.removeEventListener("mouseleave", resume);
+    };
+  }, [items]);
+
+  const viewAllPath = content?.button_href || "/notices";
+  const viewAllLabel = content?.button_label || "View All";
+  const title = content?.section_title || "Notice Board";
 
   return (
     <section className="notice-wrapper container">
       <div className="notice-board">
         <div className="notice-header">
-          <h2>Notice Board</h2>
+          <h2 style={{ color: "#fff" }}>{title}</h2>
 
-          <Link to="/site/notices" className="view-all" onClick={scrollTop}>
-            View All
-          </Link>
+          <a
+            href={buildSiteHref(siteId, viewAllPath)}
+            className="view-all"
+            onClick={(event) => {
+              event.preventDefault();
+              window.dispatchEvent(
+                new CustomEvent("builder:navigate", { detail: viewAllPath }),
+              );
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          >
+            {viewAllLabel}
+          </a>
         </div>
 
         <div className="notice-scroll" ref={scrollRef}>
           <div className="notice-list">
-            {[...NOTICES, ...NOTICES].map((item, index) => (
-              <div key={`${item.id}-${index}`} className="notice-row">
+            {[...items, ...items].map((item, index) => (
+              <div
+                key={`${item.id || item.title}-${index}`}
+                className="notice-row"
+              >
                 <span className="notice-date">
-                  Published: {formatDateTime(item.publishedAt)}
+                  {item.publishedAt
+                    ? `Published: ${formatDateTime(item.publishedAt)}`
+                    : ""}
                 </span>
 
                 <span className="notice-title">{item.title}</span>
