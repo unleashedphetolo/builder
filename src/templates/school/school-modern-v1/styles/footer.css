@@ -50,14 +50,14 @@
   }
 .brand-text .school-name {
   font-weight: 700;
-  color: #2a1b6b;
+  color: #2a1b6b !important;
   font-size: 1.05rem;
   letter-spacing: 0.2px;
 }
 
 .brand-text .slogan {
   font-size: 0.85rem;
-  color: #6b6b7a;
+  color: #9494a3 !important;
   margin-top: 4px;
 }
 
@@ -70,7 +70,7 @@
 
 .small {
   font-size: 0.85rem;
-  color: #6b6b7a;
+  color: #ebebf3 !important;
 }
 
 .contact small {
@@ -180,7 +180,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: #000000;
+  color: #ffffff;
   margin-top: 10px;
 }
 .ulterspace-link {
@@ -226,7 +226,7 @@
   font-size: 13px;
   font-weight: 700;
   line-height: 1.35;
-  color: #2a1b6b;
+  color: #ffffff;
   opacity: 0.85;
   font-style: italic;
 }

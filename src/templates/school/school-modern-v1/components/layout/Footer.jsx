@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "../../styles/footer.css";
-import logoz from "../../assets/institutional.png";
+import logoz from "../../assets/Modern.png";
 import logo from "../../../../../assets/logo.gif";
 
 import {

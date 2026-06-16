@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { IoChevronDown } from "react-icons/io5";
 import BuilderMediaEditor from "../../../../../builder/BuilderMediaEditor";
 import "../../styles/navbar.css";
-import logos from "../../assets/institutional.png";
+import logos from "../../assets/Modern.png";
 
 const DEFAULT_FEATURES = {
   about: true,

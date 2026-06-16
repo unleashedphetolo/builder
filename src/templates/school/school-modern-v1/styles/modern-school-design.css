@@ -20,7 +20,7 @@
 }
 
 .school-modern-v1-root {
-  --smv1-primary: var(--primary, #1d4ed8);
+  --smv1-primary: var(--primary, #1d2d58);
   --smv1-primary-dark: #1e3a8a;
   --smv1-secondary: var(--secondary, #0f172a);
   --smv1-accent: var(--accent, #f59e0b);

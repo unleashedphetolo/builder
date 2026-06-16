@@ -1,4 +1,4 @@
-import fallbackLogo from "./assets/institutional.png";
+import fallbackLogo from "./assets/Modern.png";
 import fallbackHeroImage from "./assets/gallery3.png";
 import hero2 from "./assets/gallery4.jpg";
 import hero3 from "./assets/acade14.jpg";
