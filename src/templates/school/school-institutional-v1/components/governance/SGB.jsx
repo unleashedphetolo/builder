@@ -116,7 +116,7 @@ export default function SGB({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="team"
+      sectionType="school_sgb"
       label={content?.section_title || "School Governing Body (SGB)"}
       templateCategory="school"
       templateKey="school-institutional-v1"

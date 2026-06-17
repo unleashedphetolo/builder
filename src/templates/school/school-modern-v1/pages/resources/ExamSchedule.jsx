@@ -378,7 +378,7 @@ export default function ExamSchedule({
     </main>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -386,7 +386,7 @@ export default function ExamSchedule({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="calendar"
+      sectionType="school_exam_schedule"
       label={content?.section_title || "Exam Schedule"}
       templateCategory="school"
       templateKey="school-modern-v1"

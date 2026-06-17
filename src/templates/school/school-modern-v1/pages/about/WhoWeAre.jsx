@@ -179,7 +179,7 @@ export default function WhoWeAre({
     </main>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -191,8 +191,8 @@ export default function WhoWeAre({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="about_section"
-      label="Who We Are"
+      sectionType="school_who_we_are"
+      label={content?.section_title || content?.title || "Who We Are"}
       templateCategory="school"
       templateKey="school-modern-v1"
     >

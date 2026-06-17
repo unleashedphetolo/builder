@@ -22,7 +22,7 @@ export default function News({
     </div>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -30,7 +30,7 @@ export default function News({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="latest_news"
+      sectionType="school_news"
       label={content?.section_title || "Latest News"}
       templateCategory="school"
       templateKey="school-institutional-v1"

@@ -51,7 +51,7 @@ export default function LifeAcademics({
             </h1>
             <p className="la-subtitle">
               {content?.subtitle ||
-                "M.O.M Sebone Secondary School is committed to maintaining high academic standards, fostering discipline, and preparing learners for tertiary education and responsible citizenship."}
+                "Our School is committed to maintaining high academic standards, fostering discipline, and preparing learners for tertiary education and responsible citizenship."}
             </p>
           </div>
 
@@ -97,7 +97,7 @@ export default function LifeAcademics({
     </main>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -105,7 +105,7 @@ export default function LifeAcademics({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="services"
+      sectionType="school_academics"
       label={content?.section_title || "Academic Programme"}
       templateCategory="school"
       templateKey="school-modern-v1"

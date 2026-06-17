@@ -269,7 +269,7 @@ export default function Requirements({
     </main>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -277,7 +277,7 @@ export default function Requirements({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="admissions"
+      sectionType="school_entry_requirements"
       label={content?.section_title || "Entry Requirements"}
       templateCategory="school"
       templateKey="school-institutional-v1"

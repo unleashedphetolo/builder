@@ -276,7 +276,7 @@ export default function WallOfFame({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="wall_of_fame"
+      sectionType={section?.content?._editor_section_type || section?.type || "wall_of_fame"}
       label={content?.section_title || "Academic Wall of Fame"}
       templateCategory="school"
       templateKey="school-institutional-v1"

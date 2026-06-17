@@ -829,7 +829,7 @@ export default function Apply({
     </main>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -837,7 +837,7 @@ export default function Apply({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="admissions"
+      sectionType="school_apply_online"
       label={content?.section_title || "Online Application"}
       templateCategory="school"
       templateKey="school-modern-v1"

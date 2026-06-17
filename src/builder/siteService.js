@@ -368,21 +368,25 @@ function mapDefaultsToSiteSettings(siteId, defaults = {}, organization = {}) {
   };
 }
 
-function buildDefaultSectionsForPage({ siteId, pageId, sections = [] }) {
-  return sections.map((section, index) => ({
-    site_id: siteId,
-    page_id: pageId,
-    type: section.type,
-    content: section.content || {},
-    position: index,
-    visible: section.visible !== false,
-    is_locked: section.is_locked === true,
-    style: section.style || {},
-    animation: section.animation || {},
-    updated_by: null,
-    revision: 1,
-    library_id: null,
-  }));
+function buildDefaultSectionsForPage({ siteId, pageId, page = {}, sections = [] }) {
+  return sections.map((section, index) => {
+    const normalizedSection = normalizeTemplateSection(section, page, index);
+
+    return {
+      site_id: siteId,
+      page_id: pageId,
+      type: normalizedSection.type,
+      content: normalizedSection.content || {},
+      position: index,
+      visible: normalizedSection.visible !== false,
+      is_locked: normalizedSection.is_locked === true,
+      style: normalizedSection.style || {},
+      animation: normalizedSection.animation || {},
+      updated_by: null,
+      revision: 1,
+      library_id: null,
+    };
+  });
 }
 
 function getTemplatePageKey(page = {}) {
@@ -424,9 +428,211 @@ function getTemplateSectionKey(section = {}, fallbackIndex = 0) {
   return (
     section.section_key ||
     section.key ||
+    section.content?.__section_key ||
+    section.content?.section_key ||
+    section.content?.editor_section_type ||
     section.id ||
     `${section.type || "section"}-${fallbackIndex}`
   );
+}
+
+
+function normalizeTemplateEditorKey(value = "") {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/^\/+|\/+$/g, "")
+    .replace(/[\s/-]+/g, "_");
+}
+
+function inferSchoolSectionTypeFromSlug(slug = "") {
+  const cleanSlug = normalizePageSlug(slug || "/");
+
+  const map = {
+
+    "/about": "school_about_landing",
+    "/facilities": "school_facilities",
+    "/attendance": "school_attendance_policy",
+    "/activities": "school_activities",
+    "/activities/academics": "school_academics",
+    "/activities/sports": "school_sports",
+    "/activities/culture": "school_culture",
+    "/activities/facilities": "school_activity_facilities",
+    "/resources": "school_resources",
+    "/resources/subject-choices": "school_subject_choices",
+    "/resources/term-plan": "school_term_plan",
+    "/resources/exam-schedule": "school_exam_schedule",
+    "/resources/code-of-conduct": "school_code_of_conduct",
+    "/resources/stationary-list": "school_stationary_list",
+    "/calendar/events": "school_all_events",
+    "/robotics": "school_robotics",
+    "/admissions": "school_admissions_landing",
+    "/admissions/apply": "school_apply_online",
+    "/admissions/howtoapply": "school_how_to_apply",
+    "/admissions/how-to-apply": "school_how_to_apply",
+    "/admissions/requirements": "school_entry_requirements",
+    "/about/who-we-are": "school_who_we_are",
+    "/about/vision-mission": "school_vision_mission",
+    "/about/history": "school_history",
+    "/staff": "school_staff",
+    "/sgb": "school_sgb",
+    "/governance/sgb": "school_sgb",
+    "/digital-library": "school_digital_library",
+    "/resources/digital-library": "school_digital_library",
+    "/schoolcalendar": "school_calendar",
+    "/school-calendar": "school_calendar",
+    "/resources/calendar": "school_calendar",
+    "/notices": "school_notices",
+    "/bulletin": "school_daily_bulletin",
+    "/student-daily-bulletin": "school_daily_bulletin",
+    "/gallery": "school_gallery",
+    "/contact": "school_contact",
+    "/news": "school_news",
+    "/events": "school_all_events",
+    "/all-events": "school_all_events",
+    "/wall-of-fame": "school_wall_of_fame",
+    "/sponsors": "school_sponsors",
+  };
+
+  return map[cleanSlug] || "";
+}
+
+function hasTemplateContentKey(content = {}, keys = []) {
+  if (!content || typeof content !== "object" || Array.isArray(content)) {
+    return false;
+  }
+
+  return keys.some((key) => Object.prototype.hasOwnProperty.call(content, key));
+}
+
+function inferSchoolSectionTypeFromContent(content = {}) {
+  if (
+    hasTemplateContentKey(content, [
+      "manual_form_label",
+      "manual_form_url",
+      "form_title",
+      "form_subtitle",
+      "required_fields_label",
+      "upload_title",
+    ])
+  ) {
+    return "school_apply_online";
+  }
+
+  if (
+    hasTemplateContentKey(content, [
+      "online_steps",
+      "manual_steps",
+      "hero_download_label",
+      "apply_button_label",
+      "help_button_label",
+    ])
+  ) {
+    return "school_how_to_apply";
+  }
+
+  if (
+    hasTemplateContentKey(content, [
+      "required_documents",
+      "documents_title",
+      "grades_title",
+      "process_title",
+      "closing_date",
+    ])
+  ) {
+    return "school_entry_requirements";
+  }
+
+  if (
+    hasTemplateContentKey(content, [
+      "commitment_title",
+      "commitment_body",
+      "badge_label",
+      "pills",
+      "left_image_url",
+      "right_image_url",
+    ])
+  ) {
+    return "school_who_we_are";
+  }
+
+  if (
+    hasTemplateContentKey(content, [
+      "vision_title",
+      "vision_body",
+      "mission_title",
+      "mission_body",
+      "values_title",
+      "values",
+    ])
+  ) {
+    return "school_vision_mission";
+  }
+
+  if (hasTemplateContentKey(content, ["staff_members", "staff", "departments"])) {
+    return "school_staff";
+  }
+
+  if (hasTemplateContentKey(content, ["sgb_members", "committee_members", "governance_members"])) {
+    return "school_sgb";
+  }
+
+  if (hasTemplateContentKey(content, ["resources", "documents", "library_items", "ebooks"])) {
+    return "school_digital_library";
+  }
+
+  if (hasTemplateContentKey(content, ["calendar_items", "events", "term_dates", "pdf_url"])) {
+    return "school_calendar";
+  }
+
+  return "";
+}
+
+function resolveTemplateSectionType(section = {}, page = {}) {
+  const rawType = section.type || section.section_type || "";
+  const normalizedRawType = normalizeTemplateEditorKey(rawType);
+  const content = section.content || {};
+
+  if (normalizedRawType.startsWith("school_")) return normalizedRawType;
+
+  const contentType = inferSchoolSectionTypeFromContent(content);
+  if (contentType) return contentType;
+
+  const slugType = inferSchoolSectionTypeFromSlug(page?.slug || "");
+  if (slugType) return slugType;
+
+  return rawType || "section";
+}
+
+function attachTemplateSectionIdentity(content = {}, section = {}, page = {}, index = 0) {
+  const resolvedType = resolveTemplateSectionType(section, page);
+  const sectionKey =
+    section.section_key ||
+    section.key ||
+    section.id ||
+    `${resolvedType || section.type || "section"}-${index}`;
+
+  return {
+    ...(content || {}),
+    __section_key: sectionKey,
+    _section_key: sectionKey,
+    section_key: sectionKey,
+    editor_section_type: resolvedType,
+    _editor_section_type: resolvedType,
+    section_type: resolvedType,
+    page_slug: normalizePageSlug(page?.slug || content?.page_slug || "/"),
+    _page_slug: normalizePageSlug(page?.slug || content?.page_slug || "/"),
+  };
+}
+
+function normalizeTemplateSection(section = {}, page = {}, index = 0) {
+  const resolvedType = resolveTemplateSectionType(section, page);
+
+  return {
+    ...section,
+    type: resolvedType,
+    content: attachTemplateSectionIdentity(section.content || {}, section, page, index),
+  };
 }
 
 function normalizeTemplateLink(link = {}, fallbackLocation = "header", index = 0) {
@@ -1166,7 +1372,9 @@ export async function syncSitePagesForTemplate({
       if (!activePage?.id) continue;
 
       const templateSections = Array.isArray(templatePage.sections)
-        ? templatePage.sections
+        ? templatePage.sections.map((section, index) =>
+            normalizeTemplateSection(section, templatePage, index),
+          )
         : [];
 
       const existingForPage = sectionsByPageId.get(activePage.id) || [];
@@ -1184,9 +1392,21 @@ export async function syncSitePagesForTemplate({
 
           const existingKey = getTemplateSectionKey(section, index);
 
-          return (
-            existingKey === templateSectionKey ||
-            section.type === templateSection.type
+          if (existingKey === templateSectionKey) return true;
+
+          const existingEditorType = normalizeTemplateEditorKey(
+            section.content?.editor_section_type ||
+              section.content?.__section_key ||
+              section.content?.section_key ||
+              section.type,
+          );
+
+          const templateEditorType = normalizeTemplateEditorKey(templateSection.type);
+
+          return Boolean(
+            templateEditorType &&
+              existingEditorType &&
+              existingEditorType === templateEditorType,
           );
         });
 
@@ -1202,9 +1422,12 @@ export async function syncSitePagesForTemplate({
             revision: (matchedSection.revision || 1) + 1,
           };
 
-          if (!hasUsefulContent(matchedSection.content)) {
-            sectionPatch.content = templateSection.content || {};
-          }
+          sectionPatch.content = attachTemplateSectionIdentity(
+            getReusableSectionContent(matchedSection, templateSection),
+            templateSection,
+            templatePage,
+            index,
+          );
 
           const { error: updateSectionErr } = await supabase
             .from("site_sections")
@@ -1219,7 +1442,12 @@ export async function syncSitePagesForTemplate({
             site_id: siteId,
             page_id: activePage.id,
             type: templateSection.type,
-            content: getReusableSectionContent(null, templateSection),
+            content: attachTemplateSectionIdentity(
+              getReusableSectionContent(null, templateSection),
+              templateSection,
+              templatePage,
+              index,
+            ),
             position: index,
             visible: templateSection.visible !== false,
             is_locked: templateSection.is_locked === true,
@@ -1407,6 +1635,7 @@ export async function seedSiteFromTemplate({ siteId, layoutKey, templateKey }) {
       return buildDefaultSectionsForPage({
         siteId,
         pageId: dbPage.id,
+        page,
         sections: Array.isArray(page.sections) ? page.sections : [],
       });
     });
@@ -1568,6 +1797,126 @@ export async function loadVisibleSiteNav(siteId) {
 }
 
 // ---------- Section editing ----------
+
+
+function getRequestValue(request = {}, ...keys) {
+  for (const key of keys) {
+    if (request?.[key] !== undefined && request?.[key] !== null) {
+      return request[key];
+    }
+  }
+
+  return "";
+}
+
+export async function createSiteSectionFromEditorRequest({
+  siteId,
+  pageId,
+  request = {},
+  position = 0,
+} = {}) {
+  if (!siteId || !pageId || !request || typeof request !== "object") {
+    return null;
+  }
+
+  const rawContent =
+    request.content && typeof request.content === "object" && !Array.isArray(request.content)
+      ? request.content
+      : {};
+
+  const requestedType = normalizeTemplateEditorKey(
+    getRequestValue(
+      request,
+      "editorSectionType",
+      "editor_section_type",
+      "sectionType",
+      "section_type",
+      "type",
+    ),
+  );
+
+  const requestedKey = normalizeTemplateEditorKey(
+    getRequestValue(
+      request,
+      "sectionKey",
+      "section_key",
+      "key",
+    ) ||
+      rawContent?._section_key ||
+      rawContent?.__section_key ||
+      rawContent?.section_key ||
+      requestedType,
+  );
+
+  const sectionType = requestedType || requestedKey || "section";
+  const sectionKey = requestedKey || sectionType;
+  const pageSlug = normalizePageSlug(
+    getRequestValue(request, "pageSlug", "page_slug") ||
+      rawContent?.page_slug ||
+      rawContent?._page_slug ||
+      "/",
+  );
+
+  const content = {
+    ...rawContent,
+    __section_key: rawContent.__section_key || sectionKey,
+    _section_key: rawContent._section_key || sectionKey,
+    section_key: rawContent.section_key || sectionKey,
+    editor_section_type: rawContent.editor_section_type || sectionType,
+    _editor_section_type: rawContent._editor_section_type || sectionType,
+    section_type: rawContent.section_type || sectionType,
+    page_slug: rawContent.page_slug || pageSlug,
+    _page_slug: rawContent._page_slug || pageSlug,
+    section_title:
+      rawContent.section_title ||
+      rawContent.title ||
+      request.label ||
+      defaultSectionContent(sectionType)?.title ||
+      "Section",
+  };
+
+  const safePosition = Number.isFinite(Number(request.position))
+    ? Number(request.position)
+    : Number.isFinite(Number(position))
+      ? Number(position)
+      : 0;
+
+  const payload = {
+    site_id: siteId,
+    page_id: pageId,
+    type: sectionType,
+    content,
+    position: Math.max(0, Math.round(safePosition)),
+    visible: request.visible !== false,
+    is_locked: false,
+    style:
+      request.style && typeof request.style === "object" && !Array.isArray(request.style)
+        ? request.style
+        : {},
+    animation:
+      request.animation &&
+      typeof request.animation === "object" &&
+      !Array.isArray(request.animation)
+        ? request.animation
+        : {},
+    updated_by: null,
+    revision: 1,
+    library_id: null,
+  };
+
+  const { data, error } = await supabase
+    .from("site_sections")
+    .insert(payload)
+    .select("*")
+    .single();
+
+  if (error) {
+    console.error("createSiteSectionFromEditorRequest error", error);
+    return null;
+  }
+
+  return data;
+}
 
 export async function updateSiteSection({
   siteId,

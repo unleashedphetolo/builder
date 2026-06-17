@@ -1,6 +1,7 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { supabase } from "../../supabase/client";
 import "../../styles/builder-section-editor.css";
+import { getEditorComponent, resolveRegistrySectionType } from "./editorRegistry";
 
 const SECTION_TABS = [
   { id: "content", label: "Content", icon: "▤" },
@@ -98,6 +99,92 @@ function classifySection(type = "") {
 
   if (
     isSectionType(normalized, [
+      "school_apply_online",
+      "school_admissions_apply",
+      "school_apply",
+      "apply_online",
+      "admissions_apply",
+    ])
+  ) {
+    return "admissions";
+  }
+
+  if (
+    isSectionType(normalized, [
+      "school_how_to_apply",
+      "how_to_apply",
+      "howtoapply",
+      "admissions_how_to_apply",
+    ])
+  ) {
+    return "admissions";
+  }
+
+  if (
+    isSectionType(normalized, [
+      "school_entry_requirements",
+      "entry_requirements",
+      "admission_requirements",
+      "admissions_requirements",
+      "requirements",
+    ])
+  ) {
+    return "admissions";
+  }
+
+  if (
+    isSectionType(normalized, [
+      "school_admissions_landing",
+      "admissions_landing",
+      "school_admissions",
+    ])
+  ) {
+    return "admissions";
+  }
+
+  if (isSectionType(normalized, ["school_who_we_are", "school_about_who_we_are"])) {
+    return "who_we_are";
+  }
+
+  if (
+    isSectionType(normalized, [
+      "school_vision_mission",
+      "vision_mission_values",
+      "school_vision",
+      "school_mission",
+    ])
+  ) {
+    return "about";
+  }
+
+  if (isSectionType(normalized, ["school_staff", "school_team"])) {
+    return "team";
+  }
+
+  if (isSectionType(normalized, ["school_sgb", "school_governing_body", "governance_sgb"])) {
+    return "team";
+  }
+
+  if (
+    isSectionType(normalized, [
+      "school_calendar",
+      "school_events",
+      "school_all_events",
+      "school_term_plan",
+      "school_exam_schedule",
+    ])
+  ) {
+    return "calendar";
+  }
+
+  if (isSectionType(normalized, ["school_digital_library", "digital_library", "library_resources"])) {
+    return "services";
+  }
+
+  if (
+    isSectionType(normalized, [
+      "school_notices",
+      "school_daily_bulletin",
       "noticeboard",
       "notice_board",
       "notices",
@@ -115,10 +202,13 @@ function classifySection(type = "") {
 
   if (
     isSectionType(normalized, [
+      "school_news",
+      "school_events",
       "latest_news",
       "news",
       "news_listing",
       "school_news",
+      "school_all_events",
       "articles",
     ])
   ) {
@@ -130,7 +220,9 @@ function classifySection(type = "") {
       "policy",
       "policies",
       "code_of_conduct",
+      "school_code_of_conduct",
       "attendance_policy",
+      "school_attendance_policy",
       "school_policy",
     ])
   ) {
@@ -227,6 +319,7 @@ function classifySection(type = "") {
 
   if (
     isSectionType(normalized, [
+      "school_wall_of_fame",
       "walloffame",
       "wall_of_fame",
       "fame",
@@ -242,6 +335,7 @@ function classifySection(type = "") {
 
   if (
     isSectionType(normalized, [
+      "school_sponsors",
       "sponsors",
       "partners",
       "supporters",
@@ -257,6 +351,7 @@ function classifySection(type = "") {
 
   if (
     isSectionType(normalized, [
+      "school_gallery",
       "gallery",
       "gallerypreview",
       "gallery_preview",
@@ -271,6 +366,15 @@ function classifySection(type = "") {
   if (
     isSectionType(normalized, [
       "services",
+      "school_academics",
+      "school_sports",
+      "school_culture",
+      "school_activities",
+      "school_resources",
+      "school_subject_choices",
+      "school_stationary_list",
+      "school_robotics",
+      "school_facilities",
       "service_list",
       "solutions",
       "capabilities",
@@ -367,6 +471,7 @@ function classifySection(type = "") {
 
   if (
     isSectionType(normalized, [
+      "school_contact",
       "contact",
       "contact_us",
       "contact_details",
@@ -1505,6 +1610,208 @@ function LayoutCards({ selected, onChange }) {
   );
 }
 
+
+const SYSTEM_DYNAMIC_CONTENT_KEYS = new Set([
+  "__section_key",
+  "_section_key",
+  "section_key",
+  "editor_section_type",
+  "_editor_section_type",
+  "section_type",
+  "page_slug",
+  "_page_slug",
+  "template_key",
+  "template_category",
+]);
+
+const HEADER_DYNAMIC_CONTENT_KEYS = new Set([
+  "section_title",
+  "subtitle",
+]);
+
+function formatDynamicLabel(key = "") {
+  return String(key || "")
+    .replace(/^_+/, "")
+    .replace(/[_-]+/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function isLongDynamicKey(key = "") {
+  const normalized = normalizeType(key);
+
+  return [
+    "body",
+    "description",
+    "text",
+    "summary",
+    "subtitle",
+    "introduction",
+    "note",
+    "footer_note",
+    "closing_text",
+    "supporting_text",
+    "profile_note",
+    "commitment_body",
+    "projects_body",
+    "competitions_body",
+  ].some((part) => normalized.includes(part));
+}
+
+function inferDynamicItemFields(items = []) {
+  const fieldKeys = [];
+
+  (Array.isArray(items) ? items : []).slice(0, 6).forEach((item) => {
+    if (!isObject(item)) return;
+
+    Object.keys(item).forEach((key) => {
+      if (key === "id") return;
+      if (!fieldKeys.includes(key)) fieldKeys.push(key);
+    });
+  });
+
+  if (!fieldKeys.length) {
+    fieldKeys.push("title", "body");
+  }
+
+  return fieldKeys.map((key) => {
+    const sampleValue =
+      (Array.isArray(items) ? items : [])
+        .map((item) => (isObject(item) ? item[key] : undefined))
+        .find((value) => value !== undefined && value !== null) ?? "";
+
+    if (Array.isArray(sampleValue)) {
+      return {
+        key,
+        label: formatDynamicLabel(key),
+        type: "list",
+        rows: 4,
+      };
+    }
+
+    if (isObject(sampleValue)) {
+      return {
+        key,
+        label: formatDynamicLabel(key),
+        type: "json",
+        rows: 5,
+      };
+    }
+
+    return {
+      key,
+      label: formatDynamicLabel(key),
+      type: isLongDynamicKey(key) ? "textarea" : undefined,
+      rows: isLongDynamicKey(key) ? 3 : undefined,
+    };
+  });
+}
+
+function createDynamicItemFromFields(fields = [], prefix = "item") {
+  return {
+    id: createKey(prefix),
+    ...fields.reduce((result, field) => {
+      result[field.key] = field.type === "list" ? [] : field.type === "json" ? {} : "";
+      return result;
+    }, {}),
+  };
+}
+
+
+const FORCE_TEMPLATE_ORDER_EDITOR_TYPES = new Set([
+  "school_academics",
+  "school_activity_facilities",
+  "school_facilities",
+  "school_stationary_list",
+  "school_exam_schedule",
+  "school_entry_requirements",
+  "school_code_of_conduct",
+  "school_contact",
+  "school_subject_choices",
+]);
+
+function shouldForceTemplateOrderEditor(registrySectionType = "", draftContent = {}) {
+  const normalizedType = normalizeType(registrySectionType);
+
+  return (
+    FORCE_TEMPLATE_ORDER_EDITOR_TYPES.has(normalizedType) ||
+    (Array.isArray(draftContent?.__editor_field_order) &&
+      draftContent.__editor_field_order.length > 0 &&
+      Boolean(draftContent?.__editor_fallback_content))
+  );
+}
+
+function shouldUseDynamicTemplateContentEditor({
+  registrySectionType = "",
+  registeredEditor = null,
+  draftContent = {},
+} = {}) {
+  if (
+    registeredEditor &&
+    !shouldForceTemplateOrderEditor(registrySectionType, draftContent)
+  ) return false;
+
+  const normalizedType = normalizeType(registrySectionType);
+
+  if (!normalizedType.startsWith("school_")) return false;
+
+  return Object.keys(draftContent || {}).some(
+    (key) =>
+      !SYSTEM_DYNAMIC_CONTENT_KEYS.has(key) &&
+      !HEADER_DYNAMIC_CONTENT_KEYS.has(key),
+  );
+}
+
+
+function mergeDraftFallbackContent(fallbackContent = {}, currentContent = {}) {
+  const fallback = isObject(fallbackContent) ? clone(fallbackContent) : {};
+  const current = isObject(currentContent) ? clone(currentContent) : {};
+
+  const merged = {
+    ...fallback,
+    ...current,
+  };
+
+  Object.entries(fallback).forEach(([key, fallbackValue]) => {
+    const currentValue = current[key];
+
+    const isMissing =
+      currentValue === undefined ||
+      currentValue === null ||
+      (Array.isArray(currentValue) &&
+        currentValue.length === 0 &&
+        Array.isArray(fallbackValue)) ||
+      (isObject(currentValue) &&
+        Object.keys(currentValue).length === 0 &&
+        isObject(fallbackValue)) ||
+      (String(currentValue ?? "").trim() === "" &&
+        String(fallbackValue ?? "").trim() !== "");
+
+    if (isMissing) {
+      merged[key] = clone(fallbackValue);
+      return;
+    }
+
+    if (isObject(fallbackValue) && isObject(currentValue)) {
+      merged[key] = mergeDraftFallbackContent(fallbackValue, currentValue);
+    }
+  });
+
+  return merged;
+}
+
+function hydrateContentWithEditorFallback(content = {}) {
+  const fallback =
+    content?.__editor_fallback_content &&
+    isObject(content.__editor_fallback_content)
+      ? content.__editor_fallback_content
+      : null;
+
+  if (!fallback) return content;
+
+  return mergeDraftFallbackContent(fallback, content);
+}
+
+
 function MediaLibrary({
   assets,
   loading,
@@ -1584,6 +1891,13 @@ export default function BuilderSectionEditor({
   const activeMediaTargetRef = useRef(null);
 
   const sectionKind = resolveEditorSectionKind(section, page);
+  const registrySectionType = resolveRegistrySectionType(section, page);
+  const RegisteredContentEditor = getEditorComponent({
+    templateCategory: section?.templateCategory || section?.template_category || "school",
+    sectionType: registrySectionType,
+    pageSlug: page?.slug || "",
+    content: section?.content || {},
+  });
   const sectionName =
     sectionKind === "who_we_are" ? "Who We Are" : sectionDisplayName(section);
 
@@ -1628,7 +1942,7 @@ export default function BuilderSectionEditor({
       resolveEditorSectionKind(sourceSection, page) === "who_we_are"
         ? { ...sourceSection, type: "who_we_are" }
         : sourceSection;
-    const content = defaultContentFor(editorSourceSection, settings, page);
+    const content = hydrateContentWithEditorFallback(defaultContentFor(editorSourceSection, settings, page));
     const style = defaultStyleFor(sourceSection);
     const animation = defaultAnimationFor(sourceSection);
     const visible = sourceSection?.visible !== false;
@@ -1969,7 +2283,136 @@ export default function BuilderSectionEditor({
     </>
   );
 
+
+  const renderDynamicTemplateContentTab = () => {
+    const orderedKeys = Array.isArray(draftContent?.__editor_field_order)
+      ? draftContent.__editor_field_order.filter(
+          (key) =>
+            key &&
+            Object.prototype.hasOwnProperty.call(draftContent, key) &&
+            !SYSTEM_DYNAMIC_CONTENT_KEYS.has(key),
+        )
+      : [];
+
+    const remainingKeys = Object.keys(draftContent || {}).filter(
+      (key) =>
+        !SYSTEM_DYNAMIC_CONTENT_KEYS.has(key) &&
+        !orderedKeys.includes(key),
+    );
+
+    const dynamicKeys = [...orderedKeys, ...remainingKeys];
+
+    return (
+      <>
+        <div className="bse-panel-intro">
+          <h3>Template Fields</h3>
+          <p>
+            These fields come from the original template fallback for this page.
+            Existing saved content is preserved while missing fields are restored.
+          </p>
+        </div>
+
+        {dynamicKeys.map((key) => {
+          const value = draftContent[key];
+
+          if (Array.isArray(value)) {
+            if (value.every((item) => typeof item === "string")) {
+              return (
+                <TextListField
+                  key={key}
+                  label={draftContent?.__editor_field_labels?.[key] || formatDynamicLabel(key)}
+                  items={value}
+                  onChange={(items) => updateContent(key, items)}
+                />
+              );
+            }
+
+            if (value.every((item) => isObject(item))) {
+              const fields = inferDynamicItemFields(value);
+
+              return (
+                <ItemCollection
+                  key={key}
+                  title={draftContent?.__editor_field_labels?.[key] || formatDynamicLabel(key)}
+                  items={value}
+                  emptyText={`${(draftContent?.__editor_field_labels?.[key] || formatDynamicLabel(key)).toLowerCase()} is not configured.`}
+                  addLabel={`Add ${(draftContent?.__editor_field_labels?.[key] || formatDynamicLabel(key)).replace(/s$/, "")}`}
+                  createItem={() => createDynamicItemFromFields(fields, key)}
+                  fields={fields}
+                  onChange={(items) => updateContent(key, items)}
+                />
+              );
+            }
+
+            return (
+              <ContentField
+                key={key}
+                label={draftContent?.__editor_field_labels?.[key] || formatDynamicLabel(key)}
+                type="textarea"
+                rows={5}
+                value={value.join("\\n")}
+                onChange={(nextValue) => updateContent(key, splitTextList(nextValue))}
+              />
+            );
+          }
+
+          if (isObject(value)) {
+            return (
+              <ContentField
+                key={key}
+                label={draftContent?.__editor_field_labels?.[key] || formatDynamicLabel(key)}
+                type="textarea"
+                rows={6}
+                value={JSON.stringify(value, null, 2)}
+                onChange={(nextValue) => {
+                  try {
+                    updateContent(key, JSON.parse(nextValue || "{}"));
+                  } catch {
+                    updateContent(key, nextValue);
+                  }
+                }}
+              />
+            );
+          }
+
+          return (
+            <ContentField
+              key={key}
+              label={draftContent?.__editor_field_labels?.[key] || formatDynamicLabel(key)}
+              type={isLongDynamicKey(key) ? "textarea" : "text"}
+              rows={isLongDynamicKey(key) ? 3 : undefined}
+              value={value || ""}
+              onChange={(nextValue) => updateContent(key, nextValue)}
+            />
+          );
+        })}
+      </>
+    );
+  };
+
   const renderContentTab = () => {
+    if (
+      shouldUseDynamicTemplateContentEditor({
+        registrySectionType,
+        registeredEditor: RegisteredContentEditor,
+        draftContent,
+      })
+    ) {
+      return renderDynamicTemplateContentTab();
+    }
+
+    if (RegisteredContentEditor) {
+      return (
+        <RegisteredContentEditor
+          draftContent={draftContent}
+          updateContent={updateContent}
+          section={section}
+          page={page}
+          settings={settings}
+        />
+      );
+    }
+
     if (sectionKind === "notices") {
       return (
         <>
@@ -3744,6 +4187,8 @@ export default function BuilderSectionEditor({
       if (!isObject(value)) return;
 
       Object.entries(value).forEach(([key, nestedValue]) => {
+        if (SYSTEM_DYNAMIC_CONTENT_KEYS.has(key)) return;
+
         const nextPath = path ? `${path}.${key}` : key;
         const normalizedKey = normalizeType(key);
 

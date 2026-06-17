@@ -78,7 +78,7 @@ export default function LifeSports({
     </main>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -86,7 +86,7 @@ export default function LifeSports({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="services"
+      sectionType="school_sports"
       label={content?.section_title || "Sports & Recreation"}
       templateCategory="school"
       templateKey="school-modern-v1"

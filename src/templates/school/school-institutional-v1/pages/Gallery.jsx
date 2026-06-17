@@ -6,7 +6,11 @@ import WallOfFame from "../components/home/WallOfFame";
 function findSection(sections = [], sectionKey = "") {
   if (!Array.isArray(sections)) return null;
 
-  return sections.find((item) => item?.section_key === sectionKey) || null;
+  return sections.find((item) => item?.section_key === sectionKey ||
+        item?.key === sectionKey ||
+        item?.content?.section_key === sectionKey ||
+        item?.content?._section_key === sectionKey,
+    ) || null;
 }
 
 export default function Gallery({
@@ -49,7 +53,7 @@ export default function Gallery({
         <BuilderSectionTarget
           builderMode={builderMode}
           section={gallerySection}
-          sectionType="gallery"
+          sectionType="school_gallery"
           label={galleryContent?.section_title || "Photo Gallery"}
           templateCategory="school"
           templateKey="school-institutional-v1"

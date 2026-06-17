@@ -78,7 +78,7 @@ export default function LifeCulture({
     </main>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -86,7 +86,7 @@ export default function LifeCulture({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="services"
+      sectionType="school_culture"
       label={content?.section_title || "Culture & Activities"}
       templateCategory="school"
       templateKey="school-modern-v1"

@@ -148,7 +148,7 @@ export default function StudentDailyBulletin({
     </main>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -156,7 +156,7 @@ export default function StudentDailyBulletin({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="notice_board"
+      sectionType="school_daily_bulletin"
       label={content?.section_title || "Student Daily Bulletin"}
       templateCategory="school"
       templateKey="school-modern-v1"

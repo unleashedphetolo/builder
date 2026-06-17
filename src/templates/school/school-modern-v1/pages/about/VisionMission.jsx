@@ -19,7 +19,7 @@ export default function VisionMission({
     </section>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -27,7 +27,7 @@ export default function VisionMission({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="about_section"
+      sectionType="school_vision_mission"
       label={content?.section_title || "Vision & Mission"}
       templateCategory="school"
       templateKey="school-modern-v1"

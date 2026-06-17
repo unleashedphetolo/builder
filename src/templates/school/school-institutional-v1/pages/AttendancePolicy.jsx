@@ -339,7 +339,7 @@ export default function AttendancePolicy({
     </main>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -347,7 +347,7 @@ export default function AttendancePolicy({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="policy"
+      sectionType="school_attendance_policy"
       label={content?.section_title || "Attendance Policy"}
       templateCategory="school"
       templateKey="school-institutional-v1"

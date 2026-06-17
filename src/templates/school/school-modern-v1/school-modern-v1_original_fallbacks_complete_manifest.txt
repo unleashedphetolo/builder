@@ -1,0 +1,13 @@
+school-modern-v1 original fallback fields update
+
+Updated:
+- App.jsx
+- template.config.js
+
+What changed:
+- Full original fallback content is now supplied to the builder/editor for sections that were opening with title only.
+- Our History now includes the full highlights, badges, stats, timeline, principals and gallery fallback data.
+- Staff and SGB data now include editor-friendly image aliases and SGB description fallback.
+- Template fallback content is still merged with saved database content without overwriting useful existing values.
+- Media/document fields remain present for the Media tab.
+- Home page layout/design was not changed.

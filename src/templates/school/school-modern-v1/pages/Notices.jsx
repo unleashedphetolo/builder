@@ -190,7 +190,7 @@ export default function Notices({
     </main>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -198,7 +198,7 @@ export default function Notices({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="notice_board"
+      sectionType="school_notices"
       label={content?.section_title || "School Notices"}
       templateCategory="school"
       templateKey="school-modern-v1"

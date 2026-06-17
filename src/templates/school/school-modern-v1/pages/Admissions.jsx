@@ -367,7 +367,7 @@ export default function Admissions({
     </main>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -375,7 +375,7 @@ export default function Admissions({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="admissions"
+      sectionType="school_admissions_landing"
       label={content?.section_title || "Admission"}
       templateCategory="school"
       templateKey="school-modern-v1"

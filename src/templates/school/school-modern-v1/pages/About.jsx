@@ -37,7 +37,8 @@ function findSectionByKey(sections = [], sectionKey = "") {
       (section) =>
         section?.section_key === sectionKey ||
         section?.key === sectionKey ||
-        section?.content?.section_key === sectionKey,
+        section?.content?.section_key === sectionKey ||
+        section?.content?._section_key === sectionKey,
     ) || null
   );
 }
@@ -61,7 +62,7 @@ function EditableSection({
   builderMode,
   children,
 }) {
-  if (!section) {
+  if (!section && !builderMode) {
     return children;
   }
 
@@ -87,10 +88,10 @@ export default function AboutLanding({
   const siteId = settings?.site_id || "";
 
   const overviewSection =
-    findSectionByKey(sections, "about-introduction") || sections[0] || null;
+    findSectionByKey(sections, "about-introduction") || null;
 
   const valuesSection =
-    findSectionByKey(sections, "about-values") || sections[1] || null;
+    findSectionByKey(sections, "about-values") || null;
 
   const overviewContent = sectionContent(overviewSection);
   const valuesContent = sectionContent(valuesSection);
@@ -106,8 +107,8 @@ export default function AboutLanding({
       {canRenderSection(valuesSection, builderMode) && (
         <EditableSection
           section={valuesSection}
-          sectionType="about_section"
-          label="Vision, Mission & Values"
+          sectionType="school_about_values"
+          label={valuesContent?.section_title || valuesContent?.title || "Vision, Mission & Values"}
           builderMode={builderMode}
         >
           <h2 className="section-title">
@@ -122,8 +123,8 @@ export default function AboutLanding({
       {canRenderSection(overviewSection, builderMode) && (
         <EditableSection
           section={overviewSection}
-          sectionType="about_section"
-          label="About Page Links"
+          sectionType="school_about_landing"
+          label={overviewContent?.section_title || overviewContent?.title || "About Page Links"}
           builderMode={builderMode}
         >
           <div

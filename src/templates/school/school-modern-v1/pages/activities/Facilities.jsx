@@ -209,7 +209,7 @@ export default function LifeFacilities({
     </main>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -217,7 +217,7 @@ export default function LifeFacilities({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="gallery"
+      sectionType="school_activity_facilities"
       label={content?.section_title || "Campus Facilities"}
       templateCategory="school"
       templateKey="school-modern-v1"

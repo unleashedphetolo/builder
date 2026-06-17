@@ -99,7 +99,7 @@ export default function SchoolLifeLanding({
     </section>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -107,7 +107,7 @@ export default function SchoolLifeLanding({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="services"
+      sectionType="school_activities"
       label={content?.section_title || "Activities"}
       templateCategory="school"
       templateKey="school-modern-v1"

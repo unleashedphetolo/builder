@@ -8,7 +8,12 @@ function findSectionByKeys(sections = [], keys = []) {
 
   return (
     (Array.isArray(sections) ? sections : []).find((section) =>
-      acceptedKeys.has(section?.section_key || section?.key),
+      acceptedKeys.has(
+        section?.section_key ||
+          section?.key ||
+          section?.content?.section_key ||
+          section?.content?._section_key,
+      ),
     ) || null
   );
 }
@@ -26,7 +31,7 @@ function findSectionByTypes(sections = [], types = []) {
   return (
     (Array.isArray(sections) ? sections : []).find((section) =>
       acceptedTypes.has(
-        String(section?.type || section?.section_type || "")
+        String(section?.type || section?.section_type || section?.content?._editor_section_type || section?.content?.section_type || "")
           .trim()
           .toLowerCase()
           .replace(/[\s-]+/g, "_"),
@@ -54,7 +59,7 @@ function EditableSection({
   builderMode,
   children,
 }) {
-  if (!section) {
+  if (!section && !builderMode) {
     return children;
   }
 
@@ -79,7 +84,7 @@ export default function Staff({
 }) {
   const staffSection =
     findSectionByKeys(sections, ["staff-team"]) ||
-    findSectionByTypes(sections, ["staff", "staff_team", "team"]);
+    findSectionByTypes(sections, ["school_staff", "staff", "staff_team", "team"]);
 
   /*
     The SGB block remains at the bottom of the Staff page as before.
@@ -88,7 +93,7 @@ export default function Staff({
   */
   const sgbSection =
     findSectionByKeys(sections, ["staff-sgb-team", "sgb-team"]) ||
-    findSectionByTypes(sections, ["sgb", "governance", "school_governance"]);
+    findSectionByTypes(sections, ["school_sgb", "sgb", "governance", "school_governance"]);
 
   const staffContent = sectionContent(staffSection);
   const sgbContent = sectionContent(sgbSection);
@@ -99,8 +104,8 @@ export default function Staff({
       {canRenderSection(staffSection, builderMode) && (
         <EditableSection
           section={staffSection}
-          sectionType="team"
-          label={staffContent?.section_title || "Staff Members"}
+          sectionType="school_staff"
+          label={staffContent?.section_title || staffContent?.title || "Staff Members"}
           builderMode={builderMode}
         >
           <StaffGrid
@@ -114,8 +119,8 @@ export default function Staff({
       {canRenderSection(sgbSection, builderMode) && (
         <EditableSection
           section={sgbSection}
-          sectionType="team"
-          label={sgbContent?.section_title || "School Governing Body"}
+          sectionType="school_sgb"
+          label={sgbContent?.section_title || sgbContent?.title || "School Governing Body"}
           builderMode={builderMode}
         >
           <SGB

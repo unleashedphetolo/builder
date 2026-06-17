@@ -28,13 +28,43 @@ function toLabel(value = "") {
     .replace(/\b\w/g, (character) => character.toUpperCase());
 }
 
+function getSectionKey(section = EMPTY_SECTION, fallbackKey = "") {
+  return (
+    fallbackKey ||
+    section?.section_key ||
+    section?.key ||
+    section?.content?._section_key ||
+    section?.content?.__section_key ||
+    section?.content?.section_key ||
+    section?.content?.editor_section_type ||
+    section?.content?._editor_section_type ||
+    ""
+  );
+}
+
 function getSectionType(section = EMPTY_SECTION, fallbackType = "") {
   return (
-    section?.type ||
-    section?.section_type ||
-    section?.key ||
-    section?.section_key ||
     fallbackType ||
+    section?.content?._editor_section_type ||
+    section?.content?.editor_section_type ||
+    section?.content?.section_type ||
+    section?.section_type ||
+    section?.type ||
+    section?.section_key ||
+    section?.key ||
+    section?.content?._section_key ||
+    section?.content?.__section_key ||
+    section?.content?.section_key ||
+    ""
+  );
+}
+
+function getSectionPageSlug(section = EMPTY_SECTION) {
+  return (
+    section?.page_slug ||
+    section?.slug ||
+    section?.content?.page_slug ||
+    section?.content?._page_slug ||
     ""
   );
 }
@@ -81,6 +111,13 @@ function sameSection(target = EMPTY_SECTION, candidate = EMPTY_SECTION, fallback
     return String(targetId) === String(candidateId);
   }
 
+  const targetKey = normalizeKey(getSectionKey(target, fallbackType));
+  const candidateKey = normalizeKey(getSectionKey(candidate));
+
+  if (targetKey && candidateKey && targetKey === candidateKey) {
+    return true;
+  }
+
   const targetType = normalizeKey(getSectionType(target, fallbackType));
   const candidateType = normalizeKey(getSectionType(candidate));
 
@@ -96,6 +133,16 @@ function findUpdatedSection(incomingSections, target, fallbackId, fallbackType) 
   });
 
   if (exactId) return exactId;
+
+  const targetKey = normalizeKey(getSectionKey(target, fallbackType));
+
+  if (targetKey) {
+    const exactKey = incomingSections.find(
+      (section) => normalizeKey(getSectionKey(section)) === targetKey,
+    );
+
+    if (exactKey) return exactKey;
+  }
 
   const targetType = normalizeKey(getSectionType(target, fallbackType));
 
@@ -118,7 +165,19 @@ function buildRequest({
   source,
 }) {
   const resolvedType = getSectionType(section, sectionType);
+  const resolvedKey = getSectionKey(section, sectionType);
   const resolvedId = getSectionId(section, sectionId);
+
+  const safeContent =
+    section?.content && typeof section.content === "object"
+      ? cloneValue(section.content)
+      : {};
+
+  const editorSectionType =
+    safeContent?._editor_section_type ||
+    safeContent?.editor_section_type ||
+    safeContent?.section_type ||
+    resolvedType;
 
   return {
     type: "builder:open-section-editor",
@@ -126,11 +185,28 @@ function buildRequest({
     source,
     sectionId: resolvedId,
     section_id: resolvedId,
+    sectionKey: resolvedKey || resolvedType,
+    section_key: resolvedKey || resolvedType,
     sectionType: resolvedType,
     section_type: resolvedType,
+    editorSectionType,
+    editor_section_type: editorSectionType,
+    pageSlug: getSectionPageSlug(section),
+    page_slug: getSectionPageSlug(section),
     label: getSectionLabel(section, label, resolvedType),
     templateCategory: templateCategory || null,
     templateKey: templateKey || null,
+    content: safeContent,
+    style:
+      section?.style && typeof section.style === "object"
+        ? cloneValue(section.style)
+        : {},
+    animation:
+      section?.animation && typeof section.animation === "object"
+        ? cloneValue(section.animation)
+        : {},
+    visible: section?.visible !== false,
+    position: section?.position,
   };
 }
 
@@ -232,7 +308,22 @@ export default function BuilderSectionTarget({
         liveSection,
         {
           id: payload.sectionId || payload.section_id,
-          type: payload.sectionType || payload.section_type,
+          type:
+            payload.editorSectionType ||
+            payload.editor_section_type ||
+            payload.sectionType ||
+            payload.section_type,
+          section_key: payload.sectionKey || payload.section_key,
+          key: payload.sectionKey || payload.section_key,
+          content: {
+            _section_key: payload.sectionKey || payload.section_key,
+            section_key: payload.sectionKey || payload.section_key,
+            _editor_section_type:
+              payload.editorSectionType ||
+              payload.editor_section_type ||
+              payload.sectionType ||
+              payload.section_type,
+          },
         },
         sectionId,
         sectionType,

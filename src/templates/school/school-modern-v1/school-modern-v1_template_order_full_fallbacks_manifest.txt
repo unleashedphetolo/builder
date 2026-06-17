@@ -1,0 +1,12 @@
+school-modern-v1 template-order fallback update
+
+Updated:
+- App.jsx
+
+What changed:
+- Every editor target now carries __editor_fallback_content with the full original template content.
+- Every editor target now carries __editor_field_order in the same order as template.config.js.
+- Pages such as Subject Choices, Academic Programme, Campus Facilities, Stationery Requirements, Exam Schedule and Entry Requirements now provide the full template fallback to the builder.
+- Numbered/timeline/table/list data is preserved as arrays in the original order.
+- Media/PDF/document fields remain available.
+- Home page design/layout was not changed.

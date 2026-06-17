@@ -257,7 +257,7 @@ export default function SubjectChoices({
     </main>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -265,7 +265,7 @@ export default function SubjectChoices({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="process"
+      sectionType="school_subject_choices"
       label={content?.section_title || "Subject Choices"}
       templateCategory="school"
       templateKey="school-modern-v1"

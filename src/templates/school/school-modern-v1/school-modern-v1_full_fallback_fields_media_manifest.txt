@@ -1,0 +1,13 @@
+school-modern-v1 full fallback fields and media update
+
+Updated file:
+- school-modern-v1/App.jsx
+
+What changed:
+- App.jsx now imports template.config.js.
+- Virtual/missing page sections no longer contain only section_title.
+- Every virtual or partial section is merged with its full template.config.js fallback content.
+- Existing saved values are preserved, but missing/empty fields are filled from the template fallback.
+- Media/document fields such as image_url, pdf_url, hero_image, gallery item images and document links remain in content so the builder media tab can discover them.
+- Section identity is still preserved: section_key, _section_key, editor_section_type, _editor_section_type, section_type and page_slug.
+- No styling/design/page layout changes were made.

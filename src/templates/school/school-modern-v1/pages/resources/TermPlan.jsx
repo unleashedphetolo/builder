@@ -86,7 +86,7 @@ export default function TermPlan({
     </section>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -94,7 +94,7 @@ export default function TermPlan({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="calendar"
+      sectionType="school_term_plan"
       label={content?.section_title || "Academic Term Plan"}
       templateCategory="school"
       templateKey="school-modern-v1"

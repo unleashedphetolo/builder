@@ -348,7 +348,7 @@ export default function HowToApply({
     </main>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -356,7 +356,7 @@ export default function HowToApply({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="admissions"
+      sectionType="school_how_to_apply"
       label={content?.section_title || "How to Apply"}
       templateCategory="school"
       templateKey="school-modern-v1"

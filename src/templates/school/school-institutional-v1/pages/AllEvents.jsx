@@ -132,7 +132,7 @@ export default function AllEvents({
     </main>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -140,7 +140,7 @@ export default function AllEvents({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="calendar"
+      sectionType="school_all_events"
       label={content?.section_title || "All Calendar Events"}
       templateCategory="school"
       templateKey="school-institutional-v1"

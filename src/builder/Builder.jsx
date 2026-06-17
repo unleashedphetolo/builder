@@ -26,8 +26,150 @@ import {
   normalizePageSlug,
   loadPageSections,
   updateSiteSection,
+  createSiteSectionFromEditorRequest,
   reorderPageSections,
 } from "./siteService";
+
+
+function normalizeSectionLookupKey(value = "") {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/^\/+|\/+$/g, "")
+    .replace(/[\s/-]+/g, "_");
+}
+
+function getSectionLookupKey(section = {}) {
+  return (
+    section?.section_key ||
+    section?.key ||
+    section?.content?._section_key ||
+    section?.content?.__section_key ||
+    section?.content?.section_key ||
+    section?.content?.editor_section_type ||
+    section?.content?._editor_section_type ||
+    ""
+  );
+}
+
+function getSectionLookupType(section = {}) {
+  return (
+    section?.content?._editor_section_type ||
+    section?.content?.editor_section_type ||
+    section?.content?.section_type ||
+    section?.section_type ||
+    section?.type ||
+    getSectionLookupKey(section) ||
+    ""
+  );
+}
+
+function getSectionLookupPageSlug(section = {}) {
+  return normalizeSectionLookupKey(
+    section?.page_slug ||
+      section?.slug ||
+      section?.content?.page_slug ||
+      section?.content?._page_slug ||
+      "",
+  );
+}
+
+function buildSectionStatePayload(section = {}, request = {}) {
+  const sectionKey =
+    request.sectionKey ||
+    request.section_key ||
+    getSectionLookupKey(section) ||
+    request.sectionType ||
+    request.section_type ||
+    "";
+
+  const sectionType =
+    request.editorSectionType ||
+    request.editor_section_type ||
+    request.sectionType ||
+    request.section_type ||
+    getSectionLookupType(section) ||
+    "";
+
+  return {
+    open: true,
+    editorType: "section",
+    sectionId: section.id,
+    sectionKey,
+    sectionType,
+    editorSectionType: sectionType,
+    sidebarPanel: "sections",
+  };
+}
+
+
+
+function isPlainSectionContent(value) {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function cloneSectionValue(value) {
+  if (value === undefined || value === null) return value;
+
+  try {
+    return JSON.parse(JSON.stringify(value));
+  } catch {
+    return value;
+  }
+}
+
+function isMissingSectionContentValue(value, fallbackValue) {
+  if (value === undefined || value === null) return true;
+  if (Array.isArray(value)) return value.length === 0 && Array.isArray(fallbackValue);
+  if (isPlainSectionContent(value)) {
+    return (
+      Object.keys(value).length === 0 &&
+      isPlainSectionContent(fallbackValue)
+    );
+  }
+
+  return String(value).trim() === "" && String(fallbackValue ?? "").trim() !== "";
+}
+
+function mergeSectionContentWithFallback(fallbackContent = {}, currentContent = {}) {
+  const fallback = isPlainSectionContent(fallbackContent)
+    ? cloneSectionValue(fallbackContent)
+    : {};
+  const current = isPlainSectionContent(currentContent)
+    ? cloneSectionValue(currentContent)
+    : {};
+
+  const merged = {
+    ...fallback,
+    ...current,
+  };
+
+  Object.entries(fallback).forEach(([key, fallbackValue]) => {
+    const currentValue = current[key];
+
+    if (isMissingSectionContentValue(currentValue, fallbackValue)) {
+      merged[key] = cloneSectionValue(fallbackValue);
+      return;
+    }
+
+    if (
+      isPlainSectionContent(fallbackValue) &&
+      isPlainSectionContent(currentValue)
+    ) {
+      merged[key] = mergeSectionContentWithFallback(fallbackValue, currentValue);
+    }
+  });
+
+  return merged;
+}
+
+function hasSectionContentChanged(firstValue = {}, secondValue = {}) {
+  try {
+    return JSON.stringify(firstValue || {}) !== JSON.stringify(secondValue || {});
+  } catch {
+    return true;
+  }
+}
 
 function NoTemplateSelected({ onChooseTemplate }) {
   return (
@@ -1040,42 +1182,176 @@ export default function Builder() {
   */
 
   useEffect(() => {
-    const openRequestedSection = (request = {}) => {
+    const openRequestedSection = async (request = {}) => {
       const requestedId =
         request.sectionId || request.section_id || request.id || null;
+      const requestedKey =
+        request.sectionKey || request.section_key || request.key || "";
       const requestedType =
-        request.sectionType || request.section_type || request.type || "";
+        request.editorSectionType ||
+        request.editor_section_type ||
+        request.sectionType ||
+        request.section_type ||
+        request.type ||
+        "";
 
-      const matchingSection =
-        sections.find((section) => section.id === requestedId) ||
-        sections.find((section) => section.type === requestedType);
+      const requestedPageSlug = normalizeSectionLookupKey(
+        request.pageSlug || request.page_slug || request.content?.page_slug || "",
+      );
 
-      if (!matchingSection?.id) return;
+      const normalizedRequestedKey = normalizeSectionLookupKey(
+        requestedKey || requestedType,
+      );
+      const normalizedRequestedType = normalizeSectionLookupKey(requestedType);
+
+      let matchingSection =
+        sections.find((section) => requestedId && section.id === requestedId) ||
+        sections.find(
+          (section) =>
+            normalizedRequestedKey &&
+            normalizeSectionLookupKey(getSectionLookupKey(section)) ===
+              normalizedRequestedKey,
+        ) ||
+        sections.find(
+          (section) =>
+            normalizedRequestedType &&
+            normalizeSectionLookupKey(getSectionLookupType(section)) ===
+              normalizedRequestedType,
+        ) ||
+        sections.find(
+          (section) =>
+            requestedPageSlug &&
+            getSectionLookupPageSlug(section) === requestedPageSlug &&
+            normalizedRequestedType &&
+            normalizeSectionLookupKey(getSectionLookupType(section)) ===
+              normalizedRequestedType,
+        );
+
+      /*
+        Some school-modern-v1 inner pages can render an editor target before the
+        database has a real site_sections row for that page. In that case the
+        request has a section type/key/content but no id. Create the missing row
+        immediately, then open the normal editor using the saved row id.
+      */
+      if (!matchingSection?.id && siteId && currentPageId && normalizedRequestedType) {
+        setSaveStatus("Preparing section editor...");
+
+        const createdSection = await createSiteSectionFromEditorRequest({
+          siteId,
+          pageId: currentPageId,
+          request,
+          position: sections.length,
+        });
+
+        if (createdSection?.id) {
+          matchingSection = createdSection;
+
+          setSections((previousSections) => {
+            const exists = previousSections.some(
+              (section) => section.id === createdSection.id,
+            );
+
+            const nextSections = exists
+              ? previousSections.map((section) =>
+                  section.id === createdSection.id ? createdSection : section,
+                )
+              : [...previousSections, createdSection].sort(
+                  (first, second) =>
+                    Number(first.position || 0) - Number(second.position || 0),
+                );
+
+            emitLiveSectionsUpdate(nextSections);
+            return nextSections;
+          });
+
+          setSectionsLoaded(true);
+          setSaveStatus("Section editor ready");
+        }
+      }
+
+
+      if (
+        matchingSection?.id &&
+        request?.content &&
+        typeof request.content === "object" &&
+        !Array.isArray(request.content)
+      ) {
+        const requestFallbackContent =
+          request.content.__editor_fallback_content &&
+          typeof request.content.__editor_fallback_content === "object" &&
+          !Array.isArray(request.content.__editor_fallback_content)
+            ? {
+                ...request.content.__editor_fallback_content,
+                ...request.content,
+              }
+            : request.content;
+
+        const mergedContent = mergeSectionContentWithFallback(
+          requestFallbackContent,
+          matchingSection.content || {},
+        );
+
+        if (hasSectionContentChanged(mergedContent, matchingSection.content || {})) {
+          const optimisticSection = {
+            ...matchingSection,
+            content: mergedContent,
+          };
+
+          matchingSection = optimisticSection;
+
+          setSections((previousSections) => {
+            const nextSections = previousSections.map((section) =>
+              section.id === optimisticSection.id ? optimisticSection : section,
+            );
+
+            emitLiveSectionsUpdate(nextSections);
+            return nextSections;
+          });
+
+          const savedMergedSection = await updateSiteSection({
+            siteId,
+            sectionId: optimisticSection.id,
+            patch: {
+              content: mergedContent,
+            },
+          });
+
+          if (savedMergedSection?.id) {
+            matchingSection = savedMergedSection;
+
+            setSections((previousSections) => {
+              const nextSections = previousSections.map((section) =>
+                section.id === savedMergedSection.id ? savedMergedSection : section,
+              );
+
+              emitLiveSectionsUpdate(nextSections);
+              return nextSections;
+            });
+          }
+        }
+      }
+
+      if (!matchingSection?.id) {
+        setSaveStatus("Could not open section editor");
+        return;
+      }
 
       setSelectedSectionId(matchingSection.id);
       setSectionEditorOpen(true);
       setSidebarOpen(true);
 
+      const statePayload = buildSectionStatePayload(matchingSection, request);
+
       window.dispatchEvent(
         new CustomEvent("builder:section-editor-state", {
-          detail: {
-            open: true,
-            editorType: "section",
-            sectionId: matchingSection.id,
-            sectionType: matchingSection.type,
-            sidebarPanel: "sections",
-          },
+          detail: statePayload,
         }),
       );
 
       window.postMessage(
         {
           type: "builder:section-editor-state",
-          open: true,
-          editorType: "section",
-          sectionId: matchingSection.id,
-          sectionType: matchingSection.type,
-          sidebarPanel: "sections",
+          ...statePayload,
         },
         "*",
       );
@@ -1177,7 +1453,7 @@ export default function Builder() {
       );
       window.removeEventListener("message", handleSectionEditorMessage);
     };
-  }, [sections]);
+  }, [currentPageId, sections, siteId]);
 
   /*
   =============================
@@ -1844,7 +2120,40 @@ export default function Builder() {
     const sectionId =
       typeof sectionOrId === "object" ? sectionOrId?.id : sectionOrId;
 
-    const section = sections.find((item) => item.id === sectionId);
+    const requestedKey =
+      typeof sectionOrId === "object"
+        ? normalizeSectionLookupKey(
+            sectionOrId?.sectionKey ||
+              sectionOrId?.section_key ||
+              sectionOrId?.key ||
+              getSectionLookupKey(sectionOrId),
+          )
+        : "";
+
+    const requestedType =
+      typeof sectionOrId === "object"
+        ? normalizeSectionLookupKey(
+            sectionOrId?.editorSectionType ||
+              sectionOrId?.editor_section_type ||
+              sectionOrId?.sectionType ||
+              sectionOrId?.section_type ||
+              sectionOrId?.type ||
+              getSectionLookupType(sectionOrId),
+          )
+        : "";
+
+    const section =
+      sections.find((item) => item.id === sectionId) ||
+      sections.find(
+        (item) =>
+          requestedKey &&
+          normalizeSectionLookupKey(getSectionLookupKey(item)) === requestedKey,
+      ) ||
+      sections.find(
+        (item) =>
+          requestedType &&
+          normalizeSectionLookupKey(getSectionLookupType(item)) === requestedType,
+      );
 
     if (!section?.id) return;
 
@@ -1852,26 +2161,18 @@ export default function Builder() {
     setSectionEditorOpen(true);
     setSidebarOpen(true);
 
+    const statePayload = buildSectionStatePayload(section, sectionOrId || {});
+
     window.dispatchEvent(
       new CustomEvent("builder:section-editor-state", {
-        detail: {
-          open: true,
-          editorType: "section",
-          sectionId: section.id,
-          sectionType: section.type,
-          sidebarPanel: "sections",
-        },
+        detail: statePayload,
       }),
     );
 
     window.postMessage(
       {
         type: "builder:section-editor-state",
-        open: true,
-        editorType: "section",
-        sectionId: section.id,
-        sectionType: section.type,
-        sidebarPanel: "sections",
+        ...statePayload,
       },
       "*",
     );

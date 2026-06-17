@@ -95,7 +95,7 @@ export default function Facilities({
     </main>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -103,7 +103,7 @@ export default function Facilities({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="services"
+      sectionType="school_facilities"
       label={content?.section_title || "School Facilities"}
       templateCategory="school"
       templateKey="school-modern-v1"

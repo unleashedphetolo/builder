@@ -2,6 +2,7 @@
 // Institutional Digital Library – Resource Modal, Search & Filters, PDF Viewer, NSC Exam Portal (Grade 12)
 
 import React, { useState } from "react";
+import BuilderSectionTarget from "../../../../builder/BuilderSectionTarget";
 import "../styles/digital-library.css";
 
 const grades = [8, 9, 10, 11, 12];
@@ -89,7 +90,7 @@ const resources = [
   },
 ];
 
-export default function DigitalLibrary() {
+export default function DigitalLibrary({ section = null, content = {}, builderMode = false }) {
   const [selectedGrade, setSelectedGrade] = useState(10);
   const [selectedTerm, setSelectedTerm] = useState("Term 1");
   const [openCategory, setOpenCategory] = useState(null);
@@ -119,12 +120,12 @@ export default function DigitalLibrary() {
     );
   });
 
-  return (
+  const pageContent = (
     <section className="digital-library container">
       {/* Header */}
       <header className="library-header">
-        <h1>Digital Academic Library</h1>
-        <p>Grades 8–12 | CAPS Curriculum | South Africa</p>
+        <h1>{content?.section_title || content?.title || "Digital Academic Library"}</h1>
+        <p>{content?.subtitle || "Grades 8–12 | CAPS Curriculum | South Africa"}</p>
       </header>
 
       {/* ================= SEARCH & FILTERS ================= */}
@@ -279,5 +280,22 @@ export default function DigitalLibrary() {
         </div>
       )}
     </section>
+  );
+
+  if (!section && !builderMode) {
+    return pageContent;
+  }
+
+  return (
+    <BuilderSectionTarget
+      builderMode={builderMode}
+      section={section}
+      sectionType="school_digital_library"
+      label={content?.section_title || content?.title || "Digital Academic Library"}
+      templateCategory="school"
+      templateKey="school-institutional-v1"
+    >
+      {pageContent}
+    </BuilderSectionTarget>
   );
 }

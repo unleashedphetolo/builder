@@ -723,7 +723,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "About", location: "header", position: 1 },
       sections: [
-        editableSection("about-introduction", "about_section", {
+        editableSection("about-introduction", "school_about_landing", {
           section_title: "About Our School",
           subtitle:
             "A learning community built on academic excellence, character and opportunity.",
@@ -732,7 +732,7 @@ export const templateConfig = {
             "Our school provides a supportive environment in which learners are challenged to achieve their potential and contribute positively to society.",
           image_url: fallbackHeroImage,
         }),
-        editableSection("about-values", "about_section", {
+        editableSection("about-values", "school_about_values", {
           section_title: "Our Values",
           cards: [
             {
@@ -760,7 +760,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Who We Are", location: "header", position: 2 },
       sections: [
-        editableSection("who-we-are-introduction", "about_section", {
+        editableSection("who-we-are-introduction", "school_who_we_are", {
           section_title: "Who We Are",
           subtitle: "A school committed to learning, leadership and service.",
           body:
@@ -775,7 +775,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Vision & Mission", location: "header", position: 3 },
       sections: [
-        editableSection("vision-mission-content", "about_section", {
+        editableSection("vision-mission-content", "school_vision_mission", {
           section_title: "Vision & Mission",
           cards: [
             {
@@ -802,7 +802,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Our History", location: "header", position: 4 },
       sections: [
-        editableSection("school-history", "process", {
+        editableSection("school-history", "school_history", {
           section_title: "Our History",
           subtitle: "Milestones in our journey of learning and service.",
           items: [
@@ -829,7 +829,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Staff Members", location: "header", position: 5 },
       sections: [
-        editableSection("staff-team", "team", {
+        editableSection("staff-team", "school_staff", {
           section_title: "School Leadership & Staff",
           subtitle:
             "Dedicated educators and leaders committed to academic excellence, discipline and learner development at M.O.M Sebone Secondary School.",
@@ -860,7 +860,7 @@ export const templateConfig = {
             },
           ],
         }),
-        editableSection("staff-sgb-team", "team", {
+        editableSection("staff-sgb-team", "school_sgb", {
           section_title: "School Governing Body (SGB)",
           subtitle:
             "The School Governing Body supports governance, accountability, community engagement and policy oversight to ensure that M.O.M Sebone Secondary School continues to deliver quality education and responsible leadership.",
@@ -907,7 +907,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "SGB", location: "header", position: 6 },
       sections: [
-        editableSection("sgb-team", "team", {
+        editableSection("sgb-team", "school_sgb", {
           section_title: "School Governing Body (SGB)",
           subtitle:
             "The School Governing Body supports governance, accountability, community engagement and policy oversight to ensure that M.O.M Sebone Secondary School continues to deliver quality education and responsible leadership.",
@@ -954,7 +954,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Facilities", location: "header", position: 7 },
       sections: [
-        editableSection("facilities-overview", "services", {
+        editableSection("facilities-overview", "school_facilities", {
           section_title: "School Facilities",
           subtitle:
             "Our facilities are designed to provide a safe, structured, and resource-rich environment that supports both academic and extracurricular excellence.",
@@ -1011,7 +1011,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Activities", location: "header", position: 8 },
       sections: [
-        editableSection("activities-overview", "services", {
+        editableSection("activities-overview", "school_activities", {
           section_title: "Activities",
           subtitle:
             "Activities at school builds confident learners through academics, sport, culture and a safe campus environment.",
@@ -1053,7 +1053,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Academics", location: "header", position: 9 },
       sections: [
-        editableSection("academics-programmes", "services", {
+        editableSection("academics-programmes", "school_academics", {
           section_title: "Academic Programme",
           subtitle:
             "M.O.M Sebone Secondary School is committed to maintaining high academic standards, fostering discipline, and preparing learners for tertiary education and responsible citizenship.",
@@ -1109,7 +1109,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Sports & Recreation", location: "header", position: 10 },
       sections: [
-        editableSection("sports-programmes", "services", {
+        editableSection("sports-programmes", "school_sports", {
           section_title: "Sports & Recreation",
           subtitle:
             "Our sports programme promotes teamwork, discipline, and excellence—developing confident learners through structured training and competitive participation.",
@@ -1150,7 +1150,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Culture & Activities", location: "header", position: 11 },
       sections: [
-        editableSection("culture-programmes", "services", {
+        editableSection("culture-programmes", "school_culture", {
           section_title: "Culture & Activities",
           subtitle:
             "Our cultural and co-curricular programmes build confident, responsible learners through leadership, creativity, and community participation.",
@@ -1191,7 +1191,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Campus Facilities", location: "header", position: 12 },
       sections: [
-        editableSection("activity-facilities-gallery", "gallery", {
+        editableSection("activity-facilities-gallery", "school_activity_facilities", {
           section_title: "Campus Facilities",
           subtitle:
             "{site_name} provides facilities that support academic excellence, discipline, learner wellbeing, and participation in sport and culture.",
@@ -1274,7 +1274,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Resources", location: "header", position: 13 },
       sections: [
-        editableSection("resources-library", "services", {
+        editableSection("resources-library", "school_resources", {
           section_title: "Resources",
           subtitle:
             "Important academic documents, learner support materials, school policies, and official information for learners and parents.",
@@ -1331,7 +1331,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Subject Choices", location: "header", position: 14 },
       sections: [
-        editableSection("subject-choices-content", "process", {
+        editableSection("subject-choices-content", "school_subject_choices", {
           section_title: "Subject Choices",
           subtitle:
             "Use this guide to understand subject options by grade and choose the best pathway based on interests, strengths and career goals.",
@@ -1463,7 +1463,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Term Plan", location: "header", position: 15 },
       sections: [
-        editableSection("term-plan-content", "calendar", {
+        editableSection("term-plan-content", "school_term_plan", {
           section_title: "Academic Term Plan",
           description:
             "The Academic Term Plan provides important information about the school academic year including term dates, examination periods, school holidays, and other key academic activities.",
@@ -1482,7 +1482,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Exam Schedule", location: "header", position: 16 },
       sections: [
-        editableSection("exam-schedule-content", "calendar", {
+        editableSection("exam-schedule-content", "school_exam_schedule", {
           kicker: "Academic Assessment",
           section_title: "Exam Schedule",
           subtitle:
@@ -1604,7 +1604,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Code of Conduct", location: "header", position: 17 },
       sections: [
-        editableSection("conduct-policy", "policy", {
+        editableSection("conduct-policy", "school_code_of_conduct", {
           section_title: "Learner Code of Conduct",
           introduction:
             "The Learner Code of Conduct of M.O.M Sebone Secondary School sets out the standards of behaviour expected from every learner. These rules are designed to create a safe, disciplined, and respectful environment that supports effective teaching and learning.",
@@ -1660,7 +1660,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Stationary List", location: "header", position: 18 },
       sections: [
-        editableSection("stationary-list-content", "services", {
+        editableSection("stationary-list-content", "school_stationary_list", {
           section_title: "Stationery Requirements",
           subtitle:
             "Official stationery items per grade and subject. Please ensure learners have the required materials.",
@@ -1739,7 +1739,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Calendar", location: "header", position: 19 },
       sections: [
-        editableSection("resource-calendar", "calendar", {
+        editableSection("resource-calendar", "school_calendar", {
           section_title: "School Calendar",
           subtitle:
             "Key academic dates, examinations, school activities, and public holidays.",
@@ -1800,7 +1800,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Daily Bulletin", location: "header", position: 20 },
       sections: [
-        editableSection("daily-bulletin", "notice_board", {
+        editableSection("daily-bulletin", "school_daily_bulletin", {
           section_title: "Student Daily Bulletin",
           subtitle:
             "Official daily announcements for learners at M.O.M Sebone Secondary School.",
@@ -1853,7 +1853,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Attendance Policy", location: "header", position: 21 },
       sections: [
-        editableSection("attendance-policy", "policy", {
+        editableSection("attendance-policy", "school_attendance_policy", {
           section_title: "Attendance Policy",
           subtitle:
             "Regular attendance and punctuality support learner success.",
@@ -1880,7 +1880,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "All Events", location: "header", position: 22 },
       sections: [
-        editableSection("all-calendar-events", "calendar", {
+        editableSection("all-calendar-events", "school_all_events", {
           section_title: "All Calendar Events",
           subtitle:
             "Browse and search all school events, academic dates, and public holidays.",
@@ -1931,7 +1931,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Admissions", location: "header", position: 23 },
       sections: [
-        editableSection("admissions-main", "admissions", {
+        editableSection("admissions-main", "school_admissions_landing", {
           section_title: "Admission",
           subtitle:
             "Join a school that shapes character, curiosity and leadership.",
@@ -1991,7 +1991,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Apply Now", location: "header", position: 24 },
       sections: [
-        editableSection("application-introduction", "admissions", {
+        editableSection("application-introduction", "school_apply_online", {
           section_title: "Online Application",
           form_title: "Online Application",
           form_subtitle:
@@ -2018,7 +2018,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Entry Requirements", location: "header", position: 25 },
       sections: [
-        editableSection("admission-requirements", "admissions", {
+        editableSection("admission-requirements", "school_entry_requirements", {
           section_title: "Entry Requirements",
           documents_title: "Required Documents",
           documents_description:
@@ -2060,7 +2060,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "How to Apply", location: "header", position: 26 },
       sections: [
-        editableSection("how-to-apply", "admissions", {
+        editableSection("how-to-apply", "school_how_to_apply", {
           section_title: "How to Apply",
           primary_badge: "Admissions",
           secondary_badge: "Grade 8–12",
@@ -2111,7 +2111,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Digital Library", location: "header", position: 27 },
       sections: [
-        editableSection("digital-library-content", "services", {
+        editableSection("digital-library-content", "school_digital_library", {
           section_title: "Digital Academic Library",
           subtitle: "Grades 8–12 | CAPS Curriculum | South Africa",
           search_placeholder: "Search by title or keyword",
@@ -2222,7 +2222,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "School Calendar", location: "header", position: 28 },
       sections: [
-        editableSection("school-calendar-main", "calendar", {
+        editableSection("school-calendar-main", "school_calendar", {
           section_title: "School Calendar",
           subtitle:
             "Key academic dates, examinations, school activities, and public holidays.",
@@ -2283,7 +2283,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "News", location: "header", position: 29 },
       sections: [
-        editableSection("news-listing", "latest_news", {
+        editableSection("news-listing", "school_news", {
           section_title: "Latest News",
           subtitle: "Latest stories and achievements from our school community.",
           items: [
@@ -2329,7 +2329,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Gallery", location: "header", position: 30 },
       sections: [
-        editableSection("gallery-main", "gallery", {
+        editableSection("gallery-main", "school_gallery", {
           section_title: "Photo Gallery",
           subtitle: "Moments from academics, activities and school events.",
           items: [
@@ -2363,7 +2363,7 @@ export const templateConfig = {
             },
           ],
         }),
-        editableSection("gallery-wall-of-fame", "wall_of_fame", {
+        editableSection("gallery-wall-of-fame", "school_wall_of_fame", {
           section_title: "Academic Wall of Fame",
           subtitle:
             "Celebrating Outstanding Academic Performance & Excellence",
@@ -2414,7 +2414,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Robotics Club", location: "header", position: 31 },
       sections: [
-        editableSection("robotics-overview", "services", {
+        editableSection("robotics-overview", "school_robotics", {
           section_title: "Robotics Club",
           subtitle:
             "The Robotics Club develops problem-solving, teamwork and engineering skills through hands-on projects, coding and competitions.",
@@ -2444,7 +2444,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Wall Of Fame", location: "home", position: 108 },
       sections: [
-        editableSection("recognition-main", "wall_of_fame", {
+        editableSection("recognition-main", "school_wall_of_fame", {
           section_title: "Academic Wall of Fame",
           subtitle:
             "Celebrating Outstanding Academic Performance & Excellence",
@@ -2495,7 +2495,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Contact", location: "header", position: 33 },
       sections: [
-        editableSection("contact-details", "contact", {
+        editableSection("contact-details", "school_contact", {
           section_title: "Contact Us",
           subtitle: "We look forward to hearing from you.",
           heading: "Get in Touch",
@@ -2516,7 +2516,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Notice Board", location: "home", position: 109 },
       sections: [
-        editableSection("notices-main", "notice_board", {
+        editableSection("notices-main", "school_notices", {
           section_title: "School Notices",
           subtitle:
             "Official communications and announcements from M.O.M Sebone Secondary School.",
@@ -2573,7 +2573,7 @@ export const templateConfig = {
       enabled: true,
       nav: { label: "Sponsors", location: "home", position: 110 },
       sections: [
-        editableSection("sponsors-main", "partners", {
+        editableSection("sponsors-main", "school_sponsors", {
           section_title: "Our Partners & Supporters",
           subtitle:
             "School Name appreciates the continued support of our partners, community stakeholders, and organisations that contribute to learner development and school growth.",

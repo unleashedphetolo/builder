@@ -1,4 +1,5 @@
 import React from "react";
+import BuilderSectionTarget from "../../../../builder/BuilderSectionTarget";
 import {
   FiPhone,
   FiMail,
@@ -21,7 +22,7 @@ function hasOrganisationData(value = {}) {
   );
 }
 
-export default function Contact({ settings = {}, organization = null }) {
+export default function Contact({ settings = {}, organization = null, section = null, content = {}, builderMode = false }) {
   const org = hasOrganisationData(organization)
     ? organization
     : hasOrganisationData(settings?.organization)
@@ -63,16 +64,16 @@ export default function Contact({ settings = {}, organization = null }) {
       )}&output=embed`
     : "";
 
-  return (
+  const pageContent = (
     <section
       className="container"
       style={{ paddingTop: 10, paddingBottom: 40 }}
     >
-      <h2 className="section-title">Contact Us</h2>
+      <h2 className="section-title">{content?.section_title || content?.title || "Contact Us"}</h2>
 
       <p style={{ opacity: 0.85, maxWidth: 900, marginBottom: 18 }}>
-        For admissions, school information, events and learner support — reach
-        out to the school using the official contact details below.
+        {content?.subtitle ||
+          "For admissions, school information, events and learner support — reach out to the school using the official contact details below."}
       </p>
 
       <div
@@ -187,6 +188,23 @@ export default function Contact({ settings = {}, organization = null }) {
         </Card>
       </div>
     </section>
+  );
+
+  if (!section && !builderMode) {
+    return pageContent;
+  }
+
+  return (
+    <BuilderSectionTarget
+      builderMode={builderMode}
+      section={section}
+      sectionType="school_contact"
+      label={content?.section_title || content?.title || "Contact Us"}
+      templateCategory="school"
+      templateKey="school-modern-v1"
+    >
+      {pageContent}
+    </BuilderSectionTarget>
   );
 }
 

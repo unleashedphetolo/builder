@@ -316,7 +316,7 @@ export default function History({
     </main>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -324,7 +324,7 @@ export default function History({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="process"
+      sectionType="school_history"
       label={content?.section_title || "Our History"}
       templateCategory="school"
       templateKey="school-modern-v1"

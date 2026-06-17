@@ -131,7 +131,7 @@ export default function CodeOfConduct({
     </section>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -139,7 +139,7 @@ export default function CodeOfConduct({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="policy"
+      sectionType="school_code_of_conduct"
       label={content?.section_title || "Learner Code of Conduct"}
       templateCategory="school"
       templateKey="school-modern-v1"

@@ -88,7 +88,7 @@ export default function ResourcesLanding({
     </section>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -96,7 +96,7 @@ export default function ResourcesLanding({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="services"
+      sectionType="school_resources"
       label={content?.section_title || "Resources"}
       templateCategory="school"
       templateKey="school-institutional-v1"

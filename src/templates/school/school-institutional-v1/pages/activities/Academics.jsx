@@ -97,7 +97,7 @@ export default function LifeAcademics({
     </main>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -105,7 +105,7 @@ export default function LifeAcademics({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="services"
+      sectionType="school_academics"
       label={content?.section_title || "Academic Programme"}
       templateCategory="school"
       templateKey="school-institutional-v1"

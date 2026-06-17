@@ -1,4 +1,5 @@
 import React from "react";
+import BuilderSectionTarget from "../../../../builder/BuilderSectionTarget";
 import "../styles/school-calendar.css";
 import CalendarWidget from "../components/common/CalendarWidget";
 
@@ -56,7 +57,7 @@ function formatDateTime(iso) {
   });
 }
 
-export default function SchoolCalendar({ content = {} }) {
+export default function SchoolCalendar({ section = null, content = {}, builderMode = false }) {
   const navigate = (slug) => {
     window.dispatchEvent(new CustomEvent("builder:navigate", { detail: slug }));
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -77,7 +78,7 @@ export default function SchoolCalendar({ content = {} }) {
   const viewAllHref = content?.view_all_href || "/calendar/events";
   const pdfHref = content?.pdf_url || "/docs/school-calendar.pdf";
 
-  return (
+  const pageContent = (
     <main className="scal-page container">
       <header className="scal-hero">
         <div>
@@ -207,5 +208,22 @@ export default function SchoolCalendar({ content = {} }) {
         </div>
       </section>
     </main>
+  );
+
+  if (!section && !builderMode) {
+    return pageContent;
+  }
+
+  return (
+    <BuilderSectionTarget
+      builderMode={builderMode}
+      section={section}
+      sectionType="school_calendar"
+      label={content?.section_title || content?.title || "School Calendar"}
+      templateCategory="school"
+      templateKey="school-modern-v1"
+    >
+      {pageContent}
+    </BuilderSectionTarget>
   );
 }

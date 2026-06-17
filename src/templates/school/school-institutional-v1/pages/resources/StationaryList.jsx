@@ -143,7 +143,7 @@ export default function StationaryList({
     </section>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -151,7 +151,7 @@ export default function StationaryList({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="services"
+      sectionType="school_stationary_list"
       label={content?.section_title || "Stationery Requirements"}
       templateCategory="school"
       templateKey="school-institutional-v1"

@@ -89,7 +89,7 @@ export default function RoboticsClub({
     </section>
   );
 
-  if (!section) {
+  if (!section && !builderMode) {
     return pageContent;
   }
 
@@ -97,7 +97,7 @@ export default function RoboticsClub({
     <BuilderSectionTarget
       builderMode={builderMode}
       section={section}
-      sectionType="services"
+      sectionType="school_robotics"
       label={content?.section_title || "Robotics Club"}
       templateCategory="school"
       templateKey="school-modern-v1"

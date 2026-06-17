@@ -1,0 +1,18 @@
+Builder open all section editors fix
+
+Updated files:
+- builder/Builder.jsx
+- builder/BuilderSectionTarget.jsx
+- builder/siteService.js
+- builder/section-editor/BuilderSectionEditor.jsx
+- builder/section-editor/editorRegistry.js
+- builder/section-editor/categories/school/schoolEditorRegistry.js
+
+What changed:
+- Edit buttons from school-modern-v1 virtual/page targets now send section key, editor type, page slug, content, style and animation.
+- Builder.jsx now opens by id, section key, editor type and page slug.
+- If an inner page target has no real database section id yet, Builder.jsx creates the missing site_sections row first, then opens the editor.
+- siteService.js includes createSiteSectionFromEditorRequest to save those missing page sections.
+- Section identity now stores section_key, _section_key, editor_section_type, _editor_section_type and page_slug in content.
+- School section registry and classifier were extended for activities, resources, robotics, policies, calendars and other inner pages.
+- Existing folder structure was retained.
