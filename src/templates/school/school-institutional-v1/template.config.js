@@ -1248,21 +1248,25 @@ export const templateConfig = {
               id: "facility-preview-classrooms",
               title: "Classrooms",
               image_url: "/images/facilities/classrooms.jpg",
+              img: "/images/facilities/classrooms.jpg",
             },
             {
               id: "facility-preview-science-lab",
               title: "Science Lab",
               image_url: "/images/facilities/science-lab.jpg",
+              img: "/images/facilities/science-lab.jpg",
             },
             {
               id: "facility-preview-computer-lab",
               title: "Computer Lab",
               image_url: "/images/facilities/computer-lab.jpg",
+              img: "/images/facilities/computer-lab.jpg",
             },
             {
               id: "facility-preview-sports",
               title: "Sports Grounds",
               image_url: "/images/facilities/sports.jpg",
+              img: "/images/facilities/sports.jpg",
             },
           ],
         }),
@@ -1806,6 +1810,8 @@ export const templateConfig = {
             "Official daily announcements for learners at M.O.M Sebone Secondary School.",
           search_placeholder: "Search bulletin...",
           empty_message: "No announcements matched your search.",
+          footer_note:
+            "For urgent announcements, learners should confirm details with the school office or their class teacher.",
           items: [
             {
               id: "bulletin-mathematics-extra-classes",
@@ -1856,21 +1862,119 @@ export const templateConfig = {
         editableSection("attendance-policy", "school_attendance_policy", {
           section_title: "Attendance Policy",
           subtitle:
-            "Regular attendance and punctuality support learner success.",
-          body:
-            "Learners are expected to attend school every scheduled day and arrive on time. Parents or guardians should provide appropriate communication when absence is unavoidable.",
-          items: [
+            "This policy explains attendance expectations, late-coming procedures, absence reporting, and academic accountability for learners at M.O.M Sebone Secondary School.",
+          school_name: "M.O.M Sebone Secondary School",
+          phone: "011 023 9428",
+          email: "sebone@gmail.com",
+          meta_items: [
+            "Policy Type: Learner Conduct",
+            "Applies to: All Grades",
+            "Status: Active",
+          ],
+          purpose_title: "1. Purpose",
+          purpose_body:
+            "Regular attendance is essential for learner performance, discipline, and successful completion of curriculum requirements. This policy sets out clear procedures to support punctuality, monitor attendance, and ensure effective communication between the school and parents/guardians.",
+          attendance_title: "2. Attendance Expectations",
+          attendance_expectations: [
+            "Learners must attend school every official school day unless excused for a valid reason.",
+            "Learners must arrive on time and be prepared for learning (uniform, stationery, and books).",
+            "Attendance is recorded daily (and per period where applicable).",
+            "Repeated absences or late-coming may lead to intervention and disciplinary steps.",
+          ],
+          late_coming_title: "3. Late-Coming Procedure",
+          late_coming_body:
+            "Learners who arrive late disrupt teaching and learning. Late-coming is recorded and monitored.",
+          late_arrival_title: "3.1 When a learner is late",
+          late_arrival_items: [
+            "Report to the designated late-coming point/office on arrival.",
+            "Late-coming is recorded and may require a slip/pass to enter class.",
+            "Repeated late-coming triggers parent contact and intervention.",
+          ],
+          acceptable_reasons_title: "3.2 Acceptable reasons",
+          acceptable_reasons: [
+            "Medical appointment (proof required)",
+            "Public transport delays (when consistent and verifiable)",
+            "Family emergency (parent/guardian confirmation required)",
+          ],
+          absences_title: "4. Absences & Reporting",
+          absence_items: [
+            "Parents/guardians must inform the school as soon as possible when a learner will be absent.",
+            "A written note or proof must be provided upon return to school.",
+            "Medical certificates are required for extended illness or repeated health-related absences.",
+            "Unreported absences may be recorded as unexcused and can trigger intervention.",
+          ],
+          absence_callout_label: "Important:",
+          absence_callout:
+            "If a learner is absent on the day of a test/exam, the school may require valid proof before a make-up assessment is considered.",
+          catch_up_title: "5. Catch-Up Work & Assessments",
+          catch_up_items: [
+            "It is the learner’s responsibility to request and complete missed classwork.",
+            "Teachers will guide learners on what was missed and the deadline for catch-up work.",
+            "Make-up tasks/tests are granted at the school’s discretion and may require proof of absence.",
+            "Repeated missed assessments may affect promotion requirements.",
+          ],
+          intervention_title: "6. Monitoring & Intervention",
+          intervention_steps: [
             {
-              id: "attendance-absence",
-              title: "Absence Reporting",
-              body: "Contact the school when a learner cannot attend.",
+              id: "early-warning",
+              title: "Early Warning",
+              body:
+                "Educator/grade head identifies patterns of lateness/absence and records concerns.",
             },
             {
-              id: "attendance-punctuality",
-              title: "Punctuality",
-              body: "Learners should arrive before the official start of classes.",
+              id: "parent-contact",
+              title: "Parent/Guardian Contact",
+              body:
+                "School contacts parent/guardian to discuss causes and agree on corrective actions.",
+            },
+            {
+              id: "support-plan",
+              title: "Support Plan",
+              body:
+                "Where needed, a learner support plan may be implemented (counselling, referrals, monitoring).",
+            },
+            {
+              id: "disciplinary-steps",
+              title: "Disciplinary Steps",
+              body:
+                "Continued non-compliance may lead to disciplinary action in line with the school code of conduct.",
             },
           ],
+          roles_title: "7. Roles & Responsibilities",
+          roles: [
+            {
+              id: "learners",
+              title: "Learners",
+              items: [
+                "Attend daily and arrive on time.",
+                "Bring required materials and maintain discipline.",
+                "Catch up missed work promptly.",
+              ],
+            },
+            {
+              id: "parents",
+              title: "Parents/Guardians",
+              items: [
+                "Ensure learners arrive on time.",
+                "Report absences promptly and provide proof.",
+                "Respond to school communication and attend meetings when required.",
+              ],
+            },
+            {
+              id: "school",
+              title: "School",
+              items: [
+                "Record attendance accurately.",
+                "Communicate concerns and apply interventions.",
+                "Support learners to improve attendance.",
+              ],
+            },
+          ],
+          contact_title: "8. Contact",
+          contact_body:
+            "For attendance enquiries, please contact the school office:",
+          footer_note:
+            "This page is a website version of the policy. The school’s official signed policy document remains the primary reference.",
         }),
       ],
     },
@@ -2506,7 +2610,12 @@ export const templateConfig = {
           address_line1: "123 Education St",
           city: "Johannesburg",
           province: "Gauteng",
+          postal_code: "0000",
           country: "South Africa",
+          map_title: "Location Map",
+          map_badge_label: "Map",
+          map_available_text: "Find us using the official address",
+          map_empty_text: "Save an organisation address to show the map",
         }),
       ],
     },

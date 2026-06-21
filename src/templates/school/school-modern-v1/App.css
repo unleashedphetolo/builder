@@ -64,3 +64,2582 @@
   --modern-school-secondary: var(--secondary, #0f172a);
   --modern-school-accent: var(--accent, #06b6d4);
 }
+
+
+/* ===== merged from styles/template-theme-bridge.css ===== */
+/* =========================================================
+   INSTITUTIONAL SCHOOL THEME / BRAND STYLES BRIDGE
+   Keeps the template layout and content structure unchanged while allowing
+   global Theme and Brand Styles selections to appear across this template.
+   ========================================================= */
+
+.school-modern-v1-root {
+  --school-primary: var(--site-theme-primary, var(--primary, #1e40af));
+  --school-secondary: var(--site-theme-secondary, var(--secondary, #0f172a));
+  --school-background: var(--site-theme-background, var(--background, #ffffff));
+  --school-surface: var(--site-theme-surface, #ffffff);
+  --school-soft: var(--site-theme-soft, #f8fafc);
+  --school-border: var(--site-theme-border, #e2e8f0);
+  --school-card-radius: var(--site-theme-card-radius, 14px);
+  --school-button-radius: var(--site-theme-button-radius, 8px);
+  --school-shadow: var(--site-theme-shadow, 0 12px 30px rgba(15, 23, 42, 0.08));
+
+  min-height: 100%;
+  background: var(--school-background);
+  color: var(--school-secondary);
+  font-family: var(--site-theme-body-font, var(--font, Inter, "Segoe UI", Arial, sans-serif));
+  font-size: var(--site-theme-base-font-size, 16px);
+  font-weight: var(--site-theme-body-weight, 450);
+  line-height: var(--site-theme-line-height, 1.6);
+}
+
+.school-modern-v1-root :where(p, li, label, input, select, textarea) {
+  font-family: var(--site-theme-body-font, var(--font, Inter, "Segoe UI", Arial, sans-serif));
+}
+
+.school-modern-v1-root :where(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--site-theme-display-font, var(--heading-font, Inter, "Segoe UI", Arial, sans-serif));
+  font-weight: var(--site-theme-heading-weight, 760);
+  letter-spacing: var(--site-theme-letter-spacing, -0.025em);
+}
+
+.school-modern-v1-root :where(
+  .section-title,
+  .wall-title,
+  .scal-title,
+  .scal-h2,
+  .admissions-page__hero-title,
+  .admissions-page__card-title,
+  .admissions-page__side-title,
+  .about-card h3
+) {
+  color: var(--school-primary);
+  font-family: var(--site-theme-display-font, var(--heading-font, Inter, "Segoe UI", Arial, sans-serif));
+  font-weight: var(--site-theme-heading-weight, 760);
+}
+
+.school-modern-v1-root :where(
+  .view-all,
+  .scal-btn,
+  .admissions-page__btn--primary,
+  .auth-links a,
+  .btn-primary,
+  .primary-btn
+) {
+  border-radius: var(--school-button-radius);
+  background-color: var(--school-primary);
+}
+
+.school-modern-v1-root :where(
+  .about-card,
+  .honour-card,
+  .sponsor-card,
+  .stats-card,
+  .scal-card,
+  .admissions-page__card,
+  .admissions-page__side-card,
+  .gallery-card
+) {
+  border-radius: var(--school-card-radius);
+}
+
+.school-modern-v1-root :where(
+  .about-card,
+  .honour-card,
+  .sponsor-card,
+  .stats-card,
+  .scal-card,
+  .admissions-page__card,
+  .admissions-page__side-card
+) {
+  box-shadow: var(--school-shadow);
+}
+
+.school-modern-v1-root .about,
+.school-modern-v1-root .wall-container,
+.school-modern-v1-root .sponsors-section {
+  background-color: var(--school-soft);
+}
+
+.school-modern-v1-root .about-card {
+  border-top-color: var(--school-primary);
+}
+
+.school-modern-v1-root .values-list li::before,
+.school-modern-v1-root .stat .num,
+.school-modern-v1-root .scal-link {
+  color: var(--school-primary);
+}
+
+.school-modern-v1-root .principal {
+  background: var(--school-secondary);
+  color: #ffffff;
+}
+
+.school-modern-v1-root .principal :where(h1, h2, h3, p) {
+  color: inherit;
+}
+
+.school-modern-v1-root .notice-board {
+  background: var(--school-secondary);
+  border-radius: var(--school-card-radius);
+}
+
+.school-modern-v1-root .badge {
+  background: var(--school-primary);
+}
+
+.school-modern-v1-root .scal-pill {
+  border-color: rgba(30, 64, 175, 0.18);
+  background: var(--school-soft);
+  color: var(--school-primary);
+}
+
+.school-modern-v1-root .principal-role {
+  display: block;
+  margin-top: 4px;
+  opacity: 0.74;
+  font-size: 0.86rem;
+  font-weight: 500;
+}
+
+/*
+  Keep the product editing UI controlled by builder styles, not the selected
+  school website theme.
+*/
+.school-modern-v1-root :where(
+  .bst-edit-button,
+  .navbar-logo-edit-button,
+  .bme-root,
+  .bme-root button,
+  .bme-root input,
+  .bme-root textarea,
+  .bme-root select
+) {
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  text-transform: none;
+}
+
+
+/* ===== merged from styles/modern-school-design.css ===== */
+/*
+  school-modern-v1 — Responsive School Design Fix
+  ------------------------------------------------
+  Purpose:
+  - Make school-modern-v1 look clean, school-friendly and responsive.
+  - Keep the exact template/component/editor structure functional.
+  - Scope visual overrides to .school-modern-v1-root so styling does not leak
+    to the builder app or other templates.
+  - Remove the previous oversized glass-card hero overlay/pseudo element.
+*/
+
+/* =============================
+   Template isolation
+   ============================= */
+
+.school-modern-v1-root,
+.school-modern-v1-root * {
+  box-sizing: border-box;
+}
+
+.school-modern-v1-root {
+  --smv1-primary: var(--primary, #1d2d58);
+  --smv1-primary-dark: #1e3a8a;
+  --smv1-secondary: var(--secondary, #0f172a);
+  --smv1-accent: var(--accent, #f59e0b);
+  --smv1-accent-soft: #fef3c7;
+  --smv1-surface: #ffffff;
+  --smv1-surface-soft: #f8fafc;
+  --smv1-surface-blue: #eff6ff;
+  --smv1-text: #0f172a;
+  --smv1-muted: #64748b;
+  --smv1-border: rgba(15, 23, 42, 0.10);
+  --smv1-border-strong: rgba(29, 78, 216, 0.18);
+  --smv1-shadow: 0 18px 46px rgba(15, 23, 42, 0.10);
+  --smv1-shadow-strong: 0 28px 70px rgba(15, 23, 42, 0.16);
+  --smv1-radius-xl: 28px;
+  --smv1-radius-lg: 20px;
+  --smv1-radius-md: 14px;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  color: var(--smv1-text);
+  background:
+    radial-gradient(circle at 6% 8%, rgba(37, 99, 235, 0.08), transparent 30rem),
+    radial-gradient(circle at 94% 10%, rgba(245, 158, 11, 0.09), transparent 28rem),
+    linear-gradient(180deg, #ffffff 0%, #f8fafc 44%, #ffffff 100%);
+  font-family: var(--font-family, Inter, "Segoe UI", Arial, sans-serif);
+}
+
+.school-modern-v1-root main {
+  background: transparent !important;
+}
+
+.school-modern-v1-root img,
+.school-modern-v1-root video {
+  max-width: 100%;
+}
+
+.school-modern-v1-root a {
+  text-decoration: none;
+}
+
+.school-modern-v1-root .container {
+  width: min(1180px, calc(100% - 32px)) !important;
+  max-width: 1180px !important;
+  margin-inline: auto !important;
+  padding-inline: 0 !important;
+}
+
+/* =============================
+   Topbar
+   ============================= */
+
+.school-modern-v1-root .topbar {
+  width: 100%;
+  background:
+    linear-gradient(90deg, #1e3a8a 0%, #0f3f73 45%, #0f172a 100%) !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: none !important;
+  font-size: 0.88rem !important;
+}
+
+.school-modern-v1-root .topbar-inner {
+  display: grid !important;
+  grid-template-columns: minmax(240px, 1fr) auto minmax(240px, 1fr);
+  align-items: center !important;
+  gap: 18px !important;
+  min-height: 56px;
+  padding: 9px 0 !important;
+}
+
+.school-modern-v1-root .topbar .left,
+.school-modern-v1-root .topbar .center,
+.school-modern-v1-root .topbar .right {
+  min-width: 0 !important;
+  flex: none !important;
+}
+
+.school-modern-v1-root .topbar .left {
+  justify-content: flex-start !important;
+}
+
+.school-modern-v1-root .topbar .center {
+  justify-self: center !important;
+  text-align: center !important;
+}
+
+.school-modern-v1-root .topbar .right {
+  justify-content: flex-end !important;
+  gap: 14px !important;
+}
+
+.school-modern-v1-root .brand-small {
+  opacity: 0.72;
+}
+
+.school-modern-v1-root .contact {
+  gap: 10px !important;
+  font-weight: 800 !important;
+  color: rgba(255, 255, 255, 0.92) !important;
+  white-space: nowrap;
+}
+
+.school-modern-v1-root .contact a {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.school-modern-v1-root .contact .sep {
+  color: rgba(245, 158, 11, 0.52) !important;
+}
+
+.school-modern-v1-root .top-links {
+  display: flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-wrap: wrap;
+}
+
+.school-modern-v1-root .top-links a {
+  color: rgba(255, 255, 255, 0.92) !important;
+  font-size: 0.82rem !important;
+  font-weight: 850 !important;
+  padding: 7px 10px !important;
+  border-radius: 999px !important;
+  line-height: 1 !important;
+}
+
+.school-modern-v1-root .top-links a:hover {
+  background: rgba(255, 255, 255, 0.13) !important;
+  color: #ffffff !important;
+  transform: none !important;
+}
+
+.school-modern-v1-root .social {
+  gap: 7px !important;
+  flex-wrap: nowrap !important;
+}
+
+.school-modern-v1-root .social-icons {
+  width: 24px !important;
+  height: 24px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: transparent !important;
+  border-radius: 7px !important;
+  box-shadow: none !important;
+}
+
+.school-modern-v1-root .social-icons svg {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.school-modern-v1-root .auth-links a {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 8px 14px !important;
+  border-radius: 999px !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  border: 1px solid rgba(255, 255, 255, 0.20) !important;
+  background: rgba(255, 255, 255, 0.10) !important;
+}
+
+/* =============================
+   Navbar
+   ============================= */
+
+.school-modern-v1-root .site-nav {
+  position: sticky !important;
+  top: 0;
+  z-index: 9999;
+  width: 100%;
+  padding: 0 !important;
+  background: rgba(255, 255, 255, 0.97) !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.school-modern-v1-root .nav-inner {
+  min-height: 86px !important;
+  padding: 10px 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 18px !important;
+}
+
+.school-modern-v1-root .logo-section,
+.school-modern-v1-root .logo-link {
+  min-width: 0;
+}
+
+.school-modern-v1-root .logo-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  max-width: min(360px, 48vw);
+  padding: 8px 14px 8px 8px !important;
+  border-radius: 20px !important;
+  color: var(--smv1-text) !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(29, 78, 216, 0.12) !important;
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.06) !important;
+}
+
+.school-modern-v1-root .builder-logo-target {
+  flex: 0 0 auto;
+}
+
+.school-modern-v1-root .logo-image {
+  width: 56px !important;
+  height: 56px !important;
+  max-width: 56px !important;
+  max-height: 56px !important;
+  margin: 0 !important;
+  object-fit: contain !important;
+  border-radius: 16px !important;
+  background: #ffffff;
+  filter: none !important;
+  box-shadow: 0 10px 22px rgba(29, 78, 216, 0.10);
+}
+
+.school-modern-v1-root .logo-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.school-modern-v1-root .brand-name,
+.school-modern-v1-root .school-name {
+  margin: 0 !important;
+  color: var(--smv1-secondary) !important;
+  font-size: clamp(1rem, 1.5vw, 1.26rem) !important;
+  line-height: 1.08 !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.035em !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.school-modern-v1-root .logo-text .slogan,
+.school-modern-v1-root .slogan {
+  color: var(--smv1-muted) !important;
+  font-size: 0.78rem !important;
+  line-height: 1.2 !important;
+  font-weight: 750 !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.school-modern-v1-root .nav-links {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin-left: auto;
+}
+
+.school-modern-v1-root .nav-links a,
+.school-modern-v1-root .drop-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  min-height: 40px;
+  padding: 9px 12px !important;
+  border-radius: 999px !important;
+  border: 1px solid transparent !important;
+  background: transparent !important;
+  color: #334155 !important;
+  font-size: 0.92rem !important;
+  line-height: 1 !important;
+  font-weight: 850 !important;
+  white-space: nowrap;
+  transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+}
+
+.school-modern-v1-root .nav-links a:hover,
+.school-modern-v1-root .drop-btn:hover {
+  color: var(--smv1-primary) !important;
+  background: var(--smv1-surface-blue) !important;
+  border-color: rgba(29, 78, 216, 0.13) !important;
+}
+
+.school-modern-v1-root .dropdown {
+  position: relative !important;
+}
+
+.school-modern-v1-root .drop-menu {
+  position: absolute !important;
+  top: calc(100% + 10px) !important;
+  left: 0 !important;
+  width: 250px !important;
+  padding: 10px !important;
+  border-radius: 20px !important;
+  background: #ffffff !important;
+  border: 1px solid var(--smv1-border) !important;
+  box-shadow: var(--smv1-shadow-strong) !important;
+  z-index: 10000 !important;
+}
+
+.school-modern-v1-root .drop-menu a {
+  display: flex !important;
+  align-items: center;
+  min-height: 40px;
+  width: 100%;
+  padding: 10px 12px !important;
+  border-radius: 14px !important;
+  color: #334155 !important;
+  font-size: 0.9rem !important;
+  font-weight: 780 !important;
+  white-space: normal;
+}
+
+.school-modern-v1-root .drop-menu a:hover {
+  background: var(--smv1-surface-blue) !important;
+  color: var(--smv1-primary) !important;
+}
+
+.school-modern-v1-root .hamburger {
+  width: 42px !important;
+  height: 42px !important;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px !important;
+  border: 1px solid rgba(15, 23, 42, 0.10) !important;
+  background: #ffffff !important;
+}
+
+.school-modern-v1-root .hamburger span {
+  width: 22px !important;
+  height: 2.5px !important;
+  background: var(--smv1-secondary) !important;
+}
+
+/* =============================
+   Hero
+   ============================= */
+
+.school-modern-v1-root .hero-carousel,
+.school-modern-v1-root .hero,
+.school-modern-v1-root .hero-slider {
+  position: relative !important;
+  width: 100% !important;
+  height: clamp(560px, 66vh, 700px) !important;
+  min-height: clamp(560px, 66vh, 700px) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  background:
+    linear-gradient(135deg, #0f172a 0%, #1e3a8a 54%, #0f172a 100%) !important;
+  color: #ffffff !important;
+}
+
+/* Remove previous decorative pseudo overlay/card completely */
+.school-modern-v1-root .hero-carousel::before,
+.school-modern-v1-root .hero-carousel::after,
+.school-modern-v1-root .hero::before,
+.school-modern-v1-root .hero::after {
+  content: none !important;
+  display: none !important;
+}
+
+.school-modern-v1-root .slides,
+.school-modern-v1-root .slide {
+  width: 100%;
+  height: 100%;
+}
+
+.school-modern-v1-root .slide {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+}
+
+.school-modern-v1-root .slide::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(2, 6, 23, 0.84) 0%, rgba(2, 6, 23, 0.58) 43%, rgba(2, 6, 23, 0.20) 100%),
+    linear-gradient(180deg, rgba(2, 6, 23, 0.22) 0%, rgba(2, 6, 23, 0.18) 52%, rgba(2, 6, 23, 0.74) 100%);
+}
+
+.school-modern-v1-root .slide-media {
+  position: absolute !important;
+  inset: 0 !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  filter: none !important;
+  -webkit-filter: none !important;
+  transform: scale(1.01);
+}
+
+.school-modern-v1-root .hero-video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  filter: none !important;
+}
+
+.school-modern-v1-root .slide-caption {
+  position: relative !important;
+  z-index: 4 !important;
+  display: block !important;
+  width: min(1180px, calc(100% - 32px)) !important;
+  max-width: 1180px !important;
+  margin: 0 auto !important;
+  padding: clamp(54px, 8vw, 84px) 0 clamp(92px, 10vw, 118px) !important;
+  text-align: left !important;
+  color: #ffffff !important;
+}
+
+/* Only the small label remains; no big floating white card */
+.school-modern-v1-root .slide-caption::before {
+  content: "School website template";
+  display: inline-flex !important;
+  align-items: center;
+  width: fit-content;
+  margin-bottom: 18px !important;
+  padding: 9px 13px !important;
+  border-radius: 999px !important;
+  background: rgba(245, 158, 11, 0.16) !important;
+  border: 1px solid rgba(254, 243, 199, 0.34) !important;
+  color: #fde68a !important;
+  font-size: 0.76rem !important;
+  line-height: 1 !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+}
+
+.school-modern-v1-root .slide-caption::after {
+  content: none !important;
+  display: none !important;
+}
+
+.school-modern-v1-root .slide-caption h2 {
+  max-width: 760px !important;
+  margin: 0 0 18px !important;
+  color: #ffffff !important;
+  font-size: clamp(2.45rem, 5.4vw, 5rem) !important;
+  line-height: 0.98 !important;
+  letter-spacing: -0.07em !important;
+  font-weight: 950 !important;
+  text-shadow: 0 20px 50px rgba(0, 0, 0, 0.36) !important;
+}
+
+.school-modern-v1-root .slide-caption .subtitle {
+  max-width: 640px !important;
+  margin: 0 0 26px !important;
+  color: rgba(255, 255, 255, 0.88) !important;
+  font-size: clamp(1rem, 1.6vw, 1.24rem) !important;
+  line-height: 1.75 !important;
+  font-weight: 580 !important;
+}
+
+.school-modern-v1-root .cta-row {
+  display: flex !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex-wrap: wrap !important;
+  margin-top: 6px !important;
+}
+
+.school-modern-v1-root .btns {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 13px 22px !important;
+  border-radius: 999px !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+  border: 1px solid transparent !important;
+}
+
+.school-modern-v1-root .btns.primary {
+  color: #111827 !important;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
+  box-shadow: 0 16px 34px rgba(245, 158, 11, 0.30) !important;
+}
+
+.school-modern-v1-root .btns.ghost {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.28) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.school-modern-v1-root .carousel-btn {
+  z-index: 7 !important;
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 16px !important;
+  color: #ffffff !important;
+  background: rgba(15, 23, 42, 0.46) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 18px 38px rgba(2, 6, 23, 0.24) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.school-modern-v1-root .carousel-btn.prev {
+  left: max(16px, calc((100vw - 1180px) / 2 - 58px)) !important;
+}
+
+.school-modern-v1-root .carousel-btn.next {
+  right: max(16px, calc((100vw - 1180px) / 2 - 58px)) !important;
+}
+
+.school-modern-v1-root .indicators {
+  z-index: 7 !important;
+  bottom: 34px !important;
+  display: flex !important;
+  gap: 8px !important;
+  padding: 8px 10px !important;
+  border-radius: 999px !important;
+  background: rgba(2, 6, 23, 0.36) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.school-modern-v1-root .indicator {
+  width: 30px !important;
+  height: 7px !important;
+  border-radius: 999px !important;
+  border: 0 !important;
+  background: rgba(255, 255, 255, 0.42) !important;
+  transform: none !important;
+}
+
+.school-modern-v1-root .indicator.active {
+  background: #fbbf24 !important;
+  transform: none !important;
+}
+
+/* =============================
+   Home sections and school cards
+   ============================= */
+
+.school-modern-v1-root .notice-wrapper {
+  position: relative !important;
+  z-index: 20 !important;
+  width: min(1180px, calc(100% - 32px));
+  margin: -60px auto 0 !important;
+}
+
+.school-modern-v1-root .notice-board {
+  padding: clamp(18px, 2.8vw, 28px) !important;
+  border-radius: var(--smv1-radius-xl) !important;
+  color: var(--smv1-text) !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 1px solid rgba(29, 78, 216, 0.12) !important;
+  box-shadow: var(--smv1-shadow-strong) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.school-modern-v1-root .notice-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 14px !important;
+  padding: 0 0 14px !important;
+  margin-bottom: 14px !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
+}
+
+.school-modern-v1-root .notice-header h2,
+.school-modern-v1-root .notice-header h3 {
+  margin: 0 !important;
+  color: var(--smv1-primary-dark) !important;
+  font-size: clamp(1.3rem, 2.3vw, 1.9rem) !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.04em !important;
+}
+
+.school-modern-v1-root .view-all,
+.school-modern-v1-root .view-all-btn {
+  min-height: 38px;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px !important;
+  border-radius: 999px !important;
+  color: var(--smv1-primary-dark) !important;
+  background: var(--smv1-surface-blue) !important;
+  border: 1px solid rgba(29, 78, 216, 0.14) !important;
+  font-weight: 900 !important;
+}
+
+.school-modern-v1-root .notice-row {
+  border-radius: 18px !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05) !important;
+}
+
+.school-modern-v1-root .notice-title {
+  color: var(--smv1-secondary) !important;
+  font-weight: 900 !important;
+}
+
+.school-modern-v1-root .notice-date,
+.school-modern-v1-root .notice-meta {
+  color: var(--smv1-muted) !important;
+}
+
+.school-modern-v1-root .about,
+.school-modern-v1-root .gallery,
+.school-modern-v1-root .quick-links,
+.school-modern-v1-root .latest-news,
+.school-modern-v1-root .events,
+.school-modern-v1-root .school-stats,
+.school-modern-v1-root .sponsors,
+.school-modern-v1-root .wall-of-fame {
+  background: transparent !important;
+}
+
+.school-modern-v1-root .about {
+  padding: clamp(36px, 5vw, 68px) 0 !important;
+}
+
+.school-modern-v1-root .about-horizontal,
+.school-modern-v1-root .admissions-grid,
+.school-modern-v1-root .resources-grid,
+.school-modern-v1-root .contact-grid,
+.school-modern-v1-root .calendar-inner-grid,
+.school-modern-v1-root .staff-grid,
+.school-modern-v1-root .news-grid,
+.school-modern-v1-root .gallery-grid {
+  gap: clamp(16px, 2vw, 24px) !important;
+}
+
+.school-modern-v1-root .about-card,
+.school-modern-v1-root .card,
+.school-modern-v1-root .info-card,
+.school-modern-v1-root .admission-card,
+.school-modern-v1-root .resource-card,
+.school-modern-v1-root .news-card,
+.school-modern-v1-root .staff-card,
+.school-modern-v1-root .contact-card,
+.school-modern-v1-root .calendar-card,
+.school-modern-v1-root .event-card,
+.school-modern-v1-root .library-card,
+.school-modern-v1-root .stats-card,
+.school-modern-v1-root .policy-card {
+  border-radius: var(--smv1-radius-xl) !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  box-shadow: var(--smv1-shadow) !important;
+  color: var(--smv1-text) !important;
+}
+
+.school-modern-v1-root .about-card {
+  border-top: 5px solid var(--smv1-primary) !important;
+}
+
+.school-modern-v1-root .about-label {
+  color: var(--smv1-primary) !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.08em;
+}
+
+.school-modern-v1-root .about-card h3,
+.school-modern-v1-root .section-title h2,
+.school-modern-v1-root .page-title,
+.school-modern-v1-root .card h3,
+.school-modern-v1-root .info-card h3,
+.school-modern-v1-root .resource-card h3,
+.school-modern-v1-root .news-card h3,
+.school-modern-v1-root .staff-card h3 {
+  color: var(--smv1-secondary) !important;
+  letter-spacing: -0.04em;
+  font-weight: 950 !important;
+}
+
+.school-modern-v1-root .about-card p,
+.school-modern-v1-root .card p,
+.school-modern-v1-root .info-card p,
+.school-modern-v1-root .resource-card p,
+.school-modern-v1-root .news-card p {
+  color: var(--smv1-muted) !important;
+}
+
+.school-modern-v1-root .principal {
+  width: min(1180px, calc(100% - 32px)) !important;
+  margin: clamp(34px, 5vw, 66px) auto !important;
+  border-radius: 34px !important;
+  overflow: hidden !important;
+  background:
+    radial-gradient(circle at 10% 18%, rgba(59, 130, 246, 0.26), transparent 22rem),
+    linear-gradient(135deg, #1e3a8a 0%, #0f172a 64%, #111827 100%) !important;
+  box-shadow: var(--smv1-shadow-strong) !important;
+}
+
+.school-modern-v1-root .principal-inner {
+  width: 100% !important;
+  gap: clamp(22px, 4vw, 52px) !important;
+  padding: clamp(26px, 4vw, 48px) !important;
+}
+
+.school-modern-v1-root .principal-text h2 {
+  color: #ffffff !important;
+  font-size: clamp(1.75rem, 3.4vw, 3.1rem) !important;
+  line-height: 1.05 !important;
+  letter-spacing: -0.055em !important;
+}
+
+.school-modern-v1-root .principal-text p {
+  color: rgba(255, 255, 255, 0.84) !important;
+  line-height: 1.8 !important;
+}
+
+.school-modern-v1-root .principal-photo img {
+  width: min(360px, 42vw) !important;
+  aspect-ratio: 4 / 5 !important;
+  height: auto !important;
+  object-fit: cover !important;
+  border-radius: 26px !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.24) !important;
+}
+
+.school-modern-v1-root .gallery-card {
+  height: clamp(230px, 28vw, 330px) !important;
+  border-radius: var(--smv1-radius-xl) !important;
+  overflow: hidden !important;
+  box-shadow: var(--smv1-shadow) !important;
+}
+
+.school-modern-v1-root .gallery-overlay {
+  align-items: flex-end !important;
+  justify-content: flex-start !important;
+  padding: 22px !important;
+  background:
+    linear-gradient(to top, rgba(15, 23, 42, 0.86), rgba(15, 23, 42, 0.26), transparent) !important;
+}
+
+.school-modern-v1-root .gallery-overlay h3 {
+  margin: 0 !important;
+  padding: 9px 12px !important;
+  border-radius: 999px !important;
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  font-size: 0.86rem !important;
+  font-weight: 900 !important;
+}
+
+/* =============================
+   Inner page heroes
+   ============================= */
+
+.school-modern-v1-root .page-hero,
+.school-modern-v1-root .admissions-hero,
+.school-modern-v1-root .resources-hero,
+.school-modern-v1-root .contact-hero,
+.school-modern-v1-root .library-hero,
+.school-modern-v1-root .gallery-hero,
+.school-modern-v1-root .notices-hero {
+  min-height: 300px !important;
+  display: flex !important;
+  align-items: center !important;
+  color: #ffffff !important;
+  background:
+    radial-gradient(circle at 12% 24%, rgba(245, 158, 11, 0.22), transparent 20rem),
+    linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%) !important;
+  border-radius: 0 0 32px 32px !important;
+}
+
+.school-modern-v1-root .page-hero h1,
+.school-modern-v1-root .admissions-hero h1,
+.school-modern-v1-root .resources-hero h1,
+.school-modern-v1-root .contact-hero h1,
+.school-modern-v1-root .library-hero h1,
+.school-modern-v1-root .gallery-hero h1,
+.school-modern-v1-root .notices-hero h1 {
+  color: #ffffff !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.055em !important;
+}
+
+.school-modern-v1-root .page-hero p,
+.school-modern-v1-root .admissions-hero p,
+.school-modern-v1-root .resources-hero p,
+.school-modern-v1-root .contact-hero p,
+.school-modern-v1-root .library-hero p,
+.school-modern-v1-root .gallery-hero p,
+.school-modern-v1-root .notices-hero p {
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+
+/* =============================
+   Footer
+   ============================= */
+
+.school-modern-v1-root .site-footer {
+  margin-top: 48px !important;
+  background:
+    radial-gradient(circle at 15% 18%, rgba(37, 99, 235, 0.22), transparent 24rem),
+    linear-gradient(180deg, #0f172a 0%, #020617 100%) !important;
+  color: rgba(255, 255, 255, 0.76) !important;
+  border-top: 0 !important;
+}
+
+.school-modern-v1-root .footer-top {
+  padding-top: 48px !important;
+}
+
+.school-modern-v1-root .site-footer h4,
+.school-modern-v1-root .site-footer .school-name {
+  color: #ffffff !important;
+}
+
+.school-modern-v1-root .site-footer a {
+  color: rgba(255, 255, 255, 0.74) !important;
+}
+
+.school-modern-v1-root .site-footer a:hover {
+  color: #bfdbfe !important;
+}
+
+/* =============================
+   Builder compatibility
+   ============================= */
+
+.school-modern-v1-root .builder-media-editor-trigger,
+.school-modern-v1-root .builder-section-edit-button,
+.school-modern-v1-root [class*="builder-media"],
+.school-modern-v1-root [class*="builder-section"] {
+  z-index: 10000;
+}
+
+/* Do not restyle the builder media/section editor panels themselves. */
+.school-modern-v1-root .builder-media-editor,
+.school-modern-v1-root .builder-section-editor {
+  font-family: inherit;
+}
+
+/* =============================
+   Tablet
+   ============================= */
+
+@media (max-width: 1180px) {
+  .school-modern-v1-root .topbar-inner {
+    width: min(100% - 24px, 1180px) !important;
+    grid-template-columns: 1fr;
+    justify-items: center !important;
+    gap: 8px !important;
+    padding: 10px 0 !important;
+  }
+
+  .school-modern-v1-root .topbar .left,
+  .school-modern-v1-root .topbar .right {
+    justify-content: center !important;
+  }
+
+  .school-modern-v1-root .topbar .center {
+    order: 3;
+  }
+
+  .school-modern-v1-root .nav-inner {
+    width: min(100% - 24px, 1180px) !important;
+  }
+
+  .school-modern-v1-root .nav-links a,
+  .school-modern-v1-root .drop-btn {
+    padding-inline: 9px !important;
+    font-size: 0.86rem !important;
+  }
+
+  .school-modern-v1-root .carousel-btn.prev {
+    left: 18px !important;
+  }
+
+  .school-modern-v1-root .carousel-btn.next {
+    right: 18px !important;
+  }
+}
+
+/* =============================
+   Mobile navigation
+   ============================= */
+
+@media (max-width: 880px) {
+  .school-modern-v1-root .topbar-inner {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .school-modern-v1-root .topbar .left,
+  .school-modern-v1-root .topbar .center,
+  .school-modern-v1-root .topbar .right {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .school-modern-v1-root .contact {
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    font-size: 0.82rem !important;
+  }
+
+  .school-modern-v1-root .top-links {
+    gap: 6px !important;
+  }
+
+  .school-modern-v1-root .top-links a {
+    padding: 6px 9px !important;
+    font-size: 0.78rem !important;
+  }
+
+  .school-modern-v1-root .social {
+    justify-content: center !important;
+  }
+
+  .school-modern-v1-root .auth-links {
+    justify-content: center !important;
+  }
+
+  .school-modern-v1-root .nav-inner {
+    min-height: 76px !important;
+    gap: 12px !important;
+  }
+
+  .school-modern-v1-root .logo-link {
+    max-width: calc(100vw - 96px) !important;
+    padding: 7px 10px 7px 7px !important;
+    border-radius: 18px !important;
+  }
+
+  .school-modern-v1-root .logo-image {
+    width: 48px !important;
+    height: 48px !important;
+    max-width: 48px !important;
+    max-height: 48px !important;
+  }
+
+  .school-modern-v1-root .brand-name,
+  .school-modern-v1-root .school-name {
+    font-size: 1rem !important;
+  }
+
+  .school-modern-v1-root .logo-text .slogan,
+  .school-modern-v1-root .slogan {
+    font-size: 0.72rem !important;
+  }
+
+  .school-modern-v1-root .hamburger {
+    display: inline-flex !important;
+    flex: 0 0 auto;
+  }
+
+  .school-modern-v1-root .nav-links {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    width: min(340px, calc(100vw - 28px)) !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow-y: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+    padding: 96px 18px 24px !important;
+    margin: 0 !important;
+    background: rgba(255, 255, 255, 0.98) !important;
+    border-left: 1px solid var(--smv1-border) !important;
+    box-shadow: -24px 0 70px rgba(15, 23, 42, 0.18) !important;
+    transform: translateX(110%) !important;
+    transition: transform 240ms ease !important;
+    z-index: 9998 !important;
+  }
+
+  .school-modern-v1-root .nav-links.open {
+    transform: translateX(0) !important;
+  }
+
+  .school-modern-v1-root .nav-links a,
+  .school-modern-v1-root .nav-links .dropdown,
+  .school-modern-v1-root .drop-btn {
+    width: 100% !important;
+  }
+
+  .school-modern-v1-root .nav-links a,
+  .school-modern-v1-root .drop-btn {
+    min-height: 46px !important;
+    justify-content: space-between !important;
+    padding: 12px 14px !important;
+    border-radius: 16px !important;
+    color: var(--smv1-secondary) !important;
+    background: #f8fafc !important;
+    border: 1px solid rgba(15, 23, 42, 0.08) !important;
+    margin: 0 !important;
+  }
+
+  .school-modern-v1-root .drop-menu {
+    position: static !important;
+    display: none !important;
+    width: 100% !important;
+    margin: 8px 0 0 !important;
+    padding: 8px !important;
+    border-radius: 16px !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+  }
+
+  .school-modern-v1-root .drop-menu.show {
+    display: block !important;
+  }
+
+  .school-modern-v1-root .drop-menu a {
+    min-height: 40px !important;
+    background: #ffffff !important;
+  }
+
+  .school-modern-v1-root .dropdown:hover .drop-menu:not(.show) {
+    display: none !important;
+  }
+}
+
+/* =============================
+   Mobile hero/content
+   ============================= */
+
+@media (max-width: 720px) {
+  .school-modern-v1-root .container {
+    width: min(100% - 24px, 1180px) !important;
+  }
+
+  .school-modern-v1-root .hero-carousel,
+  .school-modern-v1-root .hero,
+  .school-modern-v1-root .hero-slider {
+    height: 620px !important;
+    min-height: 620px !important;
+  }
+
+  .school-modern-v1-root .slide::after {
+    background:
+      linear-gradient(180deg, rgba(2, 6, 23, 0.56) 0%, rgba(2, 6, 23, 0.78) 52%, rgba(2, 6, 23, 0.90) 100%) !important;
+  }
+
+  .school-modern-v1-root .slide-media {
+    background-position: center top !important;
+  }
+
+  .school-modern-v1-root .slide-caption {
+    width: min(100% - 28px, 1180px) !important;
+    padding: 96px 0 98px !important;
+    text-align: left !important;
+  }
+
+  .school-modern-v1-root .slide-caption::before {
+    font-size: 0.68rem !important;
+    padding: 8px 10px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .school-modern-v1-root .slide-caption h2 {
+    max-width: 100% !important;
+    font-size: clamp(2rem, 13vw, 3.15rem) !important;
+    line-height: 1.02 !important;
+    margin-bottom: 16px !important;
+  }
+
+  .school-modern-v1-root .slide-caption .subtitle {
+    max-width: 100% !important;
+    font-size: 0.98rem !important;
+    line-height: 1.62 !important;
+    margin-bottom: 22px !important;
+  }
+
+  .school-modern-v1-root .cta-row {
+    width: 100%;
+    gap: 10px !important;
+  }
+
+  .school-modern-v1-root .btns {
+    width: 100% !important;
+    min-height: 48px !important;
+    padding: 13px 16px !important;
+    text-align: center !important;
+  }
+
+  .school-modern-v1-root .carousel-btn {
+    top: auto !important;
+    bottom: 68px !important;
+    transform: none !important;
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  .school-modern-v1-root .carousel-btn:hover {
+    transform: none !important;
+  }
+
+  .school-modern-v1-root .carousel-btn.prev {
+    left: 18px !important;
+  }
+
+  .school-modern-v1-root .carousel-btn.next {
+    right: 18px !important;
+  }
+
+  .school-modern-v1-root .indicators {
+    bottom: 22px !important;
+  }
+
+  .school-modern-v1-root .indicator {
+    width: 24px !important;
+    height: 7px !important;
+  }
+
+  .school-modern-v1-root .notice-wrapper {
+    width: min(100% - 24px, 1180px) !important;
+    margin-top: -34px !important;
+  }
+
+  .school-modern-v1-root .notice-header {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+  }
+
+  .school-modern-v1-root .view-all,
+  .school-modern-v1-root .view-all-btn {
+    width: 100%;
+  }
+
+  .school-modern-v1-root .principal {
+    width: min(100% - 24px, 1180px) !important;
+    border-radius: 26px !important;
+  }
+
+  .school-modern-v1-root .principal-inner {
+    padding: 22px !important;
+  }
+
+  .school-modern-v1-root .principal-photo img {
+    width: 100% !important;
+    max-width: 340px !important;
+  }
+
+  .school-modern-v1-root .gallery-card {
+    height: 240px !important;
+  }
+
+  .school-modern-v1-root .about-card,
+  .school-modern-v1-root .card,
+  .school-modern-v1-root .info-card,
+  .school-modern-v1-root .admission-card,
+  .school-modern-v1-root .resource-card,
+  .school-modern-v1-root .news-card,
+  .school-modern-v1-root .staff-card,
+  .school-modern-v1-root .contact-card,
+  .school-modern-v1-root .calendar-card,
+  .school-modern-v1-root .event-card,
+  .school-modern-v1-root .library-card,
+  .school-modern-v1-root .stats-card,
+  .school-modern-v1-root .policy-card {
+    border-radius: 22px !important;
+  }
+}
+
+/* =============================
+   Small phones
+   ============================= */
+
+@media (max-width: 480px) {
+  .school-modern-v1-root .container {
+    width: min(100% - 18px, 1180px) !important;
+  }
+
+  .school-modern-v1-root .topbar {
+    font-size: 0.78rem !important;
+  }
+
+  .school-modern-v1-root .contact .sep {
+    display: none !important;
+  }
+
+  .school-modern-v1-root .social-icons {
+    width: 22px !important;
+    height: 22px !important;
+  }
+
+  .school-modern-v1-root .social-icons svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .school-modern-v1-root .nav-inner {
+    min-height: 70px !important;
+  }
+
+  .school-modern-v1-root .logo-link {
+    max-width: calc(100vw - 86px) !important;
+  }
+
+  .school-modern-v1-root .logo-image {
+    width: 44px !important;
+    height: 44px !important;
+    max-width: 44px !important;
+    max-height: 44px !important;
+  }
+
+  .school-modern-v1-root .brand-name,
+  .school-modern-v1-root .school-name {
+    font-size: 0.94rem !important;
+  }
+
+  .school-modern-v1-root .logo-text .slogan {
+    display: none !important;
+  }
+
+  .school-modern-v1-root .hero-carousel,
+  .school-modern-v1-root .hero,
+  .school-modern-v1-root .hero-slider {
+    height: 590px !important;
+    min-height: 590px !important;
+  }
+
+  .school-modern-v1-root .slide-caption {
+    width: min(100% - 22px, 1180px) !important;
+    padding-top: 88px !important;
+  }
+
+  .school-modern-v1-root .slide-caption h2 {
+    font-size: clamp(1.9rem, 13vw, 2.85rem) !important;
+  }
+
+  .school-modern-v1-root .slide-caption .subtitle {
+    font-size: 0.92rem !important;
+  }
+
+  .school-modern-v1-root .notice-wrapper {
+    width: min(100% - 18px, 1180px) !important;
+  }
+
+  .school-modern-v1-root .notice-board {
+    padding: 16px !important;
+    border-radius: 20px !important;
+  }
+}
+
+/* =============================
+   Large desktop polish
+   ============================= */
+
+@media (min-width: 1400px) {
+  .school-modern-v1-root .hero-carousel,
+  .school-modern-v1-root .hero,
+  .school-modern-v1-root .hero-slider {
+    height: 720px !important;
+    min-height: 720px !important;
+  }
+}
+
+
+/* ===== merged from styles/school-modern-enterprise-polish.css ===== */
+/*
+  school-modern-v1 — Enterprise School Polish
+  -------------------------------------------
+  Final scoped design layer for a cleaner, more school-suitable and
+  responsive template.
+
+  It intentionally imports last in App.jsx.
+  It does not change editor hooks, section types, media editor, logo editor
+  or template seed compatibility.
+*/
+
+.school-modern-v1-root {
+  --smep-blue: #1d4ed8;
+  --smep-blue-dark: #1e3a8a;
+  --smep-navy: #0f172a;
+  --smep-slate: #334155;
+  --smep-muted: #64748b;
+  --smep-soft: #f8fafc;
+  --smep-line: rgba(15, 23, 42, 0.10);
+  --smep-gold: #f59e0b;
+  --smep-green: #16a34a;
+  --smep-radius-xl: 30px;
+  --smep-radius-lg: 22px;
+  --smep-radius-md: 14px;
+  --smep-shadow: 0 18px 44px rgba(15, 23, 42, 0.10);
+  --smep-shadow-lg: 0 32px 76px rgba(15, 23, 42, 0.16);
+  color: var(--smep-navy);
+  background:
+    radial-gradient(circle at 10% -10%, rgba(29, 78, 216, 0.08), transparent 32rem),
+    radial-gradient(circle at 100% 0%, rgba(245, 158, 11, 0.10), transparent 26rem),
+    linear-gradient(180deg, #ffffff 0%, #f8fafc 44%, #ffffff 100%) !important;
+}
+
+.school-modern-v1-root,
+.school-modern-v1-root * {
+  box-sizing: border-box;
+}
+
+/* prevent old inherited template widths/margins from making the design awkward */
+.school-modern-v1-root .container,
+.school-modern-v1-root .nav-inner,
+.school-modern-v1-root .topbar-inner {
+  width: min(1180px, calc(100% - 32px)) !important;
+  max-width: 1180px !important;
+  margin-inline: auto !important;
+}
+
+/* ============================
+   Enterprise topbar
+   ============================ */
+
+.school-modern-v1-root .topbar {
+  background:
+    linear-gradient(90deg, #0b1c4d 0%, #0b2a52 43%, #0f172a 100%) !important;
+  color: #ffffff !important;
+  min-height: 42px !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.school-modern-v1-root .topbar-inner {
+  min-height: 42px !important;
+  padding: 6px 0 !important;
+  display: grid !important;
+  grid-template-columns: minmax(260px, 1fr) auto minmax(260px, 1fr) !important;
+  align-items: center !important;
+  gap: 18px !important;
+}
+
+.school-modern-v1-root .topbar .left,
+.school-modern-v1-root .topbar .center,
+.school-modern-v1-root .topbar .right {
+  min-width: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.school-modern-v1-root .topbar .left {
+  justify-content: flex-start !important;
+}
+
+.school-modern-v1-root .topbar .center {
+  justify-content: center !important;
+}
+
+.school-modern-v1-root .topbar .right {
+  justify-content: flex-end !important;
+  gap: 12px !important;
+}
+
+.school-modern-v1-root .brand-small {
+  display: none !important;
+}
+
+.school-modern-v1-root .contact {
+  gap: 9px !important;
+  font-size: 0.78rem !important;
+  line-height: 1 !important;
+  font-weight: 850 !important;
+  letter-spacing: 0.01em;
+  color: rgba(255, 255, 255, 0.92) !important;
+  flex-wrap: nowrap !important;
+}
+
+.school-modern-v1-root .contact a {
+  color: rgba(255, 255, 255, 0.94) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+}
+
+.school-modern-v1-root .contact .sep {
+  margin: 0 5px !important;
+  color: rgba(245, 158, 11, 0.55) !important;
+}
+
+.school-modern-v1-root .top-links {
+  gap: 4px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.school-modern-v1-root .top-links a {
+  min-height: 28px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 6px 10px !important;
+  border-radius: 999px !important;
+  color: rgba(255, 255, 255, 0.90) !important;
+  font-size: 0.76rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  transform: none !important;
+}
+
+.school-modern-v1-root .top-links a:hover {
+  background: rgba(255, 255, 255, 0.13) !important;
+  color: #ffffff !important;
+}
+
+.school-modern-v1-root .social {
+  gap: 7px !important;
+}
+
+.school-modern-v1-root .social-icons {
+  width: 22px !important;
+  height: 22px !important;
+  border: 0 !important;
+  border-radius: 7px !important;
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.school-modern-v1-root .social-icons svg {
+  width: 19px !important;
+  height: 19px !important;
+}
+
+.school-modern-v1-root .auth-links a {
+  min-height: 30px !important;
+  padding: 7px 13px !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.14) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  color: #ffffff !important;
+  font-size: 0.76rem !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+}
+
+/* ============================
+   Enterprise school navbar
+   ============================ */
+
+.school-modern-v1-root .site-nav {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 9999 !important;
+  background: rgba(255, 255, 255, 0.98) !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
+  box-shadow: 0 12px 34px rgba(15, 23, 42, 0.08) !important;
+  padding: 0 !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.school-modern-v1-root .nav-inner {
+  min-height: 78px !important;
+  padding: 10px 0 !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 20px !important;
+}
+
+.school-modern-v1-root .logo-section {
+  min-width: 0 !important;
+  flex: 0 1 340px !important;
+}
+
+.school-modern-v1-root .logo-section .logo-link,
+.school-modern-v1-root .logo-link {
+  width: fit-content !important;
+  max-width: 100% !important;
+  min-height: 58px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--smep-navy) !important;
+}
+
+.school-modern-v1-root .builder-logo-target {
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+  min-height: 56px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 5px !important;
+  border-radius: 18px !important;
+  background:
+    linear-gradient(#ffffff, #ffffff) padding-box,
+    linear-gradient(135deg, rgba(29, 78, 216, 0.28), rgba(245, 158, 11, 0.32)) border-box !important;
+  border: 1px solid transparent !important;
+  box-shadow: 0 10px 24px rgba(29, 78, 216, 0.13) !important;
+}
+
+.school-modern-v1-root .builder-logo-target .logo-image,
+.school-modern-v1-root .logo-image {
+  display: block !important;
+  width: 46px !important;
+  height: 46px !important;
+  max-width: 46px !important;
+  max-height: 46px !important;
+  object-fit: contain !important;
+  margin: 0 !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+}
+
+.school-modern-v1-root .brand-text,
+.school-modern-v1-root .logo-text {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+}
+
+.school-modern-v1-root .brand-name,
+.school-modern-v1-root .school-name {
+  margin: 0 !important;
+  color: #1e3a8a !important;
+  font-size: clamp(1.02rem, 1.4vw, 1.24rem) !important;
+  line-height: 1.08 !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.035em !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.school-modern-v1-root .brand-text .slogan,
+.school-modern-v1-root .logo-text .slogan,
+.school-modern-v1-root .slogan {
+  margin: 0 !important;
+  color: var(--smep-muted) !important;
+  font-size: 0.78rem !important;
+  line-height: 1.15 !important;
+  font-weight: 800 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.school-modern-v1-root .nav-links {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 5px !important;
+  margin-left: auto !important;
+}
+
+.school-modern-v1-root .nav-links a,
+.school-modern-v1-root .drop-btn {
+  min-height: 38px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 9px 11px !important;
+  border: 1px solid transparent !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  color: var(--smep-slate) !important;
+  font-size: 0.88rem !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+.school-modern-v1-root .nav-links a:hover,
+.school-modern-v1-root .drop-btn:hover {
+  background: #eff6ff !important;
+  border-color: rgba(29, 78, 216, 0.13) !important;
+  color: var(--smep-blue) !important;
+}
+
+.school-modern-v1-root .drop-menu {
+  top: calc(100% + 10px) !important;
+  left: 0 !important;
+  width: 260px !important;
+  padding: 9px !important;
+  border-radius: 20px !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.10) !important;
+  box-shadow: var(--smep-shadow-lg) !important;
+}
+
+.school-modern-v1-root .drop-menu a {
+  width: 100% !important;
+  min-height: 40px !important;
+  border-radius: 14px !important;
+  padding: 10px 12px !important;
+  color: var(--smep-slate) !important;
+  font-size: 0.86rem !important;
+  font-weight: 820 !important;
+  white-space: normal !important;
+}
+
+.school-modern-v1-root .hamburger {
+  position: relative !important;
+  width: 46px !important;
+  height: 46px !important;
+  min-width: 46px !important;
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  padding: 0 !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(29, 78, 216, 0.16) !important;
+  background: #ffffff !important;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08) !important;
+  cursor: pointer !important;
+}
+
+.school-modern-v1-root .hamburger span {
+  width: 22px !important;
+  height: 2px !important;
+  display: block !important;
+  margin: 0 !important;
+  border-radius: 999px !important;
+  background: #1e3a8a !important;
+  transition: transform 180ms ease, opacity 180ms ease !important;
+}
+
+.school-modern-v1-root .hamburger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg) !important;
+}
+
+.school-modern-v1-root .hamburger.open span:nth-child(2) {
+  opacity: 0 !important;
+}
+
+.school-modern-v1-root .hamburger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg) !important;
+}
+
+/* builder logo selection remains usable */
+.school-modern-v1-root .logo-section.builder-logo-editable .builder-logo-target.is-selected {
+  width: auto !important;
+  height: auto !important;
+  min-width: 74px !important;
+  min-height: 82px !important;
+  padding: 28px 8px 8px !important;
+  border: 2px solid #3b82f6 !important;
+  background: #ffffff !important;
+}
+
+.school-modern-v1-root .logo-section.builder-logo-editable .navbar-logo-edit-button {
+  z-index: 10001 !important;
+}
+
+/* ============================
+   Modern hero without awkward floating card
+   ============================ */
+
+.school-modern-v1-root .hero-carousel,
+.school-modern-v1-root .hero,
+.school-modern-v1-root .hero-slider {
+  position: relative !important;
+  height: clamp(560px, 66vh, 700px) !important;
+  min-height: clamp(560px, 66vh, 700px) !important;
+  overflow: hidden !important;
+  background: #0f172a !important;
+}
+
+.school-modern-v1-root .hero-carousel::before,
+.school-modern-v1-root .hero-carousel::after,
+.school-modern-v1-root .hero::before,
+.school-modern-v1-root .hero::after,
+.school-modern-v1-root .slide-caption::after {
+  content: none !important;
+  display: none !important;
+}
+
+.school-modern-v1-root .slide::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 2 !important;
+  pointer-events: none !important;
+  background:
+    linear-gradient(90deg, rgba(3, 7, 18, 0.82) 0%, rgba(15, 23, 42, 0.62) 44%, rgba(15, 23, 42, 0.18) 100%),
+    linear-gradient(180deg, rgba(3, 7, 18, 0.16) 0%, rgba(3, 7, 18, 0.28) 58%, rgba(3, 7, 18, 0.82) 100%) !important;
+}
+
+.school-modern-v1-root .slide-media,
+.school-modern-v1-root .hero-video {
+  filter: none !important;
+  transform: none !important;
+  object-position: center center !important;
+}
+
+.school-modern-v1-root .slide-caption {
+  position: relative !important;
+  z-index: 4 !important;
+  width: min(1180px, calc(100% - 32px)) !important;
+  max-width: 1180px !important;
+  margin: 0 auto !important;
+  display: block !important;
+  padding: clamp(58px, 8vw, 86px) 0 clamp(96px, 11vw, 120px) !important;
+  color: #ffffff !important;
+  text-align: left !important;
+}
+
+.school-modern-v1-root .slide-caption::before {
+  content: "School website" !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  width: fit-content !important;
+  margin: 0 0 16px !important;
+  padding: 9px 13px !important;
+  border-radius: 999px !important;
+  background: rgba(245, 158, 11, 0.18) !important;
+  border: 1px solid rgba(254, 243, 199, 0.30) !important;
+  color: #fde68a !important;
+  font-size: 0.72rem !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.09em !important;
+  text-transform: uppercase !important;
+}
+
+.school-modern-v1-root .slide-caption h2 {
+  max-width: 780px !important;
+  margin: 0 0 18px !important;
+  color: #ffffff !important;
+  font-size: clamp(0.45rem, 3vw, 2.75rem) !important;
+  line-height: 6.02 !important;
+  letter-spacing: -0.07em !important;
+  font-weight: 950 !important;
+  text-shadow: 0 18px 44px rgba(0, 0, 0, 0.32) !important;
+}
+
+.school-modern-v1-root .slide-caption .subtitle {
+  max-width: 620px !important;
+  margin: 0 0 26px !important;
+  color: rgba(255, 255, 255, 0.88) !important;
+  font-size: clamp(1rem, 1.4vw, 1.18rem) !important;
+  line-height: 1.75 !important;
+  font-weight: 600 !important;
+}
+
+.school-modern-v1-root .cta-row {
+  display: flex !important;
+  justify-content: flex-start !important;
+  gap: 12px !important;
+  flex-wrap: wrap !important;
+}
+
+.school-modern-v1-root .btns {
+  min-height: 48px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 13px 22px !important;
+  border-radius: 999px !important;
+  font-weight: 950 !important;
+}
+
+.school-modern-v1-root .btns.primary {
+  color: #111827 !important;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
+  box-shadow: 0 18px 36px rgba(245, 158, 11, 0.28) !important;
+}
+
+.school-modern-v1-root .btns.ghost {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.28) !important;
+  backdrop-filter: blur(12px);
+}
+
+.school-modern-v1-root .carousel-btn {
+  width: 46px !important;
+  height: 46px !important;
+  z-index: 8 !important;
+  border-radius: 16px !important;
+  color: #ffffff !important;
+  background: rgba(15, 23, 42, 0.52) !important;
+  border: 1px solid rgba(255, 255, 255, 0.20) !important;
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.22) !important;
+  backdrop-filter: blur(10px);
+}
+
+.school-modern-v1-root .indicators {
+  z-index: 8 !important;
+  bottom: 32px !important;
+  gap: 8px !important;
+  padding: 8px 10px !important;
+  border-radius: 999px !important;
+  background: rgba(2, 6, 23, 0.35) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  backdrop-filter: blur(10px);
+}
+
+.school-modern-v1-root .indicator {
+  width: 30px !important;
+  height: 7px !important;
+  background: rgba(255, 255, 255, 0.38) !important;
+  border-radius: 999px !important;
+  border: 0 !important;
+}
+
+.school-modern-v1-root .indicator.active {
+  background: #fbbf24 !important;
+}
+
+/* ============================
+   Page-level structure
+   ============================ */
+
+.school-modern-v1-root .school-modern-main {
+  isolation: isolate;
+}
+
+.school-modern-v1-root .school-modern-main:not(.school-page--home) {
+  padding-top: 0 !important;
+}
+
+.school-modern-v1-root .school-modern-main:not(.school-page--home) > .container,
+.school-modern-v1-root .school-modern-main:not(.school-page--home) > section.container,
+.school-modern-v1-root .school-modern-main:not(.school-page--home) > main.container {
+  margin-top: 28px !important;
+  margin-bottom: 56px !important;
+}
+
+.school-modern-v1-root .school-modern-main:not(.school-page--home) .section-title {
+  position: relative !important;
+  margin: 0 0 16px !important;
+  padding: 20px 22px !important;
+  border-radius: 24px !important;
+  color: #ffffff !important;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(245, 158, 11, 0.35), transparent 18rem),
+    linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%) !important;
+  box-shadow: var(--smep-shadow) !important;
+  overflow: hidden;
+}
+
+.school-modern-v1-root .school-modern-main:not(.school-page--home) .section-title::after {
+  content: "";
+  position: absolute;
+  right: 24px;
+  top: 18px;
+  width: 76px;
+  height: 76px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.10);
+}
+
+.school-modern-v1-root .school-page--about > .container {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.92fr) !important;
+  gap: 24px !important;
+  align-items: start !important;
+}
+
+.school-modern-v1-root .school-page--about > .container > *:first-child {
+  grid-column: 1 / -1 !important;
+}
+
+.school-modern-v1-root .school-page--resources > .container,
+.school-modern-v1-root .school-page--contact > .container,
+.school-modern-v1-root .school-page--digital-library > .container,
+.school-modern-v1-root .school-page--gallery > .container,
+.school-modern-v1-root .school-page--news > .container,
+.school-modern-v1-root .school-page--notices > .container {
+  padding: 34px !important;
+  border-radius: 32px !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  box-shadow: var(--smep-shadow) !important;
+}
+
+.school-modern-v1-root .admissions-page {
+  width: min(1180px, calc(100% - 32px)) !important;
+  margin: 34px auto 64px !important;
+  padding: 0 !important;
+}
+
+.school-modern-v1-root .admissions-page__hero {
+  border-radius: 34px !important;
+  padding: clamp(28px, 4vw, 48px) !important;
+  background:
+    radial-gradient(circle at 78% 20%, rgba(245, 158, 11, 0.28), transparent 20rem),
+    linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%) !important;
+  color: #ffffff !important;
+  box-shadow: var(--smep-shadow-lg) !important;
+}
+
+.school-modern-v1-root .admissions-page__hero-title {
+  color: #ffffff !important;
+  font-size: clamp(2rem, 4vw, 3.6rem) !important;
+  line-height: 1.02 !important;
+  letter-spacing: -0.06em !important;
+}
+
+.school-modern-v1-root .admissions-page__hero-sub {
+  color: rgba(255, 255, 255, 0.84) !important;
+}
+
+.school-modern-v1-root .admissions-page__grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.75fr) !important;
+  gap: 24px !important;
+  margin-top: 24px !important;
+}
+
+.school-modern-v1-root .admissions-page__card,
+.school-modern-v1-root .admissions-page__side-card,
+.school-modern-v1-root .card,
+.school-modern-v1-root .info-card,
+.school-modern-v1-root .resource-card,
+.school-modern-v1-root .news-card,
+.school-modern-v1-root .staff-card,
+.school-modern-v1-root .contact-card,
+.school-modern-v1-root .calendar-card,
+.school-modern-v1-root .library-card,
+.school-modern-v1-root .policy-section,
+.school-modern-v1-root .policy-box,
+.school-modern-v1-root .fac-card,
+.school-modern-v1-root .subject-card {
+  border-radius: 26px !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  box-shadow: var(--smep-shadow) !important;
+}
+
+.school-modern-v1-root .school-page--resources .container > div,
+.school-modern-v1-root .school-page--news .container > div,
+.school-modern-v1-root .school-page--gallery .container > div {
+  gap: 22px !important;
+}
+
+.school-modern-v1-root .school-page--resources .card:nth-child(1),
+.school-modern-v1-root .school-page--resources .card:nth-child(4),
+.school-modern-v1-root .school-page--about .card:nth-child(2) {
+  background:
+    linear-gradient(#ffffff, #ffffff) padding-box,
+    linear-gradient(135deg, rgba(29, 78, 216, 0.28), rgba(245, 158, 11, 0.24)) border-box !important;
+  border: 1px solid transparent !important;
+}
+
+.school-modern-v1-root .school-page--contact .container > div {
+  grid-template-columns: minmax(320px, 0.75fr) minmax(0, 1.25fr) !important;
+}
+
+.school-modern-v1-root .digital-library .library-layout {
+  display: grid !important;
+  grid-template-columns: minmax(190px, 0.26fr) minmax(0, 1fr) minmax(220px, 0.32fr) !important;
+  gap: 22px !important;
+  align-items: start !important;
+}
+
+.school-modern-v1-root .gallery-grid {
+  display: grid !important;
+  grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+  gap: 18px !important;
+}
+
+.school-modern-v1-root .gallery-grid > * {
+  grid-column: span 4 !important;
+}
+
+.school-modern-v1-root .gallery-grid > *:nth-child(1),
+.school-modern-v1-root .gallery-grid > *:nth-child(6n) {
+  grid-column: span 8 !important;
+}
+
+.school-modern-v1-root .gallery-card {
+  min-height: 260px !important;
+  border-radius: 28px !important;
+  box-shadow: var(--smep-shadow) !important;
+}
+
+/* ============================
+   Home sections
+   ============================ */
+
+.school-modern-v1-root .notice-wrapper {
+  width: min(1180px, calc(100% - 32px)) !important;
+  margin: -58px auto 0 !important;
+  position: relative !important;
+  z-index: 20 !important;
+}
+
+.school-modern-v1-root .notice-board,
+.school-modern-v1-root .about-card,
+.school-modern-v1-root .principal,
+.school-modern-v1-root .stats-card {
+  border-radius: 30px !important;
+  box-shadow: var(--smep-shadow-lg) !important;
+}
+
+.school-modern-v1-root .notice-board {
+  padding: clamp(18px, 2vw, 28px) !important;
+  background: rgba(255, 255, 255, 0.97) !important;
+  border: 1px solid rgba(29, 78, 216, 0.12) !important;
+  backdrop-filter: blur(16px);
+}
+
+.school-modern-v1-root .notice-header h2,
+.school-modern-v1-root .notice-header h3 {
+  color: #1e3a8a !important;
+  font-weight: 950 !important;
+}
+
+.school-modern-v1-root .about-card {
+  border-top: 5px solid #1d4ed8 !important;
+}
+
+.school-modern-v1-root .principal {
+  width: min(1180px, calc(100% - 32px)) !important;
+  margin: 54px auto !important;
+  background:
+    radial-gradient(circle at 12% 20%, rgba(59, 130, 246, 0.30), transparent 22rem),
+    linear-gradient(135deg, #1e3a8a 0%, #0f172a 70%) !important;
+  overflow: hidden !important;
+}
+
+/* ============================
+   Footer
+   ============================ */
+
+.school-modern-v1-root .site-footer {
+  background:
+    radial-gradient(circle at 10% 18%, rgba(29, 78, 216, 0.20), transparent 24rem),
+    linear-gradient(180deg, #0f172a 0%, #020617 100%) !important;
+  color: rgba(255, 255, 255, 0.76) !important;
+}
+
+/* ============================
+   Responsive
+   ============================ */
+
+@media (max-width: 1200px) {
+  .school-modern-v1-root .nav-links a,
+  .school-modern-v1-root .drop-btn {
+    padding-inline: 9px !important;
+    font-size: 0.82rem !important;
+  }
+
+  .school-modern-v1-root .logo-section {
+    flex-basis: 300px !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .school-modern-v1-root .topbar-inner {
+    grid-template-columns: 1fr !important;
+    justify-items: center !important;
+    gap: 8px !important;
+    padding: 8px 0 !important;
+  }
+
+  .school-modern-v1-root .topbar .left,
+  .school-modern-v1-root .topbar .center,
+  .school-modern-v1-root .topbar .right {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .school-modern-v1-root .top-links {
+    display: none !important;
+  }
+
+  .school-modern-v1-root .social {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+  .school-modern-v1-root .nav-inner {
+    min-height: 72px !important;
+  }
+
+  .school-modern-v1-root .hamburger {
+    display: inline-flex !important;
+  }
+
+  .school-modern-v1-root .nav-links {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    width: min(360px, calc(100vw - 28px)) !important;
+    height: 100dvh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 9px !important;
+    padding: 94px 18px 24px !important;
+    margin: 0 !important;
+    overflow-y: auto !important;
+    background: rgba(255, 255, 255, 0.98) !important;
+    border-left: 1px solid rgba(15, 23, 42, 0.10) !important;
+    box-shadow: -24px 0 70px rgba(15, 23, 42, 0.18) !important;
+    transform: translateX(110%) !important;
+    transition: transform 240ms ease !important;
+    z-index: 9998 !important;
+  }
+
+  .school-modern-v1-root .nav-links.open {
+    transform: translateX(0) !important;
+  }
+
+  .school-modern-v1-root .nav-links a,
+  .school-modern-v1-root .nav-links .dropdown,
+  .school-modern-v1-root .drop-btn {
+    width: 100% !important;
+  }
+
+  .school-modern-v1-root .nav-links a,
+  .school-modern-v1-root .drop-btn {
+    justify-content: space-between !important;
+    min-height: 46px !important;
+    padding: 12px 14px !important;
+    border-radius: 16px !important;
+    background: #f8fafc !important;
+    border: 1px solid rgba(15, 23, 42, 0.08) !important;
+    color: var(--smep-navy) !important;
+  }
+
+  .school-modern-v1-root .drop-menu {
+    position: static !important;
+    display: none !important;
+    width: 100% !important;
+    margin: 8px 0 0 !important;
+    padding: 8px !important;
+    box-shadow: none !important;
+    border-radius: 16px !important;
+    background: #ffffff !important;
+  }
+
+  .school-modern-v1-root .drop-menu.show {
+    display: block !important;
+  }
+
+  .school-modern-v1-root .dropdown:hover .drop-menu:not(.show) {
+    display: none !important;
+  }
+
+  .school-modern-v1-root .slide-caption h2 {
+    font-size: clamp(1.2rem, 9vw, 2.5rem) !important;
+  }
+
+  .school-modern-v1-root .school-page--about > .container,
+  .school-modern-v1-root .admissions-page__grid,
+  .school-modern-v1-root .digital-library .library-layout,
+  .school-modern-v1-root .school-page--contact .container > div {
+    grid-template-columns: 1fr !important;
+  }
+
+  .school-modern-v1-root .gallery-grid > * {
+    grid-column: span 6 !important;
+  }
+
+  .school-modern-v1-root .gallery-grid > *:nth-child(1),
+  .school-modern-v1-root .gallery-grid > *:nth-child(6n) {
+    grid-column: span 12 !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .school-modern-v1-root .container,
+  .school-modern-v1-root .nav-inner,
+  .school-modern-v1-root .topbar-inner,
+  .school-modern-v1-root .slide-caption,
+  .school-modern-v1-root .notice-wrapper,
+  .school-modern-v1-root .principal,
+  .school-modern-v1-root .admissions-page {
+    width: min(100% - 24px, 1180px) !important;
+  }
+
+  .school-modern-v1-root .topbar {
+    min-height: auto !important;
+  }
+
+  .school-modern-v1-root .topbar-inner {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .school-modern-v1-root .contact {
+    width: 100% !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    font-size: 0.76rem !important;
+  }
+
+  .school-modern-v1-root .auth-links {
+    justify-content: center !important;
+  }
+
+  .school-modern-v1-root .auth-links a {
+    width: 100% !important;
+    max-width: 220px !important;
+  }
+
+  .school-modern-v1-root .logo-section {
+    flex: 1 1 auto !important;
+  }
+
+  .school-modern-v1-root .builder-logo-target {
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
+    border-radius: 16px !important;
+  }
+
+  .school-modern-v1-root .builder-logo-target .logo-image,
+  .school-modern-v1-root .logo-image {
+    width: 40px !important;
+    height: 40px !important;
+    max-width: 40px !important;
+    max-height: 40px !important;
+  }
+
+  .school-modern-v1-root .school-name {
+    font-size: 0.98rem !important;
+  }
+
+  .school-modern-v1-root .brand-text .slogan {
+    font-size: 0.72rem !important;
+  }
+
+  .school-modern-v1-root .hero-carousel,
+  .school-modern-v1-root .hero,
+  .school-modern-v1-root .hero-slider {
+    height: 610px !important;
+    min-height: 610px !important;
+  }
+
+  .school-modern-v1-root .slide::after {
+    background:
+      linear-gradient(180deg, rgba(3, 7, 18, 0.48) 0%, rgba(15, 23, 42, 0.78) 48%, rgba(3, 7, 18, 0.92) 100%) !important;
+  }
+
+  .school-modern-v1-root .slide-caption {
+    padding: 92px 0 98px !important;
+  }
+
+  .school-modern-v1-root .slide-caption h2 {
+    font-size: clamp(1rem, 10vw, 2.15rem) !important;
+    line-height: 1.03 !important;
+  }
+
+  .school-modern-v1-root .slide-caption .subtitle {
+    font-size: 0.96rem !important;
+    line-height: 1.62 !important;
+  }
+
+  .school-modern-v1-root .cta-row {
+    width: 100% !important;
+  }
+
+  .school-modern-v1-root .btns {
+    width: 100% !important;
+  }
+
+  .school-modern-v1-root .carousel-btn {
+    top: auto !important;
+    bottom: 66px !important;
+    transform: none !important;
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  .school-modern-v1-root .indicators {
+    bottom: 22px !important;
+  }
+
+  .school-modern-v1-root .notice-wrapper {
+    margin-top: -36px !important;
+  }
+
+  .school-modern-v1-root .school-modern-main:not(.school-page--home) > .container,
+  .school-modern-v1-root .school-modern-main:not(.school-page--home) > section.container,
+  .school-modern-v1-root .school-modern-main:not(.school-page--home) > main.container,
+  .school-modern-v1-root .school-page--resources > .container,
+  .school-modern-v1-root .school-page--contact > .container,
+  .school-modern-v1-root .school-page--digital-library > .container,
+  .school-modern-v1-root .school-page--gallery > .container,
+  .school-modern-v1-root .school-page--news > .container,
+  .school-modern-v1-root .school-page--notices > .container {
+    padding: 20px !important;
+    border-radius: 24px !important;
+  }
+
+  .school-modern-v1-root .admissions-page__hero {
+    border-radius: 26px !important;
+  }
+
+  .school-modern-v1-root .gallery-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .school-modern-v1-root .gallery-grid > *,
+  .school-modern-v1-root .gallery-grid > *:nth-child(1),
+  .school-modern-v1-root .gallery-grid > *:nth-child(6n) {
+    grid-column: auto !important;
+  }
+}
+
+@media (max-width: 460px) {
+  .school-modern-v1-root .container,
+  .school-modern-v1-root .nav-inner,
+  .school-modern-v1-root .topbar-inner,
+  .school-modern-v1-root .slide-caption,
+  .school-modern-v1-root .notice-wrapper,
+  .school-modern-v1-root .principal,
+  .school-modern-v1-root .admissions-page {
+    width: min(100% - 18px, 1180px) !important;
+  }
+
+  .school-modern-v1-root .contact .sep {
+    display: none !important;
+  }
+
+  .school-modern-v1-root .site-nav {
+    border-top: 4px solid #1e3a8a !important;
+  }
+
+  .school-modern-v1-root .nav-inner {
+    min-height: 66px !important;
+  }
+
+  .school-modern-v1-root .logo-section .logo-link {
+    gap: 9px !important;
+  }
+
+  .school-modern-v1-root .builder-logo-target {
+    width: 46px !important;
+    height: 46px !important;
+    min-width: 46px !important;
+    min-height: 46px !important;
+  }
+
+  .school-modern-v1-root .builder-logo-target .logo-image,
+  .school-modern-v1-root .logo-image {
+    width: 36px !important;
+    height: 36px !important;
+    max-width: 36px !important;
+    max-height: 36px !important;
+  }
+
+  .school-modern-v1-root .school-name {
+    font-size: 0.9rem !important;
+    max-width: 190px !important;
+  }
+
+  .school-modern-v1-root .brand-text .slogan {
+    display: block !important;
+    max-width: 190px !important;
+    font-size: 0.66rem !important;
+  }
+
+  .school-modern-v1-root .hamburger {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    border-radius: 14px !important;
+  }
+
+  .school-modern-v1-root .hero-carousel,
+  .school-modern-v1-root .hero,
+  .school-modern-v1-root .hero-slider {
+    height: 590px !important;
+    min-height: 590px !important;
+  }
+}
+
+/* Remove hero badge completely */
+.school-modern-v1-root .slide-caption::before {
+  content: none !important;
+  display: none !important;
+}

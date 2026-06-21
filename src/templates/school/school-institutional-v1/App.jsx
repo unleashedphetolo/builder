@@ -548,6 +548,9 @@ const EDITOR_METADATA_KEYS = new Set([
   "__editor_field_order",
   "__editor_field_labels",
   "__editor_fallback_content",
+  "editor_field_order",
+  "editor_field_labels",
+  "editor_fallback_content",
 ]);
 
 function normalizeMatcherValue(value = "") {
@@ -877,6 +880,80 @@ function applyEditorFriendlyAliases(content = {}, definition = {}) {
     next.city = next.city || "Johannesburg";
     next.province = next.province || "Gauteng";
     next.country = next.country || "South Africa";
+  }
+
+
+  if (type === "school_daily_bulletin") {
+    next.footer_note =
+      next.footer_note ||
+      "For urgent announcements, learners should confirm details with the school office or their class teacher.";
+
+    if (Array.isArray(next.items)) {
+      next.items = next.items.map((item, index) => ({
+        id: item.id || `bulletin-${index + 1}`,
+        date: item.date || item.publishedAt || "",
+        title: item.title || "",
+        category: item.category || "General",
+        urgent: item.urgent === true,
+        content: item.content || item.body || item.message || "",
+      }));
+    }
+  }
+
+  if (type === "school_attendance_policy") {
+    next.meta_items = Array.isArray(next.meta_items) ? next.meta_items : [];
+    next.attendance_expectations = Array.isArray(next.attendance_expectations)
+      ? next.attendance_expectations
+      : [];
+    next.late_arrival_items = Array.isArray(next.late_arrival_items)
+      ? next.late_arrival_items
+      : [];
+    next.acceptable_reasons = Array.isArray(next.acceptable_reasons)
+      ? next.acceptable_reasons
+      : [];
+    next.absence_items = Array.isArray(next.absence_items)
+      ? next.absence_items
+      : [];
+    next.catch_up_items = Array.isArray(next.catch_up_items)
+      ? next.catch_up_items
+      : [];
+
+    if (Array.isArray(next.intervention_steps)) {
+      next.intervention_steps = next.intervention_steps.map((item, index) => ({
+        id: item.id || `intervention-${index + 1}`,
+        title: item.title || `Step ${index + 1}`,
+        body: item.body || item.description || item.text || "",
+        description: item.description || item.body || item.text || "",
+      }));
+    }
+
+    if (Array.isArray(next.roles)) {
+      next.roles = next.roles.map((role, index) => ({
+        id: role.id || `role-${index + 1}`,
+        title: role.title || "",
+        items: Array.isArray(role.items) ? role.items : [],
+      }));
+    }
+  }
+
+  if (
+    (type === "school_facilities" || type === "school_activity_facilities") &&
+    Array.isArray(next.items)
+  ) {
+    next.items = next.items.map((item, index) => {
+      if (!item || typeof item !== "object" || Array.isArray(item)) return item;
+
+      const image = item.image_url || item.image || item.img || "";
+
+      return {
+        id: item.id || `facility-${index + 1}`,
+        ...item,
+        image_url: image,
+        image: item.image || image,
+        body: item.body || item.description || item.text || "",
+        description: item.description || item.body || item.text || "",
+      };
+    });
   }
 
   if (Array.isArray(next.items)) {

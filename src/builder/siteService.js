@@ -536,6 +536,7 @@ function inferSchoolSectionTypeFromContent(content = {}) {
       "required_documents",
       "documents_title",
       "grades_title",
+      "grades_description",
       "process_title",
       "closing_date",
     ])

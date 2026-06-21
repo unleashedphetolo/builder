@@ -16,7 +16,7 @@ export default function NewsEditor({ draftContent = {}, updateContent }) {
         createItem={() => ({ id: createId(), title: "New Story", date: "", category: "News", summary: "", image_url: "", link: "", button_label: "Read More" })}
         fields={[
           { key: "title", label: "Title" },
-          { key: "date", label: "Date" },
+          { key: "date", label: "Date", type: "date", placeholder: "Tue, Nov 25, 2025" },
           { key: "category", label: "Category" },
           { key: "summary", label: "Summary", type: "textarea", rows: 2 },
           { key: "image_url", label: "Image URL" },

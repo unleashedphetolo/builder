@@ -1,0 +1,7 @@
+Builder editor alignment/fallback cleanup for builder(19)
+
+- Exact school fallback pages now ignore old saved editor-order metadata when an exact builder fallback exists, so Attendance Policy, Campus Facilities and Student Daily Bulletin keep the current template order again.
+- Exact fallback metadata is kept exact instead of being merged with older fallback metadata that could reintroduce duplicate item fields.
+- Dynamic template pages with fallback content but no explicit order now use fallback keys only, so unrelated saved aliases do not appear as editor fields.
+- Repetitive item aliases such as body/text/summary/description/items are collapsed only when they contain the same repeated value, while preserving the best matching field for common school templates.
+- Generic scheduled items now use startAt before endAt and publishedAt, and local date/time pickers are only used for intentional schedule keys such as startAt/endAt/publishedAt rather than plain template date fields.

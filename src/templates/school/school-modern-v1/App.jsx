@@ -53,9 +53,6 @@ import Breadcrumbs from "./components/common/Breadcrumbs";
 import "./index.css";
 import "./App.css";
 import "./styles/announcements.css";
-import "./styles/template-theme-bridge.css";
-import "./styles/modern-school-design.css";
-import "./styles/school-modern-enterprise-polish.css";
 import StudentDailyBulletin from "./pages/StudentDailyBulletin";
 
 const PAGE_COMPONENTS = {
@@ -1054,6 +1051,84 @@ function applyEditorFriendlyAliases(content = {}, definition = {}) {
       icon: group.icon || "",
       items: Array.isArray(group.items) ? group.items : [],
     }));
+  }
+
+
+  if (type === "school_daily_bulletin") {
+    next.search_placeholder = next.search_placeholder || "Search bulletin...";
+    next.empty_message = next.empty_message || "No announcements matched your search.";
+    next.footer_note =
+      next.footer_note ||
+      "For urgent announcements, learners should confirm details with the school office.";
+
+    if (Array.isArray(next.items)) {
+      next.items = next.items.map((item, index) => ({
+        id: item.id || `bulletin-${index + 1}`,
+        date: item.date || item.publishedAt || "",
+        title: item.title || "",
+        category: item.category || "General",
+        urgent: item.urgent === true,
+        content: item.content || item.body || item.message || "",
+        body: item.body || item.content || item.message || "",
+        message: item.message || item.content || item.body || "",
+      }));
+    }
+  }
+
+  if (type === "school_attendance_policy") {
+    next.meta_items = Array.isArray(next.meta_items) ? next.meta_items : [];
+    next.attendance_expectations = Array.isArray(next.attendance_expectations)
+      ? next.attendance_expectations
+      : [];
+    next.late_arrival_items = Array.isArray(next.late_arrival_items)
+      ? next.late_arrival_items
+      : [];
+    next.acceptable_reasons = Array.isArray(next.acceptable_reasons)
+      ? next.acceptable_reasons
+      : [];
+    next.absence_items = Array.isArray(next.absence_items)
+      ? next.absence_items
+      : [];
+    next.catch_up_items = Array.isArray(next.catch_up_items)
+      ? next.catch_up_items
+      : [];
+
+    if (Array.isArray(next.intervention_steps)) {
+      next.intervention_steps = next.intervention_steps.map((item, index) => ({
+        id: item.id || `intervention-${index + 1}`,
+        title: item.title || `Step ${index + 1}`,
+        body: item.body || item.description || item.text || "",
+        description: item.description || item.body || item.text || "",
+      }));
+    }
+
+    if (Array.isArray(next.roles)) {
+      next.roles = next.roles.map((role, index) => ({
+        id: role.id || `role-${index + 1}`,
+        title: role.title || "",
+        items: Array.isArray(role.items) ? role.items : [],
+      }));
+    }
+  }
+
+  if (
+    (type === "school_facilities" || type === "school_activity_facilities") &&
+    Array.isArray(next.items)
+  ) {
+    next.items = next.items.map((item, index) => {
+      if (!item || typeof item !== "object" || Array.isArray(item)) return item;
+
+      const image = item.image_url || item.image || item.img || "";
+
+      return {
+        id: item.id || `facility-${index + 1}`,
+        ...item,
+        image_url: image,
+        image: item.image || image,
+        body: item.body || item.description || item.text || "",
+        description: item.description || item.body || item.text || "",
+      };
+    });
   }
 
   if (type === "school_contact") {

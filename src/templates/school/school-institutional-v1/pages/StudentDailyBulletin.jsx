@@ -145,6 +145,10 @@ export default function StudentDailyBulletin({
           </div>
         )}
       </section>
+
+      {content?.footer_note && (
+        <p className="bulletin-footer-note">{content.footer_note}</p>
+      )}
     </main>
   );
 

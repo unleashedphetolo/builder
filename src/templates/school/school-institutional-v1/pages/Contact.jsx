@@ -37,22 +37,24 @@ export default function Contact({ settings = {}, organization = null, section = 
     org?.name ||
     "School";
 
-  const phone = settings?.phone || org?.phone || "0XX XXX XXXX";
+  const contactHeading =
+    content?.heading || organisationName;
 
-  const email = settings?.email || org?.email || "info@new-school.co.za";
+  const contactBody =
+    content?.body || "Official contact information";
 
-  /*
-    IMPORTANT:
-    Address is taken ONLY from the organisation table object.
-    It does NOT use settings.address_line1, settings.city, settings.province,
-    or any example address.
-  */
+  const phone =
+    content?.phone || settings?.phone || org?.phone || "0XX XXX XXXX";
+
+  const email =
+    content?.email || settings?.email || org?.email || "info@new-school.co.za";
+
   const addressParts = [
-    org?.address_line1 || "",
-    org?.city || "",
-    org?.province || "",
-    org?.postal_code || "",
-    org?.country || "",
+    content?.address_line1 || org?.address_line1 || "",
+    content?.city || org?.city || "",
+    content?.province || org?.province || "",
+    content?.postal_code || org?.postal_code || "",
+    content?.country || org?.country || "",
   ].filter(Boolean);
 
   const address = addressParts.join(", ");
@@ -91,8 +93,8 @@ export default function Contact({ settings = {}, organization = null, section = 
             </div>
 
             <div>
-              <h3 style={{ margin: 0 }}>{organisationName}</h3>
-              <p style={subtitleStyle}>Official contact information</p>
+              <h3 style={{ margin: 0 }}>{contactHeading}</h3>
+              <p style={subtitleStyle}>{contactBody}</p>
             </div>
           </div>
 
@@ -149,16 +151,16 @@ export default function Contact({ settings = {}, organization = null, section = 
         <Card>
           <div style={mapHeaderStyle}>
             <div>
-              <h3 style={{ margin: 0 }}>Location Map</h3>
+              <h3 style={{ margin: 0 }}>{content?.map_title || "Location Map"}</h3>
               <p style={subtitleStyle}>
                 {hasAddress
-                  ? "Find us using the official address"
-                  : "Save an organisation address to show the map"}
+                  ? content?.map_available_text || "Find us using the official address"
+                  : content?.map_empty_text || "Save an organisation address to show the map"}
               </p>
             </div>
 
             <span style={mapBadgeStyle}>
-              <FiMapPin /> Map
+              <FiMapPin /> {content?.map_badge_label || "Map"}
             </span>
           </div>
 

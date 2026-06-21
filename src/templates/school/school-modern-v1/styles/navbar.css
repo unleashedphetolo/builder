@@ -429,3 +429,56 @@ body {
 }
 }
 
+
+/* =========================================================
+   ENTERPRISE NAVBAR SPACING
+   Adds clear space between the logo/school name and navbar links.
+   ========================================================= */
+
+.site-nav .nav-inner {
+  gap: clamp(22px, 3vw, 52px);
+}
+
+.site-nav .logo-section {
+  flex: 0 0 auto;
+  margin-right: clamp(18px, 3vw, 46px);
+}
+
+.site-nav .logo-section .logo-link {
+  gap: 12px;
+}
+
+.site-nav .brand-text,
+.site-nav .logo-text {
+  min-width: max-content;
+}
+
+.site-nav .nav-links {
+  flex: 1 1 auto;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-left: auto;
+}
+
+@media (max-width: 880px) {
+  .site-nav .nav-inner {
+    gap: 12px;
+  }
+
+  .site-nav .logo-section {
+    margin-right: 0;
+  }
+
+  .site-nav .brand-text,
+  .site-nav .logo-text {
+    min-width: 0;
+  }
+
+  .site-nav .nav-links {
+    flex: initial;
+    justify-content: flex-start;
+    margin-left: 0;
+    gap: 8px;
+  }
+}
+

@@ -367,6 +367,8 @@ export default function ThemePanel({
         <span>Current theme</span>
         <strong>{selectedTheme.name}</strong>
         <small>{selectedTheme.description}</small>
+        <span>Current preview page</span>
+        <strong>{selectedPreviewPage?.title || currentPageData?.title || "Current Page"}</strong>
       </div>
 
       {notice && <div className="btp-notice">{notice}</div>}

@@ -113,7 +113,7 @@ export default function LifeFacilities({
           </h1>
           <p className="lf-subtitle">
             {content?.subtitle ||
-              "M.O.M Sebone Secondary School provides facilities that support academic excellence, discipline, learner wellbeing, and participation in sport and culture."}
+              "Our School provides facilities that support academic excellence, discipline, learner wellbeing, and participation in sport and culture."}
           </p>
 
           <div className="lf-actions">

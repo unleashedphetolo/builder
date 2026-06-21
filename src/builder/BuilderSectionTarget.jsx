@@ -93,6 +93,57 @@ function stableSerialize(value) {
   }
 }
 
+function cssSizeValue(value) {
+  const raw = String(value ?? "").trim();
+  if (!raw) return "";
+  if (/^\d+(\.\d+)?$/.test(raw)) return `${raw}px`;
+  return raw;
+}
+
+function cssWeightValue(value) {
+  const raw = String(value ?? "").trim();
+  if (!raw) return "";
+  return raw;
+}
+
+function sectionStyleVars(style = EMPTY_OBJECT, baseStyle = EMPTY_OBJECT) {
+  if (!style || typeof style !== "object") return baseStyle || {};
+
+  const nextStyle = { ...(baseStyle || {}) };
+  const fontSize = cssSizeValue(style.fontSize || style.font_size);
+  const headingFontSize = cssSizeValue(style.headingFontSize || style.heading_font_size);
+  const fontWeight = cssWeightValue(style.fontWeight || style.font_weight);
+  const headingFontWeight = cssWeightValue(style.headingFontWeight || style.heading_font_weight);
+
+  if (style.backgroundColor) nextStyle.backgroundColor = style.backgroundColor;
+  if (style.textColor) nextStyle.color = style.textColor;
+  if (style.alignment) nextStyle.textAlign = style.alignment;
+  if (fontSize) nextStyle.fontSize = fontSize;
+  if (fontWeight) nextStyle.fontWeight = fontWeight;
+
+  if (style.accentColor) nextStyle["--section-accent-color"] = style.accentColor;
+  if (style.linkColor) nextStyle["--section-link-color"] = style.linkColor;
+  if (style.headingColor) nextStyle["--section-heading-color"] = style.headingColor;
+  if (style.textColor) nextStyle["--section-text-color"] = style.textColor;
+  if (style.backgroundColor) nextStyle["--section-background-color"] = style.backgroundColor;
+  if (fontSize) nextStyle["--section-font-size"] = fontSize;
+  if (headingFontSize) nextStyle["--section-heading-font-size"] = headingFontSize;
+  if (fontWeight) nextStyle["--section-font-weight"] = fontWeight;
+  if (headingFontWeight) nextStyle["--section-heading-font-weight"] = headingFontWeight;
+  if (style.borderRadius !== undefined && style.borderRadius !== null) {
+    nextStyle["--section-radius"] = `${style.borderRadius}px`;
+  }
+  if (style.spacing) nextStyle["--section-spacing"] = style.spacing;
+  if (style.typography) nextStyle["--section-font-family"] = style.typography;
+  if (style.headingTypography) {
+    nextStyle["--section-heading-font-family"] = style.headingTypography;
+  }
+  if (style.typeScale) nextStyle["--section-type-scale"] = style.typeScale;
+  if (style.linkStyle) nextStyle["--section-link-style"] = style.linkStyle;
+
+  return nextStyle;
+}
+
 function isMiniTemplatePreview() {
   if (typeof window === "undefined") return false;
 
@@ -556,6 +607,7 @@ export default function BuilderSectionTarget({
       data-section-type={resolvedType || undefined}
       data-section-selected={selected ? "true" : "false"}
       data-section-hidden={isHidden ? "true" : "false"}
+      style={sectionStyleVars(liveSection?.style, rest.style)}
       tabIndex={allowKeyboardSelection ? 0 : rest.tabIndex}
       onClick={handleTargetClick}
       onKeyDown={handleTargetKeyDown}

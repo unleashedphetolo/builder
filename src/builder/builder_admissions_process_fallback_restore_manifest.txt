@@ -1,0 +1,4 @@
+Targeted builder update:
+- Restored the Admissions page process fallback items in the section editor.
+- Added only the missing Admissions process fallback list to the existing admissions default content path.
+- Does not change structure, editor layout, date/time picker behavior, other page fallbacks, or the repetition cleanup.

@@ -8,6 +8,32 @@ function safeLabel(value = "field") {
     .replace(/^-|-$/g, "");
 }
 
+function toDateInputValue(value = "") {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  const isoDate = raw.match(/^(\d{4}-\d{2}-\d{2})$/);
+  if (isoDate) return isoDate[1];
+  const parsed = new Date(raw);
+  if (Number.isNaN(parsed.getTime())) return "";
+  const year = parsed.getFullYear();
+  const month = String(parsed.getMonth() + 1).padStart(2, "0");
+  const day = String(parsed.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function formatDisplayDateFromInput(value = "") {
+  const raw = String(value || "").trim();
+  const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return raw;
+  const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  return date.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 export default function ContentField({
   label,
   value,
@@ -47,10 +73,10 @@ export default function ContentField({
           id={fieldId}
           className="bse-input"
           type={type}
-          value={value || ""}
+          value={type === "date" ? toDateInputValue(value) : value || ""}
           maxLength={maxLength}
           placeholder={placeholder}
-          onChange={(event) => onChange?.(event.target.value)}
+          onChange={(event) => onChange?.(type === "date" ? formatDisplayDateFromInput(event.target.value) : event.target.value)}
         />
       )}
 

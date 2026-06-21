@@ -153,6 +153,27 @@ function mergeSectionContentWithFallback(fallbackContent = {}, currentContent = 
     }
 
     if (
+      Array.isArray(fallbackValue) &&
+      Array.isArray(currentValue) &&
+      fallbackValue.some((item) => isPlainSectionContent(item)) &&
+      currentValue.some((item) => isPlainSectionContent(item))
+    ) {
+      merged[key] = currentValue.map((item, index) => {
+        if (!isPlainSectionContent(item)) return item;
+
+        const fallbackItem =
+          isPlainSectionContent(fallbackValue[index])
+            ? fallbackValue[index]
+            : isPlainSectionContent(fallbackValue[0])
+              ? fallbackValue[0]
+              : {};
+
+        return mergeSectionContentWithFallback(fallbackItem, item);
+      });
+      return;
+    }
+
+    if (
       isPlainSectionContent(fallbackValue) &&
       isPlainSectionContent(currentValue)
     ) {

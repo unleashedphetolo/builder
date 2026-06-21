@@ -33,6 +33,7 @@ export const schoolEditorRegistry = {
   howtoapply: HowToApplyEditor,
   admissions_how_to_apply: HowToApplyEditor,
 
+  school_entry_requirements: EntryRequirementsEditor,
   entry_requirements: EntryRequirementsEditor,
   admission_requirements: EntryRequirementsEditor,
   admissions_requirements: EntryRequirementsEditor,

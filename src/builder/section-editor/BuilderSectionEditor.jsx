@@ -31,6 +31,55 @@ const ALIGNMENT_OPTIONS = [
   { value: "right", label: "Right" },
 ];
 
+const TYPOGRAPHY_OPTIONS = [
+  { value: "inherit", label: "Use Template Default" },
+  { value: "system", label: "Clean System Sans" },
+  { value: "serif", label: "Formal Serif" },
+  { value: "rounded", label: "Friendly Rounded" },
+  { value: "display", label: "Modern Display" },
+];
+
+const TYPE_SCALE_OPTIONS = [
+  { value: "default", label: "Template Default" },
+  { value: "compact", label: "Compact" },
+  { value: "comfortable", label: "Comfortable" },
+  { value: "feature", label: "Feature" },
+];
+
+const SECTION_FONT_SIZE_OPTIONS = [
+  { value: "", label: "Template Default" },
+  { value: "14", label: "Compact / 14px" },
+  { value: "16", label: "Standard / 16px" },
+  { value: "18", label: "Comfortable / 18px" },
+  { value: "20", label: "Large / 20px" },
+];
+
+const SECTION_HEADING_SIZE_OPTIONS = [
+  { value: "", label: "Template Default" },
+  { value: "28", label: "Balanced / 28px" },
+  { value: "32", label: "Professional / 32px" },
+  { value: "40", label: "Feature / 40px" },
+  { value: "48", label: "Hero / 48px" },
+];
+
+const SECTION_FONT_WEIGHT_OPTIONS = [
+  { value: "", label: "Template Default" },
+  { value: "400", label: "Regular" },
+  { value: "450", label: "Comfortable" },
+  { value: "500", label: "Medium" },
+  { value: "600", label: "Semi Bold" },
+  { value: "700", label: "Bold" },
+  { value: "800", label: "Extra Bold" },
+];
+
+const LINK_STYLE_OPTIONS = [
+  { value: "template", label: "Template Default" },
+  { value: "button", label: "Button" },
+  { value: "outline", label: "Outline Button" },
+  { value: "text", label: "Text Link" },
+  { value: "card", label: "Card Link" },
+];
+
 const ANIMATION_OPTIONS = [
   { value: "none", label: "None" },
   { value: "fade", label: "Fade In" },
@@ -980,6 +1029,31 @@ function defaultContentFor(
         existing.secondary_button_href || "/docs/admission-form.pdf",
       hero_image: existing.hero_image || "",
       ...existing,
+      process: firstNonEmptyCollection(existing, ["process"], [
+        {
+          id: "download",
+          title: "Download",
+          body: "Get the official admission form (PDF).",
+        },
+        {
+          id: "complete",
+          title: "Complete",
+          body:
+            "Fill guardian details and attach required documents (ID, proof of residence, reports).",
+        },
+        {
+          id: "submit",
+          title: "Submit",
+          body:
+            "Upload online or hand-deliver to the school office during working hours.",
+        },
+        {
+          id: "await",
+          title: "Await",
+          body:
+            "You will receive confirmation via email or SMS about assessment and intake.",
+        },
+      ]),
       stats: firstCollection(existing, ["stats", "figures"]),
     };
   }
@@ -1232,9 +1306,21 @@ function defaultStyleFor(section = EMPTY_SECTION) {
     columns: Number(existing.columns || 3),
     backgroundColor: existing.backgroundColor || existing.background_color || "",
     textColor: existing.textColor || existing.text_color || "",
+    headingColor: existing.headingColor || existing.heading_color || "",
     accentColor: existing.accentColor || existing.accent_color || "",
+    linkColor: existing.linkColor || existing.link_color || "",
     borderRadius: Number(existing.borderRadius ?? existing.border_radius ?? 16),
     maxWidth: existing.maxWidth || existing.max_width || "default",
+    typography: existing.typography || existing.fontFamily || "inherit",
+    headingTypography: existing.headingTypography || existing.heading_font_family || "inherit",
+    fontSize: existing.fontSize || existing.font_size || "",
+    headingFontSize: existing.headingFontSize || existing.heading_font_size || "",
+    fontWeight: existing.fontWeight || existing.font_weight || "",
+    headingFontWeight: existing.headingFontWeight || existing.heading_font_weight || "",
+    typeScale: existing.typeScale || existing.type_scale || "default",
+    lineHeight: existing.lineHeight || existing.line_height || "default",
+    linkStyle: existing.linkStyle || existing.link_style || "template",
+    buttonStyle: existing.buttonStyle || existing.button_style || "template",
     ...existing,
   };
 }
@@ -1377,6 +1463,148 @@ function ContentField({
   );
 }
 
+function LinkField({ label, value, onChange, placeholder = "/page or https://...", hint = "Use an internal path like /contact, an email link, a phone link, or a full website URL." }) {
+  const inputId = useId();
+  const fieldId = `bse-link-${safeText(label, "link")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")}-${inputId.replace(/:/g, "")}`;
+  const cleanValue = String(value || "").trim();
+  const canOpen = Boolean(cleanValue && /^(https?:|mailto:|tel:|\/|#)/i.test(cleanValue));
+
+  return (
+    <label className="bse-field" htmlFor={fieldId}>
+      <span className="bse-field-label">{label}</span>
+      <div className="bse-two-column">
+        <input
+          id={fieldId}
+          className="bse-input"
+          type="text"
+          value={value || ""}
+          placeholder={placeholder}
+          onChange={(event) => onChange(event.target.value)}
+        />
+        <button
+          type="button"
+          className="bse-link-button"
+          disabled={!canOpen}
+          onClick={(event) => {
+            event.preventDefault();
+            if (canOpen) window.open(cleanValue, "_blank", "noopener,noreferrer");
+          }}
+        >
+          Open Link
+        </button>
+      </div>
+      {hint && <small className="bse-field-hint">{hint}</small>}
+    </label>
+  );
+}
+
+function LocalDateTimeField({ label, value, onChange, hint = "Use the picker for a local date and time, or keep the template text format if the page displays it that way." }) {
+  const inputId = useId();
+  const fieldId = `bse-datetime-${safeText(label, "date")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")}-${inputId.replace(/:/g, "")}`;
+  const pickerValue = toLocalDateTimeInputValue(value);
+
+  return (
+    <label className="bse-field" htmlFor={fieldId}>
+      <span className="bse-field-label">{label}</span>
+      <div className="bse-two-column">
+        <input
+          id={fieldId}
+          className="bse-input"
+          type="datetime-local"
+          value={pickerValue}
+          onChange={(event) => onChange(event.target.value)}
+        />
+        <button
+          type="button"
+          className="bse-link-button"
+          onClick={(event) => {
+            event.preventDefault();
+            onChange(currentLocalDateTimeValue());
+          }}
+        >
+          Use Local Now
+        </button>
+      </div>
+      {!pickerValue && value && (
+        <input
+          className="bse-input"
+          type="text"
+          value={value || ""}
+          placeholder="18 March 2026 or 2026-06-18T08:00"
+          onChange={(event) => onChange(event.target.value)}
+        />
+      )}
+      {hint && <small className="bse-field-hint">{hint}</small>}
+    </label>
+  );
+}
+
+
+function toDateInputValue(value = "") {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+
+  const isoDate = raw.match(/^(\d{4}-\d{2}-\d{2})$/);
+  if (isoDate) return isoDate[1];
+
+  const parsed = new Date(raw);
+  if (Number.isNaN(parsed.getTime())) return "";
+
+  const year = parsed.getFullYear();
+  const month = String(parsed.getMonth() + 1).padStart(2, "0");
+  const day = String(parsed.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function formatDisplayDateFromInput(value = "") {
+  const raw = String(value || "").trim();
+  const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return raw;
+
+  const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  return date.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+function LocalDateField({ label, value, onChange, hint = "Use the date picker for a full display date, for example Tue, Nov 25, 2025." }) {
+  const inputId = useId();
+  const fieldId = `bse-date-${safeText(label, "date")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")}-${inputId.replace(/:/g, "")}`;
+  const pickerValue = toDateInputValue(value);
+
+  return (
+    <label className="bse-field" htmlFor={fieldId}>
+      <span className="bse-field-label">{label}</span>
+      <input
+        id={fieldId}
+        className="bse-input"
+        type="date"
+        value={pickerValue}
+        onChange={(event) => onChange(formatDisplayDateFromInput(event.target.value))}
+      />
+      {!pickerValue && value && (
+        <input
+          className="bse-input"
+          type="text"
+          value={value || ""}
+          placeholder="Tue, Nov 25, 2025"
+          onChange={(event) => onChange(event.target.value)}
+        />
+      )}
+      {hint && <small className="bse-field-hint">{hint}</small>}
+    </label>
+  );
+}
+
 function ToggleRow({ title, text, checked, onChange, disabled = false }) {
   return (
     <label className={`bse-toggle-row ${disabled ? "is-disabled" : ""}`}>
@@ -1429,6 +1657,50 @@ function TextListField({
 }
 
 function ItemField({ definition, value, onChange }) {
+  if (definition.type === "datetime-local") {
+    return (
+      <div className="bse-item-field">
+        <LocalDateTimeField
+          label={definition.label}
+          value={value || ""}
+          onChange={onChange}
+          hint={definition.hint || "Local date/time picker for this template field."}
+        />
+      </div>
+    );
+  }
+
+  if (definition.type === "date") {
+    return (
+      <div className="bse-item-field">
+        <LocalDateField
+          label={definition.label}
+          value={value || ""}
+          onChange={onChange}
+          hint={definition.hint || "Use the date picker for a full display date, for example Tue, Nov 25, 2025."}
+        />
+      </div>
+    );
+  }
+
+  if (definition.type === "link" || definition.type === "media-link") {
+    return (
+      <div className="bse-item-field">
+        <LinkField
+          label={definition.label}
+          value={value || ""}
+          placeholder={definition.placeholder || "/page or https://..."}
+          hint={
+            definition.type === "media-link"
+              ? "Paste a media/document URL, or use the Media tab to upload/select the asset."
+              : definition.hint
+          }
+          onChange={onChange}
+        />
+      </div>
+    );
+  }
+
   if (definition.type === "textarea") {
     return (
       <label className="bse-item-field">
@@ -1503,7 +1775,7 @@ function ItemCollection({
 }) {
   const updateItem = (index, field, value) => {
     const next = items.map((item, itemIndex) =>
-      itemIndex === index ? { ...item, [field]: value } : item,
+      itemIndex === index ? setItemValueWithAliasSync(item, field, value) : item,
     );
     onChange(next);
   };
@@ -1622,6 +1894,21 @@ const SYSTEM_DYNAMIC_CONTENT_KEYS = new Set([
   "_page_slug",
   "template_key",
   "template_category",
+  "__editor_field_order",
+  "__editor_field_labels",
+  "__editor_fallback_content",
+  "_editor_field_order",
+  "_editor_field_labels",
+  "_editor_fallback_content",
+  "editor_field_order",
+  "editor_field_labels",
+  "editor_fallback_content",
+  "editorFieldOrder",
+  "editorFieldLabels",
+  "editorFallbackContent",
+  "field_order",
+  "field_labels",
+  "fallback_content",
 ]);
 
 const HEADER_DYNAMIC_CONTENT_KEYS = new Set([
@@ -1632,6 +1919,7 @@ const HEADER_DYNAMIC_CONTENT_KEYS = new Set([
 function formatDynamicLabel(key = "") {
   return String(key || "")
     .replace(/^_+/, "")
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
     .replace(/[_-]+/g, " ")
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
@@ -1654,30 +1942,446 @@ function isLongDynamicKey(key = "") {
     "commitment_body",
     "projects_body",
     "competitions_body",
+    "content",
   ].some((part) => normalized.includes(part));
 }
 
-function inferDynamicItemFields(items = []) {
-  const fieldKeys = [];
+function isLinkDynamicKey(key = "") {
+  const normalized = normalizeType(key);
 
-  (Array.isArray(items) ? items : []).slice(0, 6).forEach((item) => {
+  return (
+    normalized.endsWith("href") ||
+    normalized.endsWith("url") ||
+    normalized.includes("link") ||
+    normalized.includes("button_href") ||
+    normalized.includes("form_url") ||
+    normalized.includes("pdf_url") ||
+    normalized.includes("document_url") ||
+    normalized.includes("manual_form_url")
+  );
+}
+
+function isMediaDynamicKey(key = "") {
+  const normalized = normalizeType(key);
+
+  return [
+    "image",
+    "image_url",
+    "img",
+    "logo",
+    "logo_url",
+    "photo",
+    "photo_url",
+    "hero_image",
+    "background_image",
+    "thumbnail",
+    "thumbnail_url",
+    "cover",
+    "cover_image",
+    "pdf",
+    "pdf_url",
+    "document",
+    "document_url",
+    "file_url",
+    "manual_form_url",
+  ].includes(normalized);
+}
+
+function isLocalDateTimeDynamicKey(key = "") {
+  const normalized = normalizeType(key);
+
+  /*
+    Local date/time controls are only used for intentional schedule fields.
+    Plain template fields such as "date" remain text unless they are stored in
+    an ISO date-only format and can safely use a date picker.
+  */
+  return (
+    normalized === "start_at" ||
+    normalized === "startat" ||
+    normalized === "end_at" ||
+    normalized === "endat" ||
+    normalized === "published_at" ||
+    normalized === "publishedat" ||
+    normalized === "scheduled_at" ||
+    normalized === "scheduledat" ||
+    normalized === "event_at" ||
+    normalized === "eventat" ||
+    normalized.includes("date_time") ||
+    normalized.includes("datetime")
+  );
+}
+
+function isDateOnlyDynamicKey(key = "", value = "") {
+  const normalized = normalizeType(key);
+  const raw = String(value || "").trim();
+  const dateKeys = [
+    "date",
+    "event_date",
+    "start_date",
+    "end_date",
+    "due_date",
+    "published_date",
+    "scheduled_date",
+  ];
+
+  if (!dateKeys.includes(normalized)) return false;
+  if (!raw) return true;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return true;
+  if (/^[A-Za-z]{3},\s+[A-Za-z]{3}\s+\d{1,2},\s+\d{4}$/.test(raw)) return true;
+  if (/^[A-Za-z]+\s+\d{1,2},\s+\d{4}$/.test(raw)) return true;
+  if (/^[A-Za-z]{3,9}\s+\d{4}$/.test(raw)) return true;
+
+  const parsed = new Date(raw);
+  return !Number.isNaN(parsed.getTime());
+}
+
+function isTimeOnlyDynamicKey(key = "", value = "") {
+  const normalized = normalizeType(key);
+  const raw = String(value || "").trim();
+  const isTime = /^\d{2}:\d{2}(:\d{2})?$/.test(raw);
+
+  return (
+    isTime &&
+    [
+      "time",
+      "start_time",
+      "end_time",
+      "opening_time",
+      "closing_time",
+      "arrival_time",
+    ].includes(normalized)
+  );
+}
+
+function toLocalDateTimeInputValue(value = "") {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+
+  const directMatch = raw.match(/^(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2})/);
+  if (directMatch) return `${directMatch[1]}T${directMatch[2]}`;
+
+  const dateOnlyMatch = raw.match(/^(\d{4}-\d{2}-\d{2})$/);
+  if (dateOnlyMatch) return `${dateOnlyMatch[1]}T08:00`;
+
+  const parsed = new Date(raw);
+  if (Number.isNaN(parsed.getTime())) return "";
+
+  const timezoneOffset = parsed.getTimezoneOffset() * 60000;
+  return new Date(parsed.getTime() - timezoneOffset).toISOString().slice(0, 16);
+}
+
+function currentLocalDateTimeValue() {
+  const now = new Date();
+  const timezoneOffset = now.getTimezoneOffset() * 60000;
+  return new Date(now.getTime() - timezoneOffset).toISOString().slice(0, 16);
+}
+
+function currentLocalDateValue() {
+  return currentLocalDateTimeValue().slice(0, 10);
+}
+
+function currentLocalTimeValue() {
+  return currentLocalDateTimeValue().slice(11, 16);
+}
+
+
+const CONTENT_ALIAS_FIELD_KEYS = [
+  "content",
+  "body",
+  "description",
+  "summary",
+  "text",
+  "message",
+  "items",
+];
+
+function normalizedItemValueSignature(items = [], key = "") {
+  return (Array.isArray(items) ? items : [])
+    .map((item) => {
+      if (!isObject(item)) return "";
+      const value = item[key];
+      if (Array.isArray(value) || isObject(value)) return "";
+      return String(value ?? "").replace(/\s+/g, " ").trim().toLowerCase();
+    })
+    .join("||");
+}
+
+function normalizedScalarContentSignature(content = {}, key = "") {
+  if (!isObject(content)) return "";
+
+  const value = content[key];
+  if (Array.isArray(value) || isObject(value)) return "";
+
+  return String(value ?? "").replace(/\s+/g, " ").trim().toLowerCase();
+}
+
+function preferredContentAliasKey(keys = []) {
+  const normalizedKeys = keys.map((key) => normalizeType(key));
+
+  if (
+    normalizedKeys.includes("grade") &&
+    normalizedKeys.includes("subject") &&
+    normalizedKeys.includes("items")
+  ) {
+    return "items";
+  }
+
+  if (
+    (normalizedKeys.includes("category") || normalizedKeys.includes("image_alt")) &&
+    normalizedKeys.includes("summary")
+  ) {
+    return "summary";
+  }
+
+  return CONTENT_ALIAS_FIELD_KEYS.find((key) => normalizedKeys.includes(key)) || "body";
+}
+
+function removeDuplicatedContentAliasFields(fieldKeys = [], items = []) {
+  const aliasKeys = fieldKeys.filter((key) =>
+    CONTENT_ALIAS_FIELD_KEYS.includes(normalizeType(key)),
+  );
+
+  if (aliasKeys.length < 2) return fieldKeys;
+
+  const signatureGroups = aliasKeys.reduce((groups, key) => {
+    const signature = normalizedItemValueSignature(items, key);
+    if (!signature || signature.split("||").every((part) => !part)) return groups;
+    groups[signature] = [...(groups[signature] || []), key];
+    return groups;
+  }, {});
+
+  const hiddenKeys = new Set();
+
+  Object.values(signatureGroups).forEach((groupKeys) => {
+    if (!Array.isArray(groupKeys) || groupKeys.length < 2) return;
+
+    const preferred = preferredContentAliasKey(fieldKeys);
+    const keepKey = groupKeys.includes(preferred) ? preferred : groupKeys[0];
+
+    groupKeys.forEach((key) => {
+      if (key !== keepKey) hiddenKeys.add(key);
+    });
+  });
+
+  if (!hiddenKeys.size) return fieldKeys;
+  return fieldKeys.filter((key) => !hiddenKeys.has(key));
+}
+
+function removeDuplicatedScalarContentAliasFields(fieldKeys = [], content = {}) {
+  const aliasKeys = fieldKeys.filter((key) =>
+    CONTENT_ALIAS_FIELD_KEYS.includes(normalizeType(key)),
+  );
+
+  if (aliasKeys.length < 2) return fieldKeys;
+
+  const signatureGroups = aliasKeys.reduce((groups, key) => {
+    const signature = normalizedScalarContentSignature(content, key);
+    if (!signature) return groups;
+    groups[signature] = [...(groups[signature] || []), key];
+    return groups;
+  }, {});
+
+  const hiddenKeys = new Set();
+
+  Object.values(signatureGroups).forEach((groupKeys) => {
+    if (!Array.isArray(groupKeys) || groupKeys.length < 2) return;
+
+    const preferred = preferredContentAliasKey(fieldKeys);
+    const keepKey = groupKeys.includes(preferred) ? preferred : groupKeys[0];
+
+    groupKeys.forEach((key) => {
+      if (key !== keepKey) hiddenKeys.add(key);
+    });
+  });
+
+  if (!hiddenKeys.size) return fieldKeys;
+  return fieldKeys.filter((key) => !hiddenKeys.has(key));
+}
+
+function isContentAliasKey(key = "") {
+  return CONTENT_ALIAS_FIELD_KEYS.includes(normalizeType(key));
+}
+
+function setContentValueWithAliasSync(content = {}, path = "", value) {
+  const key = String(path || "");
+  const next = setAtPath(content, key, value);
+
+  if (!key || key.includes(".") || !isContentAliasKey(key) || !isObject(content)) {
+    return next;
+  }
+
+  const originalSignature = normalizedScalarContentSignature(content, key);
+  if (!originalSignature) return next;
+
+  Object.keys(content).forEach((candidateKey) => {
+    if (candidateKey === key || !isContentAliasKey(candidateKey)) return;
+    if (normalizedScalarContentSignature(content, candidateKey) === originalSignature) {
+      next[candidateKey] = value;
+    }
+  });
+
+  return next;
+}
+
+function setItemValueWithAliasSync(item = {}, field = "", value) {
+  const next = { ...item, [field]: value };
+
+  if (!isContentAliasKey(field) || !isObject(item)) {
+    return next;
+  }
+
+  const originalSignature = normalizedScalarContentSignature(item, field);
+  if (!originalSignature) return next;
+
+  Object.keys(item).forEach((candidateKey) => {
+    if (candidateKey === field || !isContentAliasKey(candidateKey)) return;
+    if (normalizedScalarContentSignature(item, candidateKey) === originalSignature) {
+      next[candidateKey] = value;
+    }
+  });
+
+  return next;
+}
+
+function orderDynamicItemFieldKeys(fieldKeys = []) {
+  const normalizedMap = fieldKeys.reduce((result, key) => {
+    result[normalizeType(key)] = key;
+    return result;
+  }, {});
+  const hasKeys = (keys = []) => keys.every((key) => normalizedMap[normalizeType(key)]);
+  const applyOrder = (preferredOrder = []) => {
+    const used = new Set();
+    const ordered = [];
+
+    preferredOrder.forEach((key) => {
+      const originalKey = normalizedMap[normalizeType(key)];
+      if (!originalKey || used.has(originalKey)) return;
+      ordered.push(originalKey);
+      used.add(originalKey);
+    });
+
+    fieldKeys.forEach((key) => {
+      if (!used.has(key)) ordered.push(key);
+    });
+
+    return ordered;
+  };
+
+  if (hasKeys(["eyebrow", "title"]) && hasKeys(["body"]) && hasKeys(["values"])) {
+    return applyOrder(["eyebrow", "title", "body", "values"]);
+  }
+
+  if (hasKeys(["grade", "subject", "items"])) {
+    return applyOrder(["grade", "subject", "items"]);
+  }
+
+  if (hasKeys(["title", "startAt"])) {
+    return applyOrder([
+      "title",
+      "startAt",
+      "endAt",
+      "publishedAt",
+      "location",
+      "category",
+      "status",
+    ]);
+  }
+
+  if (hasKeys(["title", "date", "category", "content"])) {
+    return applyOrder(["date", "title", "category", "urgent", "content"]);
+  }
+
+  if (hasKeys(["title", "summary", "category"])) {
+    return applyOrder([
+      "title",
+      "summary",
+      "category",
+      "date",
+      "image_url",
+      "image_alt",
+      "href",
+      "url",
+    ]);
+  }
+
+  if (hasKeys(["title", "body", "image_url"])) {
+    return applyOrder(["title", "body", "image_url", "img", "image_alt"]);
+  }
+
+  if (hasKeys(["title", "icon", "items"])) {
+    return applyOrder(["title", "icon", "items"]);
+  }
+
+  const scheduleRank = {
+    title: 0,
+    name: 0,
+    label: 0,
+    startat: 1,
+    start_at: 1,
+    endat: 2,
+    end_at: 2,
+    publishedat: 3,
+    published_at: 3,
+  };
+
+  return [...fieldKeys].sort((a, b) => {
+    const aRank = scheduleRank[normalizeType(a)];
+    const bRank = scheduleRank[normalizeType(b)];
+
+    if (aRank === undefined && bRank === undefined) return 0;
+    if (aRank === undefined) return 1;
+    if (bRank === undefined) return -1;
+    return aRank - bRank;
+  });
+}
+
+function inputTypeForDynamicKey(key = "", value) {
+  if (typeof value === "number") return "number";
+  if (isLocalDateTimeDynamicKey(key)) return "datetime-local";
+  if (isDateOnlyDynamicKey(key, value)) return "date";
+  if (isTimeOnlyDynamicKey(key, value)) return "time";
+  if (isLinkDynamicKey(key) && !isMediaDynamicKey(key)) return "link";
+  if (isMediaDynamicKey(key)) return "media-link";
+  return isLongDynamicKey(key) ? "textarea" : "text";
+}
+
+function inferDynamicItemFields(items = [], fallbackItems = []) {
+  const fieldKeys = [];
+  const templateItems = Array.isArray(fallbackItems) ? fallbackItems.filter((item) => isObject(item)) : [];
+  const currentItems = Array.isArray(items) ? items.filter((item) => isObject(item)) : [];
+  const sourceItems = templateItems.length ? templateItems : currentItems;
+  const fieldSources = templateItems.length
+    ? [...templateItems.slice(0, 6), ...currentItems.slice(0, 6)]
+    : currentItems.slice(0, 6);
+
+  fieldSources.forEach((item) => {
     if (!isObject(item)) return;
 
     Object.keys(item).forEach((key) => {
-      if (key === "id") return;
+      if (key === "id" || SYSTEM_DYNAMIC_CONTENT_KEYS.has(key)) return;
       if (!fieldKeys.includes(key)) fieldKeys.push(key);
     });
   });
 
-  if (!fieldKeys.length) {
-    fieldKeys.push("title", "body");
+  const cleanedFieldKeys = removeDuplicatedContentAliasFields(
+    fieldKeys,
+    fieldSources.length ? fieldSources : items,
+  );
+  const orderedFieldKeys = orderDynamicItemFieldKeys(cleanedFieldKeys);
+
+  if (!orderedFieldKeys.length) {
+    orderedFieldKeys.push("title", "body");
   }
 
-  return fieldKeys.map((key) => {
+  return orderedFieldKeys.map((key) => {
     const sampleValue =
-      (Array.isArray(items) ? items : [])
+      fieldSources
         .map((item) => (isObject(item) ? item[key] : undefined))
-        .find((value) => value !== undefined && value !== null) ?? "";
+        .find((value) => value !== undefined && value !== null) ??
+      (Array.isArray(sourceItems) ? sourceItems : [])
+        .map((item) => (isObject(item) ? item[key] : undefined))
+        .find((value) => value !== undefined && value !== null) ??
+      "";
 
     if (Array.isArray(sampleValue)) {
       return {
@@ -1697,11 +2401,21 @@ function inferDynamicItemFields(items = []) {
       };
     }
 
+    if (typeof sampleValue === "boolean") {
+      return {
+        key,
+        label: formatDynamicLabel(key),
+        type: "checkbox",
+      };
+    }
+
+    const inputType = inputTypeForDynamicKey(key, sampleValue);
+
     return {
       key,
       label: formatDynamicLabel(key),
-      type: isLongDynamicKey(key) ? "textarea" : undefined,
-      rows: isLongDynamicKey(key) ? 3 : undefined,
+      type: inputType === "text" ? undefined : inputType,
+      rows: inputType === "textarea" ? 3 : undefined,
     };
   });
 }
@@ -1710,12 +2424,439 @@ function createDynamicItemFromFields(fields = [], prefix = "item") {
   return {
     id: createKey(prefix),
     ...fields.reduce((result, field) => {
-      result[field.key] = field.type === "list" ? [] : field.type === "json" ? {} : "";
+      if (field.type === "list") {
+        result[field.key] = [];
+        return result;
+      }
+
+      if (field.type === "json") {
+        result[field.key] = {};
+        return result;
+      }
+
+      if (field.type === "checkbox") {
+        result[field.key] = false;
+        return result;
+      }
+
+      if (field.type === "datetime-local") {
+        result[field.key] = currentLocalDateTimeValue();
+        return result;
+      }
+
+      if (field.type === "date") {
+        result[field.key] = currentLocalDateValue();
+        return result;
+      }
+
+      if (field.type === "time") {
+        result[field.key] = currentLocalTimeValue();
+        return result;
+      }
+
+      result[field.key] = "";
       return result;
     }, {}),
   };
 }
 
+
+
+const EXACT_SCHOOL_TEMPLATE_FALLBACKS = {
+  school_facilities: {
+    section_title: "School Facilities",
+    subtitle:
+      "Our facilities are designed to provide a safe, structured, and resource-rich environment that supports both academic and extracurricular excellence.",
+    items: [
+      {
+        id: "facility-learning-spaces",
+        title: "Learning Spaces",
+        body:
+          "Modern classrooms, science laboratories, and structured learning spaces designed to support academic excellence and focused instruction.",
+        image_url: "/images/facilities/classrooms.jpg",
+        img: "/images/facilities/classrooms.jpg",
+      },
+      {
+        id: "facility-library-resource-centre",
+        title: "Library & Resource Centre",
+        body:
+          "A dedicated space for reading, research, and digital learning access, supporting independent study and curriculum enrichment.",
+        image_url: "/images/facilities/library.jpg",
+      },
+      {
+        id: "facility-science-computer-labs",
+        title: "Science & Computer Labs",
+        body:
+          "Fully equipped laboratories for Physical Sciences, Life Sciences, and Information Technology.",
+        image_url: "/images/facilities/computer-lab.jpg",
+      },
+      {
+        id: "facility-sport-recreation",
+        title: "Sport & Recreation",
+        body:
+          "Soccer field, athletics space, and courts that promote discipline, teamwork, and physical development.",
+        image_url: "/images/facilities/sports.jpg",
+      },
+      {
+        id: "facility-administration-block",
+        title: "Administration Block",
+        body:
+          "Professional administrative offices ensuring effective school management and learner support services.",
+        image_url: "/images/facilities/admin.jpg",
+      },
+      {
+        id: "facility-multipurpose-hall",
+        title: "Assembly & Multi-Purpose Hall",
+        body:
+          "A venue for assemblies, examinations, cultural activities, and important school events.",
+        image_url: "/images/facilities/hall.jpg",
+      },
+    ],
+  },
+  school_activity_facilities: {
+    section_title: "Campus Facilities",
+    subtitle:
+      "{site_name} provides facilities that support academic excellence, discipline, learner wellbeing, and participation in sport and culture.",
+    primary_button_label: "Full Facilities Page",
+    primary_button_href: "/facilities",
+    secondary_button_label: "View Photos",
+    secondary_button_href: "/gallery",
+    image_url: "/images/school/school.jpg",
+    image_alt: "School Campus",
+    feature_groups: [
+      {
+        id: "academic",
+        title: "Academic Facilities",
+        icon: "🎓",
+        items: [
+          "Spacious, well-equipped classrooms",
+          "Science laboratories (Physical Sciences & Life Sciences)",
+          "Computer laboratory with internet access",
+          "Library and study resource centre",
+          "Mathematics support and enrichment",
+        ],
+      },
+      {
+        id: "sports",
+        title: "Sports & Recreation",
+        icon: "🏟️",
+        items: [
+          "Soccer and athletics field",
+          "Netball and basketball courts",
+          "Multi-purpose sports ground",
+          "Indoor hall for assemblies and events",
+        ],
+      },
+      {
+        id: "support",
+        title: "Learner Support Areas",
+        icon: "🛡️",
+        items: [
+          "Administration block",
+          "Guidance and counselling support",
+          "Staff room and meeting facilities",
+          "Secure school premises and controlled access",
+        ],
+      },
+    ],
+    gallery_label: "# Preview",
+    gallery_title: "Facilities Photo Preview",
+    gallery_subtitle: "Replace these images with your real facility photos.",
+    gallery_button_label: "Open Gallery →",
+    gallery_note:
+      "Tip: put images in public/images/facilities/ and keep the same names.",
+    gallery: [
+      {
+        id: "facility-preview-classrooms",
+        title: "Classrooms",
+        image_url: "/images/facilities/classrooms.jpg",
+        img: "/images/facilities/classrooms.jpg",
+      },
+      {
+        id: "facility-preview-science-lab",
+        title: "Science Lab",
+        image_url: "/images/facilities/science-lab.jpg",
+        img: "/images/facilities/science-lab.jpg",
+      },
+      {
+        id: "facility-preview-computer-lab",
+        title: "Computer Lab",
+        image_url: "/images/facilities/computer-lab.jpg",
+        img: "/images/facilities/computer-lab.jpg",
+      },
+      {
+        id: "facility-preview-sports",
+        title: "Sports Grounds",
+        image_url: "/images/facilities/sports.jpg",
+        img: "/images/facilities/sports.jpg",
+      },
+    ],
+  },
+  school_daily_bulletin: {
+    section_title: "Student Daily Bulletin",
+    subtitle:
+      "Official daily announcements for learners at M.O.M Sebone Secondary School.",
+    search_placeholder: "Search bulletin...",
+    empty_message: "No announcements matched your search.",
+    footer_note:
+      "For urgent announcements, learners should confirm details with the school office or their class teacher.",
+    items: [
+      {
+        id: "bulletin-mathematics-extra-classes",
+        date: "18 March 2026",
+        title: "Mathematics Extra Classes",
+        category: "Academics",
+        urgent: false,
+        content:
+          "Grade 12 learners will attend Mathematics extra classes from 14:30 – 16:00 in Room 12.",
+      },
+      {
+        id: "bulletin-school-assembly-reminder",
+        date: "18 March 2026",
+        title: "School Assembly Reminder",
+        category: "General",
+        urgent: true,
+        content:
+          "All learners must report to the assembly ground at 07:30 sharp in full school uniform.",
+      },
+      {
+        id: "bulletin-soccer-trials",
+        date: "17 March 2026",
+        title: "Soccer Trials",
+        category: "Sports",
+        urgent: false,
+        content:
+          "Soccer trials will take place at 15:00 on the main field. Bring training kit.",
+      },
+      {
+        id: "bulletin-life-sciences-practical",
+        date: "17 March 2026",
+        title: "Life Sciences Practical",
+        category: "Academics",
+        urgent: false,
+        content:
+          "Grade 11 learners must bring lab coats for the Life Sciences practical session.",
+      },
+    ],
+  },
+  school_attendance_policy: {
+    section_title: "Attendance Policy",
+    subtitle:
+      "This policy explains attendance expectations, late-coming procedures, absence reporting, and academic accountability for learners at M.O.M Sebone Secondary School.",
+    school_name: "M.O.M Sebone Secondary School",
+    phone: "011 023 9428",
+    email: "sebone@gmail.com",
+    meta_items: [
+      "Policy Type: Learner Conduct",
+      "Applies to: All Grades",
+      "Status: Active",
+    ],
+    purpose_title: "1. Purpose",
+    purpose_body:
+      "Regular attendance is essential for learner performance, discipline, and successful completion of curriculum requirements. This policy sets out clear procedures to support punctuality, monitor attendance, and ensure effective communication between the school and parents/guardians.",
+    attendance_title: "2. Attendance Expectations",
+    attendance_expectations: [
+      "Learners must attend school every official school day unless excused for a valid reason.",
+      "Learners must arrive on time and be prepared for learning (uniform, stationery, and books).",
+      "Attendance is recorded daily (and per period where applicable).",
+      "Repeated absences or late-coming may lead to intervention and disciplinary steps.",
+    ],
+    late_coming_title: "3. Late-Coming Procedure",
+    late_coming_body:
+      "Learners who arrive late disrupt teaching and learning. Late-coming is recorded and monitored.",
+    late_arrival_title: "3.1 When a learner is late",
+    late_arrival_items: [
+      "Report to the designated late-coming point/office on arrival.",
+      "Late-coming is recorded and may require a slip/pass to enter class.",
+      "Repeated late-coming triggers parent contact and intervention.",
+    ],
+    acceptable_reasons_title: "3.2 Acceptable reasons",
+    acceptable_reasons: [
+      "Medical appointment (proof required)",
+      "Public transport delays (when consistent and verifiable)",
+      "Family emergency (parent/guardian confirmation required)",
+    ],
+    absences_title: "4. Absences & Reporting",
+    absence_items: [
+      "Parents/guardians must inform the school as soon as possible when a learner will be absent.",
+      "A written note or proof must be provided upon return to school.",
+      "Medical certificates are required for extended illness or repeated health-related absences.",
+      "Unreported absences may be recorded as unexcused and can trigger intervention.",
+    ],
+    absence_callout_label: "Important:",
+    absence_callout:
+      "If a learner is absent on the day of a test/exam, the school may require valid proof before a make-up assessment is considered.",
+    catch_up_title: "5. Catch-Up Work & Assessments",
+    catch_up_items: [
+      "It is the learner’s responsibility to request and complete missed classwork.",
+      "Teachers will guide learners on what was missed and the deadline for catch-up work.",
+      "Make-up tasks/tests are granted at the school’s discretion and may require proof of absence.",
+      "Repeated missed assessments may affect promotion requirements.",
+    ],
+    intervention_title: "6. Monitoring & Intervention",
+    intervention_steps: [
+      {
+        id: "early-warning",
+        title: "Early Warning",
+        body:
+          "Educator/grade head identifies patterns of lateness/absence and records concerns.",
+      },
+      {
+        id: "parent-contact",
+        title: "Parent/Guardian Contact",
+        body:
+          "School contacts parent/guardian to discuss causes and agree on corrective actions.",
+      },
+      {
+        id: "support-plan",
+        title: "Support Plan",
+        body:
+          "Where needed, a learner support plan may be implemented (counselling, referrals, monitoring).",
+      },
+      {
+        id: "disciplinary-steps",
+        title: "Disciplinary Steps",
+        body:
+          "Continued non-compliance may lead to disciplinary action in line with the school code of conduct.",
+      },
+    ],
+    roles_title: "7. Roles & Responsibilities",
+    roles: [
+      {
+        id: "learners",
+        title: "Learners",
+        items: [
+          "Attend daily and arrive on time.",
+          "Bring required materials and maintain discipline.",
+          "Catch up missed work promptly.",
+        ],
+      },
+      {
+        id: "parents",
+        title: "Parents/Guardians",
+        items: [
+          "Ensure learners arrive on time.",
+          "Report absences promptly and provide proof.",
+          "Respond to school communication and attend meetings when required.",
+        ],
+      },
+      {
+        id: "school",
+        title: "School",
+        items: [
+          "Record attendance accurately.",
+          "Communicate concerns and apply interventions.",
+          "Support learners to improve attendance.",
+        ],
+      },
+    ],
+    contact_title: "8. Contact",
+    contact_body:
+      "For attendance enquiries, please contact the school office:",
+    footer_note:
+      "This page is a website version of the policy. The school’s official signed policy document remains the primary reference.",
+  },
+};
+
+function normalizeEditorSlug(value = "") {
+  const clean = String(value || "/").trim().toLowerCase();
+  if (!clean || clean === "_") return "/";
+  return `/${clean.replace(/^\/+|\/+$/g, "")}`;
+}
+
+function getExactSchoolTemplateFallback(section = EMPTY_SECTION, page = EMPTY_PAGE) {
+  const content = isObject(section?.content) ? section.content : {};
+  const normalizedType = normalizeType(
+    section?.type ||
+      section?.section_type ||
+      content?._editor_section_type ||
+      content?.editor_section_type ||
+      content?.section_type ||
+      section?.editor_section_type ||
+      section?.editorSectionType ||
+      "",
+  );
+  const normalizedKey = normalizeType(
+    section?.key ||
+      section?.section_key ||
+      section?.sectionKey ||
+      content?.__section_key ||
+      content?._section_key ||
+      content?.section_key ||
+      section?.id ||
+      "",
+  );
+  const pageSlug = normalizeEditorSlug(
+    page?.slug || section?.page_slug || section?.pageSlug || content?.page_slug || content?._page_slug || "",
+  );
+
+  if (
+    normalizedType === "school_daily_bulletin" ||
+    normalizedKey.includes("daily_bulletin") ||
+    normalizedKey.includes("bulletin") ||
+    pageSlug === "/bulletin" ||
+    pageSlug.endsWith("/bulletin") ||
+    pageSlug === "/student-daily-bulletin" ||
+    pageSlug.endsWith("/student-daily-bulletin")
+  ) {
+    return EXACT_SCHOOL_TEMPLATE_FALLBACKS.school_daily_bulletin;
+  }
+
+  if (
+    normalizedType === "school_attendance_policy" ||
+    normalizedKey.includes("attendance") ||
+    pageSlug === "/attendance" ||
+    pageSlug.endsWith("/attendance")
+  ) {
+    return EXACT_SCHOOL_TEMPLATE_FALLBACKS.school_attendance_policy;
+  }
+
+  if (
+    normalizedType === "school_activity_facilities" ||
+    pageSlug === "/activities/facilities" ||
+    pageSlug.endsWith("/activities/facilities") ||
+    normalizedKey.includes("activity_facilities") ||
+    normalizedKey.includes("campus_facilities")
+  ) {
+    return EXACT_SCHOOL_TEMPLATE_FALLBACKS.school_activity_facilities;
+  }
+
+  if (
+    normalizedType === "school_facilities" ||
+    pageSlug === "/facilities" ||
+    pageSlug.endsWith("/facilities") ||
+    normalizedKey.includes("facilities")
+  ) {
+    return EXACT_SCHOOL_TEMPLATE_FALLBACKS.school_facilities;
+  }
+
+  return null;
+}
+
+function createEditorFieldLabels(order = []) {
+  return (Array.isArray(order) ? order : []).reduce((labels, key) => {
+    labels[key] = formatDynamicLabel(key);
+    return labels;
+  }, {});
+}
+
+function hydrateContentWithExactSchoolFallback(section = EMPTY_SECTION, page = EMPTY_PAGE, content = {}) {
+  const fallback = getExactSchoolTemplateFallback(section, page);
+  if (!fallback) return content;
+
+  const order = Object.keys(fallback).filter((key) => !SYSTEM_DYNAMIC_CONTENT_KEYS.has(key));
+  const merged = mergeDraftFallbackContent(fallback, content);
+
+  return {
+    ...merged,
+    // Exact school pages must keep the current template's own editor order.
+    // Old saved metadata may exist from earlier builder versions, but it must
+    // not reintroduce duplicate fields or reorder Attendance Policy/Bulletin/Facilities.
+    __editor_field_order: order,
+    __editor_field_labels: createEditorFieldLabels(order),
+    __editor_fallback_content: clone(fallback),
+  };
+}
 
 const FORCE_TEMPLATE_ORDER_EDITOR_TYPES = new Set([
   "school_academics",
@@ -1727,6 +2868,8 @@ const FORCE_TEMPLATE_ORDER_EDITOR_TYPES = new Set([
   "school_code_of_conduct",
   "school_contact",
   "school_subject_choices",
+  "school_daily_bulletin",
+  "school_attendance_policy",
 ]);
 
 function shouldForceTemplateOrderEditor(registrySectionType = "", draftContent = {}) {
@@ -1751,8 +2894,12 @@ function shouldUseDynamicTemplateContentEditor({
   ) return false;
 
   const normalizedType = normalizeType(registrySectionType);
+  const hasTemplateFallbackMetadata =
+    Array.isArray(draftContent?.__editor_field_order) &&
+    draftContent.__editor_field_order.length > 0 &&
+    Boolean(draftContent?.__editor_fallback_content);
 
-  if (!normalizedType.startsWith("school_")) return false;
+  if (!normalizedType.startsWith("school_") && !hasTemplateFallbackMetadata) return false;
 
   return Object.keys(draftContent || {}).some(
     (key) =>
@@ -1791,6 +2938,27 @@ function mergeDraftFallbackContent(fallbackContent = {}, currentContent = {}) {
       return;
     }
 
+    if (
+      Array.isArray(fallbackValue) &&
+      Array.isArray(currentValue) &&
+      fallbackValue.some((item) => isObject(item)) &&
+      currentValue.some((item) => isObject(item))
+    ) {
+      merged[key] = currentValue.map((item, index) => {
+        if (!isObject(item)) return item;
+
+        const fallbackItem =
+          isObject(fallbackValue[index])
+            ? fallbackValue[index]
+            : isObject(fallbackValue[0])
+              ? fallbackValue[0]
+              : {};
+
+        return mergeDraftFallbackContent(fallbackItem, item);
+      });
+      return;
+    }
+
     if (isObject(fallbackValue) && isObject(currentValue)) {
       merged[key] = mergeDraftFallbackContent(fallbackValue, currentValue);
     }
@@ -1809,6 +2977,77 @@ function hydrateContentWithEditorFallback(content = {}) {
   if (!fallback) return content;
 
   return mergeDraftFallbackContent(fallback, content);
+}
+
+const ENTRY_REQUIREMENTS_GRADE_DESCRIPTION =
+  "Applications are primarily accepted for Grade 8, which is the entry level for the school. Applications for higher grades, Grades 9–12, may be considered depending on space availability.";
+
+function isEntryRequirementsEditorContent(content = {}, registrySectionType = "") {
+  if (!isObject(content)) return false;
+
+  const normalizedType = normalizeType(registrySectionType);
+
+  return (
+    normalizedType === "school_entry_requirements" ||
+    (Object.prototype.hasOwnProperty.call(content, "grades_title") &&
+      Object.prototype.hasOwnProperty.call(content, "process_title")) ||
+    (Object.prototype.hasOwnProperty.call(content, "required_documents") &&
+      Object.prototype.hasOwnProperty.call(content, "application_process") &&
+      Object.prototype.hasOwnProperty.call(content, "important_notes"))
+  );
+}
+
+function insertAfterField(order = [], afterKey = "", keyToInsert = "") {
+  const cleanOrder = Array.isArray(order) ? order.filter(Boolean) : [];
+
+  if (!keyToInsert || cleanOrder.includes(keyToInsert)) return cleanOrder;
+
+  const insertIndex = cleanOrder.indexOf(afterKey);
+  const nextOrder = [...cleanOrder];
+
+  nextOrder.splice(insertIndex >= 0 ? insertIndex + 1 : nextOrder.length, 0, keyToInsert);
+  return nextOrder;
+}
+
+function ensureEntryRequirementsGradeDescriptionEditorFields(
+  content = {},
+  registrySectionType = "",
+) {
+  if (!isEntryRequirementsEditorContent(content, registrySectionType)) return content;
+
+  const next = { ...content };
+
+  if (!String(next.grades_description || "").trim()) {
+    next.grades_description = ENTRY_REQUIREMENTS_GRADE_DESCRIPTION;
+  }
+
+  if (Array.isArray(next.__editor_field_order)) {
+    next.__editor_field_order = insertAfterField(
+      next.__editor_field_order,
+      "grades_title",
+      "grades_description",
+    );
+  }
+
+  if (isObject(next.__editor_field_labels)) {
+    next.__editor_field_labels = {
+      ...next.__editor_field_labels,
+      grades_description:
+        next.__editor_field_labels.grades_description ||
+        "Grade Admissions Description",
+    };
+  }
+
+  if (isObject(next.__editor_fallback_content)) {
+    next.__editor_fallback_content = {
+      ...next.__editor_fallback_content,
+      grades_description:
+        next.__editor_fallback_content.grades_description ||
+        ENTRY_REQUIREMENTS_GRADE_DESCRIPTION,
+    };
+  }
+
+  return next;
 }
 
 
@@ -1942,7 +3181,14 @@ export default function BuilderSectionEditor({
       resolveEditorSectionKind(sourceSection, page) === "who_we_are"
         ? { ...sourceSection, type: "who_we_are" }
         : sourceSection;
-    const content = hydrateContentWithEditorFallback(defaultContentFor(editorSourceSection, settings, page));
+    const content = ensureEntryRequirementsGradeDescriptionEditorFields(
+      hydrateContentWithExactSchoolFallback(
+        editorSourceSection,
+        page,
+        hydrateContentWithEditorFallback(defaultContentFor(editorSourceSection, settings, page)),
+      ),
+      registrySectionType,
+    );
     const style = defaultStyleFor(sourceSection);
     const animation = defaultAnimationFor(sourceSection);
     const visible = sourceSection?.visible !== false;
@@ -2041,7 +3287,7 @@ export default function BuilderSectionEditor({
   }, [enabled, saving, uploading, isDirty]);
 
   const updateContent = (path, value) => {
-    setDraftContent((previous) => setAtPath(previous, path, value));
+    setDraftContent((previous) => setContentValueWithAliasSync(previous, path, value));
     setNotice("");
     setError("");
   };
@@ -2285,42 +3531,70 @@ export default function BuilderSectionEditor({
 
 
   const renderDynamicTemplateContentTab = () => {
-    const orderedKeys = Array.isArray(draftContent?.__editor_field_order)
+    const hasTemplateOrder =
+      Array.isArray(draftContent?.__editor_field_order) &&
+      draftContent.__editor_field_order.length > 0;
+    const fallbackContent = isObject(draftContent?.__editor_fallback_content)
+      ? draftContent.__editor_fallback_content
+      : {};
+    const fallbackKeys = Object.keys(fallbackContent || {}).filter(
+      (key) =>
+        key &&
+        Object.prototype.hasOwnProperty.call(draftContent, key) &&
+        !SYSTEM_DYNAMIC_CONTENT_KEYS.has(key),
+    );
+    const hasFallbackKeys = fallbackKeys.length > 0;
+    const orderedKeys = hasTemplateOrder
       ? draftContent.__editor_field_order.filter(
           (key) =>
             key &&
             Object.prototype.hasOwnProperty.call(draftContent, key) &&
             !SYSTEM_DYNAMIC_CONTENT_KEYS.has(key),
         )
-      : [];
+      : hasFallbackKeys
+        ? fallbackKeys
+        : [];
 
-    const remainingKeys = Object.keys(draftContent || {}).filter(
-      (key) =>
-        !SYSTEM_DYNAMIC_CONTENT_KEYS.has(key) &&
-        !orderedKeys.includes(key),
+    const remainingKeys = hasTemplateOrder || hasFallbackKeys
+      ? []
+      : Object.keys(draftContent || {}).filter(
+          (key) => !SYSTEM_DYNAMIC_CONTENT_KEYS.has(key),
+        );
+
+    const dynamicKeys = removeDuplicatedScalarContentAliasFields(
+      [...orderedKeys, ...remainingKeys],
+      draftContent,
     );
-
-    const dynamicKeys = [...orderedKeys, ...remainingKeys];
 
     return (
       <>
         <div className="bse-panel-intro">
           <h3>Template Fields</h3>
           <p>
-            These fields come from the original template fallback for this page.
-            Existing saved content is preserved while missing fields are restored.
+            These fields are aligned to this page template only. The editor keeps
+            the original template order, restores missing fallback values, and
+            hides internal metadata fields.
           </p>
         </div>
 
+        {!dynamicKeys.length && (
+          <p className="bse-empty-note">
+            No editable template fields were found for this section.
+          </p>
+        )}
+
         {dynamicKeys.map((key) => {
           const value = draftContent[key];
+          const fallbackValue = fallbackContent[key];
+          const label = draftContent?.__editor_field_labels?.[key] || formatDynamicLabel(key);
+          const inputType = inputTypeForDynamicKey(key, value);
 
           if (Array.isArray(value)) {
             if (value.every((item) => typeof item === "string")) {
               return (
                 <TextListField
                   key={key}
-                  label={draftContent?.__editor_field_labels?.[key] || formatDynamicLabel(key)}
+                  label={label}
                   items={value}
                   onChange={(items) => updateContent(key, items)}
                 />
@@ -2328,15 +3602,15 @@ export default function BuilderSectionEditor({
             }
 
             if (value.every((item) => isObject(item))) {
-              const fields = inferDynamicItemFields(value);
+              const fields = inferDynamicItemFields(value, fallbackValue);
 
               return (
                 <ItemCollection
                   key={key}
-                  title={draftContent?.__editor_field_labels?.[key] || formatDynamicLabel(key)}
+                  title={label}
                   items={value}
-                  emptyText={`${(draftContent?.__editor_field_labels?.[key] || formatDynamicLabel(key)).toLowerCase()} is not configured.`}
-                  addLabel={`Add ${(draftContent?.__editor_field_labels?.[key] || formatDynamicLabel(key)).replace(/s$/, "")}`}
+                  emptyText={`${label.toLowerCase()} is not configured.`}
+                  addLabel={`Add ${label.replace(/s$/, "")}`}
                   createItem={() => createDynamicItemFromFields(fields, key)}
                   fields={fields}
                   onChange={(items) => updateContent(key, items)}
@@ -2347,10 +3621,10 @@ export default function BuilderSectionEditor({
             return (
               <ContentField
                 key={key}
-                label={draftContent?.__editor_field_labels?.[key] || formatDynamicLabel(key)}
+                label={label}
                 type="textarea"
                 rows={5}
-                value={value.join("\\n")}
+                value={value.join("\n")}
                 onChange={(nextValue) => updateContent(key, splitTextList(nextValue))}
               />
             );
@@ -2360,7 +3634,7 @@ export default function BuilderSectionEditor({
             return (
               <ContentField
                 key={key}
-                label={draftContent?.__editor_field_labels?.[key] || formatDynamicLabel(key)}
+                label={label}
                 type="textarea"
                 rows={6}
                 value={JSON.stringify(value, null, 2)}
@@ -2375,12 +3649,51 @@ export default function BuilderSectionEditor({
             );
           }
 
+          if (inputType === "datetime-local") {
+            return (
+              <LocalDateTimeField
+                key={key}
+                label={label}
+                value={value || ""}
+                onChange={(nextValue) => updateContent(key, nextValue)}
+              />
+            );
+          }
+
+          if (inputType === "date") {
+            return (
+              <LocalDateField
+                key={key}
+                label={label}
+                value={value || ""}
+                onChange={(nextValue) => updateContent(key, nextValue)}
+              />
+            );
+          }
+
+          if (inputType === "link" || inputType === "media-link") {
+            return (
+              <LinkField
+                key={key}
+                label={label}
+                value={value || ""}
+                placeholder={inputType === "media-link" ? "Paste or upload media/document URL" : "/page or https://..."}
+                hint={
+                  inputType === "media-link"
+                    ? "Use the Media tab to upload/select the file, or paste an existing asset URL."
+                    : undefined
+                }
+                onChange={(nextValue) => updateContent(key, nextValue)}
+              />
+            );
+          }
+
           return (
             <ContentField
               key={key}
-              label={draftContent?.__editor_field_labels?.[key] || formatDynamicLabel(key)}
-              type={isLongDynamicKey(key) ? "textarea" : "text"}
-              rows={isLongDynamicKey(key) ? 3 : undefined}
+              label={label}
+              type={inputType === "textarea" ? "textarea" : "text"}
+              rows={inputType === "textarea" ? 3 : undefined}
               value={value || ""}
               onChange={(nextValue) => updateContent(key, nextValue)}
             />
@@ -2460,18 +3773,18 @@ export default function BuilderSectionEditor({
             createItem={() => ({
               id: createKey("notice"),
               title: "New Notice",
-              publishedAt: "",
               startAt: "",
               endAt: "",
+              publishedAt: "",
               location: "",
               category: "",
               status: "Active",
             })}
             fields={[
               { key: "title", label: "Title", placeholder: "Notice title" },
-              { key: "publishedAt", label: "Published Date & Time", type: "datetime-local" },
               { key: "startAt", label: "Start Date & Time", type: "datetime-local" },
               { key: "endAt", label: "End Date & Time", type: "datetime-local" },
+              { key: "publishedAt", label: "Published Date & Time", type: "datetime-local" },
               { key: "location", label: "Location", placeholder: "Venue or location" },
               { key: "category", label: "Category", placeholder: "Announcement" },
               { key: "status", label: "Status", placeholder: "Active" },
@@ -2506,7 +3819,7 @@ export default function BuilderSectionEditor({
             })}
             fields={[
               { key: "title", label: "Story Title", placeholder: "News title" },
-              { key: "date", label: "Published Date", placeholder: "Jun 2026" },
+              { key: "date", label: "Published Date", type: "date", placeholder: "Tue, Nov 25, 2025" },
               { key: "category", label: "Category", placeholder: "School News" },
               { key: "summary", label: "Card Summary", type: "textarea", rows: 2 },
               { key: "body", label: "Article Content", type: "textarea", rows: 4 },
@@ -4365,6 +5678,13 @@ export default function BuilderSectionEditor({
         <p>Control visibility and the presentation of this section.</p>
       </div>
 
+      <div className="bse-readonly-card">
+        <span>Current Page</span>
+        <strong>{pageTitle}</strong>
+        <span>Current Section</span>
+        <strong>{sectionName}</strong>
+      </div>
+
       <ToggleRow
         title="Show Section"
         text="Display this section on the published website."
@@ -4422,6 +5742,16 @@ export default function BuilderSectionEditor({
         </label>
       </div>
 
+      <div className="bse-divider" />
+
+      <div className="bse-panel-intro">
+        <h3>Colour & Typography</h3>
+        <p>
+          Section-level brand controls for this exact page block. Leave values
+          on template default when you want the original design to stay unchanged.
+        </p>
+      </div>
+
       <div className="bse-two-column">
         <ContentField
           label="Background Colour"
@@ -4430,11 +5760,151 @@ export default function BuilderSectionEditor({
           onChange={(value) => updateStyle("backgroundColor", value)}
         />
         <ContentField
+          label="Text Colour"
+          type="color"
+          value={draftStyle.textColor || "#111827"}
+          onChange={(value) => updateStyle("textColor", value)}
+        />
+        <ContentField
+          label="Heading Colour"
+          type="color"
+          value={draftStyle.headingColor || "#0f172a"}
+          onChange={(value) => updateStyle("headingColor", value)}
+        />
+        <ContentField
           label="Accent Colour"
           type="color"
           value={draftStyle.accentColor || "#2563eb"}
           onChange={(value) => updateStyle("accentColor", value)}
         />
+        <ContentField
+          label="Link Colour"
+          type="color"
+          value={draftStyle.linkColor || draftStyle.accentColor || "#2563eb"}
+          onChange={(value) => updateStyle("linkColor", value)}
+        />
+      </div>
+
+      <div className="bse-two-column">
+        <label className="bse-field">
+          <span className="bse-field-label">Body Typography</span>
+          <select
+            className="bse-select"
+            value={draftStyle.typography || "inherit"}
+            onChange={(event) => updateStyle("typography", event.target.value)}
+          >
+            {TYPOGRAPHY_OPTIONS.map((option) => (
+              <option value={option.value} key={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="bse-field">
+          <span className="bse-field-label">Heading Typography</span>
+          <select
+            className="bse-select"
+            value={draftStyle.headingTypography || "inherit"}
+            onChange={(event) => updateStyle("headingTypography", event.target.value)}
+          >
+            {TYPOGRAPHY_OPTIONS.map((option) => (
+              <option value={option.value} key={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="bse-field">
+          <span className="bse-field-label">Body Font Size</span>
+          <select
+            className="bse-select"
+            value={String(draftStyle.fontSize || "")}
+            onChange={(event) => updateStyle("fontSize", event.target.value)}
+          >
+            {SECTION_FONT_SIZE_OPTIONS.map((option) => (
+              <option value={option.value} key={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="bse-field">
+          <span className="bse-field-label">Heading Font Size</span>
+          <select
+            className="bse-select"
+            value={String(draftStyle.headingFontSize || "")}
+            onChange={(event) => updateStyle("headingFontSize", event.target.value)}
+          >
+            {SECTION_HEADING_SIZE_OPTIONS.map((option) => (
+              <option value={option.value} key={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="bse-field">
+          <span className="bse-field-label">Body Font Weight</span>
+          <select
+            className="bse-select"
+            value={String(draftStyle.fontWeight || "")}
+            onChange={(event) => updateStyle("fontWeight", event.target.value)}
+          >
+            {SECTION_FONT_WEIGHT_OPTIONS.map((option) => (
+              <option value={option.value} key={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="bse-field">
+          <span className="bse-field-label">Heading Font Weight</span>
+          <select
+            className="bse-select"
+            value={String(draftStyle.headingFontWeight || "")}
+            onChange={(event) => updateStyle("headingFontWeight", event.target.value)}
+          >
+            {SECTION_FONT_WEIGHT_OPTIONS.map((option) => (
+              <option value={option.value} key={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="bse-field">
+          <span className="bse-field-label">Type Scale</span>
+          <select
+            className="bse-select"
+            value={draftStyle.typeScale || "default"}
+            onChange={(event) => updateStyle("typeScale", event.target.value)}
+          >
+            {TYPE_SCALE_OPTIONS.map((option) => (
+              <option value={option.value} key={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="bse-field">
+          <span className="bse-field-label">Link / Button Style</span>
+          <select
+            className="bse-select"
+            value={draftStyle.linkStyle || "template"}
+            onChange={(event) => updateStyle("linkStyle", event.target.value)}
+          >
+            {LINK_STYLE_OPTIONS.map((option) => (
+              <option value={option.value} key={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
 
       <label className="bse-field">
