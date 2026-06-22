@@ -1,0 +1,659 @@
+/* ================================
+   DIGITAL ACADEMIC LIBRARY
+   Institutional • Professional • CAPS Aligned
+   ================================ */
+
+:root {
+  --primary: #1e2a5a;
+  --secondary: #2f3e8f;
+  --accent: #c9a227;
+  --light: #f5f7fb;
+  --dark: #0f172a;
+  --border: #e2e8f0;
+}
+
+/* ================= Page Wrapper ================= */
+.digital-library {
+  padding: 40px 0;
+  background: var(--light);
+  min-height: 100vh;
+}
+
+/* ================= Header ================= */
+.library-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.library-header h1 {
+  font-size: 2.3rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+
+.library-header p {
+  color: #475569;
+  font-size: 1rem;
+}
+
+/* ================= Layout ================= */
+.library-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr 260px;
+  gap: 24px;
+}
+
+/* ================= Sidebar ================= */
+.library-sidebar {
+  background: #fff;
+  border-radius: 14px;
+  padding: 22px;
+  border: 1px solid var(--border);
+}
+
+.sidebar-block + .sidebar-block {
+  margin-top: 28px;
+}
+
+.sidebar-block h3 {
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--secondary);
+  margin-bottom: 12px;
+}
+
+.sidebar-block button {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  color: #1e293b;
+  transition: all 160ms ease;
+}
+
+.sidebar-block button:hover {
+  background: var(--light);
+}
+
+.sidebar-block button.active {
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  color: #fff;
+  border: none;
+}
+
+/* ================= Main Content ================= */
+.library-content {
+  background: #fff;
+  border-radius: 14px;
+  padding: 26px;
+  border: 1px solid var(--border);
+}
+
+.library-content h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 20px;
+}
+
+/* ================= Subject Categories ================= */
+.subject-category + .subject-category {
+  margin-top: 16px;
+}
+
+.category-header {
+  width: 100%;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.category-header:hover {
+  background: #eef2ff;
+}
+
+/* ================= Subject Cards ================= */
+.subject-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 18px;
+  margin-top: 16px;
+}
+
+.subject-card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  background: #fff;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.subject-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.subject-card h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 10px;
+}
+
+.subject-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 14px 0;
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.subject-card li + li {
+  margin-top: 6px;
+}
+
+.open-btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(90deg, var(--secondary), var(--primary));
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.open-btn:hover {
+  opacity: 0.95;
+}
+
+/* ================= Search & Filters ================= */
+.library-filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.library-filters input,
+.library-filters select {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
+  background: #fff;
+}
+
+/* ================= NSC Examination Portal ================= */
+.nsc-portal {
+  margin-top: 36px;
+  padding: 22px;
+  background: #f8fafc;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+}
+
+.nsc-portal h3 {
+  font-size: 1.1rem;
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+
+.nsc-portal p {
+  font-size: 0.95rem;
+  color: #475569;
+}
+
+/* ================= Right Panel ================= */
+.library-right {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.info-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px;
+  border: 1px solid var(--border);
+}
+
+.info-card h3 {
+  font-size: 1rem;
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+
+.info-card p {
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+/* ================= PDF MODAL (RESOURCE VIEWER) ================= */
+.pdf-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.85);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdf-content {
+  width: 90%;
+  height: 90%;
+  background: #fff;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pdf-content iframe {
+  flex: 1;
+  width: 100%;
+  border: none;
+}
+
+.close-btn {
+  align-self: flex-end;
+  margin: 10px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ================================
+   SEARCH & FILTERS BAR
+   ================================ */
+
+.library-filters {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr 1fr 1fr auto;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.library-filters input,
+.library-filters select {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-size: 0.9rem;
+  background: #fff;
+  color: var(--dark);
+}
+
+.library-filters input::placeholder {
+  color: #94a3b8;
+}
+
+.library-filters select {
+  cursor: pointer;
+}
+
+/* Clear Filters Button */
+.clear-btn {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: none;
+  background: #e11d48;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+
+.clear-btn:hover {
+  background: #be123c;
+}
+
+/* ================================
+   RESOURCE GRID & CARDS
+   ================================ */
+
+.resource-grid {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.resource-card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.resource-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+}
+
+.resource-card h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.resource-card p {
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+/* Resource Action Button */
+.resource-card button {
+  margin-top: auto;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ================================
+   PDF MODAL VIEWER
+   ================================ */
+
+.pdf-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.pdf-content {
+  width: 92%;
+  max-width: 1100px;
+  height: 88vh;
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.pdf-content iframe {
+  flex: 1;
+  width: 100%;
+  border: none;
+}
+
+/* Close Button */
+.close-btn {
+  align-self: flex-end;
+  padding: 10px 16px;
+  border-radius: 0 0 0 14px;
+  border: none;
+  background: #0f172a;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ================================
+   PROVINCE & META TEXT
+   ================================ */
+
+.resource-card p:last-of-type {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* ================================
+   RESPONSIVE ADJUSTMENTS
+   ================================ */
+
+@media (max-width: 1024px) {
+  .library-filters {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .clear-btn {
+    grid-column: span 3;
+  }
+}
+
+@media (max-width: 640px) {
+  .library-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .clear-btn {
+    width: 100%;
+  }
+}
+
+/* ================= Responsive ================= */
+@media (max-width: 1100px) {
+  .library-layout {
+    grid-template-columns: 240px 1fr;
+  }
+  .library-right {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .library-layout {
+    grid-template-columns: 1fr;
+  }
+  .library-sidebar {
+    order: 2;
+  }
+  .library-content {
+    order: 1;
+  }
+  .library-filters {
+    flex-direction: column;
+  }
+}
+/* ================================
+   SEARCH & FILTERS BAR FIX – ADVANCED
+   ================================ */
+.library-filters {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr; /* 4 main filters */
+  gap: 12px;
+  margin-bottom: 24px;
+  align-items: center;
+}
+
+.library-filters input,
+.library-filters select {
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
+  background: #fff;
+  color: var(--dark);
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.library-filters input::placeholder {
+  color: #94a3b8;
+}
+
+.library-filters input:focus,
+.library-filters select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(30, 42, 90, 0.15);
+}
+
+.library-filters select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l5 6 5-6H0z' fill='%2394a3b8'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 10px 6px;
+  padding-right: 40px;
+}
+
+/* Clear Filters Button – make full width and aligned */
+.clear-btn {
+  grid-column: 1 / -1; /* span all columns */
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: none;
+  background: #e11d48;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.clear-btn:hover {
+  background: #be123c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3);
+}
+
+/* Responsive – Medium Screens */
+@media (max-width: 1024px) {
+  .library-filters {
+    grid-template-columns: 1fr 1fr; /* 2 per row */
+  }
+
+  .clear-btn {
+    grid-column: 1 / -1; /* full width */
+  }
+}
+
+/* Responsive – Small Screens */
+@media (max-width: 640px) {
+  .library-filters {
+    grid-template-columns: 1fr; /* stacked vertically */
+    gap: 12px;
+  }
+
+  .library-filters input,
+  .library-filters select,
+  .clear-btn {
+    width: 100%;
+  }
+}
+/* ================================
+   SEARCH & FILTERS BAR FIX – ADVANCED
+   ================================ */
+.library-filters {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr; /* 4 main filters */
+  gap: 12px;
+  margin-bottom: 24px;
+  align-items: center;
+}
+
+.library-filters input,
+.library-filters select {
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
+  background: #fff;
+  color: var(--dark);
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.library-filters input::placeholder {
+  color: #94a3b8;
+}
+
+.library-filters input:focus,
+.library-filters select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(30, 42, 90, 0.15);
+}
+
+.library-filters select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l5 6 5-6H0z' fill='%2394a3b8'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 10px 6px;
+  padding-right: 40px;
+}
+
+/* Clear Filters Button – make full width and aligned */
+.clear-btn {
+  grid-column: 1 / -1; /* span all columns */
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: none;
+  background: #e11d48;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.clear-btn:hover {
+  background: #be123c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3);
+}
+
+/* Responsive – Medium Screens */
+@media (max-width: 1024px) {
+  .library-filters {
+    grid-template-columns: 1fr 1fr; /* 2 per row */
+  }
+
+  .clear-btn {
+    grid-column: 1 / -1; /* full width */
+  }
+}
+
+/* Responsive – Small Screens */
+@media (max-width: 640px) {
+  .library-filters {
+    grid-template-columns: 1fr; /* stacked vertically */
+    gap: 12px;
+  }
+
+  .library-filters input,
+  .library-filters select,
+  .clear-btn {
+    width: 100%;
+  }
+}

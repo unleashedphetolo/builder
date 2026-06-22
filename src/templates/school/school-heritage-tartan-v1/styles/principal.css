@@ -1,0 +1,42 @@
+.principal {
+  background: linear-gradient(90deg, #1e1a43, #140a3a);
+  color: #fff;
+  padding: 36px 0;
+  margin-top: 1px;
+}
+.principal-inner {
+  display: flex;
+  gap: 26px;
+  align-items: center;
+}
+.principal-text {
+  flex: 1;
+}
+.principal-text h2 {
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+}
+.principal-text p {
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 8px;
+}
+.principal-text .sign {
+  margin-top: 12px;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.principal-photo img {
+  width: 350px;
+  border-radius: 8px;
+  border: 6px solid rgba(255, 255, 255, 0.06);
+}
+@media (max-width: 880px) {
+  .principal-inner {
+    flex-direction: column;
+    text-align: center;
+  }
+  .principal-photo img {
+    width: 350px;
+  }
+}

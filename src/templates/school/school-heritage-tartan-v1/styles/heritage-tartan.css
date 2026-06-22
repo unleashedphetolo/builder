@@ -1,0 +1,47 @@
+/* Heritage Tartan template overrides only. Keeps the original school editor and page structure unchanged. */
+.school-heritage-tartan-v1-root {
+  --heritage-green: #0f5132;
+  --heritage-deep: #08351f;
+  --heritage-gold: #d4af37;
+  --heritage-cream: #f8f3e5;
+  color: #122017;
+  background:
+    linear-gradient(90deg, rgba(15, 81, 50, 0.055) 12%, transparent 12%, transparent 26%, rgba(212, 175, 55, 0.05) 26%, rgba(212, 175, 55, 0.05) 30%, transparent 30%),
+    linear-gradient(0deg, rgba(15, 81, 50, 0.045) 12%, transparent 12%, transparent 26%, rgba(212, 175, 55, 0.045) 26%, rgba(212, 175, 55, 0.045) 30%, transparent 30%),
+    var(--heritage-cream);
+  background-size: 82px 82px, 82px 82px, auto;
+}
+.school-heritage-tartan-v1-root .site-nav,
+.school-heritage-tartan-v1-root .navbar,
+.school-heritage-tartan-v1-root .topbar {
+  border-color: rgba(212, 175, 55, 0.34) !important;
+}
+.school-heritage-tartan-v1-root .hero,
+.school-heritage-tartan-v1-root .home-hero,
+.school-heritage-tartan-v1-root .page-hero,
+.school-heritage-tartan-v1-root .page-header {
+  background-color: var(--heritage-green) !important;
+}
+.school-heritage-tartan-v1-root button,
+.school-heritage-tartan-v1-root .btn,
+.school-heritage-tartan-v1-root .primary-btn,
+.school-heritage-tartan-v1-root .cta-button {
+  border-radius: 999px;
+}
+.school-heritage-tartan-v1-root .card,
+.school-heritage-tartan-v1-root .feature-card,
+.school-heritage-tartan-v1-root .value-card,
+.school-heritage-tartan-v1-root .vmv-card,
+.school-heritage-tartan-v1-root section article {
+  border-color: rgba(15, 81, 50, 0.16) !important;
+  box-shadow: 0 18px 46px rgba(15, 81, 50, 0.11) !important;
+}
+.school-heritage-tartan-v1-root .vision,
+.school-heritage-tartan-v1-root .mission,
+.school-heritage-tartan-v1-root .values,
+.school-heritage-tartan-v1-root .vision-mission-values {
+  background:
+    linear-gradient(135deg, rgba(15, 81, 50, 0.94), rgba(8, 53, 31, 0.88)),
+    linear-gradient(90deg, rgba(212, 175, 55, 0.22) 8px, transparent 8px) !important;
+  color: #ffffff;
+}

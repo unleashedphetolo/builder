@@ -1,0 +1,401 @@
+/* =========================================================
+   INSTITUTIONAL SCHOOL THEME / BRAND STYLES BRIDGE
+   Keeps the template layout and content structure unchanged while allowing
+   global Theme and Brand Styles selections to appear across this template.
+   ========================================================= */
+
+.school-boarding-school-v1-root {
+  --school-primary: var(--site-theme-primary, var(--primary, #e0bf01));
+  --school-secondary: var(--site-theme-secondary, var(--secondary, #0f172a));
+  --school-background: var(--site-theme-background, var(--background, #ffffff));
+  --school-surface: var(--site-theme-surface, #ffffff);
+  --school-soft: var(--site-theme-soft, #f8fafc);
+  --school-border: var(--site-theme-border, #ffffff);
+  --school-card-radius: var(--site-theme-card-radius, 14px);
+  --school-button-radius: var(--site-theme-button-radius, 8px);
+  --school-shadow: var(--site-theme-shadow, 0 12px 30px rgba(15, 23, 42, 0.08));
+
+  min-height: 100%;
+  background: var(--school-background);
+  color: var(--school-secondary);
+  font-family: var(--site-theme-body-font, var(--font, Inter, "Segoe UI", Arial, sans-serif));
+  font-size: var(--site-theme-base-font-size, 16px);
+  font-weight: var(--site-theme-body-weight, 450);
+  line-height: var(--site-theme-line-height, 1.6);
+}
+
+.school-boarding-school-v1-root :where(p, li, label, input, select, textarea) {
+  font-family: var(--site-theme-body-font, var(--font, Inter, "Segoe UI", Arial, sans-serif));
+}
+
+.school-boarding-school-v1-root :where(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--site-theme-display-font, var(--heading-font, Inter, "Segoe UI", Arial, sans-serif));
+  font-weight: var(--site-theme-heading-weight, 760);
+  letter-spacing: var(--site-theme-letter-spacing, -0.025em);
+}
+
+.school-boarding-school-v1-root :where(
+  .section-title,
+  .wall-title,
+  .scal-title,
+  .scal-h2,
+  .admissions-page__hero-title,
+  .admissions-page__card-title,
+  .admissions-page__side-title,
+  .about-card h3
+) {
+  color: var(--school-primary);
+  font-family: var(--site-theme-display-font, var(--heading-font, Inter, "Segoe UI", Arial, sans-serif));
+  font-weight: var(--site-theme-heading-weight, 760);
+}
+
+.school-boarding-school-v1-root :where(
+  .view-all,
+  .scal-btn,
+  .admissions-page__btn--primary,
+  .auth-links a,
+  .btn-primary,
+  .primary-btn
+) {
+  border-radius: var(--school-button-radius);
+  background-color: var(--school-primary);
+}
+
+.school-boarding-school-v1-root :where(
+  .about-card,
+  .honour-card,
+  .sponsor-card,
+  .stats-card,
+  .scal-card,
+  .admissions-page__card,
+  .admissions-page__side-card,
+  .gallery-card
+) {
+  border-radius: var(--school-card-radius);
+}
+
+.school-boarding-school-v1-root :where(
+  .about-card,
+  .honour-card,
+  .sponsor-card,
+  .stats-card,
+  .scal-card,
+  .admissions-page__card,
+  .admissions-page__side-card
+) {
+  box-shadow: var(--school-shadow);
+}
+
+.school-boarding-school-v1-root .about,
+.school-boarding-school-v1-root .wall-container,
+.school-boarding-school-v1-root .sponsors-section {
+  background-color: var(--school-soft);
+}
+
+.school-boarding-school-v1-root .about-card {
+  border-top-color: var(--school-primary);
+}
+
+.school-boarding-school-v1-root .values-list li::before,
+.school-boarding-school-v1-root .stat .num,
+.school-boarding-school-v1-root .scal-link {
+  color: var(--school-primary);
+}
+
+.school-boarding-school-v1-root .principal {
+  background: var(--school-secondary);
+  color: #ffffff;
+}
+
+.school-boarding-school-v1-root .principal :where(h1, h2, h3, p) {
+  color: inherit;
+}
+
+.school-boarding-school-v1-root .notice-board {
+  background: var(--school-secondary);
+  border-radius: var(--school-card-radius);
+}
+
+.school-boarding-school-v1-root .badge {
+  background: var(--school-primary);
+}
+
+.school-boarding-school-v1-root .scal-pill {
+  border-color: rgba(175, 165, 30, 0.18);
+  background: var(--school-soft);
+  color: var(--school-primary);
+}
+
+.school-boarding-school-v1-root .principal-role {
+  display: block;
+  margin-top: 4px;
+  opacity: 0.74;
+  font-size: 0.86rem;
+  font-weight: 500;
+}
+
+/*
+  Keep the product editing UI controlled by builder styles, not the selected
+  school website theme.
+*/
+.school-boarding-school-v1-root :where(
+  .bst-edit-button,
+  .navbar-logo-edit-button,
+  .bme-root,
+  .bme-root button,
+  .bme-root input,
+  .bme-root textarea,
+  .bme-root select
+) {
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  text-transform: none;
+}
+
+/* Boarding School shared page styling. Keeps content/editors unchanged but makes pages visually distinct. */
+.school-boarding-school-v1-root {
+  --school-primary: var(--site-theme-primary, var(--primary, #000000));
+  --school-secondary: var(--site-theme-secondary, var(--secondary, #000000));
+  --school-background: var(--site-theme-background, var(--background, #ffffff));
+  --school-surface: #ffffff;
+  --school-soft: #fff8df;
+  --school-border: rgba(212, 175, 55, 0.28);
+  --school-shadow: 0 22px 60px rgba(12, 10, 4, 0.12);
+}
+
+.school-boarding-school-v1-root :where(
+  .section-title,
+  .wall-title,
+  .scal-title,
+  .scal-h2,
+  .admissions-page__hero-title,
+  .admissions-page__card-title,
+  .admissions-page__side-title,
+  .about-card h3
+) {
+  color: #0b0b0f;
+}
+
+.school-boarding-school-v1-root :where(
+  .about-card,
+  .honour-card,
+  .sponsor-card,
+  .stats-card,
+  .scal-card,
+  .admissions-page__card,
+  .admissions-page__side-card,
+  .gallery-card,
+  .notice-card,
+  .staff-card,
+  .facility-card
+) {
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  box-shadow: 0 18px 50px rgba(12, 10, 4, 0.1);
+}
+
+.school-boarding-school-v1-root :where(
+  .view-all,
+  .scal-btn,
+  .admissions-page__btn--primary,
+  .auth-links a,
+  .btn-primary,
+  .primary-btn
+) {
+  color: #0b0b0f;
+  background: linear-gradient(135deg, #f3d675, #d4af37 54%, #b88912);
+}
+
+.school-boarding-school-v1-root .principal,
+.school-boarding-school-v1-root .notice-board {
+  background:
+    radial-gradient(circle at top left, rgba(212, 175, 55, 0.16), transparent 22rem),
+    linear-gradient(135deg, #080704, #1c1507);
+}
+
+.school-boarding-school-v1-root .badge,
+.school-boarding-school-v1-root .scal-pill,
+.school-boarding-school-v1-root .values-list li::before,
+.school-boarding-school-v1-root .stat .num,
+.school-boarding-school-v1-root .scal-link {
+  color: #b88912;
+}
+
+
+/* =========================================================
+   PRESTIGE ENTERPRISE PAGE SHAPE REFINEMENT
+   Styling only. It does not add/remove fields, sections or fallbacks.
+   ========================================================= */
+.school-boarding-school-v1-root {
+  /* --prestige-radius-xl: 34px; */
+  --prestige-radius-lg: 24px;
+  --prestige-radius-md: 18px;
+  --prestige-cut: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+}
+
+.school-boarding-school-v1-root.prestige-inner {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(212, 175, 55, 0.18), transparent 26rem),
+    linear-gradient(180deg, #fffaf0 0%, #ffffff 42%, #fffaf0 100%);
+}
+
+.school-boarding-school-v1-root.prestige-inner main {
+  background: transparent;
+}
+
+.school-boarding-school-v1-root :where(
+  .about-card,
+  .honour-card,
+  .sponsor-card,
+  .stats-card,
+  .scal-card,
+  .admissions-page__card,
+  .admissions-page__side-card,
+  .gallery-card,
+  .notice-card,
+  .staff-card,
+  .facility-card,
+  .fac-card,
+  .resource-card,
+  .subject-card,
+  .policy-box,
+  .policy-callout,
+  .requirements-note,
+  .requirements-content,
+  .history-mini-card,
+  .history-hero-card,
+  .af-card,
+  .howtoapply-card,
+  .exam-schedule-card,
+  .np-card,
+  .bulletin-list,
+  .stationary-table-wrap,
+  .exam-schedule-table-wrap,
+  .scal-table-wrap
+) {
+  border: 1px solid rgba(212, 175, 55, 0.24);
+  border-radius: var(--prestige-radius-lg);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 250, 240, 0.9));
+  box-shadow: 0 20px 56px rgba(12, 10, 4, 0.1);
+}
+
+.school-boarding-school-v1-root :where(
+  .about-card,
+  .honour-card,
+  .sponsor-card,
+  .stats-card,
+  .scal-card,
+  .fac-card,
+  .resource-card,
+  .subject-card,
+  .gallery-card,
+  .staff-card
+)::before {
+  background: linear-gradient(135deg, #f3d675, #d4af37 54%, #b88912);
+}
+
+.school-boarding-school-v1-root :where(
+  .admissions-page__hero,
+  .fac-hero,
+  .la-hero,
+  .ls-hero,
+  .lc-hero,
+  .lf-hero,
+  .policy-hero,
+  .requirements-page,
+  .howtoapply-hero,
+  .history-hero,
+  .exam-schedule-hero,
+  .scal-hero,
+  .bulletin-header,
+  .np-header
+) {
+  border-radius: var(--prestige-radius-xl);
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  background:
+    radial-gradient(circle at top left, rgba(212, 175, 55, 0.2), transparent 24rem),
+    linear-gradient(135deg, #080704, #1c1507 72%, #2a1f08);
+  color: #fff7d7;
+  box-shadow: 0 26px 70px rgba(8, 7, 4, 0.2);
+  overflow: hidden;
+}
+
+.school-boarding-school-v1-root :where(
+  .admissions-page__hero,
+  .fac-hero,
+  .la-hero,
+  .ls-hero,
+  .lc-hero,
+  .lf-hero,
+  .policy-hero,
+  .howtoapply-hero,
+  .history-hero,
+  .exam-schedule-hero,
+  .scal-hero,
+  .bulletin-header,
+  .np-header
+) :where(h1, h2, h3, p, span, li) {
+  color: inherit;
+}
+
+.school-boarding-school-v1-root :where(
+  .section-title,
+  .wall-title,
+  .scal-title,
+  .scal-h2,
+  .admissions-page__hero-title,
+  .admissions-page__card-title,
+  .admissions-page__side-title,
+  .fac-title,
+  .la-title,
+  .ls-title,
+  .lc-title,
+  .lf-title,
+  .policy-title,
+  .requirements-heading,
+  .history-title,
+  .exam-schedule-title,
+  .bulletin-title,
+  .np-title,
+  .page-title
+) {
+  letter-spacing: -0.045em;
+  font-weight: 930;
+}
+
+.school-boarding-school-v1-root :where(
+  .btn-primary,
+  .btn-secondary,
+  .view-all,
+  .scal-btn,
+  .admissions-page__btn,
+  .requirements-btn,
+  .howtoapply-btn,
+  .exam-schedule-btn,
+  .stationary-btn,
+  .read-btn
+) {
+  border-radius: 999px;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+}
+
+.school-boarding-school-v1-root :where(
+  .btn-primary,
+  .view-all,
+  .scal-btn,
+  .admissions-page__btn--primary,
+  .requirements-btn,
+  .howtoapply-btn,
+  .exam-schedule-btn--primary,
+  .stationary-btn
+) {
+  color: #080704;
+  background: linear-gradient(135deg, #f3d675, #d4af37 54%, #b88912);
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  box-shadow: 0 14px 34px rgba(212, 175, 55, 0.22);
+}
+
+.school-boarding-school-v1-root :where(input, select, textarea, .bulletin-search, .np-search, .stationary-search, .exam-schedule-field) {
+  border-radius: 16px;
+  border-color: rgba(212, 175, 55, 0.32);
+}

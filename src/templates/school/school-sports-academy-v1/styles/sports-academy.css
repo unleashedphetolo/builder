@@ -1,0 +1,40 @@
+/* Sports Academy template overrides only. Keeps content, pages and editor logic unchanged. */
+.school-sports-academy-v1-root {
+  --sports-red: #b91c1c;
+  --sports-dark: #111827;
+  --sports-gold: #f59e0b;
+  --sports-bg: #fff7f7;
+  background: var(--sports-bg);
+}
+.school-sports-academy-v1-root .site-nav,
+.school-sports-academy-v1-root .navbar,
+.school-sports-academy-v1-root .topbar {
+  background: linear-gradient(90deg, var(--sports-dark), #7f1d1d) !important;
+  color: #ffffff !important;
+}
+.school-sports-academy-v1-root .hero,
+.school-sports-academy-v1-root .home-hero,
+.school-sports-academy-v1-root .page-header,
+.school-sports-academy-v1-root .page-hero {
+  background:
+    linear-gradient(120deg, rgba(17,24,39,0.92), rgba(185,28,28,0.78)) !important;
+}
+.school-sports-academy-v1-root h1,
+.school-sports-academy-v1-root h2 {
+  letter-spacing: -0.04em;
+}
+.school-sports-academy-v1-root .card,
+.school-sports-academy-v1-root .feature-card,
+.school-sports-academy-v1-root .value-card,
+.school-sports-academy-v1-root .vmv-card,
+.school-sports-academy-v1-root section article {
+  border-radius: 28px 8px 28px 8px !important;
+  border-color: rgba(185, 28, 28, 0.18) !important;
+}
+.school-sports-academy-v1-root button,
+.school-sports-academy-v1-root .btn,
+.school-sports-academy-v1-root .primary-btn,
+.school-sports-academy-v1-root .cta-button {
+  border-radius: 999px !important;
+  font-weight: 900 !important;
+}

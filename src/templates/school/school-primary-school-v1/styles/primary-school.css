@@ -1,0 +1,40 @@
+/* Primary School template overrides only. Keeps content, pages and editor logic unchanged. */
+.school-primary-school-v1-root {
+  --primary-green: #15803d;
+  --primary-deep: #065f46;
+  --primary-yellow: #fbbf24;
+  --primary-bg: #f0fdf4;
+  background:
+    radial-gradient(circle at 12% 12%, rgba(251, 191, 36, 0.16), transparent 22%),
+    radial-gradient(circle at 86% 18%, rgba(21, 128, 61, 0.12), transparent 26%),
+    var(--primary-bg);
+}
+.school-primary-school-v1-root .site-nav,
+.school-primary-school-v1-root .navbar,
+.school-primary-school-v1-root .topbar {
+  border-color: rgba(21, 128, 61, 0.18) !important;
+}
+.school-primary-school-v1-root .hero,
+.school-primary-school-v1-root .home-hero,
+.school-primary-school-v1-root .page-header,
+.school-primary-school-v1-root .page-hero {
+  background:
+    linear-gradient(135deg, rgba(21,128,61,0.9), rgba(6,95,70,0.76)) !important;
+}
+.school-primary-school-v1-root .card,
+.school-primary-school-v1-root .feature-card,
+.school-primary-school-v1-root .value-card,
+.school-primary-school-v1-root .vmv-card,
+.school-primary-school-v1-root section article,
+.school-primary-school-v1-root button,
+.school-primary-school-v1-root .btn,
+.school-primary-school-v1-root .primary-btn,
+.school-primary-school-v1-root .cta-button {
+  border-radius: 24px !important;
+}
+.school-primary-school-v1-root .vision,
+.school-primary-school-v1-root .mission,
+.school-primary-school-v1-root .values,
+.school-primary-school-v1-root .vision-mission-values {
+  background: linear-gradient(135deg, rgba(240,253,244,0.98), rgba(220,252,231,0.9)) !important;
+}

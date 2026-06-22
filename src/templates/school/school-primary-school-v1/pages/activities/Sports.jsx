@@ -1,0 +1,97 @@
+import React from "react";
+import BuilderSectionTarget from "../../../../../builder/BuilderSectionTarget";
+import "../../styles/life-sports.css";
+
+const SPORTS = [
+  {
+    title: "Team Sports",
+    text: "Structured training sessions, competitive fixtures, and school pride that build discipline, teamwork, and resilience.",
+  },
+  {
+    title: "Athletic Development",
+    text: "Programmes designed to improve strength, coordination, endurance, and overall physical performance.",
+  },
+  {
+    title: "Fitness & Wellness",
+    text: "Physical education initiatives that promote healthy lifestyles and balanced learner development.",
+  },
+  {
+    title: "Inclusive Participation",
+    text: "Opportunities for all learners to participate, develop skills, and proudly represent the school.",
+  },
+];
+
+export default function LifeSports({
+  section = null,
+  content = {},
+  builderMode = false,
+}) {
+  const sports =
+    Array.isArray(content?.items) && content.items.length > 0
+      ? content.items
+      : SPORTS;
+
+  const pageContent = (
+    <main className="ls container">
+      {/* Hero */}
+      <header className="ls-hero">
+        <div className="ls-hero-grid">
+          {/* Left Text */}
+          <div className="ls-hero-copy">
+            <h1 className="ls-title">
+              {content?.section_title || "Sports & Recreation"}
+            </h1>
+            <p className="ls-subtitle">
+              {content?.subtitle ||
+                "Our sports programme promotes teamwork, discipline, and excellence—developing confident learners through structured training and competitive participation."}
+            </p>
+          </div>
+
+          {/* Right Image */}
+          <div className="ls-hero-media" aria-hidden="true">
+            <img
+              src={content?.image_url || "/images/gallery2.avif"}
+              alt={content?.image_alt || "Soccer Team 2025"}
+              className="ls-hero-img"
+              onError={(e) =>
+                (e.currentTarget.src = "/images/gallery1.jpg")
+              }
+            />
+          </div>
+        </div>
+      </header>
+
+      {/* Sports Grid */}
+      <section className="ls-grid">
+        {sports.map((item, index) => (
+          <div
+            key={item.id || item.title || `sport-section-${index}`}
+            className="ls-card"
+          >
+            <h3 className="ls-card-title">{item.title || ""}</h3>
+            <p className="ls-card-text">
+              {item.body || item.text || ""}
+            </p>
+          </div>
+        ))}
+      </section>
+    </main>
+  );
+
+  if (!section && !builderMode) {
+    return pageContent;
+  }
+
+  return (
+    <BuilderSectionTarget
+      builderMode={builderMode}
+      section={section}
+      sectionType="school_sports"
+      label={content?.section_title || "Sports & Recreation"}
+      templateCategory="school"
+      templateKey="school-primary-school-v1"
+    >
+      {pageContent}
+    </BuilderSectionTarget>
+  );
+}

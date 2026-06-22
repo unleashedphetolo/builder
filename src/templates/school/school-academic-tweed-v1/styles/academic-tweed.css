@@ -1,0 +1,39 @@
+/* Academic Tweed template overrides only. Keeps content, pages and editor logic unchanged. */
+.school-academic-tweed-v1-root {
+  --tweed-brown: #6b3f24;
+  --tweed-deep: #2f261c;
+  --tweed-gold: #c6a15b;
+  --tweed-paper: #fbf7ef;
+  background:
+    radial-gradient(circle at 1px 1px, rgba(107, 63, 36, 0.14) 1px, transparent 0),
+    linear-gradient(135deg, var(--tweed-paper), #f3eadb);
+  background-size: 10px 10px, auto;
+  color: #241b13;
+}
+.school-academic-tweed-v1-root .site-nav,
+.school-academic-tweed-v1-root .navbar {
+  border-bottom: 3px solid var(--tweed-gold) !important;
+  box-shadow: 0 14px 40px rgba(47, 38, 28, 0.12) !important;
+}
+.school-academic-tweed-v1-root .hero,
+.school-academic-tweed-v1-root .home-hero,
+.school-academic-tweed-v1-root .page-header,
+.school-academic-tweed-v1-root .page-hero {
+  background:
+    linear-gradient(135deg, rgba(47, 38, 28, 0.92), rgba(107, 63, 36, 0.72)) !important;
+}
+.school-academic-tweed-v1-root .card,
+.school-academic-tweed-v1-root .feature-card,
+.school-academic-tweed-v1-root .value-card,
+.school-academic-tweed-v1-root .vmv-card,
+.school-academic-tweed-v1-root section article {
+  border-radius: 16px !important;
+  border-color: rgba(107, 63, 36, 0.18) !important;
+  background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(251,247,239,0.92)) !important;
+}
+.school-academic-tweed-v1-root .vision,
+.school-academic-tweed-v1-root .mission,
+.school-academic-tweed-v1-root .values,
+.school-academic-tweed-v1-root .vision-mission-values {
+  border-top: 5px solid var(--tweed-gold) !important;
+}

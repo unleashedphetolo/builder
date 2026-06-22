@@ -1,0 +1,405 @@
+/* container utility (adjust to your project's container) */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* Footer base */
+.site-footer {
+  background: linear-gradient(180deg, #f7f9fd 0%, #ffffff 100%);
+  color: #2a2a2a;
+  border-top: 1px solid rgba(42,27,107,0.06);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* Top area: brand + links */
+.footer-top {
+  display: flex;
+  gap: 28px;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-top: 20px;
+  padding-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+/* Brand block */
+.brand {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  min-width: 260px;
+  flex: 1 1 320px;
+}
+
+.logoz {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(42,27,107,0.06);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  }
+.logo-image {
+    height: 60px;
+    margin-right: 0.75rem;
+    border-radius: 8px;
+    transition: transform 0.3s ease, filter 0.3s ease;
+  }
+.brand-text .school-name {
+  font-weight: 700;
+  color: #2a1b6b;
+  font-size: 1.05rem;
+  letter-spacing: 0.2px;
+}
+
+.brand-text .slogan {
+  font-size: 0.85rem;
+  color: #6b6b7a;
+  margin-top: 4px;
+}
+
+.brand-text .contact {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.small {
+  font-size: 0.85rem;
+  color: #6b6b7a;
+}
+
+.contact small {
+  text-decoration: none;
+}
+
+/* Link groups */
+.footer-links {
+  display: flex;
+  gap: 18px;
+  flex: 2 1 560px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.link-group {
+  min-width: 160px;
+}
+
+.link-group h4 {
+  margin: 0 0 8px 0;
+  font-size: 0.95rem;
+  color: #2a1b6b;
+  font-weight: 700;
+}
+
+.link-group ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.link-group li {
+  margin: 6px 0;
+}
+
+.link-group a {
+  color: #000000;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 160ms ease;
+  display: inline-block;
+  padding: 2px 0;
+  border-radius: 4px;
+}
+
+.link-group a:hover,
+.link-group a:focus {
+  color: #2a1b6b;
+  transform: translateX(4px);
+  outline: none;
+}
+
+/* Bottom row */
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0 28px 0;
+  border-top: 1px solid rgba(42,27,107,0.03);
+  flex-wrap: wrap;
+}
+
+/* Social */
+.social {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.social .sep { margin: 0 8px; color: #ccc; }
+
+.social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #000000;
+  border-radius: 8px;
+  padding: 2px;
+  width: 26px;
+  height: 26px;
+  color: #ffffff;
+  text-decoration: none;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+  transition: all 180ms ease;
+}
+.social-icon svg {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+.social-icon:hover {
+  transform: translateY(-4px) scale(1.05);
+  background: #160f64;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+}
+
+.social-icon:focus {
+  transform: translateY(-4px);
+  background: rgba(42,27,107,0.06);
+  outline: none;
+}
+.powered-by {
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #000000;
+  margin-top: 10px;
+}
+.ulterspace-link {
+  display: flex;
+  align-items: center;
+  color: #0da8d3;
+  text-decoration: none;
+  gap: 6px;
+  font-weight: bold;
+}
+.ulterspace-logo {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  border-radius: 5px;
+  vertical-align: middle;
+}
+
+.brand-stacked {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.brand-identity-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-identity-row .brand-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.contact .sep {
+  color: #333333;
+}
+
+.motto {
+  width: 100%;
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #2a1b6b;
+  opacity: 0.85;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 880px) {
+  .footer-top { gap: 18px; }
+  .footer-links { justify-content: flex-start; }
+  .brand { flex: 1 1 100%; }
+  .footer-bottom { flex-direction: column; align-items: flex-start; }
+}
+
+/* Boarding School footer */
+.school-boarding-school-v1-root .site-footer {
+  background:
+    radial-gradient(circle at top left, rgba(212, 175, 55, 0.14), transparent 28rem),
+    linear-gradient(135deg, #080704, #1c1507);
+  color: rgba(255, 247, 215, 0.9);
+  border-top: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.school-boarding-school-v1-root .site-footer :where(h1, h2, h3, h4, p, small, a, li, span) {
+  color: inherit;
+}
+
+.school-boarding-school-v1-root .site-footer .school-name,
+.school-boarding-school-v1-root .site-footer .link-group h4 {
+  color: #f3d675;
+}
+
+.school-boarding-school-v1-root .site-footer a:hover {
+  color: #ffffff;
+}
+
+.school-boarding-school-v1-root .site-footer .footer-bottom {
+  border-top-color: rgba(212, 175, 55, 0.18);
+}
+
+/* Clean prestige footer refinement */
+.school-boarding-school-v1-root .site-footer {
+  background:
+    radial-gradient(circle at 9% 0%, rgba(212, 175, 55, 0.16), transparent 28rem),
+    linear-gradient(135deg, #080704 0%, #11100b 50%, #1c1507 100%);
+  border-top: 1px solid rgba(212, 175, 55, 0.34);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.school-boarding-school-v1-root .site-footer .container {
+  max-width: 1200px;
+  padding: 28px 24px 18px;
+}
+
+.school-boarding-school-v1-root .footer-top {
+  gap: 34px;
+  padding-top: 8px;
+  padding-bottom: 24px;
+}
+
+.school-boarding-school-v1-root .brand {
+  align-items: flex-start;
+}
+
+.school-boarding-school-v1-root .footer-top .logoz,
+.school-boarding-school-v1-root .footer-top .logo-image {
+  border-radius: 999px;
+}
+
+.school-boarding-school-v1-root .site-footer .school-name {
+  color: #f3d675;
+  font-size: 1.08rem;
+  font-weight: 920;
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
+.school-boarding-school-v1-root .site-footer .slogan,
+.school-boarding-school-v1-root .site-footer .motto,
+.school-boarding-school-v1-root .site-footer .small {
+  color: rgba(255, 247, 215, 0.72);
+}
+
+.school-boarding-school-v1-root .site-footer .contact,
+.school-boarding-school-v1-root .site-footer .contact a {
+  color: rgba(255, 247, 215, 0.86);
+}
+
+.school-boarding-school-v1-root .footer-links {
+  gap: 28px;
+}
+
+.school-boarding-school-v1-root .link-group h4 {
+  color: #f3d675;
+  margin-bottom: 12px;
+  font-size: 0.94rem;
+  letter-spacing: 0.02em;
+}
+
+.school-boarding-school-v1-root .link-group a {
+  color: rgba(255, 247, 215, 0.84);
+  padding: 4px 0;
+  font-size: 0.9rem;
+}
+
+.school-boarding-school-v1-root .link-group a:hover,
+.school-boarding-school-v1-root .link-group a:focus {
+  color: #ffffff;
+  transform: translateX(5px);
+}
+
+.school-boarding-school-v1-root .footer-bottom {
+  padding: 18px 0 6px;
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
+  color: rgba(255, 247, 215, 0.68);
+}
+
+.school-boarding-school-v1-root .site-footer .social-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  box-shadow: none;
+}
+
+.school-boarding-school-v1-root .site-footer .social-icon:hover,
+.school-boarding-school-v1-root .site-footer .social-icon:focus {
+  background: #d4af37;
+  color: #0b0b0f;
+}
+
+.school-boarding-school-v1-root .powered-by,
+.school-boarding-school-v1-root .powered-by * {
+  color: rgba(255, 247, 215, 0.68);
+}
+
+@media (max-width: 880px) {
+  .school-boarding-school-v1-root .site-footer .container {
+    padding: 28px 20px 18px;
+  }
+
+  .school-boarding-school-v1-root .footer-top,
+  .school-boarding-school-v1-root .footer-links {
+    gap: 22px;
+  }
+
+  .school-boarding-school-v1-root .footer-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .school-boarding-school-v1-root .link-group {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 520px) {
+  .school-boarding-school-v1-root .footer-links {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* Prestige footer final spacing/shape. */
+.school-boarding-school-v1-root .site-footer {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+
+.school-boarding-school-v1-root .footer-top .logoz,
+.school-boarding-school-v1-root .footer-top .logo-image {
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+}
+
+.school-boarding-school-v1-root .link-group a {
+  border-radius: 999px;
+}

@@ -1,0 +1,212 @@
+/* =========================================================
+   INSTITUTIONAL SCHOOL ANNOUNCEMENTS
+   Live website rendering for Announcement Bar and Pop-up Notice.
+   The Notice Board continues to use its existing visual component.
+   ========================================================= */
+
+.school-heritage-tartan-v1-root .site-announcement-bar {
+  width: 100%;
+  position: relative;
+  z-index: 90;
+  background: var(--announcement-background, var(--site-theme-primary, #166534));
+  color: var(--announcement-text, #ffffff);
+  font-family: var(--site-theme-body-font, Inter, "Segoe UI", Arial, sans-serif);
+}
+
+.school-heritage-tartan-v1-root .site-announcement-bar__inner {
+  width: min(var(--site-theme-content-width, 1180px), calc(100% - 32px));
+  min-height: 46px;
+  margin: 0 auto;
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+}
+
+.school-heritage-tartan-v1-root .site-announcement-bar__label {
+  flex: 0 0 auto;
+  padding: 4px 8px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  opacity: 0.92;
+  color: inherit;
+  font-size: 0.69rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.school-heritage-tartan-v1-root .site-announcement-bar strong {
+  color: inherit;
+  font-size: 0.93rem;
+  font-weight: 760;
+}
+
+.school-heritage-tartan-v1-root .site-announcement-bar__body {
+  max-width: 460px;
+  overflow: hidden;
+  color: inherit;
+  opacity: 0.9;
+  font-size: 0.84rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.school-heritage-tartan-v1-root .site-announcement-bar a {
+  flex: 0 0 auto;
+  color: inherit;
+  font-size: 0.84rem;
+  font-weight: 760;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.school-heritage-tartan-v1-root .site-announcement-bar button {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  margin-left: 5px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: inherit;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  font: inherit;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.school-heritage-tartan-v1-root .site-announcement-bar button:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.school-heritage-tartan-v1-root .site-announcement-popup-backdrop {
+  position: fixed;
+  z-index: 1400;
+  inset: 0;
+  padding: 28px;
+  background: rgba(15, 23, 42, 0.54);
+  display: grid;
+  place-items: center;
+}
+
+.school-heritage-tartan-v1-root .site-announcement-popup {
+  width: min(470px, 100%);
+  position: relative;
+  padding: 36px 32px 31px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: var(--site-theme-card-radius, 16px);
+  background: var(--announcement-background, #ffffff);
+  box-shadow: 0 32px 82px rgba(15, 23, 42, 0.25);
+  color: var(--announcement-text, #052e16);
+  font-family: var(--site-theme-body-font, Inter, "Segoe UI", Arial, sans-serif);
+}
+
+.school-heritage-tartan-v1-root .site-announcement-popup__label {
+  display: inline-block;
+  margin-bottom: 11px;
+  color: inherit;
+  opacity: 0.78;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.school-heritage-tartan-v1-root .site-announcement-popup h2 {
+  margin: 0 0 12px;
+  color: inherit;
+  font-family: var(--site-theme-display-font, Inter, "Segoe UI", Arial, sans-serif);
+  font-size: clamp(1.45rem, 3vw, 1.85rem);
+  font-weight: var(--site-theme-heading-weight, 760);
+  line-height: 1.16;
+}
+
+.school-heritage-tartan-v1-root .site-announcement-popup p {
+  margin: 0 0 23px;
+  color: inherit;
+  opacity: 0.9;
+  font-size: 0.98rem;
+  line-height: 1.65;
+}
+
+.school-heritage-tartan-v1-root .site-announcement-popup__close {
+  width: 37px;
+  height: 37px;
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(100, 116, 139, 0.14);
+  color: inherit;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  font: inherit;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.school-heritage-tartan-v1-root .site-announcement-popup__close:hover {
+  background: rgba(100, 116, 139, 0.24);
+}
+
+.school-heritage-tartan-v1-root .site-announcement-popup__close:focus-visible,
+.school-heritage-tartan-v1-root .site-announcement-popup__action:focus-visible,
+.school-heritage-tartan-v1-root .site-announcement-bar button:focus-visible,
+.school-heritage-tartan-v1-root .site-announcement-bar a:focus-visible {
+  outline: 3px solid rgba(21, 128, 61, 0.3);
+  outline-offset: 2px;
+}
+
+.school-heritage-tartan-v1-root .site-announcement-popup__action {
+  min-height: 45px;
+  padding: 0 19px;
+  border-radius: var(--site-theme-button-radius, 8px);
+  background: var(--site-theme-primary, #166534);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  font-weight: 760;
+  text-decoration: none;
+}
+
+.school-heritage-tartan-v1-root .site-announcement-popup__action:hover {
+  filter: brightness(0.94);
+}
+
+@media (max-width: 680px) {
+  .school-heritage-tartan-v1-root .site-announcement-bar__inner {
+    width: calc(100% - 24px);
+    min-height: 54px;
+    padding-top: 9px;
+    padding-bottom: 9px;
+    flex-wrap: wrap;
+    gap: 7px 10px;
+  }
+
+  .school-heritage-tartan-v1-root .site-announcement-bar__body {
+    display: none;
+  }
+
+  .school-heritage-tartan-v1-root .site-announcement-popup-backdrop {
+    padding: 16px;
+  }
+
+  .school-heritage-tartan-v1-root .site-announcement-popup {
+    padding: 32px 22px 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .school-heritage-tartan-v1-root .site-announcement-popup-backdrop *,
+  .school-heritage-tartan-v1-root .site-announcement-bar * {
+    transition-duration: 0.01ms !important;
+  }
+}

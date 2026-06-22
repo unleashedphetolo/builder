@@ -1,0 +1,36 @@
+/* Boarding School template overrides only. Keeps content, pages and editor logic unchanged. */
+.school-boarding-school-v1-root {
+  --boarding-navy: #102a43;
+  --boarding-deep: #0b1f33;
+  --boarding-gold: #d4af37;
+  --boarding-bg: #f6f8fb;
+  background: var(--boarding-bg);
+}
+.school-boarding-school-v1-root .site-nav,
+.school-boarding-school-v1-root .navbar,
+.school-boarding-school-v1-root .topbar {
+  background: linear-gradient(90deg, var(--boarding-deep), var(--boarding-navy)) !important;
+  border-bottom: 2px solid var(--boarding-gold) !important;
+  color: #ffffff !important;
+}
+.school-boarding-school-v1-root .hero,
+.school-boarding-school-v1-root .home-hero,
+.school-boarding-school-v1-root .page-header,
+.school-boarding-school-v1-root .page-hero {
+  background: linear-gradient(135deg, rgba(16,42,67,0.95), rgba(11,31,51,0.8)) !important;
+}
+.school-boarding-school-v1-root .card,
+.school-boarding-school-v1-root .feature-card,
+.school-boarding-school-v1-root .value-card,
+.school-boarding-school-v1-root .vmv-card,
+.school-boarding-school-v1-root section article {
+  border-radius: 14px !important;
+  border-left: 5px solid var(--boarding-gold) !important;
+  box-shadow: 0 18px 44px rgba(16, 42, 67, 0.13) !important;
+}
+.school-boarding-school-v1-root .vision,
+.school-boarding-school-v1-root .mission,
+.school-boarding-school-v1-root .values,
+.school-boarding-school-v1-root .vision-mission-values {
+  border-top: 4px solid var(--boarding-gold) !important;
+}

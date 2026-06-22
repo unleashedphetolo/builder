@@ -1,0 +1,40 @@
+/* Technical School template overrides only. Keeps content, pages and editor logic unchanged. */
+.school-technical-school-v1-root {
+  --tech-navy: #0b1f3a;
+  --tech-steel: #334155;
+  --tech-gold: #eab308;
+  --tech-bg: #f4f7fb;
+  background:
+    linear-gradient(90deg, rgba(11, 31, 58, 0.04) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(11, 31, 58, 0.04) 1px, transparent 1px),
+    var(--tech-bg);
+  background-size: 28px 28px, 28px 28px, auto;
+}
+.school-technical-school-v1-root .site-nav,
+.school-technical-school-v1-root .navbar,
+.school-technical-school-v1-root .topbar {
+  background-color: var(--tech-navy) !important;
+  color: #ffffff !important;
+}
+.school-technical-school-v1-root .hero,
+.school-technical-school-v1-root .home-hero,
+.school-technical-school-v1-root .page-header,
+.school-technical-school-v1-root .page-hero {
+  background:
+    linear-gradient(120deg, rgba(11,31,58,0.96), rgba(51,65,85,0.72)) !important;
+}
+.school-technical-school-v1-root .card,
+.school-technical-school-v1-root .feature-card,
+.school-technical-school-v1-root .value-card,
+.school-technical-school-v1-root .vmv-card,
+.school-technical-school-v1-root section article {
+  border-radius: 4px !important;
+  border-left: 4px solid var(--tech-gold) !important;
+  box-shadow: 0 20px 48px rgba(11, 31, 58, 0.12) !important;
+}
+.school-technical-school-v1-root button,
+.school-technical-school-v1-root .btn,
+.school-technical-school-v1-root .primary-btn,
+.school-technical-school-v1-root .cta-button {
+  border-radius: 10px !important;
+}
