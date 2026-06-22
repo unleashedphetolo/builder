@@ -1,0 +1,734 @@
+/* NAVBAR WRAPPER */
+.site-nav {
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+  top: 0;
+  z-index: 9999;
+  padding: 0px 20px;
+  /* border-bottom: 3px solid #166534; */
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* padding: 14px 0; */
+    padding: 8px 0;
+}
+
+/* LOGO */
+.logos {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(42,27,107,0.06);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -12px;
+}
+  .logo-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    /* color: inherit; */
+  }
+.logo-section {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+  }
+.logo-image {
+    height: 60px;
+    margin-right: 0.75rem;
+    border-radius: 8px;
+    transition: transform 0.3s ease, filter 0.3s ease;
+  }
+  
+.logo-image:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 6px #dcfce7) drop-shadow(0 0 12px #bbf7d0); /* Glows brighter on hover */
+  }
+   .logo-text {
+    display: flex;
+    flex-direction: column;
+  }
+  .brand-name {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #064e3b;
+  }
+  .slogan {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #000000;
+  }
+
+/* NAVIGATION */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.nav-links a,
+.drop-btn {
+  padding: 10px 11px;
+  border-radius: 6px;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+/* ACTIVE / HOVER */
+/* .nav-links a.active{
+  color: #166534;
+} */
+
+.nav-links a:hover,
+.drop-btn:hover {
+  /* background: #86efac; */
+  color: #15803d;
+}
+
+/* DROPDOWN GROUP */
+.dropdown {
+  position: relative;
+}
+
+.drop-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* DROPDOWN MENU */
+.drop-menu {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  background: #ffffff;
+  width: 220px;
+  box-shadow: 0 4px 18px rgba(0,0,55,0.12);
+  border-radius: 8px;
+  padding: 10px 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: 0.22s;
+  z-index: 100;
+}
+
+.drop-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0px);
+}
+
+.drop-menu a {
+  display: block;
+  padding: 10px 16px;
+  color: #333;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.drop-menu a:hover {
+  background: #f2f2ff;
+  /* color: #166534; */
+}
+
+.dropdown::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 81px;
+  pointer-events: auto;
+}
+/* HAMBURGER */
+.hamburger {
+  display: none;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.hamburger {
+  display: none;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  position: relative;
+  width: 26px;
+  height: 22px;
+  z-index: 99999;
+}
+
+.hamburger span {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: #333;
+  border-radius: 5px;
+  margin: 4px 0;
+  transition: .3s ease-in-out;
+}
+
+/* TRANSFORM TO X WHEN OPEN */
+.hamburger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+body {
+  overscroll-behavior: none;
+}
+
+/* MOBILE */
+@media (max-width: 880px) {
+  .nav-links a, .drop-btn {
+    padding: 8px 11px;
+    color: #676363;
+    text-decoration: none;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+    margin-bottom: 3px;
+  }
+  .drop-menu a {
+    color: #000;
+    font-weight: 500;
+    margin-top: -7px;
+  }
+  .drop-menu {
+    position: static;
+    width: 100%;
+    justify-content: flex-start;
+    box-shadow: none;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    padding-left: 15px;
+    display: none;   /* default closed */
+  }
+
+  .drop-menu.show {
+    display: block;  /* open when clicked */
+  }
+  .nav-links {
+    justify-content: flex-start;
+    gap: 8;
+    align-items:flex-start;
+    display: flex;
+    overflow-y: auto;       /* allow scrolling */
+    max-height: calc(100vh - 140px); /* fits under header */
+    position: fixed;
+    top: 139px;
+    right: 0;
+    background: #fff;
+    width: 280px;
+    height: calc(100% - 120px);
+    flex-direction: column;
+    padding: 20px;
+    padding-top: 55px;
+    transform: translateX(100%);
+    transition: 0.25s;
+    box-shadow: -8px 0 24px rgba(0,0,0,0.08);
+    z-index: 9999;
+  }
+
+  .nav-links.open {
+    transform: translateX(0);
+  }
+
+  .dropdown:hover .drop-menu {
+    /* disable hover drop on mobile */
+    transform: none;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .hamburger {
+    display: block;
+  }
+  .nav-links a,
+.nav-links .dropdown {
+  width: 100%;
+  padding-bottom: 1px;
+  margin-bottom: 14px;
+  border-bottom: 2px solid #d0d0d0;
+}
+
+}
+
+.drop-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  font: inherit;
+  padding: 10px 11px;
+  border-radius: 6px;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+
+/* =========================================================
+   BUILDER LOGO EDITABLE TARGET
+   Selects only the image, not the school name/tagline
+   ========================================================= */
+
+.logo-section.builder-logo-editable {
+  position: relative;
+}
+
+.logo-section .logo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.builder-logo-target {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.builder-logo-target.is-selected {
+  min-width: 72px;
+  min-height: 72px;
+  padding: 8px;
+  border: 2px solid #16a34a;
+  border-radius: 4px;
+  background: #ffffff;
+}
+
+.builder-logo-target .logo-image {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 56px;
+  max-height: 56px;
+  object-fit: contain;
+}
+
+/* Selection handles around logo image only */
+.builder-logo-handle {
+  position: absolute;
+  z-index: 3;
+  width: 8px;
+  height: 8px;
+  border: 2px solid #15803d;
+  border-radius: 1px;
+  background: #ffffff;
+  pointer-events: none;
+}
+
+.builder-logo-handle.handle-tl {
+  top: -5px;
+  left: -5px;
+}
+
+.builder-logo-handle.handle-tr {
+  top: -5px;
+  right: -5px;
+}
+
+.builder-logo-handle.handle-bl {
+  bottom: -5px;
+  left: -5px;
+}
+
+.builder-logo-handle.handle-br {
+  right: -5px;
+  bottom: -5px;
+}
+
+/*
+  Edit button attached to the logo image.
+  It sits inside the logo's top area so it cannot cover the school name.
+*/
+/*
+  Edit Logo button stays hidden until the logo is selected.
+  This keeps the normal website preview clean.
+*/
+.logo-section.builder-logo-editable .navbar-logo-edit-button {
+  top: 4px;
+  left: 4px;
+  right: auto;
+  z-index: 45;
+  height: 27px;
+  padding: 0 8px;
+  gap: 5px;
+  border-radius: 5px;
+  background: #15803d;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 5px 12px rgba(21, 128, 61, 0.22);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.16s ease,
+    visibility 0.16s ease,
+    background 0.16s ease;
+}
+
+.logo-section.builder-logo-editable.logo-editor-selected
+  .navbar-logo-edit-button {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.logo-section.builder-logo-editable.logo-editor-selected
+  .navbar-logo-edit-button:hover {
+  background: #166534;
+}
+
+/* The image receives additional top breathing space in builder mode */
+.logo-section.builder-logo-editable .builder-logo-target.is-selected {
+  padding-top: 29px;
+  min-height: 88px;
+}
+
+/* Keep database-driven name and slogan unaffected */
+.logo-section.builder-logo-editable .logo-text {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 880px) {
+  .builder-logo-target.is-selected {
+    min-width: 62px;
+    min-height: 78px;
+    padding: 27px 6px 6px;
+  }
+
+  .builder-logo-target .logo-image {
+    max-width: 48px;
+    max-height: 48px;
+  }
+
+  .logo-section.builder-logo-editable.logo-editor-selected
+  .navbar-logo-edit-button {
+  height: 25px;
+  padding: 0 7px;
+  font-size: 9px;
+}
+}
+
+
+/* =========================================================
+   ENTERPRISE NAVBAR SPACING
+   Adds clear space between the logo/school name and navbar links.
+   ========================================================= */
+
+.site-nav .nav-inner {
+  gap: clamp(22px, 3vw, 52px);
+}
+
+.site-nav .logo-section {
+  flex: 0 0 auto;
+  margin-right: clamp(18px, 3vw, 46px);
+}
+
+.site-nav .logo-section .logo-link {
+  gap: 12px;
+}
+
+.site-nav .brand-text,
+.site-nav .logo-text {
+  min-width: max-content;
+}
+
+.site-nav .nav-links {
+  flex: 1 1 auto;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-left: auto;
+}
+
+@media (max-width: 880px) {
+  .site-nav .nav-inner {
+    gap: 12px;
+  }
+
+  .site-nav .logo-section {
+    margin-right: 0;
+  }
+
+  .site-nav .brand-text,
+  .site-nav .logo-text {
+    min-width: 0;
+  }
+
+  .site-nav .nav-links {
+    flex: initial;
+    justify-content: flex-start;
+    margin-left: 0;
+    gap: 8px;
+  }
+}
+
+
+/* =========================================================
+   EVERGREEN ACADEMY NAVBAR
+   Floating white navigation card over the hero, school-green link system.
+   ========================================================= */
+.school-evergreen-v1-root .site-nav {
+  position: absolute;
+  top: 54px;
+  left: 0;
+  right: 0;
+  z-index: 10010;
+  width: 100%;
+  padding: 0 22px;
+  background: transparent;
+  box-shadow: none;
+  border: 0;
+}
+
+.school-evergreen-v1-root .nav-inner {
+  max-width: 1320px;
+  min-height: 92px;
+  margin: 0 auto;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(22, 101, 52, 0.12);
+  border-radius: 18px;
+  box-shadow: 0 24px 70px rgba(5, 46, 22, 0.16);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.school-evergreen-v1-root .logo-section,
+.school-evergreen-v1-root .logo-link,
+.school-evergreen-v1-root .logo-section .logo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.school-evergreen-v1-root .builder-logo-target {
+  width: 68px;
+  height: 68px;
+  padding: 6px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid rgba(22, 101, 52, 0.18);
+  box-shadow: 0 10px 28px rgba(5, 46, 22, 0.10);
+}
+
+.school-evergreen-v1-root .builder-logo-target .logo-image,
+.school-evergreen-v1-root .logo-image {
+  width: 100%;
+  height: 100%;
+  max-width: 56px;
+  max-height: 56px;
+  margin: 0;
+  object-fit: contain;
+}
+
+.school-evergreen-v1-root .brand-name,
+.school-evergreen-v1-root .school-name {
+  color: #14532d;
+  font-size: clamp(1.05rem, 1.5vw, 1.45rem);
+  line-height: 1.05;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.school-evergreen-v1-root .slogan {
+  color: #64748b;
+  font-size: 0.78rem;
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.school-evergreen-v1-root .nav-links {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.school-evergreen-v1-root .nav-links a,
+.school-evergreen-v1-root .drop-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 13px;
+  color: #1f3a2c;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 800;
+  line-height: 1;
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.school-evergreen-v1-root .nav-links a:hover,
+.school-evergreen-v1-root .nav-links a:focus,
+.school-evergreen-v1-root .drop-btn:hover,
+.school-evergreen-v1-root .drop-btn:focus {
+  color: #ffffff;
+  background: linear-gradient(135deg, #15803d, #14532d);
+  box-shadow: 0 10px 24px rgba(22, 101, 52, 0.20);
+  outline: none;
+}
+
+.school-evergreen-v1-root .dropdown {
+  position: relative;
+}
+
+.school-evergreen-v1-root .dropdown::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 8px;
+  pointer-events: auto;
+}
+
+.school-evergreen-v1-root .drop-menu {
+  top: calc(100% + 2px);
+  min-width: 230px;
+  padding: 8px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid rgba(22, 101, 52, 0.14);
+  box-shadow: 0 26px 60px rgba(5, 46, 22, 0.18);
+}
+
+.school-evergreen-v1-root .drop-menu a {
+  color: #14532d;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  font-weight: 720;
+  text-transform: none;
+}
+
+.school-evergreen-v1-root .drop-menu a:hover,
+.school-evergreen-v1-root .drop-menu a:focus {
+  color: #ffffff;
+  background: #15803d;
+}
+
+.school-evergreen-v1-root .hamburger {
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  border: 1px solid rgba(22, 101, 52, 0.18);
+  background: #ffffff;
+}
+
+.school-evergreen-v1-root .hamburger span {
+  background: #14532d;
+}
+
+@media (max-width: 1080px) {
+  .school-evergreen-v1-root .brand-text,
+  .school-evergreen-v1-root .logo-text {
+    display: none;
+  }
+
+  .school-evergreen-v1-root .nav-links a,
+  .school-evergreen-v1-root .drop-btn {
+    padding-left: 9px;
+    padding-right: 9px;
+    font-size: 0.76rem;
+  }
+}
+
+@media (max-width: 880px) {
+  .school-evergreen-v1-root .site-nav {
+    top: 12px;
+    padding: 0 12px;
+  }
+
+  .school-evergreen-v1-root .nav-inner {
+    min-height: 74px;
+    padding: 8px 12px;
+    border-radius: 16px;
+  }
+
+  .school-evergreen-v1-root .builder-logo-target {
+    width: 56px;
+    height: 56px;
+  }
+
+  .school-evergreen-v1-root .nav-links {
+    top: 92px;
+    right: 12px;
+    width: min(340px, calc(100vw - 24px));
+    height: auto;
+    max-height: calc(100vh - 112px);
+    padding: 14px;
+    gap: 7px;
+    align-items: stretch;
+    background: #ffffff;
+    border: 1px solid rgba(22, 101, 52, 0.16);
+    border-radius: 22px;
+    box-shadow: 0 28px 70px rgba(5, 46, 22, 0.22);
+  }
+
+  .school-evergreen-v1-root .nav-links a,
+  .school-evergreen-v1-root .drop-btn,
+  .school-evergreen-v1-root .nav-links .dropdown {
+    width: 100%;
+    margin: 0;
+    border-bottom: 0;
+  }
+
+  .school-evergreen-v1-root .nav-links a,
+  .school-evergreen-v1-root .drop-btn {
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: #f0fdf4;
+    color: #14532d;
+  }
+
+  .school-evergreen-v1-root .drop-menu {
+    margin: 7px 0 4px;
+    background: #f7fbf5;
+  }
+
+  .school-evergreen-v1-root .dropdown::after {
+    display: none;
+  }
+}

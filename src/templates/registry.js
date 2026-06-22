@@ -29,6 +29,17 @@ export const DEFAULT_TEMPLATES = [
   preview_image: "/template-previews/school-prestige.png",
 },
 
+{
+  layout_key: "school",
+  template_key: "school-evergreen-v1",
+  template_path: "templates/school/school-evergreen-v1",
+  name: "Evergreen Academy",
+  description:
+    "Premium green school design with a floating campus-style navbar, strong hero section, and responsive school pages.",
+  tags: ["green", "enterprise", "floating-nav", "school"],
+  preview_image: "/template-previews/school-evergreen.png",
+},
+
   {
     layout_key: "school",
     template_key: "school-modern-v1",
