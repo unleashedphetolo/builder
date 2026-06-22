@@ -17,7 +17,7 @@
   padding: 30px 28px 34px;
   border-radius: 14px;
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
-  border-top: 4px solid #2a1b6b;
+  border-top: 4px solid #991b1b;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
@@ -40,7 +40,7 @@
   margin: 8px 0 14px;
   font-size: 1.35rem;
   font-weight: 700;
-  color: #2a1b6b;
+  color: #991b1b;
 }
 
 /* Text */
@@ -70,7 +70,7 @@
   content: "•";
   position: absolute;
   left: 0;
-  color: #2a1b6b;
+  color: #991b1b;
 }
 
 /* Responsive */

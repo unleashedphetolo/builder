@@ -22,7 +22,7 @@ export default function Button({
   };
 
   const variants = {
-    primary: { background: "#0b5cff", color: "#fff" },
+    primary: { background: "#dc2626", color: "#fff" },
     secondary: { background: "#111827", color: "#fff" },
     outline: {
       background: "transparent",

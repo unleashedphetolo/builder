@@ -1,0 +1,164 @@
+.subject-choices-page {
+  padding: 28px 0 60px;
+  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  color: #0f172a;
+}
+
+.sc-hero {
+  background: linear-gradient(135deg, rgba(11, 59, 143, 0.10), rgba(42, 27, 107, 0.06));
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.06);
+}
+
+.sc-title {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 900;
+  color: #2a1b6b;
+}
+
+.sc-subtitle {
+  margin: 10px 0 0;
+  color: #475569;
+  line-height: 1.55;
+  font-size: 14.8px;
+  max-width: 900px;
+}
+
+.sc-section {
+  margin-top: 22px;
+}
+
+.sc-section-head {
+  margin-bottom: 12px;
+}
+
+.sc-h2 {
+  margin: 0;
+  color: #2a1b6b;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.sc-desc {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.sc-grid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 1000px) {
+  .sc-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sc-h3 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.sc-summary {
+  margin: 8px 0 0;
+  color: #475569;
+  font-size: 13.8px;
+  line-height: 1.55;
+}
+
+.sc-subjects {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+
+.sc-subjects-title {
+  font-weight: 900;
+  color: #0f172a;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.sc-list {
+  margin: 0;
+  padding-left: 18px;
+  color: #1f2937;
+}
+
+.sc-list li {
+  margin-bottom: 6px;
+}
+
+.sc-list.compact li {
+  margin-bottom: 5px;
+  font-size: 13.6px;
+}
+
+.sc-note {
+  margin: 12px 0 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.sc-electives {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 720px) {
+  .sc-electives {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sc-elective {
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 14px;
+  padding: 12px;
+  background: #ffffff;
+}
+
+.sc-elective-name {
+  font-weight: 900;
+  color: #2a1b6b;
+  font-size: 14px;
+}
+
+.sc-elective-desc {
+  margin-top: 6px;
+  color: #475569;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.sc-downloads {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sc-download {
+  display: inline-flex;
+  font-weight: 900;
+  color: #0b3b8f;
+  text-decoration: none;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(11, 59, 143, 0.08);
+  border: 1px solid rgba(11, 59, 143, 0.14);
+}
+
+.sc-download:hover {
+  text-decoration: underline;
+}

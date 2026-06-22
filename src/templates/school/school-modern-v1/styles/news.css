@@ -27,7 +27,7 @@
 }
 
 .news-card:hover {
-  border-color: rgba(30, 64, 175, 0.22);
+  border-color: rgba(153, 27, 27, 0.22);
   box-shadow: 0 18px 38px rgba(15, 23, 42, 0.1);
   transform: translateY(-2px);
 }
@@ -101,7 +101,7 @@
 }
 
 .news-body .meta .category {
-  color: var(--school-primary, #1e40af);
+  color: var(--school-primary, #991b1b);
   font-weight: 790;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -137,13 +137,13 @@
   min-height: 43px;
   margin-top: auto;
   padding: 0 15px;
-  border: 1px solid rgba(30, 64, 175, 0.15);
+  border: 1px solid rgba(153, 27, 27, 0.15);
   border-radius: var(--school-button-radius, 8px);
-  background: rgba(30, 64, 175, 0.055);
+  background: rgba(153, 27, 27, 0.055);
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  color: var(--school-primary, #1e40af);
+  color: var(--school-primary, #991b1b);
   cursor: pointer;
   font: inherit;
   font-size: 0.88rem;
@@ -156,8 +156,8 @@
 }
 
 .read-btn:hover {
-  border-color: var(--school-primary, #1e40af);
-  background: var(--school-primary, #1e40af);
+  border-color: var(--school-primary, #991b1b);
+  background: var(--school-primary, #991b1b);
   color: #ffffff;
 }
 
@@ -244,7 +244,7 @@
 }
 
 .news-dialog-body .category {
-  color: var(--school-primary, #1e40af);
+  color: var(--school-primary, #991b1b);
   font-weight: 790;
   letter-spacing: 0.04em;
   text-transform: uppercase;

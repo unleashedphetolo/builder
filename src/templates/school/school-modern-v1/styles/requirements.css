@@ -25,7 +25,7 @@
   margin-top:20px;
   font-size:18px;
   font-weight:800;
-  color:#2a1b6b;
+  color:#991b1b;
 }
 
 /* Lists */
@@ -61,11 +61,11 @@
 }
 
 .requirements-btn.primary{
-  background:#2a1b6b;
+  background:#991b1b;
 }
 
 .requirements-btn.navy{
-  background:#0b3b8f;
+  background:#b91c1c;
 }
 
 .requirements-btn.gray{

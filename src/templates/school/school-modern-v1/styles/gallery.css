@@ -73,6 +73,6 @@
 }
 
 .gallery-card:focus {
-  outline: 3px solid rgba(11, 59, 143, 0.6);
+  outline: 3px solid rgba(185, 28, 28, 0.6);
   outline-offset: 2px;
 }

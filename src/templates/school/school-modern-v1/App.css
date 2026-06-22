@@ -25,7 +25,7 @@
 }
 
 .App-link {
-  color: #61dafb;
+  color: #f87171;
 }
 
 @keyframes App-logo-spin {
@@ -60,9 +60,9 @@
 
 /* Modern Academy enterprise token bridge */
 .school-modern-v1-root {
-  --modern-school-primary: var(--primary, #2563eb);
+  --modern-school-primary: var(--primary, #dc2626);
   --modern-school-secondary: var(--secondary, #0f172a);
-  --modern-school-accent: var(--accent, #06b6d4);
+  --modern-school-accent: var(--accent, #dc2626);
 }
 
 
@@ -74,7 +74,7 @@
    ========================================================= */
 
 .school-modern-v1-root {
-  --school-primary: var(--site-theme-primary, var(--primary, #1e40af));
+  --school-primary: var(--site-theme-primary, var(--primary, #991b1b));
   --school-secondary: var(--site-theme-secondary, var(--secondary, #0f172a));
   --school-background: var(--site-theme-background, var(--background, #ffffff));
   --school-surface: var(--site-theme-surface, #ffffff);
@@ -190,7 +190,7 @@
 }
 
 .school-modern-v1-root .scal-pill {
-  border-color: rgba(30, 64, 175, 0.18);
+  border-color: rgba(153, 27, 27, 0.18);
   background: var(--school-soft);
   color: var(--school-primary);
 }
@@ -243,18 +243,18 @@
 }
 
 .school-modern-v1-root {
-  --smv1-primary: var(--primary, #1d2d58);
-  --smv1-primary-dark: #1e3a8a;
+  --smv1-primary: var(--primary, #7f1d1d);
+  --smv1-primary-dark: #7f1d1d;
   --smv1-secondary: var(--secondary, #0f172a);
   --smv1-accent: var(--accent, #f59e0b);
   --smv1-accent-soft: #fef3c7;
   --smv1-surface: #ffffff;
   --smv1-surface-soft: #f8fafc;
-  --smv1-surface-blue: #eff6ff;
+  --smv1-surface-blue: #fef2f2;
   --smv1-text: #0f172a;
   --smv1-muted: #64748b;
   --smv1-border: rgba(15, 23, 42, 0.10);
-  --smv1-border-strong: rgba(29, 78, 216, 0.18);
+  --smv1-border-strong: rgba(220, 38, 38, 0.18);
   --smv1-shadow: 0 18px 46px rgba(15, 23, 42, 0.10);
   --smv1-shadow-strong: 0 28px 70px rgba(15, 23, 42, 0.16);
   --smv1-radius-xl: 28px;
@@ -265,7 +265,7 @@
   overflow-x: hidden;
   color: var(--smv1-text);
   background:
-    radial-gradient(circle at 6% 8%, rgba(37, 99, 235, 0.08), transparent 30rem),
+    radial-gradient(circle at 6% 8%, rgba(220, 38, 38, 0.08), transparent 30rem),
     radial-gradient(circle at 94% 10%, rgba(245, 158, 11, 0.09), transparent 28rem),
     linear-gradient(180deg, #ffffff 0%, #f8fafc 44%, #ffffff 100%);
   font-family: var(--font-family, Inter, "Segoe UI", Arial, sans-serif);
@@ -298,7 +298,7 @@
 .school-modern-v1-root .topbar {
   width: 100%;
   background:
-    linear-gradient(90deg, #1e3a8a 0%, #0f3f73 45%, #0f172a 100%) !important;
+    linear-gradient(90deg, #7f1d1d 0%, #991b1b 45%, #0f172a 100%) !important;
   color: #ffffff !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
   box-shadow: none !important;
@@ -452,7 +452,7 @@
   border-radius: 20px !important;
   color: var(--smv1-text) !important;
   background: #ffffff !important;
-  border: 1px solid rgba(29, 78, 216, 0.12) !important;
+  border: 1px solid rgba(220, 38, 38, 0.12) !important;
   box-shadow: 0 12px 26px rgba(15, 23, 42, 0.06) !important;
 }
 
@@ -470,7 +470,7 @@
   border-radius: 16px !important;
   background: #ffffff;
   filter: none !important;
-  box-shadow: 0 10px 22px rgba(29, 78, 216, 0.10);
+  box-shadow: 0 10px 22px rgba(220, 38, 38, 0.10);
 }
 
 .school-modern-v1-root .logo-text {
@@ -532,7 +532,7 @@
 .school-modern-v1-root .drop-btn:hover {
   color: var(--smv1-primary) !important;
   background: var(--smv1-surface-blue) !important;
-  border-color: rgba(29, 78, 216, 0.13) !important;
+  border-color: rgba(220, 38, 38, 0.13) !important;
 }
 
 .school-modern-v1-root .dropdown {
@@ -602,7 +602,7 @@
   display: flex !important;
   align-items: center !important;
   background:
-    linear-gradient(135deg, #0f172a 0%, #1e3a8a 54%, #0f172a 100%) !important;
+    linear-gradient(135deg, #0f172a 0%, #7f1d1d 54%, #0f172a 100%) !important;
   color: #ffffff !important;
 }
 
@@ -811,7 +811,7 @@
   border-radius: var(--smv1-radius-xl) !important;
   color: var(--smv1-text) !important;
   background: rgba(255, 255, 255, 0.96) !important;
-  border: 1px solid rgba(29, 78, 216, 0.12) !important;
+  border: 1px solid rgba(220, 38, 38, 0.12) !important;
   box-shadow: var(--smv1-shadow-strong) !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -846,7 +846,7 @@
   border-radius: 999px !important;
   color: var(--smv1-primary-dark) !important;
   background: var(--smv1-surface-blue) !important;
-  border: 1px solid rgba(29, 78, 216, 0.14) !important;
+  border: 1px solid rgba(220, 38, 38, 0.14) !important;
   font-weight: 900 !important;
 }
 
@@ -950,8 +950,8 @@
   border-radius: 34px !important;
   overflow: hidden !important;
   background:
-    radial-gradient(circle at 10% 18%, rgba(59, 130, 246, 0.26), transparent 22rem),
-    linear-gradient(135deg, #1e3a8a 0%, #0f172a 64%, #111827 100%) !important;
+    radial-gradient(circle at 10% 18%, rgba(239, 68, 68, 0.26), transparent 22rem),
+    linear-gradient(135deg, #7f1d1d 0%, #0f172a 64%, #111827 100%) !important;
   box-shadow: var(--smv1-shadow-strong) !important;
 }
 
@@ -1025,7 +1025,7 @@
   color: #ffffff !important;
   background:
     radial-gradient(circle at 12% 24%, rgba(245, 158, 11, 0.22), transparent 20rem),
-    linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%) !important;
+    linear-gradient(135deg, #7f1d1d 0%, #0f172a 100%) !important;
   border-radius: 0 0 32px 32px !important;
 }
 
@@ -1058,7 +1058,7 @@
 .school-modern-v1-root .site-footer {
   margin-top: 48px !important;
   background:
-    radial-gradient(circle at 15% 18%, rgba(37, 99, 235, 0.22), transparent 24rem),
+    radial-gradient(circle at 15% 18%, rgba(220, 38, 38, 0.22), transparent 24rem),
     linear-gradient(180deg, #0f172a 0%, #020617 100%) !important;
   color: rgba(255, 255, 255, 0.76) !important;
   border-top: 0 !important;
@@ -1078,7 +1078,7 @@
 }
 
 .school-modern-v1-root .site-footer a:hover {
-  color: #bfdbfe !important;
+  color: #fecaca !important;
 }
 
 /* =============================
@@ -1534,8 +1534,8 @@
 */
 
 .school-modern-v1-root {
-  --smep-blue: #1d4ed8;
-  --smep-blue-dark: #1e3a8a;
+  --smep-blue: #dc2626;
+  --smep-blue-dark: #7f1d1d;
   --smep-navy: #0f172a;
   --smep-slate: #334155;
   --smep-muted: #64748b;
@@ -1550,7 +1550,7 @@
   --smep-shadow-lg: 0 32px 76px rgba(15, 23, 42, 0.16);
   color: var(--smep-navy);
   background:
-    radial-gradient(circle at 10% -10%, rgba(29, 78, 216, 0.08), transparent 32rem),
+    radial-gradient(circle at 10% -10%, rgba(220, 38, 38, 0.08), transparent 32rem),
     radial-gradient(circle at 100% 0%, rgba(245, 158, 11, 0.10), transparent 26rem),
     linear-gradient(180deg, #ffffff 0%, #f8fafc 44%, #ffffff 100%) !important;
 }
@@ -1575,7 +1575,7 @@
 
 .school-modern-v1-root .topbar {
   background:
-    linear-gradient(90deg, #0b1c4d 0%, #0b2a52 43%, #0f172a 100%) !important;
+    linear-gradient(90deg, #7f1d1d 0%, #991b1b 43%, #0f172a 100%) !important;
   color: #ffffff !important;
   min-height: 42px !important;
   border: 0 !important;
@@ -1752,9 +1752,9 @@
   border-radius: 18px !important;
   background:
     linear-gradient(#ffffff, #ffffff) padding-box,
-    linear-gradient(135deg, rgba(29, 78, 216, 0.28), rgba(245, 158, 11, 0.32)) border-box !important;
+    linear-gradient(135deg, rgba(220, 38, 38, 0.28), rgba(243, 243, 242, 0.32)) border-box !important;
   border: 1px solid transparent !important;
-  box-shadow: 0 10px 24px rgba(29, 78, 216, 0.13) !important;
+  box-shadow: 0 10px 24px rgba(220, 38, 38, 0.13) !important;
 }
 
 .school-modern-v1-root .builder-logo-target .logo-image,
@@ -1782,7 +1782,7 @@
 .school-modern-v1-root .brand-name,
 .school-modern-v1-root .school-name {
   margin: 0 !important;
-  color: #1e3a8a !important;
+  color: #7f1d1d !important;
   font-size: clamp(1.02rem, 1.4vw, 1.24rem) !important;
   line-height: 1.08 !important;
   font-weight: 950 !important;
@@ -1832,8 +1832,8 @@
 
 .school-modern-v1-root .nav-links a:hover,
 .school-modern-v1-root .drop-btn:hover {
-  background: #eff6ff !important;
-  border-color: rgba(29, 78, 216, 0.13) !important;
+  background: #fef2f2 !important;
+  border-color: rgba(220, 38, 38, 0.13) !important;
   color: var(--smep-blue) !important;
 }
 
@@ -1871,7 +1871,7 @@
   gap: 5px !important;
   padding: 0 !important;
   border-radius: 16px !important;
-  border: 1px solid rgba(29, 78, 216, 0.16) !important;
+  border: 1px solid rgba(220, 38, 38, 0.16) !important;
   background: #ffffff !important;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08) !important;
   cursor: pointer !important;
@@ -1883,7 +1883,7 @@
   display: block !important;
   margin: 0 !important;
   border-radius: 999px !important;
-  background: #1e3a8a !important;
+  background: #7f1d1d !important;
   transition: transform 180ms ease, opacity 180ms ease !important;
 }
 
@@ -1906,7 +1906,7 @@
   min-width: 74px !important;
   min-height: 82px !important;
   padding: 28px 8px 8px !important;
-  border: 2px solid #3b82f6 !important;
+  border: 2px solid #ef4444 !important;
   background: #ffffff !important;
 }
 
@@ -1976,8 +1976,8 @@
   padding: 9px 13px !important;
   border-radius: 999px !important;
   background: rgba(245, 158, 11, 0.18) !important;
-  border: 1px solid rgba(254, 243, 199, 0.30) !important;
-  color: #fde68a !important;
+  border: 1px solid rgba(73, 73, 73, 0.3) !important;
+  color: #b9b9b9 !important;
   font-size: 0.72rem !important;
   font-weight: 950 !important;
   letter-spacing: 0.09em !important;
@@ -2022,9 +2022,9 @@
 }
 
 .school-modern-v1-root .btns.primary {
-  color: #111827 !important;
-  background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
-  box-shadow: 0 18px 36px rgba(245, 158, 11, 0.28) !important;
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #b91c1c, #dc2626) !important;
+  box-shadow: 0 18px 36px rgba(185, 28, 28, 0.28) !important;
 }
 
 .school-modern-v1-root .btns.ghost {
@@ -2096,7 +2096,7 @@
   color: #ffffff !important;
   background:
     radial-gradient(circle at 90% 10%, rgba(245, 158, 11, 0.35), transparent 18rem),
-    linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%) !important;
+    linear-gradient(135deg, #7f1d1d 0%, #0f172a 100%) !important;
   box-shadow: var(--smep-shadow) !important;
   overflow: hidden;
 }
@@ -2147,7 +2147,7 @@
   padding: clamp(28px, 4vw, 48px) !important;
   background:
     radial-gradient(circle at 78% 20%, rgba(245, 158, 11, 0.28), transparent 20rem),
-    linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%) !important;
+    linear-gradient(135deg, #7f1d1d 0%, #0f172a 100%) !important;
   color: #ffffff !important;
   box-shadow: var(--smep-shadow-lg) !important;
 }
@@ -2201,7 +2201,7 @@
 .school-modern-v1-root .school-page--about .card:nth-child(2) {
   background:
     linear-gradient(#ffffff, #ffffff) padding-box,
-    linear-gradient(135deg, rgba(29, 78, 216, 0.28), rgba(245, 158, 11, 0.24)) border-box !important;
+    linear-gradient(135deg, rgba(220, 38, 38, 0.28), rgba(245, 158, 11, 0.24)) border-box !important;
   border: 1px solid transparent !important;
 }
 
@@ -2259,26 +2259,26 @@
 .school-modern-v1-root .notice-board {
   padding: clamp(18px, 2vw, 28px) !important;
   background: rgba(255, 255, 255, 0.97) !important;
-  border: 1px solid rgba(29, 78, 216, 0.12) !important;
+  border: 1px solid rgba(220, 38, 38, 0.12) !important;
   backdrop-filter: blur(16px);
 }
 
 .school-modern-v1-root .notice-header h2,
 .school-modern-v1-root .notice-header h3 {
-  color: #1e3a8a !important;
+  color: #7f1d1d !important;
   font-weight: 950 !important;
 }
 
 .school-modern-v1-root .about-card {
-  border-top: 5px solid #1d4ed8 !important;
+  border-top: 5px solid #dc2626 !important;
 }
 
 .school-modern-v1-root .principal {
   width: min(1180px, calc(100% - 32px)) !important;
   margin: 54px auto !important;
   background:
-    radial-gradient(circle at 12% 20%, rgba(59, 130, 246, 0.30), transparent 22rem),
-    linear-gradient(135deg, #1e3a8a 0%, #0f172a 70%) !important;
+    radial-gradient(circle at 12% 20%, rgba(239, 68, 68, 0.30), transparent 22rem),
+    linear-gradient(135deg, #7f1d1d 0%, #0f172a 70%) !important;
   overflow: hidden !important;
 }
 
@@ -2288,7 +2288,7 @@
 
 .school-modern-v1-root .site-footer {
   background:
-    radial-gradient(circle at 10% 18%, rgba(29, 78, 216, 0.20), transparent 24rem),
+    radial-gradient(circle at 10% 18%, rgba(220, 38, 38, 0.20), transparent 24rem),
     linear-gradient(180deg, #0f172a 0%, #020617 100%) !important;
   color: rgba(255, 255, 255, 0.76) !important;
 }
@@ -2586,7 +2586,7 @@
   }
 
   .school-modern-v1-root .site-nav {
-    border-top: 4px solid #1e3a8a !important;
+    border-top: 4px solid #7f1d1d !important;
   }
 
   .school-modern-v1-root .nav-inner {

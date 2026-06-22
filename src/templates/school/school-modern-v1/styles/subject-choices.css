@@ -5,7 +5,7 @@
 }
 
 .sc-hero {
-  background: linear-gradient(135deg, rgba(11, 59, 143, 0.10), rgba(42, 27, 107, 0.06));
+  background: linear-gradient(135deg, rgba(185, 28, 28, 0.10), rgba(153, 27, 27, 0.06));
   border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 18px;
   padding: 22px;
@@ -16,7 +16,7 @@
   margin: 0;
   font-size: 34px;
   font-weight: 900;
-  color: #2a1b6b;
+  color: #991b1b;
 }
 
 .sc-subtitle {
@@ -37,7 +37,7 @@
 
 .sc-h2 {
   margin: 0;
-  color: #2a1b6b;
+  color: #991b1b;
   font-size: 22px;
   font-weight: 900;
 }
@@ -131,7 +131,7 @@
 
 .sc-elective-name {
   font-weight: 900;
-  color: #2a1b6b;
+  color: #991b1b;
   font-size: 14px;
 }
 
@@ -151,12 +151,12 @@
 .sc-download {
   display: inline-flex;
   font-weight: 900;
-  color: #0b3b8f;
+  color: #b91c1c;
   text-decoration: none;
   padding: 10px 12px;
   border-radius: 12px;
-  background: rgba(11, 59, 143, 0.08);
-  border: 1px solid rgba(11, 59, 143, 0.14);
+  background: rgba(185, 28, 28, 0.08);
+  border: 1px solid rgba(185, 28, 28, 0.14);
 }
 
 .sc-download:hover {

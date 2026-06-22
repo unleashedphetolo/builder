@@ -151,7 +151,7 @@ export default function CalendarWidget({
                   <span
                     key={ev.id}
                     className="dot"
-                    style={{ background: ev.color || "#1a73e8" }}
+                    style={{ background: ev.color || "#dc2626" }}
                     title={ev.title}
                   />
                 ))}

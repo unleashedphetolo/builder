@@ -18,8 +18,8 @@
 
   background: linear-gradient(
     135deg,
-    rgba(11, 59, 143, 0.10),
-    rgba(42, 27, 107, 0.06)
+    rgba(185, 28, 28, 0.10),
+    rgba(153, 27, 27, 0.06)
   );
   border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 18px;
@@ -31,7 +31,7 @@
   margin: 0;
   font-size: 34px;
   font-weight: 900;
-  color: #2a1b6b;
+  color: #991b1b;
 }
 
 .wwa-subtitle {
@@ -53,9 +53,9 @@
   display: inline-flex;
   padding: 7px 10px;
   border-radius: 999px;
-  background: rgba(42, 27, 107, 0.08);
-  border: 1px solid rgba(42, 27, 107, 0.16);
-  color: #2a1b6b;
+  background: rgba(153, 27, 27, 0.08);
+  border: 1px solid rgba(153, 27, 27, 0.16);
+  color: #991b1b;
   font-weight: 900;
   font-size: 12px;
   white-space: nowrap;
@@ -79,9 +79,9 @@
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #0b3b8f;
-  background: rgba(11, 59, 143, 0.08);
-  border: 1px solid rgba(11, 59, 143, 0.15);
+  color: #b91c1c;
+  background: rgba(185, 28, 28, 0.08);
+  border: 1px solid rgba(185, 28, 28, 0.15);
   padding: 7px 10px;
   border-radius: 999px;
   width: fit-content;
@@ -97,7 +97,7 @@
 .wwa-stat-num {
   font-size: 22px;
   font-weight: 900;
-  color: #2a1b6b;
+  color: #991b1b;
   line-height: 1.1;
 }
 
@@ -118,7 +118,7 @@
 
 .wwa-card-title {
   margin: 0;
-  color: #2a1b6b;
+  color: #991b1b;
   font-size: 18px;
   font-weight: 900;
 }

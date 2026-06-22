@@ -12,8 +12,8 @@
 .fac-hero {
   background: linear-gradient(
     135deg,
-    rgba(11, 59, 143, 0.10),
-    rgba(42, 27, 107, 0.06)
+    rgba(185, 28, 28, 0.10),
+    rgba(153, 27, 27, 0.06)
   );
   border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 18px;
@@ -26,7 +26,7 @@
   margin: 0;
   font-size: 34px;
   font-weight: 900;
-  color: #2a1b6b;
+  color: #991b1b;
 }
 
 .fac-subtitle {
@@ -79,7 +79,7 @@
   margin: 0;
   font-size: 18px;
   font-weight: 900;
-  color: #2a1b6b;
+  color: #991b1b;
 }
 
 .fac-card-text {

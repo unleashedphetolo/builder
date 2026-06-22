@@ -10,7 +10,7 @@
 }
 
 .policy-hero {
-  background: linear-gradient(135deg, rgba(11, 59, 143, 0.10), rgba(42, 27, 107, 0.06));
+  background: linear-gradient(135deg, rgba(185, 28, 28, 0.10), rgba(153, 27, 27, 0.06));
   border: 1px solid rgba(0,0,0,0.06);
   border-radius: 18px;
   padding: 22px;
@@ -21,7 +21,7 @@
   margin: 0;
   font-size: 34px;
   font-weight: 900;
-  color: #2a1b6b;
+  color: #991b1b;
 }
 
 .policy-subtitle {
@@ -44,9 +44,9 @@
   font-weight: 900;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #0b3b8f;
-  background: rgba(11, 59, 143, 0.08);
-  border: 1px solid rgba(11, 59, 143, 0.15);
+  color: #b91c1c;
+  background: rgba(185, 28, 28, 0.08);
+  border: 1px solid rgba(185, 28, 28, 0.15);
   padding: 8px 10px;
   border-radius: 999px;
 }
@@ -59,7 +59,7 @@
   margin: 0 0 10px;
   font-size: 20px;
   font-weight: 900;
-  color: #2a1b6b;
+  color: #991b1b;
 }
 
 .policy-h3 {
@@ -146,7 +146,7 @@
   place-items: center;
   font-weight: 900;
   color: #ffffff;
-  background: linear-gradient(135deg, #2a1b6b, #0b3b8f);
+  background: linear-gradient(135deg, #991b1b, #b91c1c);
 }
 
 .step-body p {
@@ -165,7 +165,7 @@
 
 .policy-contact a {
   font-weight: 900;
-  color: #0b3b8f;
+  color: #b91c1c;
   text-decoration: none;
 }
 

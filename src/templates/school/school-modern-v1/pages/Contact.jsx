@@ -224,10 +224,10 @@ const detailsIconStyle = {
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
-  background: "linear-gradient(135deg, #eff6ff, #dbeafe)",
-  color: "#1d4ed8",
+  background: "linear-gradient(135deg, #fef2f2, #fee2e2)",
+  color: "#dc2626",
   fontSize: 21,
-  border: "1px solid #bfdbfe",
+  border: "1px solid #fecaca",
 };
 
 const subtitleStyle = {
@@ -261,8 +261,8 @@ const detailIconStyle = {
   alignItems: "center",
   justifyContent: "center",
   background: "#ffffff",
-  color: "#1d4ed8",
-  border: "1px solid #dbeafe",
+  color: "#dc2626",
+  border: "1px solid #fee2e2",
   fontSize: 18,
 };
 
@@ -301,9 +301,9 @@ const mapBadgeStyle = {
   gap: 6,
   padding: "7px 10px",
   borderRadius: 999,
-  background: "#eff6ff",
-  color: "#1d4ed8",
-  border: "1px solid #bfdbfe",
+  background: "#fef2f2",
+  color: "#dc2626",
+  border: "1px solid #fecaca",
   fontSize: 12,
   fontWeight: 900,
   whiteSpace: "nowrap",
@@ -314,7 +314,7 @@ const mapFrameWrapStyle = {
   height: 340,
   overflow: "hidden",
   borderRadius: 18,
-  border: "1px solid #dbeafe",
+  border: "1px solid #fee2e2",
   background: "#f8fafc",
   boxShadow: "0 14px 34px rgba(15, 23, 42, 0.12)",
 };
@@ -330,8 +330,8 @@ const mapPlaceholderStyle = {
   width: "100%",
   minHeight: 340,
   borderRadius: 18,
-  border: "1px dashed #bfdbfe",
-  background: "linear-gradient(135deg, #f8fafc, #eff6ff)",
+  border: "1px dashed #fecaca",
+  background: "linear-gradient(135deg, #f8fafc, #fef2f2)",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
@@ -349,8 +349,8 @@ const mapPlaceholderIconStyle = {
   alignItems: "center",
   justifyContent: "center",
   background: "#ffffff",
-  color: "#1d4ed8",
-  border: "1px solid #dbeafe",
+  color: "#dc2626",
+  border: "1px solid #fee2e2",
   fontSize: 22,
   marginBottom: 12,
 };

@@ -17,7 +17,7 @@ box-shadow: 0 16px 40px rgba(0,0,0,0.12);
 margin-bottom: 12px;
 font-size: 18px;
 font-weight: 700;
-color: #2a1b6b;
+color: #991b1b;
 }
 .ql-section ul {
 list-style: none;
@@ -36,10 +36,10 @@ transition: 0.2s ease-in-out;
 }
 .ql-link:hover {
 background: #f3f1ff;
-color: #2a1b6b;
+color: #991b1b;
 transform: translateX(4px);
 }
 .ql-icon {
-color: #2a1b6b;
+color: #991b1b;
 font-size: 10px;
 }

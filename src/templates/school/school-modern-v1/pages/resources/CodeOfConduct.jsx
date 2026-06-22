@@ -102,7 +102,7 @@ export default function CodeOfConduct({
               style={{
                 padding: "10px 16px",
                 borderRadius: 8,
-                background: "#2a1b6b",
+                background: "#991b1b",
                 color: "#fff",
                 fontWeight: 700,
                 textDecoration: "none",
@@ -117,7 +117,7 @@ export default function CodeOfConduct({
               style={{
                 padding: "10px 16px",
                 borderRadius: 8,
-                background: "#0b3b8f",
+                background: "#b91c1c",
                 color: "#fff",
                 fontWeight: 700,
                 textDecoration: "none",

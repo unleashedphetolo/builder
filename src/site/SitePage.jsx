@@ -314,6 +314,48 @@ export default function SitePage() {
       state when the applied values are already identical prevents duplicate
       rerenders and protects the preview from update loops.
     */
+    const applyIncomingTemplate = (incoming = {}) => {
+      if (!isBuilderMode) return;
+      if (!incoming || typeof incoming !== "object" || Array.isArray(incoming)) {
+        return;
+      }
+
+      const nextLayoutKey = incoming.layoutKey || incoming.layout_key || null;
+      const nextTemplateKey = incoming.templateKey || incoming.template_key || null;
+
+      if (!nextLayoutKey && !nextTemplateKey) return;
+
+      setSite((prev) => {
+        const current = prev || {};
+        const next = {
+          ...current,
+          ...(nextLayoutKey ? { layout_key: nextLayoutKey } : {}),
+          ...(nextTemplateKey ? { template_key: nextTemplateKey } : {}),
+        };
+
+        const hasChanges =
+          !Object.is(current.layout_key, next.layout_key) ||
+          !Object.is(current.template_key, next.template_key);
+
+        return hasChanges ? next : prev;
+      });
+
+      if (nextTemplateKey) {
+        setSettings((prev) => {
+          const current = prev || {};
+
+          if (Object.is(current.template_key, nextTemplateKey)) {
+            return prev;
+          }
+
+          return {
+            ...current,
+            template_key: nextTemplateKey,
+          };
+        });
+      }
+    };
+
     const applyIncomingSettings = (incoming = {}) => {
       if (!incoming || typeof incoming !== "object" || Array.isArray(incoming)) {
         return;
@@ -462,6 +504,10 @@ export default function SitePage() {
       });
     };
 
+    const handleTemplateUpdate = (event) => {
+      applyIncomingTemplate(event?.detail || {});
+    };
+
     const handleSettingsUpdate = (event) => {
       applyIncomingSettings(event?.detail || {});
     };
@@ -478,6 +524,13 @@ export default function SitePage() {
       const payload = event?.data;
 
       if (!payload || typeof payload !== "object") return;
+
+      if (
+        payload.type === "builder:template-updated" ||
+        payload.type === "site-template-updated"
+      ) {
+        applyIncomingTemplate(payload.template || payload.payload || payload);
+      }
 
       if (
         payload.type === "builder:settings-updated" ||
@@ -529,6 +582,8 @@ export default function SitePage() {
       }
     };
 
+    window.addEventListener("builder:template-updated", handleTemplateUpdate);
+    window.addEventListener("site-template-updated", handleTemplateUpdate);
     window.addEventListener("builder:settings-updated", handleSettingsUpdate);
     window.addEventListener("site-settings-updated", handleSettingsUpdate);
     window.addEventListener("builder:nav-updated", handleNavUpdate);
@@ -538,6 +593,11 @@ export default function SitePage() {
     window.addEventListener("message", handleMessage);
 
     return () => {
+      window.removeEventListener(
+        "builder:template-updated",
+        handleTemplateUpdate,
+      );
+      window.removeEventListener("site-template-updated", handleTemplateUpdate);
       window.removeEventListener(
         "builder:settings-updated",
         handleSettingsUpdate,

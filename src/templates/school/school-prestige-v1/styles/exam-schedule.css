@@ -1,0 +1,409 @@
+/* =========================================================
+   EXAM SCHEDULE PAGE
+   Isolated enterprise timetable styling for Prestige Academy.
+   ========================================================= */
+
+.exam-schedule-page {
+  padding-top: 16px;
+  padding-bottom: 48px;
+  color: var(--school-secondary, #0f172a);
+}
+
+.exam-schedule-hero {
+  padding: clamp(26px, 5vw, 42px);
+  margin-bottom: 18px;
+  border-radius: var(--school-card-radius, 16px);
+  background:
+    linear-gradient(128deg, rgba(15, 23, 42, 0.98), rgba(30, 64, 175, 0.92)),
+    var(--school-secondary, #0f172a);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 26px;
+  color: #ffffff;
+}
+
+.exam-schedule-hero__copy {
+  max-width: 720px;
+}
+
+.exam-schedule-kicker {
+  display: inline-flex;
+  margin-bottom: 13px;
+  padding: 5px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.09);
+  color: #ffffff;
+  font-size: 0.71rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.exam-schedule-title {
+  margin: 0 0 10px;
+  color: #ffffff !important;
+  font-size: clamp(2rem, 4vw, 2.72rem);
+  line-height: 1.07;
+}
+
+.exam-schedule-subtitle {
+  max-width: 650px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.exam-schedule-actions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.exam-schedule-btn {
+  min-height: 46px;
+  padding: 0 17px;
+  border: 1px solid transparent;
+  border-radius: var(--school-button-radius, 8px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: 760;
+  text-decoration: none;
+  transition:
+    transform 0.16s ease,
+    background 0.16s ease,
+    border-color 0.16s ease;
+}
+
+.exam-schedule-btn:hover {
+  transform: translateY(-1px);
+}
+
+.exam-schedule-btn--primary {
+  background: var(--school-primary, #1e40af);
+}
+
+.exam-schedule-btn--outline {
+  border-color: rgba(255, 255, 255, 0.36);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.exam-schedule-notice {
+  padding: 15px 17px;
+  margin: 0 0 18px;
+  border: 1px solid #fde68a;
+  border-radius: 12px;
+  background: #fffbeb;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  color: #78350f;
+}
+
+.exam-schedule-notice strong {
+  flex: 0 0 auto;
+  color: #92400e;
+  font-size: 0.88rem;
+}
+
+.exam-schedule-notice p {
+  margin: 0;
+  color: #78350f;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.exam-schedule-summary {
+  margin-bottom: 18px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.exam-schedule-stat {
+  min-height: 87px;
+  padding: 15px 16px;
+  border: 1px solid var(--school-border, #e2e8f0);
+  border-radius: var(--school-card-radius, 14px);
+  background: var(--school-surface, #ffffff);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+}
+
+.exam-schedule-stat span {
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 720;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.exam-schedule-stat strong {
+  color: var(--school-secondary, #0f172a);
+  font-size: 1.02rem;
+  font-weight: 780;
+  line-height: 1.25;
+}
+
+.exam-schedule-card {
+  overflow: hidden;
+}
+
+.exam-schedule-toolbar {
+  padding: 4px 4px 21px;
+  border-bottom: 1px solid var(--school-border, #e2e8f0);
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 22px;
+}
+
+.exam-schedule-toolbar h2 {
+  margin: 0 0 4px;
+  color: var(--school-secondary, #0f172a);
+  font-size: 1.27rem;
+}
+
+.exam-schedule-toolbar p {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.exam-schedule-filters {
+  display: flex;
+  gap: 10px;
+}
+
+.exam-schedule-field {
+  min-width: 140px;
+  display: grid;
+  gap: 5px;
+}
+
+.exam-schedule-field--search {
+  min-width: 210px;
+}
+
+.exam-schedule-field span {
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 720;
+}
+
+.exam-schedule-field select,
+.exam-schedule-field input {
+  height: 43px;
+  width: 100%;
+  padding: 0 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+.exam-schedule-field select:focus,
+.exam-schedule-field input:focus {
+  border-color: var(--school-primary, #1e40af);
+  outline: 3px solid rgba(30, 64, 175, 0.13);
+}
+
+.exam-schedule-table-wrap {
+  margin-top: 18px;
+  overflow-x: auto;
+}
+
+.exam-schedule-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.89rem;
+}
+
+.exam-schedule-table th {
+  padding: 12px 12px;
+  border-bottom: 1px solid #cbd5e1;
+  background: var(--school-soft, #f8fafc);
+  color: #475569;
+  font-size: 0.71rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.exam-schedule-table th:first-child {
+  border-top-left-radius: 10px;
+}
+
+.exam-schedule-table th:last-child {
+  border-top-right-radius: 10px;
+}
+
+.exam-schedule-table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #334155;
+  vertical-align: middle;
+}
+
+.exam-schedule-table tbody tr:hover td {
+  background: rgba(248, 250, 252, 0.75);
+}
+
+.exam-schedule-table td strong {
+  color: #0f172a;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.exam-schedule-subject {
+  color: #0f172a;
+  font-weight: 730;
+}
+
+.exam-schedule-paper {
+  margin-top: 2px;
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+.exam-schedule-status {
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #166534;
+  font-size: 0.73rem;
+  font-weight: 760;
+  white-space: nowrap;
+}
+
+.exam-schedule-empty {
+  padding: 34px 16px !important;
+  color: #64748b !important;
+  text-align: center;
+}
+
+.exam-schedule-footer {
+  max-width: 900px;
+  margin: 19px auto 0;
+  color: #64748b;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.exam-schedule-footer p {
+  margin: 0;
+}
+
+@media (max-width: 880px) {
+  .exam-schedule-hero {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .exam-schedule-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .exam-schedule-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 680px) {
+  .exam-schedule-page {
+    padding-top: 10px;
+    padding-bottom: 34px;
+  }
+
+  .exam-schedule-hero {
+    padding: 23px 18px;
+  }
+
+  .exam-schedule-notice {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .exam-schedule-summary {
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+  }
+
+  .exam-schedule-stat {
+    padding: 12px;
+  }
+
+  .exam-schedule-filters {
+    flex-direction: column;
+  }
+
+  .exam-schedule-field,
+  .exam-schedule-field--search {
+    min-width: 0;
+  }
+
+  .exam-schedule-table,
+  .exam-schedule-table tbody,
+  .exam-schedule-table tr,
+  .exam-schedule-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .exam-schedule-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .exam-schedule-table tr {
+    margin-bottom: 11px;
+    padding: 8px 12px;
+    border: 1px solid var(--school-border, #e2e8f0);
+    border-radius: 11px;
+    background: #ffffff;
+  }
+
+  .exam-schedule-table td {
+    min-height: 34px;
+    padding: 7px 0;
+    border: 0;
+    display: grid;
+    grid-template-columns: 112px 1fr;
+    gap: 9px;
+  }
+
+  .exam-schedule-table td::before {
+    content: attr(data-label);
+    color: #64748b;
+    font-size: 0.72rem;
+    font-weight: 780;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .exam-schedule-table .exam-schedule-empty {
+    display: block;
+  }
+
+  .exam-schedule-table .exam-schedule-empty::before {
+    display: none;
+  }
+}

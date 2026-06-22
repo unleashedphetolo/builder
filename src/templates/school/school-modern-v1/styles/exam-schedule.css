@@ -14,7 +14,7 @@
   margin-bottom: 18px;
   border-radius: var(--school-card-radius, 16px);
   background:
-    linear-gradient(128deg, rgba(15, 23, 42, 0.98), rgba(30, 64, 175, 0.92)),
+    linear-gradient(128deg, rgba(15, 23, 42, 0.98), rgba(153, 27, 27, 0.92)),
     var(--school-secondary, #0f172a);
   display: flex;
   justify-content: space-between;
@@ -86,7 +86,7 @@
 }
 
 .exam-schedule-btn--primary {
-  background: var(--school-primary, #1e40af);
+  background: var(--school-primary, #991b1b);
 }
 
 .exam-schedule-btn--outline {
@@ -214,8 +214,8 @@
 
 .exam-schedule-field select:focus,
 .exam-schedule-field input:focus {
-  border-color: var(--school-primary, #1e40af);
-  outline: 3px solid rgba(30, 64, 175, 0.13);
+  border-color: var(--school-primary, #991b1b);
+  outline: 3px solid rgba(153, 27, 27, 0.13);
 }
 
 .exam-schedule-table-wrap {

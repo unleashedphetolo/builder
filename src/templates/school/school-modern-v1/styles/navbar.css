@@ -21,7 +21,7 @@
   width: 50px;
   height: 50px;
   border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(42,27,107,0.06);
+  box-shadow: 0 8px 20px rgba(153, 27, 27,0.06);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -47,7 +47,7 @@
   
 .logo-image:hover {
     transform: scale(1.1);
-    filter: drop-shadow(0 0 6px #cde4ff) drop-shadow(0 0 12px #cde9ff); /* Glows brighter on hover */
+    filter: drop-shadow(0 0 6px #fee2e2) drop-shadow(0 0 12px #fecaca); /* Glows brighter on hover */
   }
    .logo-text {
     display: flex;
@@ -84,13 +84,13 @@
 
 /* ACTIVE / HOVER */
 /* .nav-links a.active{
-  color: #1a1363;
+  color: #7f1d1d;
 } */
 
 .nav-links a:hover,
 .drop-btn:hover {
-  /* background: #34c5ed; */
-  color: #5041f8;
+  /* background: #ef4444; */
+  color: #dc2626;
 }
 
 /* DROPDOWN GROUP */
@@ -137,9 +137,18 @@
 
 .drop-menu a:hover {
   background: #f2f2ff;
-  /* color: #1a1363; */
+  /* color: #7f1d1d; */
 }
 
+.dropdown::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 81px;
+  pointer-events: auto;
+}
 /* HAMBURGER */
 .hamburger {
   display: none;
@@ -306,7 +315,7 @@ body {
   min-width: 72px;
   min-height: 72px;
   padding: 8px;
-  border: 2px solid #3b82f6;
+  border: 2px solid #ef4444;
   border-radius: 4px;
   background: #ffffff;
 }
@@ -326,7 +335,7 @@ body {
   z-index: 3;
   width: 8px;
   height: 8px;
-  border: 2px solid #2563eb;
+  border: 2px solid #dc2626;
   border-radius: 1px;
   background: #ffffff;
   pointer-events: none;
@@ -369,13 +378,13 @@ body {
   padding: 0 8px;
   gap: 5px;
   border-radius: 5px;
-  background: #2563eb;
+  background: #dc2626;
   color: #ffffff;
   font-size: 10px;
   font-weight: 700;
   line-height: 1;
   white-space: nowrap;
-  box-shadow: 0 5px 12px rgba(37, 99, 235, 0.22);
+  box-shadow: 0 5px 12px rgba(220, 38, 38, 0.22);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -394,7 +403,7 @@ body {
 
 .logo-section.builder-logo-editable.logo-editor-selected
   .navbar-logo-edit-button:hover {
-  background: #1d4ed8;
+  background: #dc2626;
 }
 
 /* The image receives additional top breathing space in builder mode */

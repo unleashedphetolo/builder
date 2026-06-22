@@ -168,7 +168,7 @@
 }
 
 .photo-tile-preview:focus-visible {
-  outline: 3px solid var(--school-primary, #1e40af);
+  outline: 3px solid var(--school-primary, #991b1b);
   outline-offset: -3px;
 }
 
@@ -287,7 +287,7 @@
 }
 
 .photo-lightbox-chevron:hover {
-  background: rgba(30, 64, 175, 0.92);
+  background: rgba(153, 27, 27, 0.92);
   transform: scale(1.04);
 }
 
@@ -328,10 +328,10 @@
   min-height: 43px;
   flex: 0 0 auto;
   padding: 0 14px;
-  border: 1px solid rgba(30, 64, 175, 0.2);
+  border: 1px solid rgba(153, 27, 27, 0.2);
   border-radius: var(--school-button-radius, 8px);
-  background: rgba(30, 64, 175, 0.06);
-  color: var(--school-primary, #1e40af);
+  background: rgba(153, 27, 27, 0.06);
+  color: var(--school-primary, #991b1b);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -348,8 +348,8 @@
 }
 
 .photo-lightbox-action:hover {
-  border-color: var(--school-primary, #1e40af);
-  background: var(--school-primary, #1e40af);
+  border-color: var(--school-primary, #991b1b);
+  background: var(--school-primary, #991b1b);
   color: #ffffff;
 }
 

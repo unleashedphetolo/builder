@@ -9,7 +9,7 @@ const EVENTS = [
     date: "2025-01-01",
     period: "01/01/2025 To 01/01/2025",
     location: "Public",
-    color: "#1a73e8",
+    color: "#dc2626",
   },
   {
     id: 2,

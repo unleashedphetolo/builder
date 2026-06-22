@@ -19,6 +19,17 @@ export const DEFAULT_TEMPLATES = [
   },
 
   {
+  layout_key: "school",
+  template_key: "school-prestige-v1",
+  template_path: "templates/school/school-prestige-v1",
+  name: "Prestige Academy",
+  description:
+    "Premium black-and-gold school design with hero-overlay navigation, strong academic branding",
+  tags: ["prestige", "black-gold", "enterprise", "hero-nav"],
+  preview_image: "/template-previews/school-prestige.png",
+},
+
+  {
     layout_key: "school",
     template_key: "school-modern-v1",
     template_path: "templates/school/school-modern-v1",

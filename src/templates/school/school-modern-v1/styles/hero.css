@@ -137,9 +137,9 @@
 }
 
 .btns.primary {
-  background: linear-gradient(90deg, #162680, #2f31a1);
+  background: linear-gradient(90deg, #7f1d1d, #b91c1c);
   color: #fff;
-  box-shadow: 0 10px 30px rgba(42,27,107,0.18);
+  box-shadow: 0 10px 30px rgba(153, 27, 27,0.18);
 }
 
 .btns.ghost {
@@ -198,7 +198,7 @@
   cursor: pointer;
   transition: transform 120ms ease, background 120ms ease;
 }
-.indicator.active { background: #fff; transform: scale(1.2); box-shadow: 0 6px 18px rgba(42,27,107,0.18); }
+.indicator.active { background: #fff; transform: scale(1.2); box-shadow: 0 6px 18px rgba(153, 27, 27,0.18); }
 
 /* Responsive */
 @media (max-width: 1100px) {
@@ -294,9 +294,9 @@
 }
 
 .hero-btn.primary {
-  background: linear-gradient(90deg, #162680, #2f31a1);
+  background: linear-gradient(90deg, #7f1d1d, #b91c1c);
   color: #fff;
-  box-shadow: 0 10px 30px rgba(42, 27, 107, 0.18);
+  box-shadow: 0 10px 30px rgba(153, 27, 27, 0.18);
 }
 
 .hero-btn.secondary {
@@ -366,7 +366,7 @@
 .hero-dot.active {
   background: #fff;
   transform: scale(1.2);
-  box-shadow: 0 6px 18px rgba(42, 27, 107, 0.18);
+  box-shadow: 0 6px 18px rgba(153, 27, 27, 0.18);
 }
 
 @media (max-width: 1100px) {

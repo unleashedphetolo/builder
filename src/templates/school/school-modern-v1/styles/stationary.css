@@ -34,7 +34,7 @@
   justify-content:center;
   padding:10px 14px;
   border-radius:12px;
-  background:linear-gradient(135deg,#2a1b6b,#0b3b8f);
+  background:linear-gradient(135deg,#991b1b,#b91c1c);
   color:#fff;
   font-weight:900;
   text-decoration:none;
@@ -87,8 +87,8 @@
 
 .stationary-filter select:focus,
 .stationary-search input:focus{
-  border-color:rgba(11,59,143,0.45);
-  box-shadow:0 0 0 4px rgba(11,59,143,0.12);
+  border-color:rgba(185, 28, 28,0.45);
+  box-shadow:0 0 0 4px rgba(185, 28, 28,0.12);
 }
 
 .stationary-table-wrap{
@@ -130,7 +130,7 @@
 
 .st-grade{
   font-weight:900;
-  color:#2a1b6b;
+  color:#991b1b;
   white-space:nowrap;
 }
 

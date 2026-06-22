@@ -126,7 +126,7 @@ export function normalizeAnnouncement(item = {}, index = 0) {
       : [],
     style: {
       background_color:
-        safeItem?.style?.background_color || "var(--site-theme-primary, #1e40af)",
+        safeItem?.style?.background_color || "var(--site-theme-primary, #991b1b)",
       text_color: safeItem?.style?.text_color || "#ffffff",
       accent_style: safeItem?.style?.accent_style || "solid",
     },

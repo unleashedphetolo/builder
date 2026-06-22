@@ -701,6 +701,7 @@ export default function Builder() {
   const hasBootstrappedHistoryRef = useRef(false);
   const settingsSaveTimeoutRef = useRef(null);
   const socialSaveTimeoutRef = useRef(null);
+  const templateSwitchInProgressRef = useRef(false);
 
   const hasSelectedTemplate = Boolean(siteId && layoutKey && templateKey);
 
@@ -847,6 +848,43 @@ export default function Builder() {
       {
         type: "site-sections-updated",
         sections: safeSections,
+      },
+      "*",
+    );
+  };
+
+  const emitLiveTemplateUpdate = (nextLayoutKey, nextTemplateKey) => {
+    const detail = {
+      layoutKey: nextLayoutKey || null,
+      templateKey: nextTemplateKey || null,
+      layout_key: nextLayoutKey || null,
+      template_key: nextTemplateKey || null,
+    };
+
+    window.dispatchEvent(
+      new CustomEvent("builder:template-updated", {
+        detail,
+      }),
+    );
+
+    window.dispatchEvent(
+      new CustomEvent("site-template-updated", {
+        detail,
+      }),
+    );
+
+    window.postMessage(
+      {
+        type: "builder:template-updated",
+        ...detail,
+      },
+      "*",
+    );
+
+    window.postMessage(
+      {
+        type: "site-template-updated",
+        ...detail,
       },
       "*",
     );
@@ -1039,6 +1077,10 @@ export default function Builder() {
   useEffect(() => {
     if (!siteId) {
       setPagesLoaded(false);
+      return;
+    }
+
+    if (templateSwitchInProgressRef.current) {
       return;
     }
 
@@ -1718,70 +1760,105 @@ export default function Builder() {
       !!siteId && Array.isArray(pages) && pages.length > 0;
 
     if (hasExistingWebsiteData) {
+      const previousLayoutKey = layoutKey;
+      const previousTemplateKey = templateKey;
+      const previousPagesLoaded = pagesLoaded;
+
+      templateSwitchInProgressRef.current = true;
+
+      setLayoutKey(nextLayoutKey);
+      setTemplateKey(nextTemplateKey);
+      setShowTemplateSelector(false);
+      setPagesLoaded(true);
+      emitLiveTemplateUpdate(nextLayoutKey, nextTemplateKey);
       setSaveStatus("Changing template...");
       setLoadingProgress(20);
 
-      const updatedSite = await updateSiteTemplateOnly({
-        siteId,
-        layoutKey: nextLayoutKey,
-        templateKey: nextTemplateKey,
-      });
+      try {
+        const updatedSite = await updateSiteTemplateOnly({
+          siteId,
+          layoutKey: nextLayoutKey,
+          templateKey: nextTemplateKey,
+        });
 
-      if (!updatedSite) {
-        setTemplateError(
-          "Template could not be saved. Check the sites table update rule or duplicate layout constraint.",
-        );
-        setSaveStatus("Template change failed");
+        if (!updatedSite) {
+          setLayoutKey(previousLayoutKey);
+          setTemplateKey(previousTemplateKey);
+          setPagesLoaded(previousPagesLoaded);
+          emitLiveTemplateUpdate(previousLayoutKey, previousTemplateKey);
+          setTemplateError(
+            "Template could not be saved. Check the sites table update rule or duplicate layout constraint.",
+          );
+          setSaveStatus("Template change failed");
+          return;
+        }
+
+        setLoadingProgress(45);
+
+        const syncResult = await syncSitePagesForTemplate({
+          siteId,
+          layoutKey: nextLayoutKey,
+          templateKey: nextTemplateKey,
+        });
+
+        if (!syncResult?.ok) {
+          if (previousLayoutKey && previousTemplateKey) {
+            await updateSiteTemplateOnly({
+              siteId,
+              layoutKey: previousLayoutKey,
+              templateKey: previousTemplateKey,
+            });
+          }
+
+          setLayoutKey(previousLayoutKey);
+          setTemplateKey(previousTemplateKey);
+          setPagesLoaded(previousPagesLoaded);
+          emitLiveTemplateUpdate(previousLayoutKey, previousTemplateKey);
+          setTemplateError(
+            syncResult?.error?.message ||
+              "Template pages could not be synced. Website data was not deleted.",
+          );
+          setSaveStatus("Template page sync failed");
+          return;
+        }
+
+        const savedLayoutKey = updatedSite.layout_key || nextLayoutKey;
+        const savedTemplateKey = updatedSite.template_key || nextTemplateKey;
+
+        setLayoutKey(savedLayoutKey);
+        setTemplateKey(savedTemplateKey);
+        setShowTemplateSelector(false);
+        emitLiveTemplateUpdate(savedLayoutKey, savedTemplateKey);
+
+        const st = await loadSiteSettings(siteId);
+        setSiteSettings(st);
+        emitLiveSettingsUpdate(st);
+
+        setLoadingProgress(70);
+
+        const nav = syncResult.navItems?.length
+          ? syncResult.navItems
+          : await loadSiteNav(siteId);
+        setNavItems(nav);
+        emitLiveNavUpdate(nav);
+
+        const p = syncResult.pages?.length
+          ? syncResult.pages
+          : await loadSitePages(siteId);
+        setPages(p);
+        setPagesLoaded(true);
+        setLoadingProgress(100);
+
+        setCurrentPageId((prev) => {
+          if (prev && p.some((page) => page.id === prev)) return prev;
+          return p?.[0]?.id || null;
+        });
+
+        setSaveStatus("Template changed. Website data preserved");
         return;
+      } finally {
+        templateSwitchInProgressRef.current = false;
       }
-
-      setLoadingProgress(45);
-
-      const syncResult = await syncSitePagesForTemplate({
-        siteId,
-        layoutKey: nextLayoutKey,
-        templateKey: nextTemplateKey,
-      });
-
-      if (!syncResult?.ok) {
-        setTemplateError(
-          syncResult?.error?.message ||
-            "Template pages could not be synced. Website data was not deleted.",
-        );
-        setSaveStatus("Template page sync failed");
-        return;
-      }
-
-      setLayoutKey(updatedSite.layout_key || nextLayoutKey);
-      setTemplateKey(updatedSite.template_key || nextTemplateKey);
-      setShowTemplateSelector(false);
-
-      const st = await loadSiteSettings(siteId);
-      setSiteSettings(st);
-      emitLiveSettingsUpdate(st);
-
-      setLoadingProgress(70);
-
-      const nav = syncResult.navItems?.length
-        ? syncResult.navItems
-        : await loadSiteNav(siteId);
-      setNavItems(nav);
-      emitLiveNavUpdate(nav);
-
-      const p = syncResult.pages?.length
-        ? syncResult.pages
-        : await loadSitePages(siteId);
-      setPages(p);
-      setPagesLoaded(true);
-      setLoadingProgress(100);
-
-      setCurrentPageId((prev) => {
-        if (prev && p.some((page) => page.id === prev)) return prev;
-        return p?.[0]?.id || null;
-      });
-
-      setSaveStatus("Template changed. Website data preserved");
-      return;
     }
 
     setLoadingProgress(20);
@@ -1815,6 +1892,7 @@ export default function Builder() {
     setLayoutKey(nextLayoutKey);
     setTemplateKey(nextTemplateKey);
     setShowTemplateSelector(false);
+    emitLiveTemplateUpdate(nextLayoutKey, nextTemplateKey);
 
     const st = await loadSiteSettings(ensured.id);
     setSiteSettings(st);
@@ -2683,6 +2761,8 @@ export default function Builder() {
           <>
             <BuilderCanvas
               siteId={siteId}
+              layoutKey={layoutKey}
+              templateKey={templateKey}
               page={currentPage}
               sections={sections}
               selectedSectionId={selectedSectionId}

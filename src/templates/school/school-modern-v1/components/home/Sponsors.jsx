@@ -43,7 +43,7 @@ export default function Sponsors({ content = {} }) {
 
         <p className="sponsors-intro">
           {content?.subtitle ||
-            "{site_name} appreciates the continued support of our partners, community stakeholders, and organisations that contribute to learner development and school growth."}
+            "Our school appreciates the continued support of our partners, community stakeholders, and organisations that contribute to learner development and school growth."}
         </p>
 
         <div className="sponsors-grid">

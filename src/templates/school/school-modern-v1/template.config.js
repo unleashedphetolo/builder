@@ -45,7 +45,7 @@ export const templateConfig = {
     postal_code: "0000",
     country: "South Africa",
 
-    primary_color: "#1d4ed8",
+    primary_color: "#dc2626",
     secondary_color: "#0f172a",
     background_color: "#f8fafc",
     accent_color: "#f59e0b",

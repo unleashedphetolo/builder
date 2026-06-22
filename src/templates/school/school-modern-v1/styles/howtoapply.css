@@ -9,7 +9,7 @@
   align-items:flex-start;
   flex-wrap:wrap;
 
-  background: linear-gradient(135deg, rgba(11, 59, 143, 0.10), rgba(42, 27, 107, 0.06));
+  background: linear-gradient(135deg, rgba(185, 28, 28, 0.10), rgba(153, 27, 27, 0.06));
   border: 1px solid rgba(0,0,0,0.06);
   border-radius: 18px;
   padding: 22px;
@@ -20,7 +20,7 @@
   margin:0;
   font-size:34px;
   font-weight:900;
-  color:#2a1b6b;
+  color:#991b1b;
 }
 
 .howtoapply-sub{
@@ -42,16 +42,16 @@
   display:inline-flex;
   padding:7px 10px;
   border-radius:999px;
-  background: rgba(42,27,107,0.10);
-  border: 1px solid rgba(42,27,107,0.16);
-  color:#2a1b6b;
+  background: rgba(153, 27, 27,0.10);
+  border: 1px solid rgba(153, 27, 27,0.16);
+  color:#991b1b;
   font-weight:900;
   font-size:12px;
 }
 .howtoapply-pill.ghost{
   background:#fff;
-  color:#0b3b8f;
-  border: 1px solid rgba(11,59,143,0.18);
+  color:#b91c1c;
+  border: 1px solid rgba(185, 28, 28,0.18);
 }
 
 .howtoapply-cta{
@@ -75,7 +75,7 @@
 }
 
 .howtoapply-btn.primary{
-  background: linear-gradient(135deg, #2a1b6b, #0b3b8f);
+  background: linear-gradient(135deg, #991b1b, #b91c1c);
   color:#fff;
   border:1px solid rgba(255,255,255,0.18);
   box-shadow:0 10px 22px rgba(0,0,0,0.12);
@@ -87,8 +87,8 @@
 
 .howtoapply-btn.ghost{
   background:#fff;
-  color:#0b3b8f;
-  border:1px solid rgba(11,59,143,0.18);
+  color:#b91c1c;
+  border:1px solid rgba(185, 28, 28,0.18);
   box-shadow:0 10px 22px rgba(0,0,0,0.06);
 }
 .howtoapply-btn.ghost:hover{
@@ -165,14 +165,14 @@
 }
 
 .howtoapply-btn.primary{
-  background: linear-gradient(135deg, #2a1b6b, #0b3b8f);
+  background: linear-gradient(135deg, #991b1b, #b91c1c);
   color:#fff;
   border:1px solid rgba(255,255,255,0.18);
 }
 .howtoapply-btn.ghost{
   background:#fff;
-  color:#0b3b8f;
-  border:1px solid rgba(11,59,143,0.18);
+  color:#b91c1c;
+  border:1px solid rgba(185, 28, 28,0.18);
 }
 
 .docs-grid{

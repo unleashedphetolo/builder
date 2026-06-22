@@ -8,7 +8,7 @@
   width: 100%;
   position: relative;
   z-index: 90;
-  background: var(--announcement-background, var(--site-theme-primary, #1e40af));
+  background: var(--announcement-background, var(--site-theme-primary, #991b1b));
   color: var(--announcement-text, #ffffff);
   font-family: var(--site-theme-body-font, Inter, "Segoe UI", Arial, sans-serif);
 }
@@ -161,7 +161,7 @@
 .school-modern-v1-root .site-announcement-popup__action:focus-visible,
 .school-modern-v1-root .site-announcement-bar button:focus-visible,
 .school-modern-v1-root .site-announcement-bar a:focus-visible {
-  outline: 3px solid rgba(37, 99, 235, 0.3);
+  outline: 3px solid rgba(220, 38, 38, 0.3);
   outline-offset: 2px;
 }
 
@@ -169,7 +169,7 @@
   min-height: 45px;
   padding: 0 19px;
   border-radius: var(--site-theme-button-radius, 8px);
-  background: var(--site-theme-primary, #1e40af);
+  background: var(--site-theme-primary, #991b1b);
   color: #ffffff;
   display: inline-flex;
   align-items: center;

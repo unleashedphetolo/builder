@@ -59,7 +59,7 @@ export default function SiteAnnouncementBar({
       style={{
         "--announcement-background":
           announcement?.style?.background_color ||
-          "var(--site-theme-primary, #1e40af)",
+          "var(--site-theme-primary, #991b1b)",
         "--announcement-text": announcement?.style?.text_color || "#ffffff",
       }}
       role="status"

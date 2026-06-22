@@ -429,7 +429,7 @@ export default function Footer({
             {phone && (
               <a
                 href={`tel:${phone}`}
-                style={{ textDecoration: "none", color: "#2a1b6b" }}
+                style={{ textDecoration: "none", color: "#991b1b" }}
               >
                 ☎ {phone}
               </a>
@@ -440,7 +440,7 @@ export default function Footer({
             {email && (
               <a
                 href={`mailto:${email}`}
-                style={{ textDecoration: "none", color: "#2a1b6b" }}
+                style={{ textDecoration: "none", color: "#991b1b" }}
               >
                 {email}
               </a>

@@ -1,0 +1,1049 @@
+/* NAVBAR WRAPPER */
+.site-nav {
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+  top: 0;
+  z-index: 9999;
+  padding: 0px 20px;
+  /* border-bottom: 3px solid #1b166b; */
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* padding: 14px 0; */
+    padding: 8px 0;
+}
+
+/* LOGO */
+.logos {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(42,27,107,0.06);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -12px;
+}
+  .logo-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    /* color: inherit; */
+  }
+.logo-section {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+  }
+.logo-image {
+    height: 60px;
+    margin-right: 0.75rem;
+    border-radius: 8px;
+    transition: transform 0.3s ease, filter 0.3s ease;
+  }
+  
+.logo-image:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 6px #cde4ff) drop-shadow(0 0 12px #cde9ff); /* Glows brighter on hover */
+  }
+   .logo-text {
+    display: flex;
+    flex-direction: column;
+  }
+  .brand-name {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #021c42;
+  }
+  .slogan {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #000000;
+  }
+
+/* NAVIGATION */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.nav-links a,
+.drop-btn {
+  padding: 10px 11px;
+  border-radius: 6px;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+/* ACTIVE / HOVER */
+/* .nav-links a.active{
+  color: #1a1363;
+} */
+
+.nav-links a:hover,
+.drop-btn:hover {
+  /* background: #34c5ed; */
+  color: #5041f8;
+}
+
+/* DROPDOWN GROUP */
+.dropdown {
+  position: relative;
+}
+
+.drop-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* DROPDOWN MENU */
+.drop-menu {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  background: #ffffff;
+  width: 220px;
+  box-shadow: 0 4px 18px rgba(0,0,55,0.12);
+  border-radius: 8px;
+  padding: 10px 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: 0.22s;
+  z-index: 100;
+}
+
+.drop-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0px);
+}
+
+.drop-menu a {
+  display: block;
+  padding: 10px 16px;
+  color: #333;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.drop-menu a:hover {
+  background: #f2f2ff;
+  /* color: #1a1363; */
+}
+
+/* HAMBURGER */
+.hamburger {
+  display: none;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.hamburger {
+  display: none;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  position: relative;
+  width: 26px;
+  height: 22px;
+  z-index: 99999;
+}
+
+.hamburger span {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: #333;
+  border-radius: 5px;
+  margin: 4px 0;
+  transition: .3s ease-in-out;
+}
+
+/* TRANSFORM TO X WHEN OPEN */
+.hamburger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+body {
+  overscroll-behavior: none;
+}
+
+/* MOBILE */
+@media (max-width: 880px) {
+  .nav-links a, .drop-btn {
+    padding: 8px 11px;
+    color: #676363;
+    text-decoration: none;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+    margin-bottom: 3px;
+  }
+  .drop-menu a {
+    color: #000;
+    font-weight: 500;
+    margin-top: -7px;
+  }
+  .drop-menu {
+    position: static;
+    width: 100%;
+    justify-content: flex-start;
+    box-shadow: none;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    padding-left: 15px;
+    display: none;   /* default closed */
+  }
+
+  .drop-menu.show {
+    display: block;  /* open when clicked */
+  }
+  .nav-links {
+    justify-content: flex-start;
+    gap: 8;
+    align-items:flex-start;
+    display: flex;
+    overflow-y: auto;       /* allow scrolling */
+    max-height: calc(100vh - 140px); /* fits under header */
+    position: fixed;
+    top: 139px;
+    right: 0;
+    background: #fff;
+    width: 280px;
+    height: calc(100% - 120px);
+    flex-direction: column;
+    padding: 20px;
+    padding-top: 55px;
+    transform: translateX(100%);
+    transition: 0.25s;
+    box-shadow: -8px 0 24px rgba(0,0,0,0.08);
+    z-index: 9999;
+  }
+
+  .nav-links.open {
+    transform: translateX(0);
+  }
+
+  .dropdown:hover .drop-menu {
+    /* disable hover drop on mobile */
+    transform: none;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .hamburger {
+    display: block;
+  }
+  .nav-links a,
+.nav-links .dropdown {
+  width: 100%;
+  padding-bottom: 1px;
+  margin-bottom: 14px;
+  border-bottom: 2px solid #d0d0d0;
+}
+
+}
+
+.drop-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  font: inherit;
+  padding: 10px 11px;
+  border-radius: 6px;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+
+/* =========================================================
+   BUILDER LOGO EDITABLE TARGET
+   Selects only the image, not the school name/tagline
+   ========================================================= */
+
+.logo-section.builder-logo-editable {
+  position: relative;
+}
+
+.logo-section .logo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.builder-logo-target {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.builder-logo-target.is-selected {
+  min-width: 72px;
+  min-height: 72px;
+  padding: 8px;
+  border: 2px solid #3b82f6;
+  border-radius: 4px;
+  background: #ffffff;
+}
+
+.builder-logo-target .logo-image {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 56px;
+  max-height: 56px;
+  object-fit: contain;
+}
+
+/* Selection handles around logo image only */
+.builder-logo-handle {
+  position: absolute;
+  z-index: 3;
+  width: 8px;
+  height: 8px;
+  border: 2px solid #2563eb;
+  border-radius: 1px;
+  background: #ffffff;
+  pointer-events: none;
+}
+
+.builder-logo-handle.handle-tl {
+  top: -5px;
+  left: -5px;
+}
+
+.builder-logo-handle.handle-tr {
+  top: -5px;
+  right: -5px;
+}
+
+.builder-logo-handle.handle-bl {
+  bottom: -5px;
+  left: -5px;
+}
+
+.builder-logo-handle.handle-br {
+  right: -5px;
+  bottom: -5px;
+}
+
+/*
+  Edit button attached to the logo image.
+  It sits inside the logo's top area so it cannot cover the school name.
+*/
+/*
+  Edit Logo button stays hidden until the logo is selected.
+  This keeps the normal website preview clean.
+*/
+.logo-section.builder-logo-editable .navbar-logo-edit-button {
+  top: 4px;
+  left: 4px;
+  right: auto;
+  z-index: 45;
+  height: 27px;
+  padding: 0 8px;
+  gap: 5px;
+  border-radius: 5px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 5px 12px rgba(37, 99, 235, 0.22);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.16s ease,
+    visibility 0.16s ease,
+    background 0.16s ease;
+}
+
+.logo-section.builder-logo-editable.logo-editor-selected
+  .navbar-logo-edit-button {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.logo-section.builder-logo-editable.logo-editor-selected
+  .navbar-logo-edit-button:hover {
+  background: #1d4ed8;
+}
+
+/* The image receives additional top breathing space in builder mode */
+.logo-section.builder-logo-editable .builder-logo-target.is-selected {
+  padding-top: 29px;
+  min-height: 88px;
+}
+
+/* Keep database-driven name and slogan unaffected */
+.logo-section.builder-logo-editable .logo-text {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 880px) {
+  .builder-logo-target.is-selected {
+    min-width: 62px;
+    min-height: 78px;
+    padding: 27px 6px 6px;
+  }
+
+  .builder-logo-target .logo-image {
+    max-width: 48px;
+    max-height: 48px;
+  }
+
+  .logo-section.builder-logo-editable.logo-editor-selected
+  .navbar-logo-edit-button {
+  height: 25px;
+  padding: 0 7px;
+  font-size: 9px;
+}
+}
+
+
+/* =========================================================
+   PRESTIGE ACADEMY NAVIGATION
+   Hero-overlay navigation inspired by premium university/school sites.
+   ========================================================= */
+.school-prestige-v1-root .site-nav {
+  z-index: 10010;
+  width: 100%;
+  padding: 0 28px;
+  background: linear-gradient(90deg, rgba(8, 7, 4, 0.96), rgba(28, 21, 7, 0.94));
+  border-bottom: 1px solid rgba(212, 175, 55, 0.22);
+  box-shadow: 0 18px 44px rgba(8, 7, 4, 0.2);
+}
+
+.school-prestige-v1-root.prestige-home .site-nav {
+  position: absolute;
+  top: 42px;
+  left: 0;
+  right: 0;
+  background: transparent;
+  border-bottom: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.school-prestige-v1-root.prestige-inner .site-nav {
+  position: sticky;
+  top: 0;
+}
+
+.school-prestige-v1-root .nav-inner {
+  max-width: 1280px;
+  min-height: 84px;
+  margin: 0 auto;
+  padding: 10px 0;
+  gap: 24px;
+}
+
+.school-prestige-v1-root .logo-link,
+.school-prestige-v1-root .logo-section .logo-link {
+  gap: 14px;
+  color: #ffffff;
+}
+
+.school-prestige-v1-root .builder-logo-target {
+  width: 76px;
+  height: 76px;
+  border-radius: 999px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 2px solid rgba(212, 175, 55, 0.7);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.26);
+}
+
+.school-prestige-v1-root .builder-logo-target .logo-image,
+.school-prestige-v1-root .logo-image {
+  max-width: 62px;
+  max-height: 62px;
+  width: auto;
+  height: auto;
+  margin: 0;
+  object-fit: contain;
+  border-radius: 999px;
+}
+
+.school-prestige-v1-root .brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.school-prestige-v1-root .school-name {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(1rem, 1.6vw, 1.35rem);
+  line-height: 1.05;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.school-prestige-v1-root .slogan {
+  margin: 0;
+  color: #f3d675;
+  font-size: 0.78rem;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.school-prestige-v1-root .nav-links {
+  gap: 4px;
+  margin-left: auto;
+}
+
+.school-prestige-v1-root .nav-links a,
+.school-prestige-v1-root .drop-btn {
+  min-height: 42px;
+  padding: 11px 13px;
+  color: rgba(255, 255, 255, 0.94);
+  border-radius: 999px;
+  font-size: 0.79rem;
+  font-weight: 850;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.school-prestige-v1-root .nav-links a:hover,
+.school-prestige-v1-root .nav-links a:focus,
+.school-prestige-v1-root .drop-btn:hover,
+.school-prestige-v1-root .drop-btn:focus {
+  color: #0b0b0f;
+  background: #d4af37;
+  border-color: rgba(255, 255, 255, 0.18);
+  outline: none;
+}
+
+.school-prestige-v1-root .drop-menu {
+  background: rgba(12, 10, 4, 0.98);
+  border: 1px solid rgba(212, 175, 55, 0.26);
+  border-radius: 18px;
+  padding: 10px;
+  box-shadow: 0 22px 60px rgba(8, 7, 4, 0.34);
+  backdrop-filter: blur(12px);
+}
+
+.school-prestige-v1-root .drop-menu a {
+  color: rgba(255, 247, 215, 0.94);
+  border-radius: 12px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.9rem;
+}
+
+.school-prestige-v1-root .drop-menu a:hover,
+.school-prestige-v1-root .drop-menu a:focus {
+  color: #0b0b0f;
+  background: #d4af37;
+}
+
+.school-prestige-v1-root .hamburger {
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  background: rgba(8, 7, 4, 0.42);
+}
+
+.school-prestige-v1-root .hamburger span {
+  background: #ffffff;
+}
+
+@media (max-width: 1080px) {
+  .school-prestige-v1-root .brand-text {
+    display: none;
+  }
+
+  .school-prestige-v1-root .nav-links a,
+  .school-prestige-v1-root .drop-btn {
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 0.72rem;
+  }
+}
+
+@media (max-width: 880px) {
+  .school-prestige-v1-root .site-nav,
+  .school-prestige-v1-root.prestige-home .site-nav {
+    position: absolute;
+    top: 0;
+    padding: 0 14px;
+    background: linear-gradient(90deg, rgba(8, 7, 4, 0.76), rgba(28, 21, 7, 0.7));
+    backdrop-filter: blur(10px);
+  }
+
+  .school-prestige-v1-root.prestige-inner .site-nav {
+    position: sticky;
+  }
+
+  .school-prestige-v1-root .nav-inner {
+    min-height: 74px;
+  }
+
+  .school-prestige-v1-root .builder-logo-target {
+    width: 58px;
+    height: 58px;
+    padding: 6px;
+  }
+
+  .school-prestige-v1-root .builder-logo-target .logo-image,
+  .school-prestige-v1-root .logo-image {
+    max-width: 46px;
+    max-height: 46px;
+  }
+
+  .school-prestige-v1-root .nav-links {
+    top: 74px;
+    right: 12px;
+    width: min(340px, calc(100vw - 24px));
+    height: auto;
+    max-height: calc(100vh - 92px);
+    padding: 18px;
+    background: rgba(8, 7, 4, 0.97);
+    border: 1px solid rgba(212, 175, 55, 0.28);
+    border-radius: 22px;
+    box-shadow: 0 24px 70px rgba(8, 7, 4, 0.38);
+  }
+
+  .school-prestige-v1-root .nav-links a,
+  .school-prestige-v1-root .nav-links .dropdown,
+  .school-prestige-v1-root .drop-btn {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   PRESTIGE CLEAN HEADER REFINEMENT
+   Styling only: keeps the same JSX, links, editor and fallback data.
+   Makes the header feel like it belongs on top of the hero media.
+   ========================================================= */
+.school-prestige-v1-root.prestige-home .site-nav {
+  top: 44px;
+  background:
+    linear-gradient(90deg, rgba(6, 6, 4, 0.58), rgba(6, 6, 4, 0.34) 48%, rgba(28, 21, 7, 0.52)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.08);
+  backdrop-filter: blur(16px) saturate(1.08);
+  box-shadow: 0 16px 46px rgba(0, 0, 0, 0.12);
+}
+
+.school-prestige-v1-root.prestige-inner .site-nav {
+  background:
+    linear-gradient(90deg, rgba(8, 7, 4, 0.98), rgba(28, 21, 7, 0.96));
+  border-bottom: 1px solid rgba(212, 175, 55, 0.26);
+  box-shadow: 0 14px 36px rgba(8, 7, 4, 0.22);
+}
+
+.school-prestige-v1-root .nav-inner {
+  min-height: 76px;
+  padding: 8px 0;
+  gap: 22px;
+}
+
+.school-prestige-v1-root .logo-link,
+.school-prestige-v1-root .logo-section .logo-link {
+  gap: 12px;
+  min-width: 0;
+}
+
+.school-prestige-v1-root .builder-logo-target {
+  width: 66px;
+  height: 66px;
+  padding: 7px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(243, 214, 117, 0.76);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24);
+}
+
+.school-prestige-v1-root .builder-logo-target .logo-image,
+.school-prestige-v1-root .logo-image {
+  max-width: 54px;
+  max-height: 54px;
+}
+
+.school-prestige-v1-root .brand-text {
+  min-width: 0;
+  max-width: 250px;
+}
+
+.school-prestige-v1-root .school-name {
+  color: #fff9df;
+  font-size: clamp(0.95rem, 1.22vw, 1.16rem);
+  line-height: 1.08;
+  letter-spacing: 0.01em;
+  text-shadow: 0 8px 22px rgba(0, 0, 0, 0.38);
+}
+
+.school-prestige-v1-root .slogan {
+  color: rgba(243, 214, 117, 0.9);
+  font-size: 0.72rem;
+  line-height: 1.2;
+  letter-spacing: 0.12em;
+}
+
+.school-prestige-v1-root .nav-links {
+  gap: 6px;
+  flex: 1 1 auto;
+  justify-content: flex-end;
+  min-width: 0;
+  align-items: center;
+}
+
+.school-prestige-v1-root .nav-links a,
+.school-prestige-v1-root .drop-btn {
+  color: rgba(255, 250, 225, 0.96);
+  padding: 10px 12px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 850;
+  line-height: 1.1;
+  letter-spacing: 0.015em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid transparent;
+  text-shadow: 0 5px 18px rgba(0, 0, 0, 0.34);
+}
+
+.school-prestige-v1-root .nav-links a:hover,
+.school-prestige-v1-root .nav-links a:focus,
+.school-prestige-v1-root .drop-btn:hover,
+.school-prestige-v1-root .drop-btn:focus {
+  color: #0b0b0f;
+  background: linear-gradient(135deg, #f3d675, #d4af37);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 10px 24px rgba(212, 175, 55, 0.24);
+  outline: none;
+  text-shadow: none;
+}
+
+.school-prestige-v1-root .drop-menu {
+  top: calc(100% + 12px);
+  min-width: 230px;
+  padding: 10px;
+  border-radius: 18px;
+  background: rgba(8, 7, 4, 0.94);
+  border: 1px solid rgba(212, 175, 55, 0.24);
+  box-shadow: 0 26px 60px rgba(0, 0, 0, 0.34);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.school-prestige-v1-root .drop-menu a {
+  color: rgba(255, 247, 215, 0.92);
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 0.86rem;
+  font-weight: 720;
+  text-transform: none;
+  letter-spacing: 0;
+  text-shadow: none;
+}
+
+.school-prestige-v1-root .drop-menu a:hover,
+.school-prestige-v1-root .drop-menu a:focus {
+  color: #0b0b0f;
+  background: linear-gradient(135deg, #f3d675, #d4af37);
+  outline: none;
+}
+
+.school-prestige-v1-root .hamburger {
+  width: 50px;
+  height: 50px;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 175, 55, 0.42);
+  background: rgba(8, 7, 4, 0.42);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+.school-prestige-v1-root .hamburger span {
+  width: 24px;
+  height: 2px;
+  margin: 5px auto;
+  background: #f3d675;
+}
+
+@media (max-width: 1120px) {
+  .school-prestige-v1-root .brand-text {
+    max-width: 210px;
+  }
+
+  .school-prestige-v1-root .nav-links a,
+  .school-prestige-v1-root .drop-btn {
+    padding: 9px 9px;
+    font-size: 0.76rem;
+  }
+}
+
+@media (max-width: 880px) {
+  .school-prestige-v1-root .site-nav,
+  .school-prestige-v1-root.prestige-home .site-nav,
+  .school-prestige-v1-root.prestige-inner .site-nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 0 12px;
+    background:
+      linear-gradient(90deg, rgba(8, 7, 4, 0.62), rgba(28, 21, 7, 0.34));
+    border-bottom: 1px solid rgba(212, 175, 55, 0.18);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    box-shadow: none;
+  }
+
+  .school-prestige-v1-root .nav-inner {
+    min-height: 92px;
+    padding: 10px 0;
+  }
+
+  .school-prestige-v1-root .builder-logo-target {
+    width: 56px;
+    height: 56px;
+    padding: 6px;
+  }
+
+  .school-prestige-v1-root .builder-logo-target .logo-image,
+  .school-prestige-v1-root .logo-image {
+    max-width: 46px;
+    max-height: 46px;
+  }
+
+  .school-prestige-v1-root .brand-text {
+    display: none;
+  }
+
+  .school-prestige-v1-root .nav-links {
+    top: 92px;
+    right: 12px;
+    width: min(330px, calc(100vw - 24px));
+    height: auto;
+    max-height: calc(100vh - 112px);
+    padding: 14px;
+    gap: 6px;
+    background: rgba(8, 7, 4, 0.96);
+    border: 1px solid rgba(212, 175, 55, 0.24);
+    border-radius: 22px;
+    box-shadow: 0 28px 70px rgba(0, 0, 0, 0.36);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    align-items: center;
+  }
+
+  .school-prestige-v1-root .nav-links a,
+  .school-prestige-v1-root .drop-btn,
+  .school-prestige-v1-root .nav-links .dropdown {
+    width: 100%;
+    margin: 0;
+    border-bottom: 0;
+  }
+
+  .school-prestige-v1-root .nav-links a,
+  .school-prestige-v1-root .drop-btn {
+    justify-content: space-between;
+    color: rgba(255, 247, 215, 0.96);
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 12px 14px;
+    border-radius: 14px;
+    font-size: 0.88rem;
+    display: inline-flex;
+align-items: center;
+justify-content: center;
+line-height: 1;
+vertical-align: middle;
+  }
+
+  .school-prestige-v1-root .drop-menu {
+    margin: 7px 0 4px;
+    padding: 8px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(212, 175, 55, 0.16);
+  }
+
+  .school-prestige-v1-root .drop-menu a {
+    color: rgba(255, 247, 215, 0.9);
+    margin: 0;
+    padding: 10px 12px;
+    background: transparent;
+  }
+}
+
+
+/* =========================================================
+   PRESTIGE NAVBAR FINAL CLEANUP
+   CSS only. Keeps all links/dropdowns/editor logic unchanged.
+   ========================================================= */
+.school-prestige-v1-root.prestige-home .site-nav {
+  top: 42px;
+  background: transparent;
+border-top: 0;
+border-bottom: none;
+backdrop-filter: none;
+-webkit-backdrop-filter: none;
+box-shadow: none;
+}
+
+.school-prestige-v1-root .nav-inner {
+  min-height: 74px;
+  max-width: 1320px;
+  padding: 7px 0;
+}
+
+.school-prestige-v1-root .builder-logo-target {
+  width: 70px;
+  height: 70px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(243, 214, 117, 0.72);
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.24);
+}
+
+.school-prestige-v1-root .nav-links {
+  gap: 3px;
+  align-items: center;
+}
+
+.school-prestige-v1-root .nav-links a,
+.school-prestige-v1-root .drop-btn {
+  min-height: 38px;
+  padding: 9px 10px;
+  font-size: clamp(0.7rem, 0.72vw, 0.82rem);
+  border-radius: 999px;
+  background: transparent;
+}
+
+/* Keep dropdown attached to parent so hover never falls through the gap. */
+.school-prestige-v1-root .dropdown.parent::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 8px;
+  pointer-events: auto;
+}
+
+.school-prestige-v1-root .drop-menu {
+  top: calc(100% + 2px);
+  min-width: 220px;
+  padding: 8px;
+  border-radius: 16px;
+}
+
+.school-prestige-v1-root .drop-menu a {
+  min-height: 0;
+  padding: 9px 11px;
+  font-size: 0.86rem;
+  border-radius: 11px;
+}
+
+.school-prestige-v1-root.prestige-home .nav-links a:hover,
+.school-prestige-v1-root.prestige-home .nav-links a:focus,
+.school-prestige-v1-root.prestige-home .drop-btn:hover,
+.school-prestige-v1-root.prestige-home .drop-btn:focus {
+  background: rgba(243, 214, 117, 0.95);
+  color: #080704;
+}
+
+@media (max-width: 1180px) {
+  .school-prestige-v1-root .brand-text {
+    display: none;
+  }
+
+  .school-prestige-v1-root .nav-links a,
+  .school-prestige-v1-root .drop-btn {
+    padding-left: 8px;
+    padding-right: 8px;
+    font-size: 0.68rem;
+    display: inline-flex;
+align-items: center;
+justify-content: center;
+line-height: 1;
+vertical-align: middle;
+  }
+}
+
+@media (max-width: 980px) {
+  .school-prestige-v1-root .nav-links a,
+  .school-prestige-v1-root .drop-btn {
+    padding-left: 7px;
+    padding-right: 7px;
+    font-size: 0.64rem;
+  }
+}
+.school-prestige-v1-root.prestige-home .nav-links a,
+.school-prestige-v1-root.prestige-home .drop-btn {
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.65);
+}
+
+@media (max-width: 880px) {
+  .school-prestige-v1-root .site-nav,
+  .school-prestige-v1-root.prestige-home .site-nav,
+  .school-prestige-v1-root.prestige-inner .site-nav {
+   top: 0;
+background: transparent;
+border-bottom: none;
+backdrop-filter: none;
+-webkit-backdrop-filter: none;
+box-shadow: none;
+  }
+
+  .school-prestige-v1-root .nav-inner {
+    min-height: 86px;
+  }
+
+  .school-prestige-v1-root .builder-logo-target {
+    width: 58px;
+    height: 58px;
+  }
+
+  .school-prestige-v1-root .nav-links {
+    top: 88px;
+    gap: 6px;
+  }
+
+  .school-prestige-v1-root .dropdown.parent::after {
+    display: none;
+  }
+}
+

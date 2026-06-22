@@ -20,7 +20,7 @@
 .bulletin-title {
   font-size: 34px;
   font-weight: 900;
-  color: #2a1b6b;
+  color: #991b1b;
 }
 
 .bulletin-subtitle {
@@ -85,10 +85,10 @@
 }
 
 .bulletin-category {
-  background: rgba(42,27,107,0.08);
+  background: rgba(153, 27, 27,0.08);
   padding: 4px 8px;
   border-radius: 6px;
-  color: #2a1b6b;
+  color: #991b1b;
   font-weight: 600;
 }
 

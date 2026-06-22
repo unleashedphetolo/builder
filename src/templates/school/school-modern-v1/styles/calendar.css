@@ -66,7 +66,7 @@
 }
 
 .cal-today {
-  background: #0b3b8f;
+  background: #b91c1c;
   color: #ffffff;
   border-color: transparent;
 }
@@ -149,14 +149,14 @@
 }
 
 .calendar-cell.today .cell-number {
-  color: #1a73e8;
+  color: #dc2626;
 }
 
 /* Selected day */
 .calendar-cell.selected {
-  border-color: #0b3b8f;
-  box-shadow: 0 14px 28px rgba(11, 59, 143, 0.20);
-  background: rgba(11, 59, 143, 0.06);
+  border-color: #b91c1c;
+  box-shadow: 0 14px 28px rgba(185, 28, 28, 0.20);
+  background: rgba(185, 28, 28, 0.06);
 }
 
 /* Event dots */

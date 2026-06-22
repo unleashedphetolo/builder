@@ -17,7 +17,7 @@
   align-items: flex-start;
   flex-wrap: wrap;
 
-  background: linear-gradient(135deg, rgba(11, 59, 143, 0.10), rgba(42, 27, 107, 0.06));
+  background: linear-gradient(135deg, rgba(185, 28, 28, 0.10), rgba(153, 27, 27, 0.06));
   border: 1px solid rgba(0,0,0,0.06);
   border-radius: 18px;
   padding: 22px;
@@ -28,7 +28,7 @@
   margin: 0;
   font-size: 34px;
   font-weight: 900;
-  color: #2a1b6b;
+  color: #991b1b;
 }
 
 .scal-subtitle {
@@ -56,7 +56,7 @@
   font-weight: 900;
   color: #ffffff;
 
-  background: linear-gradient(135deg, #2a1b6b, #0b3b8f);
+  background: linear-gradient(135deg, #991b1b, #b91c1c);
   border: 1px solid rgba(255,255,255,0.15);
   box-shadow: 0 10px 22px rgba(0,0,0,0.12);
   transition: transform 140ms ease, box-shadow 140ms ease;
@@ -70,8 +70,8 @@
 
 .scal-btn.ghost {
   background: #ffffff;
-  color: #0b3b8f;
-  border: 1px solid rgba(11, 59, 143, 0.18);
+  color: #b91c1c;
+  border: 1px solid rgba(185, 28, 28, 0.18);
   box-shadow: 0 10px 22px rgba(0,0,0,0.06);
 }
 
@@ -108,9 +108,9 @@
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #0b3b8f;
-  background: rgba(11, 59, 143, 0.08);
-  border: 1px solid rgba(11, 59, 143, 0.15);
+  color: #b91c1c;
+  background: rgba(185, 28, 28, 0.08);
+  border: 1px solid rgba(185, 28, 28, 0.15);
   padding: 7px 10px;
   border-radius: 999px;
   display: inline-flex;
@@ -128,7 +128,7 @@
   margin: 8px 0 0;
   font-size: 28px;
   font-weight: 900;
-  color: #2a1b6b;
+  color: #991b1b;
 }
 
 .scal-muted {
@@ -150,7 +150,7 @@
 .scal-link {
   text-decoration: none;
   font-weight: 900;
-  color: #0b3b8f;
+  color: #b91c1c;
   white-space: nowrap;
 }
 
@@ -198,7 +198,7 @@
 
 .td-title {
   font-weight: 900;
-  color: #2a1b6b;
+  color: #991b1b;
 }
 
 .td-dt {
@@ -215,9 +215,9 @@
   display: inline-flex;
   padding: 6px 10px;
   border-radius: 999px;
-  background: rgba(42, 27, 107, 0.08);
-  border: 1px solid rgba(42, 27, 107, 0.16);
-  color: #2a1b6b;
+  background: rgba(153, 27, 27, 0.08);
+  border: 1px solid rgba(153, 27, 27, 0.16);
+  color: #991b1b;
   font-weight: 900;
   font-size: 12px;
   white-space: nowrap;
@@ -247,8 +247,8 @@
 }
 
 .scal-search input:focus {
-  border-color: rgba(11, 59, 143, 0.35);
-  box-shadow: 0 0 0 4px rgba(11, 59, 143, 0.12);
+  border-color: rgba(185, 28, 28, 0.35);
+  box-shadow: 0 0 0 4px rgba(185, 28, 28, 0.12);
 }
 
 /* Hide left calendar on small devices */

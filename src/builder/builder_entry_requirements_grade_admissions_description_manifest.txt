@@ -1,5 +1,0 @@
-Targeted builder update:
-- Added the school_entry_requirements registry mapping so the Entry Requirements / Grade Admissions page always opens the correct school-specific editor.
-- The Grade Admissions Description field remains directly under Grade Admissions Heading and before Application Process Heading.
-- Strengthened page-type inference with grades_description so saved pages that contain only this paragraph still resolve to the Entry Requirements editor.
-- Does not change layout, structure, date/time picker behavior, repetition cleanup, or other page fallbacks.

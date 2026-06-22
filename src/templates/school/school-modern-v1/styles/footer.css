@@ -9,7 +9,7 @@
 .site-footer {
   background: linear-gradient(180deg, #f7f9fd 0%, #ffffff 100%);
   color: #2a2a2a;
-  border-top: 1px solid rgba(42,27,107,0.06);
+  border-top: 1px solid rgba(153, 27, 27,0.06);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
 
@@ -37,7 +37,7 @@
   width: 60px;
   height: 60px;
   border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(42,27,107,0.06);
+  box-shadow: 0 8px 20px rgba(153, 27, 27,0.06);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -50,7 +50,7 @@
   }
 .brand-text .school-name {
   font-weight: 700;
-  color: #2a1b6b !important;
+  color: #991b1b !important;
   font-size: 1.05rem;
   letter-spacing: 0.2px;
 }
@@ -93,7 +93,7 @@
 .link-group h4 {
   margin: 0 0 8px 0;
   font-size: 0.95rem;
-  color: #2a1b6b;
+  color: #991b1b;
   font-weight: 700;
 }
 
@@ -119,7 +119,7 @@
 
 .link-group a:hover,
 .link-group a:focus {
-  color: #2a1b6b;
+  color: #991b1b;
   transform: translateX(4px);
   outline: none;
 }
@@ -131,7 +131,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 14px 0 28px 0;
-  border-top: 1px solid rgba(42,27,107,0.03);
+  border-top: 1px solid rgba(153, 27, 27,0.03);
   flex-wrap: wrap;
 }
 
@@ -171,7 +171,7 @@
 
 .social-icon:focus {
   transform: translateY(-4px);
-  background: rgba(42,27,107,0.06);
+  background: rgba(153, 27, 27,0.06);
   outline: none;
 }
 .powered-by {

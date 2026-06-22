@@ -1,0 +1,428 @@
+/* =========================================================
+   HOME GALLERY PREVIEW COMPATIBILITY
+   Retains the existing homepage gallery preview card layout.
+   ========================================================= */
+
+.gallery {
+  width: 100%;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.gallery-card {
+  position: relative;
+  display: block;
+  height: 225px;
+  border-radius: var(--school-card-radius, 12px);
+  overflow: hidden;
+  background: #e2e8f0;
+  text-decoration: none;
+  box-shadow: 0 7px 22px rgba(15, 23, 42, 0.08);
+}
+
+.gallery-card img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.34s ease;
+}
+
+.gallery-card:hover img {
+  transform: scale(1.055);
+}
+
+.gallery-overlay {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 54px 16px 16px;
+  color: #ffffff;
+  background: linear-gradient(transparent, rgba(15, 23, 42, 0.76));
+}
+
+.gallery-overlay h3 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 760;
+  letter-spacing: 0.04em;
+}
+
+/* =========================================================
+   FULL PHOTO GALLERY
+   Enterprise photo tiles and lightbox image browsing.
+   ========================================================= */
+
+.photo-gallery {
+  width: 100%;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.photo-tile {
+  position: relative;
+  height: 242px;
+  border-radius: var(--school-card-radius, 14px);
+  overflow: hidden;
+  background: #e2e8f0;
+  box-shadow: 0 9px 26px rgba(15, 23, 42, 0.08);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.photo-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.14);
+}
+
+.photo-tile-preview {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  display: block;
+  font: inherit;
+  text-align: left;
+}
+
+.photo-tile-image {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.38s ease;
+}
+
+.photo-tile:hover .photo-tile-image,
+.photo-tile-preview:focus-visible .photo-tile-image {
+  transform: scale(1.055);
+}
+
+.photo-tile-gradient {
+  position: absolute;
+  inset: 34% 0 0;
+  background: linear-gradient(transparent, rgba(15, 23, 42, 0.86));
+}
+
+.photo-tile-content {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 16px;
+  display: grid;
+  gap: 5px;
+  color: #ffffff;
+}
+
+.photo-tile-count {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.7rem;
+  font-weight: 760;
+  letter-spacing: 0.16em;
+}
+
+.photo-tile-title {
+  font-size: 1.03rem;
+  font-weight: 780;
+  letter-spacing: 0.03em;
+}
+
+.photo-tile-view {
+  margin-top: 3px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 0.78rem;
+  font-weight: 660;
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+
+.photo-tile-view svg {
+  width: 15px;
+  height: 15px;
+}
+
+.photo-tile:hover .photo-tile-view,
+.photo-tile-preview:focus-visible .photo-tile-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.photo-tile-preview:focus-visible {
+  outline: 3px solid var(--school-primary, #1e40af);
+  outline-offset: -3px;
+}
+
+/* =========================================================
+   ENTERPRISE LIGHTBOX
+   ========================================================= */
+
+.photo-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000000;
+  padding: clamp(12px, 4vw, 30px);
+  background: rgba(2, 6, 23, 0.84);
+  backdrop-filter: blur(7px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-lightbox-card {
+  width: min(1120px, 100%);
+  max-height: min(94vh, 920px);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 18px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 32px 95px rgba(0, 0, 0, 0.48);
+  display: flex;
+  flex-direction: column;
+}
+
+.photo-lightbox-header {
+  flex: 0 0 auto;
+  min-height: 72px;
+  padding: 14px 17px 14px 22px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.photo-lightbox-label {
+  display: block;
+  margin-bottom: 3px;
+  color: #64748b;
+  font-size: 0.68rem;
+  font-weight: 760;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.photo-lightbox-header h3 {
+  margin: 0;
+  color: var(--school-secondary, #0f172a);
+  font-size: 1.06rem;
+  font-weight: 770;
+}
+
+.photo-lightbox-close {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  background: #f8fafc;
+  color: #334155;
+  cursor: pointer;
+  font-size: 1.6rem;
+  line-height: 1;
+  transition:
+    background 0.16s ease,
+    color 0.16s ease;
+}
+
+.photo-lightbox-close:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.photo-lightbox-media {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: min(64vh, 580px);
+  background: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-lightbox-media img {
+  display: block;
+  width: 100%;
+  height: min(68vh, 650px);
+  object-fit: contain;
+}
+
+.photo-lightbox-chevron {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  width: 54px;
+  height: 54px;
+  margin-top: -27px;
+  border: 1px solid rgba(255, 255, 255, 0.21);
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.52);
+  color: #ffffff;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition:
+    background 0.16s ease,
+    transform 0.16s ease;
+}
+
+.photo-lightbox-chevron:hover {
+  background: rgba(30, 64, 175, 0.92);
+  transform: scale(1.04);
+}
+
+.photo-lightbox-chevron.previous {
+  left: 18px;
+}
+
+.photo-lightbox-chevron.next {
+  right: 18px;
+}
+
+.photo-lightbox-footer {
+  flex: 0 0 auto;
+  min-height: 76px;
+  padding: 16px 21px;
+  border-top: 1px solid #e2e8f0;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.photo-lightbox-description strong {
+  display: block;
+  color: #0f172a;
+  font-size: 0.96rem;
+}
+
+.photo-lightbox-description p {
+  margin: 5px 0 0;
+  color: #64748b;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.photo-lightbox-action {
+  min-height: 43px;
+  flex: 0 0 auto;
+  padding: 0 14px;
+  border: 1px solid rgba(30, 64, 175, 0.2);
+  border-radius: var(--school-button-radius, 8px);
+  background: rgba(30, 64, 175, 0.06);
+  color: var(--school-primary, #1e40af);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 760;
+  text-decoration: none;
+}
+
+.photo-lightbox-action svg {
+  width: 17px;
+  height: 17px;
+}
+
+.photo-lightbox-action:hover {
+  border-color: var(--school-primary, #1e40af);
+  background: var(--school-primary, #1e40af);
+  color: #ffffff;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .photo-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .photo-tile {
+    height: 220px;
+  }
+}
+
+@media (max-width: 560px) {
+  .gallery-grid,
+  .photo-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gallery-card,
+  .photo-tile {
+    height: 218px;
+  }
+
+  .photo-lightbox {
+    padding: 0;
+  }
+
+  .photo-lightbox-card {
+    max-height: 100vh;
+    height: 100vh;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .photo-lightbox-header {
+    min-height: 66px;
+    padding-left: 16px;
+  }
+
+  .photo-lightbox-media {
+    min-height: 0;
+  }
+
+  .photo-lightbox-media img {
+    height: 100%;
+    min-height: 0;
+  }
+
+  .photo-lightbox-chevron {
+    width: 46px;
+    height: 46px;
+    margin-top: -23px;
+  }
+
+  .photo-lightbox-chevron.previous {
+    left: 10px;
+  }
+
+  .photo-lightbox-chevron.next {
+    right: 10px;
+  }
+
+  .photo-lightbox-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

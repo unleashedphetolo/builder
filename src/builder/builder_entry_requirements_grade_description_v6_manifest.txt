@@ -1,5 +1,0 @@
-Builder v6 targeted fix
-- Restored the Grade Admissions Description editor field for Entry Requirements / Grade Admissions.
-- The field is inserted after grades_title and before process_title when existing template metadata forgot the key.
-- The original fallback paragraph is preserved and filled only if the saved value is missing.
-- No other editor fields, fallbacks, section structure, date/time behavior, colors, typography, or page logic were changed.

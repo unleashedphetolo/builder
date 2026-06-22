@@ -155,6 +155,8 @@ function extractSlugFromHash(hash = "") {
 
 export default function BuilderCanvas({
   siteId,
+  layoutKey = null,
+  templateKey = null,
   page,
   sections = EMPTY_BUILDER_SECTIONS,
   selectedSectionId = null,
@@ -204,6 +206,34 @@ export default function BuilderCanvas({
 
   const anyEditorOpen = mediaEditorOpen || sectionEditorOpen;
 
+  const postTemplateUpdateToPreview = (nextLayoutKey, nextTemplateKey) => {
+    if (!window.previewFrame?.contentWindow) return;
+    if (!nextLayoutKey && !nextTemplateKey) return;
+
+    const detail = {
+      layoutKey: nextLayoutKey || null,
+      templateKey: nextTemplateKey || null,
+      layout_key: nextLayoutKey || null,
+      template_key: nextTemplateKey || null,
+    };
+
+    window.previewFrame.contentWindow.postMessage(
+      {
+        type: "builder:template-updated",
+        ...detail,
+      },
+      "*",
+    );
+
+    window.previewFrame.contentWindow.postMessage(
+      {
+        type: "site-template-updated",
+        ...detail,
+      },
+      "*",
+    );
+  };
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 768) {
@@ -246,6 +276,15 @@ export default function BuilderCanvas({
           "*",
         );
       }
+    }
+
+    function handleTemplateUpdate(e) {
+      const detail = e.detail || e.data || {};
+
+      postTemplateUpdateToPreview(
+        detail.layoutKey || detail.layout_key,
+        detail.templateKey || detail.template_key,
+      );
     }
 
     function handleSettingsUpdate(e) {
@@ -303,6 +342,8 @@ export default function BuilderCanvas({
     }
 
     window.addEventListener("builder:navigate", handleNavigate);
+    window.addEventListener("builder:template-updated", handleTemplateUpdate);
+    window.addEventListener("site-template-updated", handleTemplateUpdate);
     window.addEventListener("builder:settings-updated", handleSettingsUpdate);
     window.addEventListener("site-settings-updated", handleSettingsUpdate);
     window.addEventListener("builder:nav-updated", handleNavUpdate);
@@ -312,6 +353,11 @@ export default function BuilderCanvas({
 
     return () => {
       window.removeEventListener("builder:navigate", handleNavigate);
+      window.removeEventListener(
+        "builder:template-updated",
+        handleTemplateUpdate,
+      );
+      window.removeEventListener("site-template-updated", handleTemplateUpdate);
       window.removeEventListener(
         "builder:settings-updated",
         handleSettingsUpdate,
@@ -328,7 +374,11 @@ export default function BuilderCanvas({
         handleSectionsUpdate,
       );
     };
-  }, [siteId]);
+  }, [siteId, layoutKey, templateKey]);
+
+  useEffect(() => {
+    postTemplateUpdateToPreview(layoutKey, templateKey);
+  }, [layoutKey, templateKey, previewUrl]);
 
   useEffect(() => {
     function handleMediaEditorState(event) {
@@ -448,6 +498,8 @@ export default function BuilderCanvas({
           { type: "builder:request-sync" },
           "*",
         );
+
+        postTemplateUpdateToPreview(layoutKey, templateKey);
 
         window.previewFrame.contentWindow.postMessage(
           {

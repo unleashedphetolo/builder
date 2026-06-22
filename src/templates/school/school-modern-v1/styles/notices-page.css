@@ -16,7 +16,7 @@
   font-size: 34px;
   margin: 0;
   font-weight: 900;
-  color: #2a1b6b;
+  color: #991b1b;
 }
 
 .np-subtitle {
@@ -36,8 +36,8 @@
 }
 
 .np-search input:focus {
-  border-color: rgba(11, 59, 143, 0.55);
-  box-shadow: 0 12px 22px rgba(11, 59, 143, 0.12);
+  border-color: rgba(185, 28, 28, 0.55);
+  box-shadow: 0 12px 22px rgba(185, 28, 28, 0.12);
 }
 
 .np-card {
@@ -68,8 +68,8 @@
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #0b3b8f;
-  background: rgba(11, 59, 143, 0.08);
+  color: #b91c1c;
+  background: rgba(185, 28, 28, 0.08);
   padding: 8px 10px;
   border-radius: 999px;
 }
@@ -109,7 +109,7 @@
 
 .td-title {
   font-weight: 800;
-  color: #2a1b6b;
+  color: #991b1b;
 }
 
 .status-pill {

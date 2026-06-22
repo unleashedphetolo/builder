@@ -1,9 +1,0 @@
-Builder editor values-field restore patch
-
-Updated only BuilderSectionEditor.jsx.
-
-What changed:
-- Dynamic item field inference now keeps the template fallback item fields first, but also includes current item fields that exist in saved/template content.
-- This prevents fields like cards[].values from disappearing when one card uses bullet values and other cards use body text.
-- The repeated Body/Text/Description cleanup remains in place and still hides duplicate alias fields only when they contain the same value.
-- Vision / Mission / Values cards keep Values / Bullet Items editable without changing other page fallbacks.
