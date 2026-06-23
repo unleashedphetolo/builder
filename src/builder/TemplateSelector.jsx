@@ -459,6 +459,12 @@ export default function TemplateSelector({
     setSearch("");
   };
 
+  const handleCloseSelector = () => {
+    if (typeof onClose === "function") {
+      onClose();
+    }
+  };
+
   const scrollTemplateTabs = (direction) => {
     const node = tabsScrollRef.current;
 
@@ -555,6 +561,81 @@ export default function TemplateSelector({
     <div className="template-modal">
       <style>
         {`
+          .template-modal-inner {
+            position: relative !important;
+          }
+
+          .template-modal-inner.is-maximized {
+            width: calc(100vw - 28px) !important;
+            height: calc(100vh - 28px) !important;
+            max-height: calc(100vh - 28px) !important;
+            border-radius: 18px !important;
+          }
+
+          .template-modal-close-only {
+            position: absolute !important;
+            top: 14px !important;
+            right: 14px !important;
+            z-index: 30 !important;
+            width: 42px;
+            height: 38px;
+            border: 1px solid rgba(148, 163, 184, 0.38);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.94);
+            color: #334155;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            cursor: pointer;
+            font-size: 25px;
+            line-height: 1;
+            font-weight: 700;
+            box-shadow:
+              0 10px 22px rgba(15, 23, 42, 0.11),
+              inset 0 1px 0 rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition:
+              background 0.14s ease,
+              color 0.14s ease,
+              border-color 0.14s ease;
+          }
+
+          .template-modal-close-only:hover,
+          .template-modal-close-only:focus-visible {
+            background: #dc2626;
+            border-color: #dc2626;
+            color: #ffffff;
+            outline: none;
+          }
+
+          .template-header {
+            padding-right: 72px !important;
+          }
+
+          @media (max-width: 720px) {
+            .template-modal-inner.is-maximized {
+              width: calc(100vw - 16px) !important;
+              height: calc(100vh - 16px) !important;
+              max-height: calc(100vh - 16px) !important;
+              border-radius: 16px !important;
+            }
+
+            .template-modal-close-only {
+              top: 10px !important;
+              right: 10px !important;
+              width: 38px;
+              height: 36px;
+              border-radius: 10px;
+              font-size: 23px;
+            }
+
+            .template-header {
+              padding-right: 54px !important;
+            }
+          }
+
           .template-preview-overlay {
             position: fixed;
             inset: 0;
@@ -779,11 +860,82 @@ export default function TemplateSelector({
             padding: 0;
           }
 
-          .template-preview-device-frame {
-            border: 0;
+          .template-preview-device-shell {
+            position: relative;
+            overflow: hidden;
             background: #ffffff;
             box-shadow: 0 24px 80px rgba(15, 23, 42, 0.22);
             transition: none !important;
+          }
+
+          .template-preview-device-frame {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            background: #ffffff;
+            display: block;
+            transition: none !important;
+          }
+
+          .template-device-window-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 5;
+            height: 30px;
+            overflow: hidden;
+            border: 1px solid rgba(148, 163, 184, 0.32);
+            border-radius: 999px;
+            background: rgba(226, 232, 240, 0.78);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            display: inline-flex;
+            align-items: center;
+            box-shadow:
+              0 12px 26px rgba(15, 23, 42, 0.12),
+              inset 0 1px 0 rgba(255, 255, 255, 0.62);
+            pointer-events: none;
+          }
+
+          .template-device-window-control {
+            width: 38px;
+            height: 30px;
+            color: #334155;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            line-height: 1;
+            font-weight: 700;
+          }
+
+          .template-device-window-control + .template-device-window-control {
+            border-left: 1px solid rgba(148, 163, 184, 0.24);
+          }
+
+          .template-device-window-control.minimize {
+            font-size: 18px;
+            transform: translateY(-1px);
+          }
+
+          .template-device-window-control.maximize {
+            font-size: 13px;
+          }
+
+          .template-device-window-control.close {
+            color: #64748b;
+            font-size: 16px;
+          }
+
+          .template-preview-device-shell.is-mobile .template-device-window-controls {
+            display: none;
+          }
+
+          .template-preview-device-shell.is-tablet .template-device-window-controls {
+            top: 8px;
+            right: 8px;
+            transform: scale(0.9);
+            transform-origin: top right;
           }
 
           .template-preview-card-actions {
@@ -1067,12 +1219,16 @@ export default function TemplateSelector({
               padding: 0;
             }
 
-            .template-preview-device-frame {
+            .template-preview-device-shell {
               width: 100% !important;
               max-width: 100% !important;
               height: calc(100vh - 96px) !important;
               border-radius: 0 !important;
               box-shadow: none;
+            }
+
+            .template-device-window-controls {
+              display: none;
             }
 
             .template-preview-card-actions {
@@ -1212,12 +1368,8 @@ export default function TemplateSelector({
           <div className="template-preview-stage">
             <div className="template-preview-frame-shell">
               {previewUrl ? (
-                <iframe
-                  key={previewTemplate.template_key}
-                  src={previewUrl}
-                  title={`${previewTemplate.name || "Template"} full preview`}
-                  className="template-preview-device-frame"
-                  loading="eager"
+                <div
+                  className={`template-preview-device-shell is-${previewDevice}`}
                   style={{
                     width: getPreviewFrameWidth(),
                     maxWidth:
@@ -1227,7 +1379,30 @@ export default function TemplateSelector({
                     height: getPreviewFrameHeight(),
                     borderRadius: getPreviewFrameRadius(),
                   }}
-                />
+                >
+                  {/* <div
+                    className="template-device-window-controls"
+                    aria-hidden="true"
+                  >
+                    <span className="template-device-window-control minimize">
+                      −
+                    </span>
+                    <span className="template-device-window-control maximize">
+                      □
+                    </span>
+                    <span className="template-device-window-control close">
+                      ×
+                    </span>
+                  </div> */}
+
+                  <iframe
+                    key={previewTemplate.template_key}
+                    src={previewUrl}
+                    title={`${previewTemplate.name || "Template"} full preview`}
+                    className="template-preview-device-frame"
+                    loading="eager"
+                  />
+                </div>
               ) : (
                 <div className="template-live-preview-fallback">
                   <strong>{previewTemplate.name?.slice(0, 1) || "T"}</strong>
@@ -1239,14 +1414,14 @@ export default function TemplateSelector({
         </div>
       )}
 
-      <div className="template-modal-inner">
+      <div className="template-modal-inner is-maximized">
         {onClose && (
           <button
             type="button"
-            className="template-modal-exit"
-            onClick={onClose}
-            aria-label="Exit template selector"
-            title="Exit"
+            className="template-modal-close-only"
+            onClick={handleCloseSelector}
+            aria-label="Close template selector"
+            title="Close"
           >
             ×
           </button>
@@ -1258,10 +1433,10 @@ export default function TemplateSelector({
 
             <h2>Choose a Website Template</h2>
 
-            <p>
+            {/* <p>
               Select a professional template. Your saved website information,
               pages, text, colours and media remain connected to the same site.
-            </p>
+            </p> */}
           </div>
 
           {selectedTemplateKey && (

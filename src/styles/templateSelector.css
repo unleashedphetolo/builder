@@ -1092,6 +1092,7 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
+
 .template-tab-icon,
 .template-tab-chevron {
   display: inline-flex;
@@ -1249,5 +1250,267 @@
   .template-tab-label {
     max-width: 72px !important;
     font-size: 9.5px !important;
+  }
+}
+
+/* =========================================================
+   TEMPLATE SELECTOR WINDOW CONTROLS
+   Replaces single X with − □ × controls
+   ========================================================= */
+
+.template-modal-window-controls {
+  position: sticky;
+  top: 0;
+  margin-left: auto;
+  margin-bottom: -42px;
+  z-index: 20;
+  width: fit-content;
+  height: 36px;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.32);
+  border-radius: 999px;
+  background: rgba(226, 232, 240, 0.86);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: inline-flex;
+  align-items: center;
+  box-shadow:
+    0 12px 26px rgba(15, 23, 42, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62);
+}
+
+.template-modal-window-control {
+  width: 44px;
+  height: 36px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #334155;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  line-height: 1;
+  font-weight: 800;
+}
+
+.template-modal-window-control + .template-modal-window-control {
+  border-left: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.template-modal-window-control.minimize {
+  font-size: 18px;
+  transform: translateY(-1px);
+}
+
+.template-modal-window-control.maximize {
+  font-size: 13px;
+}
+
+.template-modal-window-control.close {
+  cursor: pointer;
+  color: #334155;
+  font-size: 18px;
+}
+
+.template-modal-window-control.close:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+@media (max-width: 720px) {
+  .template-modal-window-controls {
+    height: 32px;
+    margin-bottom: -36px;
+  }
+
+  .template-modal-window-control {
+    width: 36px;
+    height: 32px;
+  }
+
+  .template-modal-window-control.minimize,
+  .template-modal-window-control.maximize {
+    display: none;
+  }
+
+  .template-modal-window-control.close {
+    width: 40px;
+  }
+}
+
+/* =========================================================
+   TEMPLATE GRID 4 COLUMNS ON DESKTOP
+   Shows four template cards in one row on large screens
+   ========================================================= */
+
+.template-grid {
+  grid-template-columns: repeat(4, minmax(260px, 1fr)) !important;
+  gap: 10px !important;
+}
+
+.template-preview {
+  height: 220px !important;
+}
+
+.template-card {
+  min-height: 420px !important;
+}
+
+@media (max-width: 1400px) {
+  .template-grid {
+    grid-template-columns: repeat(3, minmax(300px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 1080px) {
+  .template-grid {
+    grid-template-columns: repeat(2, minmax(280px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .template-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .template-preview {
+    height: 220px !important;
+  }
+
+  .template-card {
+    min-height: 430px !important;
+  }
+}
+
+/* =========================================================
+   ENTERPRISE CATEGORY HOVER EFFECT
+   Premium hover, active glow and icon interaction
+   ========================================================= */
+
+.template-tab-btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    color 180ms ease;
+}
+
+.template-tab-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(255, 255, 255, 0.95),
+      transparent 45%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.18),
+      transparent 58%
+    );
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.template-tab-btn:hover,
+.template-tab-btn:focus-visible {
+  transform: translateY(-2px);
+  border-color: var(--template-category-color, #4f46e5) !important;
+  box-shadow:
+    0 14px 30px rgba(15, 23, 42, 0.11),
+    0 0 0 3px color-mix(
+      in srgb,
+      var(--template-category-color, #4f46e5) 14%,
+      transparent
+    );
+  outline: none;
+}
+
+.template-tab-btn:hover::before,
+.template-tab-btn:focus-visible::before {
+  opacity: 1;
+}
+
+.template-tab-btn:hover .template-tab-visual,
+.template-tab-btn:focus-visible .template-tab-visual {
+  transform: translateY(-1px) scale(1.06);
+  box-shadow:
+    0 10px 22px rgba(15, 23, 42, 0.13),
+    0 0 0 4px color-mix(
+      in srgb,
+      var(--template-category-color, #4f46e5) 10%,
+      transparent
+    );
+}
+
+.template-tab-visual {
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+.template-tab-icon svg {
+  transition:
+    transform 180ms ease,
+    stroke-width 180ms ease;
+}
+
+.template-tab-btn:hover .template-tab-icon svg,
+.template-tab-btn:focus-visible .template-tab-icon svg {
+  transform: scale(1.08);
+  stroke-width: 2.85;
+}
+
+.template-tab-label {
+  transition:
+    letter-spacing 180ms ease,
+    transform 180ms ease;
+}
+
+.template-tab-btn:hover .template-tab-label,
+.template-tab-btn:focus-visible .template-tab-label {
+  letter-spacing: 0.01em;
+}
+
+.template-tab-btn.active {
+  transform: translateY(-1px);
+}
+
+.template-tab-btn.active:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 16px 34px color-mix(
+      in srgb,
+      var(--template-category-color, #4f46e5) 30%,
+      transparent
+    ),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .template-tab-btn,
+  .template-tab-btn::before,
+  .template-tab-visual,
+  .template-tab-icon svg,
+  .template-tab-label {
+    transition-duration: 0.01ms !important;
+  }
+
+  .template-tab-btn:hover,
+  .template-tab-btn:focus-visible,
+  .template-tab-btn:hover .template-tab-visual,
+  .template-tab-btn:focus-visible .template-tab-visual,
+  .template-tab-btn:hover .template-tab-icon svg,
+  .template-tab-btn:focus-visible .template-tab-icon svg {
+    transform: none !important;
   }
 }
