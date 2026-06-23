@@ -977,3 +977,277 @@
   }
 }
 
+/* =========================================================
+   ENTERPRISE TEMPLATE CATEGORY CAROUSEL
+   Icons above name + colours + left/right scroll chevrons
+   ========================================================= */
+
+.template-tabs-shell {
+  width: 100%;
+  max-width: 100%;
+  margin-top: 18px;
+  padding: 8px;
+  border: 1px solid #dbe4f0;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #ffffff, #f8fafc);
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) 42px;
+  align-items: stretch;
+  gap: 8px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.055);
+}
+
+.template-tabs {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-top: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch !important;
+  gap: 10px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.template-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.template-tabs-scroll {
+  width: 42px;
+  min-height: 70px;
+  border: 1px solid #dbe4f0;
+  border-radius: 16px;
+  background: #ffffff;
+  color: #334155;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.075);
+}
+
+.template-tabs-scroll svg {
+  width: 21px;
+  height: 21px;
+  stroke-width: 2.7;
+}
+
+.template-tabs-scroll:hover {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #2563eb;
+}
+
+.template-tab-btn {
+  flex: 0 0 106px !important;
+  min-height: 70px;
+  padding: 9px 10px !important;
+  border: 1px solid var(--template-category-border, #cbd5e1) !important;
+  border-radius: 17px !important;
+  background: var(--template-category-bg, #f8fafc) !important;
+  color: var(--template-category-color, #334155) !important;
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  white-space: nowrap !important;
+  font-weight: 900 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.78),
+    0 8px 18px rgba(15, 23, 42, 0.045);
+}
+
+.template-tab-btn:hover {
+  transform: translateY(-1px);
+}
+
+.template-tab-btn.active {
+  background: var(--template-category-color, #4f46e5) !important;
+  border-color: var(--template-category-color, #4f46e5) !important;
+  color: #ffffff !important;
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.18);
+}
+
+.template-tab-visual {
+  position: relative;
+  width: 33px;
+  height: 33px;
+  border-radius: 13px;
+  background: #ffffff;
+  color: var(--template-category-color, #334155);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 7px 16px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.template-tab-icon,
+.template-tab-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.template-tab-icon svg {
+  width: 17px;
+  height: 17px;
+  stroke-width: 2.55;
+}
+
+.template-tab-label {
+  max-width: 94px;
+  overflow: hidden;
+  text-align: center;
+  color: inherit;
+  font-size: 11px;
+  line-height: 1.05;
+  font-weight: 950;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.template-tab-chevron {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--template-category-color, #334155);
+  color: #ffffff;
+  border: 1px solid #ffffff;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
+}
+
+.template-tab-btn.active .template-tab-chevron {
+  background: #ffffff;
+  color: var(--template-category-color, #334155);
+}
+
+.template-tab-chevron svg {
+  width: 10px;
+  height: 10px;
+  stroke-width: 3;
+}
+
+@media (max-width: 720px) {
+  .template-tabs-shell {
+    grid-template-columns: 34px minmax(0, 1fr) 34px;
+    gap: 6px;
+    padding: 6px;
+  }
+
+  .template-tabs-scroll {
+    width: 34px;
+    min-height: 62px;
+    border-radius: 12px;
+  }
+
+  .template-tab-btn {
+    flex-basis: 92px !important;
+    min-height: 62px;
+    padding: 8px 9px !important;
+  }
+
+  .template-tab-visual {
+    width: 30px;
+    height: 30px;
+    border-radius: 11px;
+  }
+
+  .template-tab-label {
+    max-width: 82px;
+    font-size: 10px;
+  }
+}
+
+/* =========================================================
+   MOBILE CATEGORY WIDTH + COMPACT CHEVRON FIX
+   Keeps chevrons small and category cards balanced
+   ========================================================= */
+
+@media (max-width: 720px) {
+  .template-tabs-shell {
+    grid-template-columns: 28px minmax(0, 1fr) 20px !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 6px !important;
+  }
+
+  .template-tabs {
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  .template-tabs-scroll {
+    width: 34px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    align-self: center !important;
+    border-radius: 14px !important;
+    padding: 0 !important;
+  }
+
+  .template-tabs-scroll svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .template-tab-btn {
+    flex: 0 0 86px !important;
+    width: 86px !important;
+    min-width: 86px !important;
+    max-width: 86px !important;
+    min-height: 62px !important;
+    padding: 8px 8px !important;
+    border-radius: 16px !important;
+  }
+
+  .template-tab-visual {
+    width: 29px !important;
+    height: 29px !important;
+    border-radius: 11px !important;
+  }
+
+  .template-tab-label {
+    max-width: 78px !important;
+    font-size: 10px !important;
+    line-height: 1 !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .template-tabs-shell {
+    grid-template-columns: 34px minmax(0, 1fr) 34px !important;
+  }
+
+  .template-tabs-scroll {
+    width: 32px !important;
+    height: 40px !important;
+    min-height: 40px !important;
+  }
+
+  .template-tab-btn {
+    flex-basis: 80px !important;
+    width: 80px !important;
+    min-width: 80px !important;
+    max-width: 80px !important;
+  }
+
+  .template-tab-label {
+    max-width: 72px !important;
+    font-size: 9.5px !important;
+  }
+}

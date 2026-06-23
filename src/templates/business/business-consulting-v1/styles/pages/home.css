@@ -1,0 +1,7 @@
+.business-page--home {
+  background: var(--biz-bg);
+}
+
+.business-page--home .business-section:nth-child(even) {
+  background: color-mix(in srgb, var(--biz-primary) 4%, var(--biz-bg));
+}

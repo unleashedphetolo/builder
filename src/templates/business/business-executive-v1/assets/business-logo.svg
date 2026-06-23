@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="Business logo">
+  <defs>
+    <linearGradient id="g" x1="28" y1="28" x2="228" y2="228" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#123c7c"/>
+      <stop offset="1" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+  <rect x="18" y="18" width="220" height="220" rx="54" fill="url(#g)"/>
+  <path d="M72 170V82h64c28 0 48 18 48 44s-20 44-48 44H72Zm34-31h28c9 0 16-5 16-13s-7-13-16-13h-28v26Z" fill="#fff"/>
+  <path d="M76 184h104" stroke="#f59e0b" stroke-width="12" stroke-linecap="round"/>
+</svg>

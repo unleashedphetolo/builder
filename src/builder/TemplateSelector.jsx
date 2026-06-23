@@ -1,11 +1,151 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  FiActivity,
+  FiBookOpen,
+  FiBriefcase,
+  FiChevronDown,
   FiChevronLeft,
+  FiChevronRight,
+  FiCoffee,
+  FiCpu,
+  FiGrid,
+  FiHeart,
+  FiHome,
+  FiLayers,
   FiMonitor,
-  FiTablet,
+  FiPenTool,
+  FiShield,
+  FiShoppingBag,
   FiSmartphone,
+  FiTablet,
+  FiTruck,
+  FiUser,
 } from "react-icons/fi";
 import "../styles/templateSelector.css";
+
+const RECOMMENDED_LAYOUTS = [
+  "all",
+  "school",
+  "business",
+  "portfolio",
+  "health",
+  "agriculture",
+  "construction",
+  "technology",
+  "ecommerce",
+  "real-estate",
+  "restaurant",
+  "beauty",
+  "law",
+  "nonprofit",
+];
+
+const CATEGORY_LABELS = {
+  all: "All",
+  school: "School",
+  business: "Business",
+  portfolio: "Portfolio",
+  health: "Health",
+  agriculture: "Agriculture",
+  construction: "Construction",
+  technology: "Technology",
+  ecommerce: "E-Commerce",
+  "real-estate": "Real Estate",
+  restaurant: "Restaurant",
+  beauty: "Beauty",
+  law: "Legal",
+  nonprofit: "Nonprofit",
+};
+
+const CATEGORY_ICONS = {
+  all: FiGrid,
+  school: FiBookOpen,
+  business: FiBriefcase,
+  portfolio: FiUser,
+  health: FiHeart,
+  agriculture: FiLayers,
+  construction: FiHome,
+  technology: FiCpu,
+  ecommerce: FiShoppingBag,
+  "real-estate": FiHome,
+  restaurant: FiCoffee,
+  beauty: FiPenTool,
+  law: FiShield,
+  nonprofit: FiActivity,
+};
+
+const CATEGORY_STYLES = {
+  all: {
+    color: "#4f46e5",
+    background: "#eef2ff",
+    border: "#c7d2fe",
+  },
+  school: {
+    color: "#2563eb",
+    background: "#eff6ff",
+    border: "#bfdbfe",
+  },
+  business: {
+    color: "#0f766e",
+    background: "#ecfdf5",
+    border: "#99f6e4",
+  },
+  portfolio: {
+    color: "#7c3aed",
+    background: "#f5f3ff",
+    border: "#ddd6fe",
+  },
+  health: {
+    color: "#dc2626",
+    background: "#fef2f2",
+    border: "#fecaca",
+  },
+  agriculture: {
+    color: "#15803d",
+    background: "#f0fdf4",
+    border: "#bbf7d0",
+  },
+  construction: {
+    color: "#ca8a04",
+    background: "#fefce8",
+    border: "#fde68a",
+  },
+  technology: {
+    color: "#0284c7",
+    background: "#f0f9ff",
+    border: "#bae6fd",
+  },
+  ecommerce: {
+    color: "#ea580c",
+    background: "#fff7ed",
+    border: "#fed7aa",
+  },
+  "real-estate": {
+    color: "#475569",
+    background: "#f8fafc",
+    border: "#cbd5e1",
+  },
+  restaurant: {
+    color: "#b45309",
+    background: "#fffbeb",
+    border: "#fde68a",
+  },
+  beauty: {
+    color: "#db2777",
+    background: "#fdf2f8",
+    border: "#fbcfe8",
+  },
+  law: {
+    color: "#1e3a8a",
+    background: "#eff6ff",
+    border: "#bfdbfe",
+  },
+  nonprofit: {
+    color: "#059669",
+    background: "#ecfdf5",
+    border: "#a7f3d0",
+  },
+};
 
 /**
  * TemplateSelector (Marketplace)
@@ -24,11 +164,14 @@ export default function TemplateSelector({
   error,
 }) {
   const availableLayouts = useMemo(() => {
-    const layouts = Array.from(
-      new Set((templates || []).map((t) => t.layout_key).filter(Boolean)),
-    );
+    const layouts = new Set(RECOMMENDED_LAYOUTS);
 
-    return layouts.length ? layouts : ["school", "business", "portfolio"];
+    (templates || [])
+      .map((template) => template.layout_key)
+      .filter(Boolean)
+      .forEach((layoutKey) => layouts.add(layoutKey));
+
+    return Array.from(layouts);
   }, [templates]);
 
   const getInitialLayout = () => {
@@ -38,11 +181,12 @@ export default function TemplateSelector({
       return savedLayout;
     }
 
-    return availableLayouts[0] || "";
+    return availableLayouts.includes("all") ? "all" : availableLayouts[0] || "";
   };
 
   const [tab, setTab] = useState(getInitialLayout);
   const [search, setSearch] = useState("");
+  const tabsScrollRef = useRef(null);
 
   const [previewTemplate, setPreviewTemplate] = useState(null);
   const [applyingTemplateKey, setApplyingTemplateKey] = useState("");
@@ -150,18 +294,26 @@ export default function TemplateSelector({
 
   const cleanSearch = search.trim().toLowerCase();
 
-  const categoryLabels = {
-    school: "School",
-    business: "Business",
-    portfolio: "Portfolio",
-  };
-
   const getCategoryLabel = (layoutKey) => {
     return (
-      categoryLabels[layoutKey] ||
+      CATEGORY_LABELS[layoutKey] ||
       String(layoutKey || "")
         .replace(/[-_]/g, " ")
         .replace(/\b\w/g, (char) => char.toUpperCase())
+    );
+  };
+
+  const getCategoryIcon = (layoutKey) => {
+    return CATEGORY_ICONS[layoutKey] || FiTruck;
+  };
+
+  const getCategoryStyle = (layoutKey) => {
+    return (
+      CATEGORY_STYLES[layoutKey] || {
+        color: "#334155",
+        background: "#f8fafc",
+        border: "#cbd5e1",
+      }
     );
   };
 
@@ -235,7 +387,9 @@ export default function TemplateSelector({
   };
 
   const categoryList = useMemo(() => {
-    return (templates || []).filter((t) => t.layout_key === tab);
+    if (tab === "all") return templates || [];
+
+    return (templates || []).filter((template) => template.layout_key === tab);
   }, [templates, tab]);
 
   const categoryResults = useMemo(() => {
@@ -303,6 +457,19 @@ export default function TemplateSelector({
   const handleChangeCategory = (nextTab) => {
     setTab(nextTab);
     setSearch("");
+  };
+
+  const scrollTemplateTabs = (direction) => {
+    const node = tabsScrollRef.current;
+
+    if (!node) return;
+
+    const scrollAmount = Math.max(280, Math.floor(node.clientWidth * 0.62));
+
+    node.scrollBy({
+      left: direction === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
+    });
   };
 
   const handleOpenPreview = (template) => {
@@ -626,6 +793,220 @@ export default function TemplateSelector({
             width: 100%;
           }
 
+          .template-tabs button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+          }
+
+          .template-tab-icon,
+          .template-tab-chevron {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+          }
+
+          .template-tab-icon svg {
+            width: 15px;
+            height: 15px;
+            stroke-width: 2.35;
+          }
+
+          .template-tab-chevron {
+            opacity: 0.62;
+          }
+
+          .template-tab-chevron svg {
+            width: 13px;
+            height: 13px;
+            stroke-width: 2.4;
+          }
+
+          .template-tabs-shell {
+            width: 100%;
+            max-width: 100%;
+            margin-top: 18px;
+            padding: 8px;
+            border: 1px solid #dbe4f0;
+            border-radius: 20px;
+            background: linear-gradient(180deg, #ffffff, #f8fafc);
+            display: grid;
+            grid-template-columns: 42px minmax(0, 1fr) 42px;
+            align-items: stretch;
+            gap: 8px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.055);
+          }
+
+          .template-tabs {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin-top: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
+            border-radius: 0 !important;
+            background: transparent !important;
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: stretch !important;
+            gap: 10px !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+          }
+
+          .template-tabs::-webkit-scrollbar {
+            display: none;
+          }
+
+          .template-tabs-scroll {
+            width: 42px;
+            min-height: 70px;
+            border: 1px solid #dbe4f0;
+            border-radius: 16px;
+            background: #ffffff;
+            color: #334155;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.075);
+            transition:
+              background 0.18s ease,
+              border-color 0.18s ease,
+              color 0.18s ease,
+              transform 0.18s ease;
+          }
+
+          .template-tabs-scroll svg {
+            width: 21px;
+            height: 21px;
+            stroke-width: 2.7;
+          }
+
+          .template-tabs-scroll:hover,
+          .template-tabs-scroll:focus-visible {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+            color: #2563eb;
+            outline: none;
+            transform: translateY(-1px);
+          }
+
+          .template-tab-btn {
+            --template-category-color: #334155;
+            --template-category-bg: #f8fafc;
+            --template-category-border: #cbd5e1;
+
+            flex: 0 0 106px !important;
+            min-height: 70px;
+            padding: 9px 10px !important;
+            border: 1px solid var(--template-category-border) !important;
+            border-radius: 17px !important;
+            background:
+              radial-gradient(circle at top left, rgba(255, 255, 255, 0.92), transparent 44%),
+              var(--template-category-bg) !important;
+            color: var(--template-category-color) !important;
+            display: inline-flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 6px !important;
+            white-space: nowrap !important;
+            font-weight: 900 !important;
+            box-shadow:
+              inset 0 1px 0 rgba(255, 255, 255, 0.78),
+              0 8px 18px rgba(15, 23, 42, 0.045);
+          }
+
+          .template-tab-btn:hover,
+          .template-tab-btn:focus-visible {
+            border-color: color-mix(in srgb, var(--template-category-color) 44%, var(--template-category-border)) !important;
+            background:
+              radial-gradient(circle at top left, rgba(255, 255, 255, 0.96), transparent 44%),
+              color-mix(in srgb, var(--template-category-bg) 88%, #ffffff) !important;
+            outline: none;
+            transform: translateY(-1px);
+          }
+
+          .template-tab-btn.active {
+            background:
+              radial-gradient(circle at top left, rgba(255, 255, 255, 0.18), transparent 42%),
+              var(--template-category-color) !important;
+            border-color: var(--template-category-color) !important;
+            color: #ffffff !important;
+            box-shadow:
+              0 12px 26px color-mix(in srgb, var(--template-category-color) 28%, transparent),
+              inset 0 1px 0 rgba(255, 255, 255, 0.18);
+          }
+
+          .template-tab-visual {
+            position: relative;
+            width: 33px;
+            height: 33px;
+            border-radius: 13px;
+            background: #ffffff;
+            color: var(--template-category-color);
+            border: 1px solid color-mix(in srgb, var(--template-category-color) 24%, #ffffff);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow:
+              0 7px 16px rgba(15, 23, 42, 0.08),
+              inset 0 1px 0 rgba(255, 255, 255, 0.9);
+          }
+
+          .template-tab-btn.active .template-tab-visual {
+            color: var(--template-category-color);
+            background: #ffffff;
+            border-color: rgba(255, 255, 255, 0.72);
+          }
+
+          .template-tab-icon svg {
+            width: 17px;
+            height: 17px;
+            stroke-width: 2.55;
+          }
+
+          .template-tab-label {
+            max-width: 94px;
+            overflow: hidden;
+            text-align: center;
+            color: inherit;
+            font-size: 11px;
+            line-height: 1.05;
+            font-weight: 950;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .template-tab-chevron {
+            position: absolute;
+            right: -5px;
+            bottom: -5px;
+            width: 16px;
+            height: 16px;
+            border-radius: 999px;
+            background: var(--template-category-color);
+            color: #ffffff;
+            opacity: 1;
+            border: 1px solid #ffffff;
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
+          }
+
+          .template-tab-btn.active .template-tab-chevron {
+            background: #ffffff;
+            color: var(--template-category-color);
+          }
+
+          .template-tab-chevron svg {
+            width: 10px;
+            height: 10px;
+            stroke-width: 3;
+          }
+
           .template-actions .btn.secondary {
             border: 1px solid #dbeafe;
             background: #eff6ff;
@@ -918,17 +1299,64 @@ export default function TemplateSelector({
           </label>
         </div>
 
-        <div className="template-tabs">
-          {availableLayouts.map((layout) => (
-            <button
-              key={layout}
-              className={tab === layout ? "active" : ""}
-              onClick={() => handleChangeCategory(layout)}
-              type="button"
-            >
-              {getCategoryLabel(layout)}
-            </button>
-          ))}
+        <div className="template-tabs-shell">
+          <button
+            type="button"
+            className="template-tabs-scroll template-tabs-scroll-left"
+            onClick={() => scrollTemplateTabs("left")}
+            aria-label="Scroll template categories left"
+            title="Scroll left"
+          >
+            <FiChevronLeft />
+          </button>
+
+          <div className="template-tabs" ref={tabsScrollRef}>
+            {availableLayouts.map((layout) => {
+              const CategoryIcon = getCategoryIcon(layout);
+              const categoryStyle = getCategoryStyle(layout);
+
+              return (
+                <button
+                  key={layout}
+                  data-layout={layout}
+                  className={`template-tab-btn ${tab === layout ? "active" : ""}`}
+                  style={{
+                    "--template-category-color": categoryStyle.color,
+                    "--template-category-bg": categoryStyle.background,
+                    "--template-category-border": categoryStyle.border,
+                  }}
+                  onClick={() => handleChangeCategory(layout)}
+                  type="button"
+                >
+                  <span className="template-tab-visual" aria-hidden="true">
+                    <span className="template-tab-icon">
+                      <CategoryIcon />
+                    </span>
+
+                    {availableLayouts.length > 8 && layout !== "all" && (
+                      <span className="template-tab-chevron">
+                        <FiChevronDown />
+                      </span>
+                    )}
+                  </span>
+
+                  <span className="template-tab-label">
+                    {getCategoryLabel(layout)}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          <button
+            type="button"
+            className="template-tabs-scroll template-tabs-scroll-right"
+            onClick={() => scrollTemplateTabs("right")}
+            aria-label="Scroll template categories right"
+            title="Scroll right"
+          >
+            <FiChevronRight />
+          </button>
         </div>
 
         <div className="template-results-summary">

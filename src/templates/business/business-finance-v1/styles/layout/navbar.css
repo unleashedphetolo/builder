@@ -1,0 +1,248 @@
+.business-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  background: rgba(255, 255, 255, 0.94);
+  border-bottom: 1px solid var(--biz-border) !important;
+  box-shadow: 0 12px 36px rgba(223, 1, 1, 0.08);
+  backdrop-filter: blur(16px);
+}
+
+.business-navbar__inner {
+  min-height: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+}
+
+.business-brand {
+  min-width: 220px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: #e9ecf0 !important;
+  text-decoration: none;
+}
+
+.business-brand__mark {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  overflow: hidden;
+  color: #ffffff !important;
+  background: linear-gradient(135deg, var(--biz-primary), var(--biz-secondary));
+  font-weight: 900;
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.18);
+}
+
+.business-brand__mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 6px;
+  background: #ffffff;
+}
+
+.business-brand__copy strong {
+  display: block;
+  font-size: 1.02rem;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.business-brand__copy small {
+  display: block;
+  margin-top: 3px;
+  color: var(--biz-muted) !important;
+  font-weight: 700;
+}
+
+.business-nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.business-nav-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 12px;
+  border-radius: 999px;
+  color: #ffffff!important;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0.035em;
+}
+
+.business-nav-link:hover,
+.business-nav-link:focus,
+.business-nav-link.is-active {
+  color: #ffffff !important;
+  background: var(--biz-primary);
+  outline: none;
+}
+
+.business-menu-toggle {
+  display: none;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--biz-border);
+  border-radius: 14px;
+  background: #ffffff;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.business-menu-toggle span {
+  width: 22px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--biz-secondary);
+  transition: 0.2s ease;
+}
+
+.business-menu-toggle.is-open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.business-menu-toggle.is-open span:nth-child(2) {
+  opacity: 0;
+}
+
+.business-menu-toggle.is-open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+
+/* =========================================================
+   EDITABLE FALLBACK BUSINESS LOGO
+   Same builder media-editor behaviour pattern as school templates.
+   ========================================================= */
+.business-logo-section.builder-logo-editable {
+  position: relative;
+}
+
+.business-logo-section .business-brand {
+  position: relative;
+}
+
+.business-logo-section .navbar-logo-edit-button {
+  position: absolute;
+  top: -8px;
+  left: 4px;
+  z-index: 45;
+  height: 27px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 7px;
+  background: #2563eb;
+  color: #ffffff !important;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.24);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.business-logo-section.logo-editor-selected .navbar-logo-edit-button {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.business-brand__mark.builder-logo-target {
+  flex: 0 0 56px;
+}
+
+.business-brand__mark.builder-logo-target.is-selected {
+  overflow: visible;
+  border: 2px solid #2563eb;
+  background: #ffffff;
+  box-shadow:
+    0 0 0 4px rgba(37, 99, 235, 0.12),
+    0 18px 36px rgba(15, 23, 42, 0.18);
+}
+
+.business-brand__mark .business-logo-image,
+.business-brand__mark .logo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 6px;
+  background: #ffffff;
+  border-radius: 14px;
+}
+
+.builder-logo-handle {
+  position: absolute;
+  z-index: 3;
+  width: 8px;
+  height: 8px;
+  border: 2px solid #2563eb;
+  border-radius: 1px;
+  background: #ffffff;
+  pointer-events: none;
+}
+
+.builder-logo-handle.handle-tl {
+  top: -6px;
+  left: -6px;
+}
+
+.builder-logo-handle.handle-tr {
+  top: -6px;
+  right: -6px;
+}
+
+.builder-logo-handle.handle-bl {
+  bottom: -6px;
+  left: -6px;
+}
+
+.builder-logo-handle.handle-br {
+  right: -6px;
+  bottom: -6px;
+}
+
+@media (max-width: 880px) {
+  .business-logo-section .navbar-logo-edit-button {
+    top: -5px;
+    height: 25px;
+    font-size: 9px;
+  }
+
+  .business-nav-link {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 12px;
+  border-radius: 999px;
+  color: #0c0d11!important;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0.035em;
+}
+
+  .business-nav-links {
+    gap: 8px;
+  }
+}

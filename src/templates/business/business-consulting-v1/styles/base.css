@@ -1,0 +1,119 @@
+.business-consulting-template {
+  --biz-primary: var(--primary, #0f766e);
+  --biz-secondary: var(--secondary, #134e4a);
+  --biz-accent: var(--accent, #f97316);
+  --biz-bg: var(--background, #f0fdfa);
+  --biz-surface: #ffffff;
+  --biz-text: #111827;
+  --biz-muted: #64748b;
+  --biz-border: rgba(15, 23, 42, 0.12);
+  --biz-radius: 22px;
+  min-height: 100vh;
+  color: var(--biz-text);
+  background: var(--biz-bg);
+  font-family: var(--font, Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.business-consulting-template,
+.business-consulting-template * {
+  box-sizing: border-box;
+}
+
+.business-consulting-template img,
+.business-consulting-template video {
+  max-width: 100%;
+}
+
+.business-container {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.business-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--biz-accent);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.business-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.business-btn {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 18px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.business-btn--primary {
+  background: var(--biz-accent);
+  color: var(--biz-secondary);
+}
+
+.business-btn--secondary {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.26);
+}
+
+.business-page-header {
+  padding: 92px 0;
+  color: #ffffff;
+  background:
+    radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.26), transparent 34%),
+    linear-gradient(135deg, var(--biz-primary), var(--biz-secondary));
+}
+
+.business-page-header h1 {
+  max-width: 850px;
+  margin: 14px 0 14px;
+  font-size: clamp(2.2rem, 5vw, 4.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+}
+
+.business-page-header p {
+  max-width: 680px;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.7;
+}
+
+
+/* Consulting Firm visual identity: calm advisory layout with structured cards */
+.business-consulting-template .business-page-header,
+.business-consulting-template .business-hero-slide::before {
+  background:
+    linear-gradient(90deg, rgba(15, 118, 110, 0.96), rgba(19, 78, 74, 0.88)),
+    radial-gradient(circle at 82% 20%, rgba(249, 115, 22, 0.28), transparent 30%);
+}
+.business-consulting-template .business-card,
+.business-consulting-template .business-contact-card {
+  border-radius: 14px;
+  border-left: 4px solid var(--biz-accent);
+}
+.business-consulting-template .business-brand__mark,
+.business-consulting-template .business-btn {
+  border-radius: 10px;
+}
+.business-consulting-template .business-section {
+  background-image: linear-gradient(90deg, rgba(15, 118, 110, 0.035) 1px, transparent 1px);
+  background-size: 34px 34px;
+}
+.business-consulting-template .business-service-icon {
+  background: #0f766e;
+}
+

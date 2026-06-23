@@ -1,0 +1,96 @@
+.portfolio-navbar-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 80;
+  background: rgba(255, 255, 255, 0.92);
+  border-bottom: 1px solid var(--portfolio-border);
+  box-shadow: 0 14px 34px rgba(15,23,42,0.08);
+  backdrop-filter: blur(16px);
+}
+.portfolio-navbar {
+  min-height: 78px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.portfolio-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--portfolio-text);
+  min-width: 0;
+}
+.portfolio-brand__logo-target {
+  position: relative;
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
+  background: var(--portfolio-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 58px;
+  overflow: visible;
+}
+.portfolio-brand__logo-target img {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  object-fit: cover;
+}
+.portfolio-brand__text {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+.portfolio-brand__text strong {
+  font-size: 1.05rem;
+  font-weight: 900;
+  line-height: 1.05;
+}
+.portfolio-brand__text small {
+  color: var(--portfolio-muted);
+  font-weight: 700;
+}
+.portfolio-nav {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.portfolio-nav__link {
+  padding: 10px 12px;
+  border-radius: 999px;
+  color: var(--portfolio-text);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.portfolio-nav__link:hover {
+  background: var(--portfolio-primary);
+  color: #fff;
+}
+.portfolio-menu-button {
+  display: none;
+  width: 46px;
+  height: 46px;
+  margin-left: auto;
+  border: 1px solid var(--portfolio-border);
+  border-radius: 999px;
+  background: #fff;
+  cursor: pointer;
+}
+.portfolio-menu-button span {
+  width: 21px;
+  height: 2px;
+  margin: 4px auto;
+  display: block;
+  background: var(--portfolio-text);
+  transition: 0.2s ease;
+}
+.portfolio-menu-button.is-open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.portfolio-menu-button.is-open span:nth-child(2) { opacity: 0; }
+.portfolio-menu-button.is-open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }

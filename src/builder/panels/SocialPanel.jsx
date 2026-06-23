@@ -19,14 +19,28 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 import {
+  FaBehance,
+  FaDiscord,
+  FaDribbble,
+  FaEnvelope,
   FaFacebookF,
+  FaGithub,
+  FaGlobe,
   FaInstagram,
   FaLinkedinIn,
+  FaMediumM,
+  FaPhoneAlt,
+  FaPinterestP,
+  FaRedditAlien,
+  FaSnapchatGhost,
+  FaSpotify,
+  FaTelegramPlane,
   FaTiktok,
+  FaTwitch,
   FaWhatsapp,
   FaYoutube,
 } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import { FaThreads, FaXTwitter } from "react-icons/fa6";
 
 const DEFAULT_PLATFORMS = [
   "facebook",
@@ -36,7 +50,26 @@ const DEFAULT_PLATFORMS = [
   "tiktok",
   "linkedin",
   "whatsapp",
+  "threads",
+  "telegram",
+  "snapchat",
+  "pinterest",
+  "discord",
+  "github",
+  "behance",
+  "dribbble",
+  "medium",
+  "reddit",
+  "twitch",
+  "spotify",
+  "website",
+  "email",
+  "phone",
 ];
+
+// SocialPanel default: every platform is ON.
+// Individual templates or saved settings can still disable platforms with enabled: false.
+const DEFAULT_ENABLED_PLATFORMS = [...DEFAULT_PLATFORMS];
 
 const PLATFORM_DEFAULTS = {
   facebook: {
@@ -86,7 +119,112 @@ const PLATFORM_DEFAULTS = {
     url: "",
     colorMode: "original",
     label: "WhatsApp",
-    placeholder: "https://www.whatsapp.com/",
+    placeholder: "https://wa.me/27110000000",
+  },
+  threads: {
+    enabled: false,
+    url: "",
+    colorMode: "original",
+    label: "Threads",
+    placeholder: "https://www.threads.net",
+  },
+  telegram: {
+    enabled: false,
+    url: "",
+    colorMode: "original",
+    label: "Telegram",
+    placeholder: "https://t.me/yourusername",
+  },
+  snapchat: {
+    enabled: false,
+    url: "",
+    colorMode: "original",
+    label: "Snapchat",
+    placeholder: "https://www.snapchat.com",
+  },
+  pinterest: {
+    enabled: false,
+    url: "",
+    colorMode: "original",
+    label: "Pinterest",
+    placeholder: "https://www.pinterest.com",
+  },
+  discord: {
+    enabled: false,
+    url: "",
+    colorMode: "original",
+    label: "Discord",
+    placeholder: "https://discord.gg/yourinvite",
+  },
+  github: {
+    enabled: false,
+    url: "",
+    colorMode: "original",
+    label: "GitHub",
+    placeholder: "https://github.com",
+  },
+  behance: {
+    enabled: false,
+    url: "",
+    colorMode: "original",
+    label: "Behance",
+    placeholder: "https://www.behance.net",
+  },
+  dribbble: {
+    enabled: false,
+    url: "",
+    colorMode: "original",
+    label: "Dribbble",
+    placeholder: "https://dribbble.com",
+  },
+  medium: {
+    enabled: false,
+    url: "",
+    colorMode: "original",
+    label: "Medium",
+    placeholder: "https://medium.com",
+  },
+  reddit: {
+    enabled: false,
+    url: "",
+    colorMode: "original",
+    label: "Reddit",
+    placeholder: "https://www.reddit.com",
+  },
+  twitch: {
+    enabled: false,
+    url: "",
+    colorMode: "original",
+    label: "Twitch",
+    placeholder: "https://www.twitch.tv",
+  },
+  spotify: {
+    enabled: false,
+    url: "",
+    colorMode: "original",
+    label: "Spotify",
+    placeholder: "https://open.spotify.com",
+  },
+  website: {
+    enabled: false,
+    url: "",
+    colorMode: "original",
+    label: "Website",
+    placeholder: "https://www.example.com",
+  },
+  email: {
+    enabled: false,
+    url: "",
+    colorMode: "original",
+    label: "Email",
+    placeholder: "mailto:info@example.com",
+  },
+  phone: {
+    enabled: false,
+    url: "",
+    colorMode: "original",
+    label: "Phone",
+    placeholder: "tel:+27110000000",
   },
 };
 
@@ -98,6 +236,21 @@ const PLATFORM_ICONS = {
   tiktok: { icon: FaTiktok, color: "#000000" },
   linkedin: { icon: FaLinkedinIn, color: "#0A66C2" },
   whatsapp: { icon: FaWhatsapp, color: "#25D366" },
+  threads: { icon: FaThreads, color: "#000000" },
+  telegram: { icon: FaTelegramPlane, color: "#26A5E4" },
+  snapchat: { icon: FaSnapchatGhost, color: "#FFFC00" },
+  pinterest: { icon: FaPinterestP, color: "#E60023" },
+  discord: { icon: FaDiscord, color: "#5865F2" },
+  github: { icon: FaGithub, color: "#181717" },
+  behance: { icon: FaBehance, color: "#1769FF" },
+  dribbble: { icon: FaDribbble, color: "#EA4C89" },
+  medium: { icon: FaMediumM, color: "#000000" },
+  reddit: { icon: FaRedditAlien, color: "#FF4500" },
+  twitch: { icon: FaTwitch, color: "#9146FF" },
+  spotify: { icon: FaSpotify, color: "#1DB954" },
+  website: { icon: FaGlobe, color: "#2563EB" },
+  email: { icon: FaEnvelope, color: "#EA4335" },
+  phone: { icon: FaPhoneAlt, color: "#16A34A" },
 };
 
 function isObject(value) {
@@ -120,17 +273,33 @@ function serialize(value) {
   }
 }
 
-function uniqueOrder(value) {
-  if (!Array.isArray(value) || value.length === 0) {
-    return [...DEFAULT_PLATFORMS];
-  }
+// function uniqueOrder(value) {
+//   if (!Array.isArray(value) || value.length === 0) {
+//     return [...DEFAULT_PLATFORMS];
+//   }
 
-  return value.filter(
-    (platform, index, list) =>
-      typeof platform === "string" &&
-      platform.trim() &&
-      list.indexOf(platform) === index,
+//   return value.filter(
+//     (platform, index, list) =>
+//       typeof platform === "string" &&
+//       platform.trim() &&
+//       list.indexOf(platform) === index,
+//   );
+// }
+function uniqueOrder(value) {
+  const savedOrder = Array.isArray(value)
+    ? value.filter(
+        (platform, index, list) =>
+          typeof platform === "string" &&
+          platform.trim() &&
+          list.indexOf(platform) === index,
+      )
+    : [];
+
+  const missingDefaults = DEFAULT_PLATFORMS.filter(
+    (platform) => !savedOrder.includes(platform),
   );
+
+  return [...savedOrder, ...missingDefaults];
 }
 
 function createSocialState(siteSettings = {}) {
@@ -267,6 +436,7 @@ export default function SocialPanel({
   const [social, setSocial] = useState(initialSocial);
   const [saveState, setSaveState] = useState("saved");
   const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const socialRef = useRef(initialSocial);
   const lastSavedRef = useRef(initialSocial);
@@ -425,6 +595,16 @@ export default function SocialPanel({
   };
 
   const order = uniqueOrder(social.order);
+  const normalizedSearch = searchTerm.trim().toLowerCase();
+  const filteredOrder = normalizedSearch
+    ? order.filter((platform) => {
+        const data = platformDetails(social, platform);
+        return (
+          platform.toLowerCase().includes(normalizedSearch) ||
+          data.label.toLowerCase().includes(normalizedSearch)
+        );
+      })
+    : order;
   const saving = saveState === "saving";
 
   return (
@@ -483,14 +663,38 @@ export default function SocialPanel({
         />
       </div>
 
+      <label className="bsl-search-field">
+        <span>Search platform</span>
+        <div className="bsl-search-control">
+          <input
+            type="search"
+            placeholder="Search social media platform..."
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+          />
+
+          {searchTerm && (
+            <button
+              type="button"
+              className="bsl-search-clear"
+              aria-label="Clear search"
+              title="Clear search"
+              onClick={() => setSearchTerm("")}
+            >
+              ×
+            </button>
+          )}
+        </div>
+      </label>
+
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
       >
-        <SortableContext items={order} strategy={verticalListSortingStrategy}>
+        <SortableContext items={filteredOrder} strategy={verticalListSortingStrategy}>
           <div className="bsl-platform-list">
-            {order.map((platform) => {
+            {filteredOrder.map((platform) => {
               const data = platformDetails(social, platform);
 
               return (
@@ -569,6 +773,11 @@ export default function SocialPanel({
                 </SortablePlatformCard>
               );
             })}
+            {filteredOrder.length === 0 && (
+              <div className="bsl-empty-search">
+                No social media platform found.
+              </div>
+            )}
           </div>
         </SortableContext>
       </DndContext>

@@ -127,8 +127,8 @@ export const DEFAULT_TEMPLATES = [
     template_path: "templates/business/business-executive-v1",
     name: "Executive Business",
     description:
-      "Corporate homepage with services, testimonials, CTA, pricing and contact sections.",
-    tags: ["corporate", "executive", "services"],
+      "Corporate homepage with hero slideshow, services, testimonials, CTA, pricing, contact and full builder media/social support.",
+    tags: ["corporate", "executive", "services", "slideshow", "social"],
     preview_image: "/template-previews/business-executive.png",
   },
 
@@ -138,9 +138,31 @@ export const DEFAULT_TEMPLATES = [
     template_path: "templates/business/business-agency-v1",
     name: "Agency Pro",
     description:
-      "High-conversion agency site with portfolio, case studies, team and lead capture.",
-      tags: ["agency", "portfolio", "lead"],
+      "High-conversion agency site with hero slideshow, portfolio, case studies, team, lead capture and full builder media/social support.",
+    tags: ["agency", "portfolio", "lead", "slideshow", "social"],
     preview_image: "/template-previews/business-agency.png",
+  },
+
+  {
+    layout_key: "business",
+    template_key: "business-consulting-v1",
+    template_path: "templates/business/business-consulting-v1",
+    name: "Consulting Firm",
+    description:
+      "Professional consulting website with hero slideshow, credibility sections, services, leadership, insights and enquiries.",
+    tags: ["consulting", "professional", "strategy", "slideshow", "social"],
+    preview_image: "/template-previews/business-consulting.png",
+  },
+
+  {
+    layout_key: "business",
+    template_key: "business-finance-v1",
+    template_path: "templates/business/business-finance-v1",
+    name: "Finance Capital",
+    description:
+      "Premium finance and advisory website with hero slideshow, trust sections, service packages, client proof and lead capture.",
+    tags: ["finance", "advisory", "premium", "slideshow", "social"],
+    preview_image: "/template-previews/business-finance.png",
   },
 
   /* =========================
@@ -149,12 +171,23 @@ export const DEFAULT_TEMPLATES = [
 
   {
     layout_key: "portfolio",
+    template_key: "portfolio-developer-v1",
+    template_path: "templates/portfolio/portfolio-developer-v1",
+    name: "Software Developer Pro",
+    description:
+      "Enterprise software developer portfolio with projects, stack, experience, resume, services and contact.",
+    tags: ["software", "developer", "projects", "resume", "technical"],
+    preview_image: "/template-previews/portfolio-developer.png",
+  },
+
+  {
+    layout_key: "portfolio",
     template_key: "portfolio-clean-v1",
     template_path: "templates/portfolio/portfolio-clean-v1",
-    name: "Clean Portfolio",
+    name: "Clean Professional",
     description:
-      "Personal portfolio with projects, skills, resume, services and contact.",
-    tags: ["projects", "resume", "clean"],
+      "Clean personal brand portfolio with profile, projects, skills, services, resume and contact.",
+    tags: ["clean", "professional", "resume", "projects"],
     preview_image: "/template-previews/portfolio-clean.png",
   },
 
@@ -162,10 +195,43 @@ export const DEFAULT_TEMPLATES = [
     layout_key: "portfolio",
     template_key: "portfolio-creative-v1",
     template_path: "templates/portfolio/portfolio-creative-v1",
-    name: "Creative Portfolio",
+    name: "Creative Studio",
     description:
-      "Bold creative layout with animated sections, gallery grid and testimonials.",
-    tags: ["creative", "gallery", "animated"],
+      "Bold creative portfolio with gallery-focused projects, visual services, testimonials and contact.",
+    tags: ["creative", "gallery", "visual", "portfolio"],
     preview_image: "/template-previews/portfolio-creative.png",
   },
+
+  {
+    layout_key: "portfolio",
+    template_key: "portfolio-consultant-v1",
+    template_path: "templates/portfolio/portfolio-consultant-v1",
+    name: "Consultant Profile",
+    description:
+      "Trusted consultant portfolio with advisory services, proof of work, experience and lead capture.",
+    tags: ["consultant", "advisory", "services", "trusted"],
+    preview_image: "/template-previews/portfolio-consultant.png",
+  },
+
+  {
+    layout_key: "portfolio",
+    template_key: "portfolio-product-v1",
+    template_path: "templates/portfolio/portfolio-product-v1",
+    name: "Product Designer Pro",
+    description:
+      "Premium product/UI designer portfolio with case studies, design systems, skills, services and contact.",
+    tags: ["product", "designer", "case-studies", "ui-ux"],
+    preview_image: "/template-previews/portfolio-product.png",
+  },
+
+  {
+    layout_key: "portfolio",
+    template_key: "portfolio-educator-v1",
+    template_path: "templates/portfolio/portfolio-educator-v1",
+    name: "Educator Portfolio Pro",
+    description: "Professional teacher portfolio with teaching services, learner support, qualifications, resources, experience and contact.",
+    tags: ["teacher", "educator", "tutoring", "qualifications", "resume"],
+    preview_image: "/template-previews/portfolio-educator.png",
+  },
+
 ];

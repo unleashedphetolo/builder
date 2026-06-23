@@ -1,0 +1,117 @@
+.business-agency-template {
+  --biz-primary: var(--primary, #6d28d9);
+  --biz-secondary: var(--secondary, #111827);
+  --biz-accent: var(--accent, #06b6d4);
+  --biz-bg: var(--background, #faf5ff);
+  --biz-surface: #ffffff;
+  --biz-text: #111827;
+  --biz-muted: #64748b;
+  --biz-border: rgba(15, 23, 42, 0.12);
+  --biz-radius: 22px;
+  min-height: 100vh;
+  color: var(--biz-text);
+  background: var(--biz-bg);
+  font-family: var(--font, Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.business-agency-template,
+.business-agency-template * {
+  box-sizing: border-box;
+}
+
+.business-agency-template img,
+.business-agency-template video {
+  max-width: 100%;
+}
+
+.business-container {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.business-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--biz-accent);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.business-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.business-btn {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 18px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.business-btn--primary {
+  background: var(--biz-accent);
+  color: var(--biz-secondary);
+}
+
+.business-btn--secondary {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.26);
+}
+
+.business-page-header {
+  padding: 92px 0;
+  color: #ffffff;
+  background:
+    radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.26), transparent 34%),
+    linear-gradient(135deg, var(--biz-primary), var(--biz-secondary));
+}
+
+.business-page-header h1 {
+  max-width: 850px;
+  margin: 14px 0 14px;
+  font-size: clamp(2.2rem, 5vw, 4.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+}
+
+.business-page-header p {
+  max-width: 680px;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.7;
+}
+
+
+/* Agency Pro visual identity: vibrant creative-gradient, rounded portfolio cards */
+.business-agency-template .business-page-header,
+.business-agency-template .business-hero-slide::before {
+  background:
+    radial-gradient(circle at 12% 18%, rgba(6, 182, 212, 0.36), transparent 32%),
+    radial-gradient(circle at 88% 12%, rgba(236, 72, 153, 0.32), transparent 28%),
+    linear-gradient(135deg, #6d28d9, #111827 68%);
+}
+.business-agency-template .business-card,
+.business-agency-template .business-contact-card {
+  border-radius: 30px;
+}
+.business-agency-template .business-card__image {
+  border-radius: 24px;
+}
+.business-agency-template .business-service-icon {
+  background: linear-gradient(135deg, #6d28d9, #06b6d4);
+}
+.business-agency-template .business-section:nth-of-type(even) {
+  background: linear-gradient(180deg, #ffffff, rgba(109, 40, 217, 0.055));
+}
+

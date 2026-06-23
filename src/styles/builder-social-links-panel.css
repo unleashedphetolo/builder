@@ -359,6 +359,100 @@
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.13);
 }
 
+/* =========================================================
+   SOCIAL PLATFORM SEARCH
+   Search with clear X button
+   ========================================================= */
+
+.bsl-search-field {
+  margin: 0 0 12px;
+  padding: 11px 12px;
+  border: 1px solid var(--bsl-border);
+  border-radius: 11px;
+  background: var(--bsl-surface);
+  display: grid;
+  gap: 8px;
+}
+
+.bsl-search-field > span {
+  color: #476180;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.bsl-search-control {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.bsl-search-control input {
+  width: 100%;
+  height: 40px;
+  padding: 0 40px 0 12px;
+  border: 1px solid var(--bsl-border-strong);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--bsl-text);
+  font-size: 13px;
+  font-weight: 450;
+  line-height: 1;
+}
+
+.bsl-search-control input::placeholder {
+  color: #64748b;
+  opacity: 1;
+}
+
+.bsl-search-control input:focus {
+  outline: none;
+  border-color: var(--bsl-blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.13);
+}
+
+.bsl-search-clear {
+  width: 26px;
+  height: 26px;
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  border: 1px solid var(--bsl-border);
+  border-radius: 999px;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-50%);
+}
+
+.bsl-search-clear:hover,
+.bsl-search-clear:focus-visible {
+  border-color: var(--bsl-blue);
+  background: #eff6ff;
+  color: var(--bsl-blue);
+  outline: none;
+}
+
+.bsl-empty-search {
+  min-height: 54px;
+  padding: 16px 12px;
+  border: 1px dashed var(--bsl-border-strong);
+  border-radius: 11px;
+  background: var(--bsl-soft);
+  color: var(--bsl-muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 @media (max-width: 420px) {
   .bsl-helper-text {
     margin-right: 10px;
@@ -396,6 +490,23 @@
   .bsl-field {
     margin-right: 8px;
     margin-left: 8px;
+  }
+
+    .bsl-search-field {
+    padding-right: 9px;
+    padding-left: 9px;
+  }
+
+  .bsl-search-control input {
+    height: 39px;
+    font-size: 12px;
+  }
+
+  .bsl-search-clear {
+    width: 24px;
+    height: 24px;
+    right: 7px;
+    font-size: 16px;
   }
   
 }

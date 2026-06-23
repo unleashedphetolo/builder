@@ -1,0 +1,82 @@
+.portfolio-resume-download-section {
+  padding-bottom: 34px;
+}
+
+.portfolio-resume-download-card {
+  padding: 28px;
+  border: 1px solid var(--portfolio-border);
+  border-radius: var(--portfolio-radius);
+  background: var(--portfolio-surface);
+  box-shadow: 0 20px 54px rgba(15, 23, 42, 0.09);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.portfolio-resume-download-card h2 {
+  margin: 8px 0 10px;
+  color: var(--portfolio-text);
+  font-size: clamp(1.45rem, 3vw, 2.2rem);
+  line-height: 1.08;
+}
+
+.portfolio-resume-download-card p {
+  max-width: 700px;
+  margin: 0;
+  color: var(--portfolio-muted);
+  line-height: 1.65;
+}
+
+.portfolio-resume-download {
+  flex: 0 0 auto;
+}
+
+.portfolio-qualifications-section {
+  background: color-mix(in srgb, var(--portfolio-accent) 5%, var(--portfolio-soft));
+}
+
+.portfolio-qualification-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.portfolio-qualification-icon {
+  width: 44px;
+  height: 44px;
+  margin-bottom: 14px;
+  border-radius: 14px;
+  background: var(--portfolio-primary);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+}
+
+.portfolio-qualification-card strong,
+.portfolio-qualification-card small {
+  display: block;
+}
+
+.portfolio-qualification-card strong {
+  margin-bottom: 5px;
+  color: var(--portfolio-text);
+}
+
+.portfolio-qualification-card small {
+  margin-bottom: 10px;
+  color: var(--portfolio-accent);
+  font-weight: 800;
+}
+
+@media (max-width: 760px) {
+  .portfolio-resume-download-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .portfolio-resume-download {
+    width: 100%;
+  }
+}

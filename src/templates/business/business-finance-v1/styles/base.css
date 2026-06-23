@@ -1,0 +1,128 @@
+.business-finance-template {
+  --biz-primary: var(--primary, #020617);
+  --biz-secondary: var(--secondary, #020617);
+  --biz-accent: var(--accent, #d4af37) !important;
+  --biz-bg: var(--background, #f8fafc);
+  --biz-surface: #ffffff;
+  --biz-text: #111827;
+  --biz-muted: #64748b;
+  --biz-border: #d4af37 !important;
+  --biz-radius: 22px;
+  min-height: 100vh;
+  color: var(--biz-text) !important;
+  background: var(--biz-bg);
+  font-family: var(--font, Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.business-finance-template,
+.business-finance-template * {
+  box-sizing: border-box;
+}
+
+.business-finance-template img,
+.business-finance-template video {
+  max-width: 100%;
+}
+
+.business-container {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.business-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--biz-accent) !important;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.business-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.business-btn {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 18px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.business-btn--primary {
+  background: var(--biz-accent);
+  color: var(--biz-secondary);
+}
+
+.business-btn--secondary {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.26);
+}
+
+.business-page-header {
+  padding: 92px 0;
+  color: #ffffff;
+  background:
+    radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.26), transparent 34%),
+    linear-gradient(135deg, var(--biz-primary), var(--biz-secondary)) !important;
+}
+
+.business-page-header h1 {
+  max-width: 850px;
+  margin: 14px 0 14px;
+  font-size: clamp(2.2rem, 5vw, 4.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+}
+
+.business-page-header p {
+  max-width: 680px;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.7;
+}
+
+
+/* Finance Capital visual identity: premium navy and gold trust styling */
+.business-finance-template .business-page-header,
+.business-finance-template .business-hero-slide::before {
+  background:
+    radial-gradient(circle at 80% 18%, rgba(212, 175, 55, 0.28), transparent 30%),
+    linear-gradient(135deg, #020617, #0f172a 72%);
+}
+.business-finance-template .business-navbar,
+.business-finance-template .business-footer {
+  background: #020617;
+  color: #ffffff;
+}
+.business-finance-template .business-navbar .business-nav-link,
+.business-finance-template .business-navbar .business-brand,
+.business-finance-template .business-navbar .business-brand__copy small {
+  color: rgba(255, 255, 255, 0.88);
+}
+.business-finance-template .business-nav-link:hover,
+.business-finance-template .business-nav-link.is-active {
+  background: #d4af37 !important;
+  color: #020617;
+}
+.business-finance-template .business-card,
+.business-finance-template .business-contact-card {
+  border-radius: 22px;
+  border-color: rgba(212, 175, 55, 0.26);
+  box-shadow: 0 22px 60px rgba(2, 6, 23, 0.12);
+}
+.business-finance-template .business-service-icon {
+  background: linear-gradient(135deg, #d4af37, #f7d774);
+  color: #020617;
+}
+
