@@ -8,7 +8,7 @@ const templateConfig = {
   tags: ["software", "developer", "projects", "resume", "technical"],
   preview_image: "/template-previews/portfolio-developer.png",
   defaults: {
-    site_name: "Phetolo Mpe",
+    site_name: "Mark Torvalds",
     tagline: "Full-Stack Software Developer",
     email: "hello@portfolio.example",
     phone: "+27 11 000 0000",
