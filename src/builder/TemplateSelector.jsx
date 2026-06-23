@@ -18,6 +18,7 @@ import {
   FiShoppingBag,
   FiSmartphone,
   FiTablet,
+  FiTool,
   FiTruck,
   FiUser,
 } from "react-icons/fi";
@@ -31,6 +32,7 @@ const RECOMMENDED_LAYOUTS = [
   "health",
   "agriculture",
   "construction",
+  "engineering",
   "technology",
   "ecommerce",
   "real-estate",
@@ -48,6 +50,7 @@ const CATEGORY_LABELS = {
   health: "Health",
   agriculture: "Agriculture",
   construction: "Construction",
+  engineering: "Engineering",
   technology: "Technology",
   ecommerce: "E-Commerce",
   "real-estate": "Real Estate",
@@ -65,6 +68,7 @@ const CATEGORY_ICONS = {
   health: FiHeart,
   agriculture: FiLayers,
   construction: FiHome,
+  engineering: FiTool,
   technology: FiCpu,
   ecommerce: FiShoppingBag,
   "real-estate": FiHome,
@@ -110,6 +114,11 @@ const CATEGORY_STYLES = {
     background: "#fefce8",
     border: "#fde68a",
   },
+  engineering: {
+  color: "#475569",
+  background: "#f1f5f9",
+  border: "#cbd5e1",
+},
   technology: {
     color: "#0284c7",
     background: "#f0f9ff",
