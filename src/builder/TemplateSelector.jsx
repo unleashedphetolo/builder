@@ -26,7 +26,11 @@ import {
   FiTruck,
   FiUser,
 } from "react-icons/fi";
-import { FaPlaceOfWorship } from "react-icons/fa";
+import { 
+  FaPlaceOfWorship,
+  FaBalanceScale,
+} from "react-icons/fa";
+
 import "../styles/templateSelector.css";
 
 const RECOMMENDED_LAYOUTS = [
@@ -88,7 +92,7 @@ const CATEGORY_ICONS = {
   "real-estate": FiHome,
   restaurant: FiCoffee,
   beauty: FiPenTool,
-  legal: FiFileText,
+  legal: FaBalanceScale,
   religion: FaPlaceOfWorship,
 culture: FiGlobe,
 sports: FiAward,
