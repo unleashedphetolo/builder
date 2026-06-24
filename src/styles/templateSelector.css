@@ -991,7 +991,7 @@
   border-radius: 20px;
   background: linear-gradient(180deg, #ffffff, #f8fafc);
   display: grid;
-  grid-template-columns: 42px minmax(0, 1fr) 42px;
+  grid-template-columns: 22px minmax(0, 1fr) 22px !important;
   align-items: stretch;
   gap: 8px;
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.055);
@@ -1020,7 +1020,7 @@
 }
 
 .template-tabs-scroll {
-  width: 42px;
+  width: 22px !important;
   min-height: 70px;
   border: 1px solid #dbe4f0;
   border-radius: 16px;
@@ -1145,13 +1145,13 @@
 
 @media (max-width: 720px) {
   .template-tabs-shell {
-    grid-template-columns: 34px minmax(0, 1fr) 34px;
+    grid-template-columns: 22px minmax(0, 1fr) 22px;
     gap: 6px;
     padding: 6px;
   }
 
   .template-tabs-scroll {
-    width: 34px;
+    width: 22px;
     min-height: 62px;
     border-radius: 12px;
   }
@@ -1181,7 +1181,7 @@
 
 @media (max-width: 720px) {
   .template-tabs-shell {
-    grid-template-columns: 28px minmax(0, 1fr) 20px !important;
+    grid-template-columns: 22px minmax(0, 1fr) 22px !important;
     align-items: center !important;
     gap: 6px !important;
     padding: 6px !important;
@@ -1193,7 +1193,7 @@
   }
 
   .template-tabs-scroll {
-    width: 34px !important;
+    width: 22px !important;
     height: 42px !important;
     min-height: 42px !important;
     align-self: center !important;
@@ -1231,11 +1231,11 @@
 
 @media (max-width: 420px) {
   .template-tabs-shell {
-    grid-template-columns: 34px minmax(0, 1fr) 34px !important;
+    grid-template-columns: 22px minmax(0, 1fr) 22px !important;
   }
 
   .template-tabs-scroll {
-    width: 32px !important;
+    width: 22px !important;
     height: 40px !important;
     min-height: 40px !important;
   }

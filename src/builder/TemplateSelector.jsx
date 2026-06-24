@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   FiActivity,
+  FiAward,
   FiBookOpen,
   FiBriefcase,
   FiChevronDown,
@@ -8,6 +9,8 @@ import {
   FiChevronRight,
   FiCoffee,
   FiCpu,
+  FiFileText,
+  FiGlobe,
   FiGrid,
   FiHeart,
   FiHome,
@@ -17,17 +20,20 @@ import {
   FiShield,
   FiShoppingBag,
   FiSmartphone,
+  FiSun,
   FiTablet,
   FiTool,
   FiTruck,
   FiUser,
 } from "react-icons/fi";
+import { FaPlaceOfWorship } from "react-icons/fa";
 import "../styles/templateSelector.css";
 
 const RECOMMENDED_LAYOUTS = [
   "all",
   "school",
   "business",
+  "security",
   "portfolio",
   "health",
   "agriculture",
@@ -38,7 +44,10 @@ const RECOMMENDED_LAYOUTS = [
   "real-estate",
   "restaurant",
   "beauty",
-  "law",
+  "legal",
+  "religion",
+  "culture",
+  "sports",
   "nonprofit",
 ];
 
@@ -46,6 +55,7 @@ const CATEGORY_LABELS = {
   all: "All",
   school: "School",
   business: "Business",
+  security: "Security",
   portfolio: "Portfolio",
   health: "Health",
   agriculture: "Agriculture",
@@ -56,7 +66,10 @@ const CATEGORY_LABELS = {
   "real-estate": "Real Estate",
   restaurant: "Restaurant",
   beauty: "Beauty",
-  law: "Legal",
+  legal: "Legal",
+  religion: "Religion",
+  culture: "Culture",
+  sports: "Sports",
   nonprofit: "Nonprofit",
 };
 
@@ -64,6 +77,7 @@ const CATEGORY_ICONS = {
   all: FiGrid,
   school: FiBookOpen,
   business: FiBriefcase,
+  security: FiShield,
   portfolio: FiUser,
   health: FiHeart,
   agriculture: FiLayers,
@@ -74,7 +88,10 @@ const CATEGORY_ICONS = {
   "real-estate": FiHome,
   restaurant: FiCoffee,
   beauty: FiPenTool,
-  law: FiShield,
+  legal: FiFileText,
+  religion: FaPlaceOfWorship,
+culture: FiGlobe,
+sports: FiAward,
   nonprofit: FiActivity,
 };
 
@@ -93,6 +110,11 @@ const CATEGORY_STYLES = {
     color: "#0f766e",
     background: "#ecfdf5",
     border: "#99f6e4",
+  },
+  security: {
+    color: "#1e3a8a",
+    background: "#eff6ff",
+    border: "#bfdbfe",
   },
   portfolio: {
     color: "#7c3aed",
@@ -115,10 +137,10 @@ const CATEGORY_STYLES = {
     border: "#fde68a",
   },
   engineering: {
-  color: "#475569",
-  background: "#f1f5f9",
-  border: "#cbd5e1",
-},
+    color: "#475569",
+    background: "#f1f5f9",
+    border: "#cbd5e1",
+  },
   technology: {
     color: "#0284c7",
     background: "#f0f9ff",
@@ -144,11 +166,26 @@ const CATEGORY_STYLES = {
     background: "#fdf2f8",
     border: "#fbcfe8",
   },
-  law: {
+  legal: {
     color: "#1e3a8a",
     background: "#eff6ff",
     border: "#bfdbfe",
   },
+  religion: {
+  color: "#7c3aed",
+  background: "#f5f3ff",
+  border: "#ddd6fe",
+},
+culture: {
+  color: "#c2410c",
+  background: "#fff7ed",
+  border: "#fed7aa",
+},
+sports: {
+  color: "#16a34a",
+  background: "#f0fdf4",
+  border: "#bbf7d0",
+},
   nonprofit: {
     color: "#059669",
     background: "#ecfdf5",
