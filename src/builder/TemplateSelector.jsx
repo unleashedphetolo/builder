@@ -1,36 +1,38 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  FiActivity,
-  FiAward,
-  FiBookOpen,
-  FiBriefcase,
-  FiChevronDown,
+  // FiChevronDown,
   FiChevronLeft,
   FiChevronRight,
-  FiCoffee,
-  FiCpu,
-  FiFileText,
-  FiGlobe,
   FiGrid,
-  FiHeart,
   FiHome,
   FiLayers,
   FiMonitor,
-  FiPenTool,
-  FiShield,
   FiShoppingBag,
   FiSmartphone,
-  FiSun,
   FiTablet,
-  FiTool,
   FiTruck,
-  FiUser,
 } from "react-icons/fi";
 import {
   FaPlaceOfWorship,
   FaBalanceScale,
+  FaBuilding,
+  FaSchool,
+  FaHospital,
+  FaHardHat,
+  FaSeedling,
+  FaBriefcase,
+  FaCogs,
+  FaTrophy,
   FaLandmark,
+  FaLayerGroup,
+  FaHandsHelping,
+  FaSpa,
+  FaUtensils,
+  FaShoppingCart,
+  FaShieldAlt,
+  FaMicrochip,
   FaTheaterMasks,
+  FaUserTie,
 } from "react-icons/fa";
 
 import "../styles/templateSelector.css";
@@ -82,26 +84,26 @@ const CATEGORY_LABELS = {
 };
 
 const CATEGORY_ICONS = {
-  all: FiGrid,
-  school: FiBookOpen,
-  business: FiBriefcase,
-  security: FiShield,
-  portfolio: FiUser,
-  health: FiHeart,
-  agriculture: FiLayers,
-  construction: FiHome,
-  engineering: FiTool,
-  technology: FiCpu,
-  ecommerce: FiShoppingBag,
-  "real-estate": FiHome,
-  restaurant: FiCoffee,
-  beauty: FiPenTool,
+  all: FaLayerGroup,
+  school: FaSchool,
+  business: FaBriefcase,
+  security: FaShieldAlt,
+  portfolio: FaUserTie,
+  health: FaHospital,
+  agriculture: FaSeedling,
+  construction: FaHardHat,
+  engineering: FaCogs,
+  technology: FaMicrochip,
+  ecommerce: FaShoppingCart,
+  "real-estate": FaBuilding,
+  restaurant: FaUtensils,
+  beauty: FaSpa,
   legal: FaBalanceScale,
   religion: FaPlaceOfWorship,
   culture: FaLandmark,
   entertainment: FaTheaterMasks,
-  sports: FiAward,
-  nonprofit: FiActivity,
+  sports: FaTrophy,
+  nonprofit: FaHandsHelping,
 };
 
 const CATEGORY_STYLES = {
@@ -1568,11 +1570,11 @@ export default function TemplateSelector({
                       <CategoryIcon />
                     </span>
 
-                    {availableLayouts.length > 8 && layout !== "all" && (
+                    {/* {availableLayouts.length > 8 && layout !== "all" && (
                       <span className="template-tab-chevron">
                         <FiChevronDown />
                       </span>
-                    )}
+                    )} */}
                   </span>
 
                   <span className="template-tab-label">
