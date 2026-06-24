@@ -26,9 +26,11 @@ import {
   FiTruck,
   FiUser,
 } from "react-icons/fi";
-import { 
+import {
   FaPlaceOfWorship,
   FaBalanceScale,
+  FaLandmark,
+  FaTheaterMasks,
 } from "react-icons/fa";
 
 import "../styles/templateSelector.css";
@@ -51,6 +53,7 @@ const RECOMMENDED_LAYOUTS = [
   "legal",
   "religion",
   "culture",
+  "entertainment",
   "sports",
   "nonprofit",
 ];
@@ -73,6 +76,7 @@ const CATEGORY_LABELS = {
   legal: "Legal",
   religion: "Religion",
   culture: "Culture",
+  entertainment: "Entertainment",
   sports: "Sports",
   nonprofit: "Nonprofit",
 };
@@ -94,8 +98,9 @@ const CATEGORY_ICONS = {
   beauty: FiPenTool,
   legal: FaBalanceScale,
   religion: FaPlaceOfWorship,
-culture: FiGlobe,
-sports: FiAward,
+  culture: FaLandmark,
+  entertainment: FaTheaterMasks,
+  sports: FiAward,
   nonprofit: FiActivity,
 };
 
@@ -176,20 +181,25 @@ const CATEGORY_STYLES = {
     border: "#bfdbfe",
   },
   religion: {
-  color: "#7c3aed",
-  background: "#f5f3ff",
-  border: "#ddd6fe",
-},
-culture: {
-  color: "#c2410c",
-  background: "#fff7ed",
-  border: "#fed7aa",
-},
-sports: {
-  color: "#16a34a",
-  background: "#f0fdf4",
-  border: "#bbf7d0",
-},
+    color: "#7c3aed",
+    background: "#f5f3ff",
+    border: "#ddd6fe",
+  },
+  culture: {
+    color: "#c2410c",
+    background: "#fff7ed",
+    border: "#fed7aa",
+  },
+  entertainment: {
+    color: "#9333ea",
+    background: "#faf5ff",
+    border: "#e9d5ff",
+  },
+  sports: {
+    color: "#16a34a",
+    background: "#f0fdf4",
+    border: "#bbf7d0",
+  },
   nonprofit: {
     color: "#059669",
     background: "#ecfdf5",
@@ -1011,8 +1021,8 @@ export default function TemplateSelector({
           }
 
           .template-tab-icon svg {
-            width: 15px;
-            height: 15px;
+            width: 20px;
+            height: 20px;
             stroke-width: 2.35;
           }
 
@@ -1146,8 +1156,8 @@ export default function TemplateSelector({
 
           .template-tab-visual {
             position: relative;
-            width: 33px;
-            height: 33px;
+            width: 40px;
+            height: 40px;
             border-radius: 13px;
             background: #ffffff;
             color: var(--template-category-color);
@@ -1167,8 +1177,8 @@ export default function TemplateSelector({
           }
 
           .template-tab-icon svg {
-            width: 17px;
-            height: 17px;
+            width: 30px;
+            height: 30px;
             stroke-width: 2.55;
           }
 
@@ -1177,7 +1187,7 @@ export default function TemplateSelector({
             overflow: hidden;
             text-align: center;
             color: inherit;
-            font-size: 11px;
+            font-size: 13px;
             line-height: 1.05;
             font-weight: 950;
             text-overflow: ellipsis;

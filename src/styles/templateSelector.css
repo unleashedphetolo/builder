@@ -1078,8 +1078,8 @@
 
 .template-tab-visual {
   position: relative;
-  width: 33px;
-  height: 33px;
+  width: 40px;
+  height: 40px;
   border-radius: 13px;
   background: #ffffff;
   color: var(--template-category-color, #334155);
@@ -1102,8 +1102,8 @@
 }
 
 .template-tab-icon svg {
-  width: 17px;
-  height: 17px;
+  width: 50px;
+  height: 50px;
   stroke-width: 2.55;
 }
 
@@ -1119,6 +1119,20 @@
   white-space: nowrap;
 }
 
+/* =========================================================
+   FIX CATEGORY LABEL DESCENDERS
+   Prevents letters like g, y, p, q from being cut off
+   ========================================================= */
+
+.template-tab-label {
+  line-height: 1.25 !important;
+  padding-bottom: 2px !important;
+  overflow: visible !important;
+}
+
+.template-tab-btn {
+  overflow: visible !important;
+}
 .template-tab-chevron {
   position: absolute;
   right: -5px;
@@ -1163,8 +1177,8 @@
   }
 
   .template-tab-visual {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     border-radius: 11px;
   }
 
@@ -1217,8 +1231,8 @@
   }
 
   .template-tab-visual {
-    width: 29px !important;
-    height: 29px !important;
+    width: 40px !important;
+    height: 40px !important;
     border-radius: 11px !important;
   }
 
