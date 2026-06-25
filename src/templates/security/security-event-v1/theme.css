@@ -1,0 +1,9 @@
+.security-template--security-event-v1 .security-hero--event-command .security-hero-overlay {
+  background: linear-gradient(90deg, rgba(31,16,16,.92), rgba(127,29,29,.54), rgba(249,115,22,.18));
+}
+.security-template--security-event-v1 .security-trust-strip article:nth-child(even) {
+  background: color-mix(in srgb, var(--security-secondary) 84%, #fff);
+}
+.security-template--security-event-v1 .security-nav-links button.active {
+  background: rgba(255,255,255,.16);
+}

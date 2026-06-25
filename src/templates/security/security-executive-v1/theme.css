@@ -1,0 +1,11 @@
+.security-template--security-executive-v1 .security-hero--executive-suite .security-hero-overlay {
+  background: linear-gradient(90deg, rgba(17,17,17,.92), rgba(42,33,24,.56), rgba(17,17,17,.20));
+}
+.security-template--security-executive-v1 .security-card,
+.security-template--security-executive-v1 .security-package-grid article,
+.security-template--security-executive-v1 .security-contact-form {
+  box-shadow: 0 26px 80px rgba(88, 61, 18, .14);
+}
+.security-template--security-executive-v1 .security-kicker {
+  letter-spacing: .14em;
+}

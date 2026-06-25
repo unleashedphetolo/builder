@@ -7,6 +7,7 @@ import "../styles/site-theme-system.css";
 import SchoolLayout from "../layouts/SchoolLayout";
 import BusinessLayout from "../layouts/BusinessLayout";
 import PortfolioLayout from "../layouts/PortfolioLayout";
+import SecurityLayout from "../layouts/SecurityLayout";
 
 function normalizePageSlug(slug = "/") {
   const raw = String(slug || "/").trim();
@@ -714,6 +715,10 @@ export default function SitePage() {
 
   if (layoutKey === "portfolio") {
     return <PortfolioLayout {...sharedProps} />;
+  }
+
+  if (layoutKey === "security") {
+    return <SecurityLayout {...sharedProps} />;
   }
 
   return (

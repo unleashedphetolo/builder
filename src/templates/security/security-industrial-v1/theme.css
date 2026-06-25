@@ -1,0 +1,7 @@
+/* Industrial Shield template-specific polish. Shared engine handles layout, pages and responsiveness. */
+.security-template--security-industrial-v1 .security-kicker {
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--security-accent) 18%, transparent);
+}
+.security-template--security-industrial-v1 .security-page-header {
+  border-bottom: 4px solid var(--security-accent);
+}

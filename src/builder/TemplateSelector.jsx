@@ -18,6 +18,7 @@ import {
   FaBuilding,
   FaSchool,
   FaHospital,
+  FaHotel,
   FaHardHat,
   FaSeedling,
   FaBriefcase,
@@ -50,6 +51,7 @@ const RECOMMENDED_LAYOUTS = [
   "technology",
   "ecommerce",
   "real-estate",
+  "accommodation",
   "restaurant",
   "beauty",
   "legal",
@@ -73,6 +75,7 @@ const CATEGORY_LABELS = {
   technology: "Technology",
   ecommerce: "E-Commerce",
   "real-estate": "Real Estate",
+  accommodation: "Accommodation",
   restaurant: "Restaurant",
   beauty: "Beauty",
   legal: "Legal",
@@ -96,6 +99,7 @@ const CATEGORY_ICONS = {
   technology: FaMicrochip,
   ecommerce: FaShoppingCart,
   "real-estate": FaBuilding,
+  accommodation: FaHotel,
   restaurant: FaUtensils,
   beauty: FaSpa,
   legal: FaBalanceScale,
@@ -166,6 +170,11 @@ const CATEGORY_STYLES = {
     color: "#475569",
     background: "#f8fafc",
     border: "#cbd5e1",
+  },
+  accommodation: {
+    color: "#0e7490",
+    background: "#ecfeff",
+    border: "#a5f3fc",
   },
   restaurant: {
     color: "#b45309",
@@ -1158,8 +1167,8 @@ export default function TemplateSelector({
 
           .template-tab-visual {
             position: relative;
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border-radius: 13px;
             background: #ffffff;
             color: var(--template-category-color);
@@ -1189,7 +1198,7 @@ export default function TemplateSelector({
             overflow: hidden;
             text-align: center;
             color: inherit;
-            font-size: 13px;
+            font-size: 12px;
             line-height: 1.05;
             font-weight: 950;
             text-overflow: ellipsis;

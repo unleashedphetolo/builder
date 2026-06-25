@@ -1,6 +1,7 @@
 // Local template registry (fallback if DB tables are empty)
 // The DB can later drive this via `templates` + `template_marketplace`.
 // Each template now includes a `template_path` pointing to its folder.
+import { SECURITY_TEMPLATE_REGISTRY } from "./security/security.registry";
 
 export const DEFAULT_TEMPLATES = [
   /* =========================
@@ -165,6 +166,8 @@ export const DEFAULT_TEMPLATES = [
     preview_image: "/template-previews/business-finance.png",
   },
 
+  
+
   /* =========================
      PORTFOLIO TEMPLATES
      ========================= */
@@ -233,5 +236,11 @@ export const DEFAULT_TEMPLATES = [
     tags: ["teacher", "educator", "tutoring", "qualifications", "resume"],
     preview_image: "/template-previews/portfolio-educator.png",
   },
+
+   /* =========================
+     SECURITY TEMPLATES
+     ========================= */
+
+  ...SECURITY_TEMPLATE_REGISTRY,
 
 ];

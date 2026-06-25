@@ -1,0 +1,17 @@
+.security-template--security-surveillance-v1 .security-hero--monitoring-dashboard::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-image:
+    linear-gradient(rgba(20,184,166,.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20,184,166,.10) 1px, transparent 1px);
+  background-size: 44px 44px;
+  pointer-events: none;
+}
+.security-template--security-surveillance-v1 .security-solution-list article {
+  background: linear-gradient(135deg, #020617, #064e3b);
+}
+.security-template--security-surveillance-v1 .security-navbar--tech-glass .security-brand-mark {
+  box-shadow: 0 0 26px rgba(20, 184, 166, .42);
+}

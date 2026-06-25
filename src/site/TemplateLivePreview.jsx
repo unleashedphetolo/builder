@@ -4,6 +4,7 @@ import { useLocation, useParams } from "react-router-dom";
 import SchoolLayout from "../layouts/SchoolLayout";
 import BusinessLayout from "../layouts/BusinessLayout";
 import PortfolioLayout from "../layouts/PortfolioLayout";
+import SecurityLayout from "../layouts/SecurityLayout";
 
 const templateConfigs = import.meta.glob(
   "../templates/*/*/template.config.{js,jsx}",
@@ -423,6 +424,10 @@ export default function TemplateLivePreview() {
   if (layoutKey === "portfolio") {
     return <PortfolioLayout {...sharedProps} />;
   }
+
+  if (layoutKey === "security") {
+      return <SecurityLayout {...sharedProps} />;
+    }
 
   return <SchoolLayout {...sharedProps} />;
 }

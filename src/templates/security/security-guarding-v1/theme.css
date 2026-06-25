@@ -1,0 +1,10 @@
+.security-template--security-guarding-v1 .security-navbar--command {
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--security-text);
+}
+.security-template--security-guarding-v1 .security-hero--split-command .security-hero-panel {
+  transform: rotate(-1deg);
+}
+.security-template--security-guarding-v1 .security-trust-strip {
+  border: 1px solid rgba(37, 99, 235, 0.18);
+}
