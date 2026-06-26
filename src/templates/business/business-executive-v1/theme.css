@@ -1,0 +1,17 @@
+.business-template--business-executive-v1 .business-navbar--executive-dark {
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--business-text);
+}
+.business-template--business-executive-v1 .business-hero--executive-suite .business-hero-panel {
+  border: 1px solid color-mix(in srgb, var(--business-accent) 32%, transparent);
+}
+.business-template--business-executive-v1 .business-trust-strip {
+  border: 1px solid color-mix(in srgb, var(--business-accent) 18%, transparent);
+}
+.business-template--business-executive-v1 .business-navbar--executive-dark {
+  background: linear-gradient(90deg, var(--business-primary), var(--business-secondary));
+  color: #ffffff;
+}
+.business-template--business-executive-v1 .business-brand,
+.business-template--business-executive-v1 .business-nav-links button,
+.business-template--business-executive-v1 .business-menu-toggle { color: #ffffff; }

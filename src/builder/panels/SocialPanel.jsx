@@ -73,49 +73,49 @@ const DEFAULT_ENABLED_PLATFORMS = [...DEFAULT_PLATFORMS];
 
 const PLATFORM_DEFAULTS = {
   facebook: {
-    enabled: true,
+    enabled: false,
     url: "",
     colorMode: "original",
     label: "Facebook",
     placeholder: "https://www.facebook.com",
   },
   instagram: {
-    enabled: true,
+    enabled: false,
     url: "",
     colorMode: "original",
     label: "Instagram",
     placeholder: "https://www.instagram.com",
   },
   x: {
-    enabled: true,
+    enabled: false,
     url: "",
     colorMode: "original",
     label: "X",
     placeholder: "https://www.x.com",
   },
   youtube: {
-    enabled: true,
+    enabled: false,
     url: "",
     colorMode: "original",
     label: "YouTube",
     placeholder: "https://www.youtube.com",
   },
   tiktok: {
-    enabled: true,
+    enabled: false,
     url: "",
     colorMode: "original",
     label: "TikTok",
     placeholder: "https://www.tiktok.com",
   },
   linkedin: {
-    enabled: true,
+    enabled: false,
     url: "",
     colorMode: "original",
     label: "LinkedIn",
     placeholder: "https://www.linkedin.com",
   },
   whatsapp: {
-    enabled: true,
+    enabled: false,
     url: "",
     colorMode: "original",
     label: "WhatsApp",
@@ -273,18 +273,7 @@ function serialize(value) {
   }
 }
 
-// function uniqueOrder(value) {
-//   if (!Array.isArray(value) || value.length === 0) {
-//     return [...DEFAULT_PLATFORMS];
-//   }
 
-//   return value.filter(
-//     (platform, index, list) =>
-//       typeof platform === "string" &&
-//       platform.trim() &&
-//       list.indexOf(platform) === index,
-//   );
-// }
 function uniqueOrder(value) {
   const savedOrder = Array.isArray(value)
     ? value.filter(

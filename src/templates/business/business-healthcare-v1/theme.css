@@ -1,0 +1,10 @@
+.business-template--business-healthcare-v1 .business-navbar--healthcare-calm {
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--business-text);
+}
+.business-template--business-healthcare-v1 .business-hero--care-trust .business-hero-panel {
+  border: 1px solid color-mix(in srgb, var(--business-accent) 32%, transparent);
+}
+.business-template--business-healthcare-v1 .business-trust-strip {
+  border: 1px solid color-mix(in srgb, var(--business-accent) 18%, transparent);
+}

@@ -8,6 +8,10 @@ import SchoolLayout from "../layouts/SchoolLayout";
 import BusinessLayout from "../layouts/BusinessLayout";
 import PortfolioLayout from "../layouts/PortfolioLayout";
 import SecurityLayout from "../layouts/SecurityLayout";
+import HealthLayout from "../layouts/HealthLayout";
+import AgricultureLayout from "../layouts/AgricultureLayout";
+import ConstructionLayout from "../layouts/ConstructionLayout";
+import EngineeringLayout from "../layouts/EngineeringLayout";
 
 function normalizePageSlug(slug = "/") {
   const raw = String(slug || "/").trim();
@@ -719,6 +723,22 @@ export default function SitePage() {
 
   if (layoutKey === "security") {
     return <SecurityLayout {...sharedProps} />;
+  }
+
+  if (layoutKey === "health") {
+    return <HealthLayout {...sharedProps} />;
+  }
+
+  if (layoutKey === "agriculture") {
+    return <AgricultureLayout {...sharedProps} />;
+  }
+
+  if (layoutKey === "construction") {
+    return <ConstructionLayout {...sharedProps} />;
+  }
+
+  if (layoutKey === "engineering") {
+    return <EngineeringLayout {...sharedProps} />;
   }
 
   return (

@@ -1,7 +1,0 @@
-.business-page--services {
-  background: var(--biz-bg);
-}
-
-.business-page--services .business-section:nth-child(even) {
-  background: color-mix(in srgb, var(--biz-primary) 4%, var(--biz-bg));
-}

@@ -1,6 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   FaArrowUp,
+  FaBehance,
+  FaDiscord,
+  FaDribbble,
+  FaGithub,
+  FaGlobe,
+  FaMediumM,
+  FaPinterestP,
+  FaRedditAlien,
+  FaSnapchatGhost,
+  FaSpotify,
+  FaTelegramPlane,
+  FaTwitch,
   FaBell,
   FaBuilding,
   FaCalendarAlt,
@@ -35,7 +47,7 @@ import {
   FaWhatsapp,
   FaYoutube,
 } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import { FaThreads, FaXTwitter } from "react-icons/fa6";
 import ulterspaceLogo from "../../../assets/logo.gif";
 import {
   SECURITY_IMAGE_PACKS,
@@ -58,101 +70,105 @@ const NAV_ITEMS = [
 
 const SECURITY_PAGE_KEYS = new Set(NAV_ITEMS.map((item) => item.key));
 
+
 const SECURITY_SOCIAL_ICONS = {
   facebook: FaFacebookF,
   instagram: FaInstagram,
-  tiktok: FaTiktok,
-  linkedin: FaLinkedinIn,
   x: FaXTwitter,
   youtube: FaYoutube,
+  tiktok: FaTiktok,
+  linkedin: FaLinkedinIn,
   whatsapp: FaWhatsapp,
+  threads: FaThreads,
+  telegram: FaTelegramPlane,
+  snapchat: FaSnapchatGhost,
+  pinterest: FaPinterestP,
+  discord: FaDiscord,
+  github: FaGithub,
+  behance: FaBehance,
+  dribbble: FaDribbble,
+  medium: FaMediumM,
+  reddit: FaRedditAlien,
+  twitch: FaTwitch,
+  spotify: FaSpotify,
+  website: FaGlobe,
   email: FaEnvelope,
   phone: FaPhoneAlt,
 };
 
 const SECURITY_SOCIAL_STYLE_DEFAULTS = {
-  facebook: {
-    enabled: true,
-    url: "https://facebook.com",
-    colorMode: "original",
-    originalColor: "#1877f2",
-    monoColor: "#ffffff",
-    color: "#1877f2",
-  },
-  instagram: {
-    enabled: true,
-    url: "https://instagram.com",
-    colorMode: "original",
-    originalColor: "#e4405f",
-    monoColor: "#ffffff",
-    color: "#e4405f",
-  },
-  tiktok: {
-    enabled: true,
-    url: "https://tiktok.com",
-    colorMode: "original",
-    originalColor: "#ffffff",
-    monoColor: "#ffffff",
-    color: "#ffffff",
-  },
-  linkedin: {
-    enabled: true,
-    url: "https://linkedin.com",
-    colorMode: "original",
-    originalColor: "#0a66c2",
-    monoColor: "#ffffff",
-    color: "#0a66c2",
-  },
-  x: {
-    enabled: true,
-    url: "https://x.com",
-    colorMode: "original",
-    originalColor: "#ffffff",
-    monoColor: "#ffffff",
-    color: "#ffffff",
-  },
-  youtube: {
-    enabled: true,
-    url: "https://youtube.com",
-    colorMode: "original",
-    originalColor: "#ff0000",
-    monoColor: "#ffffff",
-    color: "#ff0000",
-  },
-  whatsapp: {
-    enabled: true,
-    url: "https://wa.me/27000000000",
-    colorMode: "original",
-    originalColor: "#25d366",
-    monoColor: "#ffffff",
-    color: "#25d366",
-  },
-  email: {
-    enabled: true,
-    url: "mailto:info@securitycompany.co.za",
-    colorMode: "mono",
-    originalColor: "#ffffff",
-    monoColor: "#ffffff",
-    color: "#ffffff",
-  },
-  phone: {
-    enabled: true,
-    url: "tel:+27000000000",
-    colorMode: "mono",
-    originalColor: "#ffffff",
-    monoColor: "#ffffff",
-    color: "#ffffff",
-  },
+  facebook: { label: "Facebook", enabled: false, url: "", colorMode: "original", originalColor: "#1877f2", monoColor: "#ffffff", color: "#1877f2" },
+  instagram: { label: "Instagram", enabled: false, url: "", colorMode: "original", originalColor: "#e4405f", monoColor: "#ffffff", color: "#e4405f" },
+  x: { label: "X", enabled: false, url: "", colorMode: "original", originalColor: "#ffffff", monoColor: "#ffffff", color: "#ffffff" },
+  youtube: { label: "YouTube", enabled: false, url: "", colorMode: "original", originalColor: "#ff0000", monoColor: "#ffffff", color: "#ff0000" },
+  tiktok: { label: "TikTok", enabled: false, url: "", colorMode: "original", originalColor: "#ffffff", monoColor: "#ffffff", color: "#ffffff" },
+  linkedin: { label: "LinkedIn", enabled: false, url: "", colorMode: "original", originalColor: "#0a66c2", monoColor: "#ffffff", color: "#0a66c2" },
+  whatsapp: { label: "WhatsApp", enabled: false, url: "", colorMode: "original", originalColor: "#25d366", monoColor: "#ffffff", color: "#25d366" },
+  threads: { label: "Threads", enabled: false, url: "", colorMode: "original", originalColor: "#ffffff", monoColor: "#ffffff", color: "#ffffff" },
+  telegram: { label: "Telegram", enabled: false, url: "", colorMode: "original", originalColor: "#26a5e4", monoColor: "#ffffff", color: "#26a5e4" },
+  snapchat: { label: "Snapchat", enabled: false, url: "", colorMode: "original", originalColor: "#fffc00", monoColor: "#ffffff", color: "#fffc00" },
+  pinterest: { label: "Pinterest", enabled: false, url: "", colorMode: "original", originalColor: "#e60023", monoColor: "#ffffff", color: "#e60023" },
+  discord: { label: "Discord", enabled: false, url: "", colorMode: "original", originalColor: "#5865f2", monoColor: "#ffffff", color: "#5865f2" },
+  github: { label: "GitHub", enabled: false, url: "", colorMode: "original", originalColor: "#ffffff", monoColor: "#ffffff", color: "#ffffff" },
+  behance: { label: "Behance", enabled: false, url: "", colorMode: "original", originalColor: "#1769ff", monoColor: "#ffffff", color: "#1769ff" },
+  dribbble: { label: "Dribbble", enabled: false, url: "", colorMode: "original", originalColor: "#ea4c89", monoColor: "#ffffff", color: "#ea4c89" },
+  medium: { label: "Medium", enabled: false, url: "", colorMode: "original", originalColor: "#ffffff", monoColor: "#ffffff", color: "#ffffff" },
+  reddit: { label: "Reddit", enabled: false, url: "", colorMode: "original", originalColor: "#ff4500", monoColor: "#ffffff", color: "#ff4500" },
+  twitch: { label: "Twitch", enabled: false, url: "", colorMode: "original", originalColor: "#9146ff", monoColor: "#ffffff", color: "#9146ff" },
+  spotify: { label: "Spotify", enabled: false, url: "", colorMode: "original", originalColor: "#1db954", monoColor: "#ffffff", color: "#1db954" },
+  website: { label: "Website", enabled: false, url: "", colorMode: "original", originalColor: "#2563eb", monoColor: "#ffffff", color: "#2563eb" },
+  email: { label: "Email", enabled: false, url: "", colorMode: "mono", originalColor: "#ffffff", monoColor: "#ffffff", color: "#ffffff" },
+  phone: { label: "Phone", enabled: false, url: "", colorMode: "mono", originalColor: "#ffffff", monoColor: "#ffffff", color: "#ffffff" },
+};
+
+const SECURITY_SOCIAL_PRESET_FALLBACKS = {
+  facebook: "https://facebook.com",
+  instagram: "https://instagram.com",
+  x: "https://x.com",
+  youtube: "https://youtube.com",
+  tiktok: "https://tiktok.com",
+  linkedin: "https://linkedin.com",
+  whatsapp: "https://wa.me/27000000000",
+  threads: "https://threads.net",
+  telegram: "https://t.me/yourusername",
+  snapchat: "https://snapchat.com",
+  pinterest: "https://pinterest.com",
+  discord: "https://discord.com",
+  github: "https://github.com",
+  behance: "https://behance.net",
+  dribbble: "https://dribbble.com",
+  medium: "https://medium.com",
+  reddit: "https://reddit.com",
+  twitch: "https://twitch.tv",
+  spotify: "https://open.spotify.com",
+  website: "https://example.com",
+  email: "mailto:info@securitycompany.co.za",
+  phone: "tel:+27000000000",
 };
 
 const SECURITY_SOCIAL_ORDER = [
   "facebook",
   "instagram",
-  "tiktok",
-  "linkedin",
   "x",
   "youtube",
+  "tiktok",
+  "linkedin",
   "whatsapp",
+  "threads",
+  "telegram",
+  "snapchat",
+  "pinterest",
+  "discord",
+  "github",
+  "behance",
+  "dribbble",
+  "medium",
+  "reddit",
+  "twitch",
+  "spotify",
+  "website",
+  "email",
+  "phone",
 ];
 
 const SECURITY_BRAND_ICONS = {
@@ -340,56 +356,90 @@ const getSocialIconColor = (data = {}) => {
   return data.originalColor || data.color || "#ffffff";
 };
 
+
 const resolveSavedSocialData = (savedLinks, key) => {
   if (!savedLinks || typeof savedLinks !== "object") return {};
 
   const savedValue = savedLinks[key];
 
-  if (!savedValue) return {};
+  if (savedValue === undefined || savedValue === null) return {};
 
   if (typeof savedValue === "string") {
-    return { url: savedValue };
+    return { enabled: true, url: savedValue };
   }
 
-  if (typeof savedValue === "object") {
+  if (typeof savedValue === "object" && !Array.isArray(savedValue)) {
     return savedValue;
   }
 
   return {};
 };
 
-const mergeSocialLinks = (defaultItems = [], savedLinks = {}, contact = {}) => {
-  const presetItems = Array.isArray(defaultItems) ? defaultItems : [];
+const hasSavedSocialData = (savedLinks, key) => {
+  return Boolean(
+    savedLinks &&
+      typeof savedLinks === "object" &&
+      Object.prototype.hasOwnProperty.call(savedLinks, key),
+  );
+};
+
+const getContactSocialUrl = (key, contact = {}) => {
+  if (key === "email") return contact.email ? `mailto:${contact.email}` : "";
+  if (key === "phone") return contact.phone ? `tel:${contact.phone}` : "";
+  if (key === "whatsapp") {
+    const phone = String(contact.phone || "").replace(/[^0-9]/g, "");
+    return phone ? `https://wa.me/${phone}` : "";
+  }
+  return "";
+};
+
+const getSocialKeys = (presetItems, savedLinks, socialDisplay) => {
+  const displayOrder = Array.isArray(socialDisplay?.order) ? socialDisplay.order : [];
   const presetKeys = presetItems.map((item) => item.key).filter(Boolean);
-  const savedOrder = Array.isArray(savedLinks?.order) ? savedLinks.order : [];
-  const keys = Array.from(
+  const savedKeys = savedLinks && typeof savedLinks === "object" ? Object.keys(savedLinks) : [];
+
+  return Array.from(
     new Set([
-      ...savedOrder,
+      ...displayOrder,
       ...presetKeys,
+      ...savedKeys,
       ...SECURITY_SOCIAL_ORDER,
     ]),
-  );
+  ).filter((key) => SECURITY_SOCIAL_ICONS[key]);
+};
+
+const mergeSocialLinks = (
+  defaultItems = [],
+  savedLinks = {},
+  contact = {},
+  socialDisplay = {},
+) => {
+  const presetItems = Array.isArray(defaultItems) ? defaultItems : [];
+  const keys = getSocialKeys(presetItems, savedLinks, socialDisplay);
 
   return keys
     .map((key) => {
       const presetItem = presetItems.find((item) => item.key === key) || {};
       const savedItem = resolveSavedSocialData(savedLinks, key);
       const baseItem = SECURITY_SOCIAL_STYLE_DEFAULTS[key] || {};
-      const contactUrl =
-        key === "email"
-          ? `mailto:${contact.email || ""}`
-          : key === "phone"
-            ? `tel:${contact.phone || ""}`
-            : "";
+      const presetExists = Boolean(presetItem.key);
+      const savedExists = hasSavedSocialData(savedLinks, key);
+
+      if (!presetExists && !savedExists) return null;
+
       const data = {
         ...baseItem,
+        ...(presetExists ? { enabled: true } : {}),
         ...presetItem,
         ...savedItem,
         key,
         label: savedItem.label || presetItem.label || baseItem.label || key,
       };
 
-      data.url = savedItem.url || presetItem.url || contactUrl || baseItem.url;
+      const contactUrl = getContactSocialUrl(key, contact);
+      data.url = savedItem.url || presetItem.url || contactUrl || SECURITY_SOCIAL_PRESET_FALLBACKS[key] || baseItem.url || "";
+
+      if (data.enabled === false || !data.url) return null;
 
       return {
         ...data,
@@ -397,15 +447,19 @@ const mergeSocialLinks = (defaultItems = [], savedLinks = {}, contact = {}) => {
         color: getSocialIconColor(data),
       };
     })
-    .filter((item) => item.Icon && item.enabled !== false && item.url);
+    .filter(Boolean);
 };
 
 function SecurityTopbar({ content, preset }) {
-  const socials = mergeSocialLinks(
-    SECURITY_SOCIAL_DEFAULTS[preset.contentKey] || SECURITY_SOCIAL_DEFAULTS.guarding,
-    content.socialLinks,
-    content.contact,
-  );
+  const showSocials = content.socialDisplay?.topbar !== false;
+  const socials = showSocials
+    ? mergeSocialLinks(
+        SECURITY_SOCIAL_DEFAULTS[preset.contentKey] || SECURITY_SOCIAL_DEFAULTS.guarding,
+        content.socialLinks,
+        content.contact,
+        content.socialDisplay,
+      )
+    : [];
 
   return (
     <div className="security-topbar">
@@ -415,21 +469,23 @@ function SecurityTopbar({ content, preset }) {
         <a href={`mailto:${content.contact.email}`}><FaEnvelope /> {content.contact.email}</a>
         <span className="security-topbar-hours"><FaClock /> {content.contact.hours}</span>
       </div>
-      <div className="security-topbar-social" aria-label="Social media links">
-        {socials.map(({ key, label, url, Icon, color }) => (
-          <a
-            key={key}
-            href={url || "#"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="security-social-icons"
-            aria-label={label}
-            onClick={(event) => !url && event.preventDefault()}
-          >
-            <Icon style={{ color }} />
-          </a>
-        ))}
-      </div>
+      {showSocials && socials.length > 0 && (
+        <div className="security-topbar-social" aria-label="Social media links">
+          {socials.map(({ key, label, url, Icon, color }) => (
+            <a
+              key={key}
+              href={url || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="security-social-icons"
+              aria-label={label}
+              onClick={(event) => !url && event.preventDefault()}
+            >
+              <Icon style={{ color }} />
+            </a>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -964,11 +1020,15 @@ function CTASection({ content, onPageChange }) {
 }
 
 function SecurityFooter({ content, config, onPageChange, preset }) {
-  const socials = mergeSocialLinks(
-    SECURITY_SOCIAL_DEFAULTS[preset.contentKey] || SECURITY_SOCIAL_DEFAULTS.guarding,
-    content.socialLinks,
-    content.contact,
-  );
+  const showSocials = content.socialDisplay?.footer !== false;
+  const socials = showSocials
+    ? mergeSocialLinks(
+        SECURITY_SOCIAL_DEFAULTS[preset.contentKey] || SECURITY_SOCIAL_DEFAULTS.guarding,
+        content.socialLinks,
+        content.contact,
+        content.socialDisplay,
+      )
+    : [];
 
   return (
     <footer className={`security-footer security-footer--${config.footerVariant}`}>
@@ -976,21 +1036,23 @@ function SecurityFooter({ content, config, onPageChange, preset }) {
         <div>
           <strong>{content.businessName}</strong>
           <p>{content.tagline}</p>
-          <div className="security-footer-social">
-            {socials.map(({ key, label, url, Icon, color }) => (
-              <a
-                key={key}
-                href={url || "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="security-social-icon"
-                aria-label={label}
-                onClick={(event) => !url && event.preventDefault()}
-              >
-                <Icon style={{ color }} />
-              </a>
-            ))}
-          </div>
+          {showSocials && socials.length > 0 && (
+            <div className="security-footer-social">
+              {socials.map(({ key, label, url, Icon, color }) => (
+                <a
+                  key={key}
+                  href={url || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="security-social-icon"
+                  aria-label={label}
+                  onClick={(event) => !url && event.preventDefault()}
+                >
+                  <Icon style={{ color }} />
+                </a>
+              ))}
+            </div>
+          )}
         </div>
         <div>
           <h4>Pages</h4>
@@ -1036,7 +1098,6 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <SecurityHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
         <SolutionsSection content={content} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
         <OperationsSection content={content} preset={preset} />
@@ -1066,7 +1127,6 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <SecurityHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
         <IndustriesSection content={content} />
@@ -1082,7 +1142,6 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <SecurityHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
         <OperationsSection content={content} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
         <SolutionsSection content={content} preset={preset} />
@@ -1097,7 +1156,6 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <SecurityHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
         <OperationsSection content={content} preset={preset} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
@@ -1126,7 +1184,6 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <SecurityHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
         <AboutSection content={content} images={images} preset={preset} />
         <VisionMissionValues content={content} config={config} />
         <ServicesSection content={content} config={config} preset={preset} />
@@ -1155,7 +1212,6 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <SecurityHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
         <AboutSection content={content} images={images} preset={preset} />
         <IndustriesSection content={content} />
@@ -1168,7 +1224,6 @@ function HomePage({ content, images, config, preset, onPageChange }) {
   return (
     <>
       <SecurityHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-      <TrustStrip content={content} preset={preset} />
       <AboutSection content={content} images={images} preset={preset} />
       <ServicesSection content={content} config={config} preset={preset} />
       <VisionMissionValues content={content} config={config} />
@@ -1227,7 +1282,7 @@ function PageContent({ currentPage, content, images, config, preset, onPageChang
 
 function SecurityScrollTopButton({ preset }) {
   const [visible, setVisible] = useState(false);
-  const TopIcon = SECURITY_TOP_SCROLL_ICONS[preset.structure] || FaArrowUp;
+  const TopIcon = FaArrowUp;
 
   useEffect(() => {
     if (typeof window === "undefined") return undefined;

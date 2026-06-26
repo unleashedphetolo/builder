@@ -1,0 +1,5 @@
+/* Family Paediatric Care uses the shared HealthRenderer styling.
+   Add tiny template-level overrides here only when this template needs a unique finishing touch. */
+.health-template--health-pediatric-v1 {
+  scroll-behavior: smooth;
+}

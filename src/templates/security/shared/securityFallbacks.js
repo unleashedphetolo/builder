@@ -95,5 +95,6 @@ export const normalizeSecurityContent = (settings = {}, preset = {}) => {
       mapQuery: contact.mapQuery || contact.address || settings.address || organization.address || "Johannesburg South Africa security company",
     },
     socialLinks: settings.social_links || settings.socialLinks || {},
+    socialDisplay: settings.social_display || settings.socialDisplay || {},
   };
 };

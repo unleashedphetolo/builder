@@ -1,0 +1,5 @@
+/* PrimeCare Clinic uses the shared HealthRenderer styling.
+   Add tiny template-level overrides here only when this template needs a unique finishing touch. */
+.health-template--health-clinic-v1 {
+  scroll-behavior: smooth;
+}

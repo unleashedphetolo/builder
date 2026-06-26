@@ -143,7 +143,7 @@
 .security-page-header div { position: relative; z-index: 2; }
 .security-page-header h1 { font-size: clamp(34px, 5vw, 62px); }
 
-.security-trust-strip { margin: -36px auto 0; position: relative; z-index: 5; width: min(1180px, calc(100% - 32px)); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; border-radius: 26px; background: var(--security-primary); overflow: hidden; box-shadow: var(--security-shadow); }
+.security-trust-strip { margin: clamp(28px, 4vw, 58px) auto 0; position: relative; z-index: 5; width: min(1180px, calc(100% - 32px)); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; border-radius: 26px; background: var(--security-primary); overflow: hidden; box-shadow: var(--security-shadow); }
 .security-trust-strip article { padding: 22px; background: color-mix(in srgb, var(--security-primary) 92%, #fff); color: #fff; }
 .security-trust-strip strong { display: block; font-size: 24px; font-weight: 950; }
 .security-trust-strip span { color: rgba(255,255,255,.72); font-size: 12px; font-weight: 800; }
@@ -246,7 +246,7 @@
   .security-hero { min-height: 620px; padding: 52px 15px 92px; }
   .security-hero h1, .security-page-header h1 { font-size: clamp(34px, 12vw, 52px); }
   .security-hero-panel, .security-trust-strip, .security-vmv, .security-cards, .security-package-grid, .security-industries-grid, .security-solution-list, .security-testimonials, .security-gallery, .security-footer-main { grid-template-columns: 1fr; }
-  .security-trust-strip { margin-top: 0; width: 100%; border-radius: 0; }
+  .security-trust-strip { margin-top: clamp(22px, 6vw, 34px); width: min(1180px, calc(100% - 32px)); border-radius: 22px; }
   .security-section, .security-vmv, .security-testimonials, .security-contact, .security-gallery, .security-cta-band { padding-left: 15px; padding-right: 15px; }
   .security-cta-band { margin-left: 15px; margin-right: 15px; display: grid; }
   .security-image-card img, .security-gallery img { height: 320px; }
@@ -1185,4 +1185,82 @@
   .security-process--patrol .security-process-list,
   .security-process--industrial .security-process-list,
   .security-process--systems .security-process-list { grid-template-columns: 1fr; }
+}
+
+
+/* SECURITY HOME TRUST PANEL SPACING - keeps the remaining hero snapshot panels clear on every device */
+.security-hero-panel {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.security-hero-panel article {
+  min-width: 0;
+}
+
+.security-hero-panel strong,
+.security-hero-panel span {
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 1121px) {
+  .security-shell--surveillance .security-hero,
+  .security-shell--event .security-hero {
+    padding-bottom: clamp(210px, 15vw, 250px);
+  }
+
+  .security-shell--estate .security-hero {
+    padding-bottom: clamp(220px, 16vw, 260px);
+  }
+
+  .security-shell--surveillance .security-slider-controls,
+  .security-shell--event .security-slider-controls {
+    bottom: 18px;
+  }
+}
+
+@media (max-width: 1120px) {
+  .security-hero {
+    align-content: start;
+  }
+
+  .security-hero-panel {
+    width: 100%;
+    align-self: stretch;
+    justify-self: stretch;
+    min-height: auto !important;
+    transform: none !important;
+  }
+
+  .security-shell--surveillance .security-hero-panel,
+  .security-shell--event .security-hero-panel,
+  .security-shell--estate .security-hero-panel {
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    width: 100%;
+    transform: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .security-hero {
+    gap: 20px;
+  }
+
+  .security-hero-panel {
+    grid-template-columns: 1fr !important;
+    padding: 16px;
+    border-radius: 22px !important;
+  }
+
+  .security-hero-panel article {
+    min-height: auto;
+    padding: 14px;
+  }
+
+  .security-hero-panel strong {
+    font-size: clamp(20px, 8vw, 28px);
+  }
 }

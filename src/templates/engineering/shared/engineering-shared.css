@@ -1,0 +1,2987 @@
+.engineering-template {
+  --engineering-radius: 28px;
+  --engineering-shadow: 0 26px 80px rgba(15, 23, 42, 0.16);
+  min-height: 100vh;
+  background: var(--engineering-surface);
+  color: var(--engineering-text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.engineering-template * { box-sizing: border-box; }
+.engineering-template button, .engineering-template input, .engineering-template textarea, .engineering-template select { font: inherit; }
+.engineering-template a { color: inherit; }
+
+.engineering-topbar {
+  min-height: 40px;
+  padding: 8px clamp(16px, 4vw, 72px);
+  background: var(--engineering-primary);
+  color: rgba(255, 255, 255, 0.86);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  font-size: 12px;
+  font-weight: 800;
+}
+.engineering-topbar-left, .engineering-topbar-social { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.engineering-topbar a { text-decoration: none; }
+.engineering-topbar-social a, .engineering-footer-social a {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--engineering-accent) 22%, rgba(255,255,255,.1));
+  display: inline-grid;
+  place-items: center;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.engineering-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  min-height: 78px;
+  padding: 14px clamp(16px, 4vw, 72px);
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto auto;
+  align-items: center;
+  gap: 18px;
+  background: rgba(255,255,255,.94);
+  border-bottom: 1px solid rgba(148, 163, 184, .26);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+.engineering-navbar--command { border-bottom: 4px solid var(--engineering-accent); }
+.engineering-navbar--tech-glass { background: rgba(2, 6, 23, .88); color: #fff; border-bottom-color: rgba(20, 184, 166, .28); }
+.engineering-navbar--premium { background: linear-gradient(135deg, #101010, #2a2118); color: #fff; border-bottom-color: rgba(184, 137, 46, .42); }
+.engineering-navbar--event-alert { background: linear-gradient(135deg, #1f1010, #7f1d1d); color: #fff; border-bottom-color: rgba(239, 68, 68, .45); }
+
+.engineering-brand {
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+.engineering-brand-mark {
+  width: 48px;
+  height: 48px;
+  border-radius: 17px;
+  background: var(--engineering-accent);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 950;
+  box-shadow: 0 16px 32px color-mix(in srgb, var(--engineering-accent) 30%, transparent);
+}
+.engineering-brand-copy { min-width: 0; }
+.engineering-brand strong, .engineering-brand small { display: block; }
+.engineering-brand strong { overflow: hidden; font-size: 15px; line-height: 1.1; font-weight: 950; text-overflow: ellipsis; white-space: nowrap; }
+.engineering-brand small { margin-top: 4px; opacity: .72; font-size: 11px; font-weight: 800; }
+
+.engineering-nav-links { display: inline-flex; align-items: center; gap: 6px; }
+.engineering-nav-links button, .engineering-footer-main button {
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 900;
+  opacity: .82;
+}
+.engineering-nav-links button.active, .engineering-nav-links button:hover { background: color-mix(in srgb, var(--engineering-accent) 18%, transparent); opacity: 1; }
+.engineering-nav-cta, .engineering-hero-actions button, .engineering-contact-form button, .engineering-cta-band button, .engineering-package-grid button {
+  border: 0;
+  border-radius: 999px;
+  background: var(--engineering-accent);
+  color: #fff;
+  padding: 12px 17px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 950;
+  box-shadow: 0 16px 36px color-mix(in srgb, var(--engineering-accent) 34%, transparent);
+}
+.engineering-menu-toggle { display: none; width: 44px; height: 40px; border: 1px solid rgba(148,163,184,.35); border-radius: 12px; background: rgba(255,255,255,.14); color: inherit; cursor: pointer; }
+.engineering-menu-toggle span { display: block; width: 20px; height: 2px; margin: 4px auto; border-radius: 999px; background: currentColor; transition: transform .18s ease, opacity .18s ease; }
+.engineering-menu-toggle.is-open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.engineering-menu-toggle.is-open span:nth-child(2) { opacity: 0; }
+.engineering-menu-toggle.is-open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+.engineering-hero { position: relative; min-height: 680px; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, .7fr); align-items: center; gap: clamp(28px, 5vw, 74px); padding: clamp(58px, 8vw, 120px) clamp(16px, 5vw, 82px); color: #fff; }
+.engineering-hero-media { position: absolute; inset: 0; z-index: 0; }
+.engineering-hero-media img, .engineering-hero-media video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.engineering-hero-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(2, 6, 23, .92), rgba(2, 6, 23, .54), rgba(2,6,23,.34)); }
+.engineering-hero-content, .engineering-hero-panel, .engineering-slider-controls { position: relative; z-index: 2; }
+.engineering-kicker { width: fit-content; border: 1px solid color-mix(in srgb, var(--engineering-accent) 40%, transparent); border-radius: 999px; background: color-mix(in srgb, var(--engineering-accent) 14%, transparent); color: var(--engineering-accent); padding: 8px 12px; font-size: 11px; font-weight: 950; letter-spacing: .08em; text-transform: uppercase; }
+.engineering-hero h1, .engineering-page-header h1 { max-width: 920px; margin: 14px 0 18px; font-size: clamp(40px, 6vw, 82px); line-height: .95; letter-spacing: -.06em; font-weight: 950; }
+.engineering-hero p, .engineering-page-header p { max-width: 780px; color: rgba(255,255,255,.86); font-size: clamp(16px, 1.7vw, 20px); line-height: 1.75; font-weight: 560; }
+.engineering-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.engineering-hero-actions .ghost { border: 1px solid rgba(255,255,255,.30); background: rgba(255,255,255,.12); box-shadow: none; }
+.engineering-hero-panel { padding: 22px; border: 1px solid rgba(255,255,255,.22); border-radius: 30px; background: rgba(15, 23, 42, .62); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; backdrop-filter: blur(18px); }
+.engineering-panel-label { grid-column: 1 / -1; font-size: 12px; font-weight: 950; letter-spacing: .1em; text-transform: uppercase; color: var(--engineering-accent-2); }
+.engineering-hero-panel article { min-height: 106px; border-radius: 20px; background: rgba(255,255,255,.11); padding: 16px; }
+.engineering-hero-panel strong { display: block; font-size: 28px; font-weight: 950; }
+.engineering-hero-panel span:not(.engineering-panel-label) { color: rgba(255,255,255,.78); font-size: 12px; font-weight: 800; }
+.engineering-slider-controls { position: absolute; left: clamp(16px, 5vw, 82px); bottom: 28px; display: inline-flex; align-items: center; gap: 12px; }
+.engineering-slider-controls > button { width: 42px; height: 42px; border: 1px solid rgba(255,255,255,.26); border-radius: 999px; background: rgba(255,255,255,.12); color: #fff; cursor: pointer; font-size: 28px; }
+.engineering-slider-controls div { display: inline-flex; gap: 7px; }
+.engineering-slider-controls div button { width: 9px; height: 9px; border: 0; border-radius: 999px; background: rgba(255,255,255,.45); padding: 0; cursor: pointer; }
+.engineering-slider-controls div button.active { width: 28px; background: var(--engineering-accent); }
+
+.engineering-page-header { position: relative; min-height: 360px; overflow: hidden; color: #fff; display: grid; align-items: end; padding: clamp(52px, 7vw, 100px) clamp(16px, 5vw, 82px); }
+.engineering-page-header img, .engineering-page-overlay { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.engineering-page-overlay { background: linear-gradient(90deg, rgba(2,6,23,.90), rgba(2,6,23,.48)); z-index: 1; }
+.engineering-page-header div { position: relative; z-index: 2; }
+.engineering-page-header h1 { font-size: clamp(34px, 5vw, 62px); }
+
+.engineering-trust-strip { margin: -36px auto 0; position: relative; z-index: 5; width: min(1180px, calc(100% - 32px)); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; border-radius: 26px; background: var(--engineering-primary); overflow: hidden; box-shadow: var(--engineering-shadow); }
+.engineering-trust-strip article { padding: 22px; background: color-mix(in srgb, var(--engineering-primary) 92%, #fff); color: #fff; }
+.engineering-trust-strip strong { display: block; font-size: 24px; font-weight: 950; }
+.engineering-trust-strip span { color: rgba(255,255,255,.72); font-size: 12px; font-weight: 800; }
+
+.engineering-section, .engineering-vmv, .engineering-testimonials, .engineering-contact, .engineering-gallery, .engineering-cta-band { padding: clamp(54px, 6vw, 96px) clamp(16px, 5vw, 82px); }
+.engineering-section-heading { max-width: 860px; margin-bottom: 26px; }
+.engineering-section h2, .engineering-contact h2, .engineering-cta-band h2 { margin: 12px 0 14px; font-size: clamp(30px, 4.4vw, 56px); line-height: 1; letter-spacing: -.05em; font-weight: 950; }
+.engineering-section-heading p, .engineering-section-copy p, .engineering-card p, .engineering-package-grid p, .engineering-process-list p, .engineering-testimonials p, .engineering-contact p, .engineering-cta-band p { color: var(--engineering-muted); line-height: 1.7; font-weight: 560; }
+.engineering-about { display: grid; grid-template-columns: minmax(0, .92fr) minmax(320px, 1.08fr); align-items: center; gap: clamp(28px, 5vw, 74px); background: #fff; }
+.engineering-feature-cloud { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 22px; }
+.engineering-feature-cloud span { border-radius: 999px; border: 1px solid var(--engineering-line); background: color-mix(in srgb, var(--engineering-accent) 9%, #fff); color: var(--engineering-secondary); padding: 8px 11px; font-size: 12px; font-weight: 900; }
+.engineering-image-card { overflow: hidden; border-radius: 34px; box-shadow: var(--engineering-shadow); background: var(--engineering-card); }
+.engineering-image-card img { width: 100%; height: 500px; object-fit: cover; display: block; }
+
+.engineering-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.engineering-card { position: relative; overflow: hidden; border: 1px solid var(--engineering-line); border-radius: 28px; background: var(--engineering-card); padding: 25px; box-shadow: 0 14px 36px rgba(15,23,42,.08); }
+.engineering-card::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--engineering-accent); }
+.engineering-card-index { width: 46px; height: 46px; border-radius: 16px; display: grid; place-items: center; background: color-mix(in srgb, var(--engineering-accent) 14%, #fff); color: var(--engineering-accent); font-weight: 950; }
+.engineering-card h3 { margin: 18px 0 8px; font-size: 19px; letter-spacing: -.02em; }
+
+.engineering-vmv { background: linear-gradient(135deg, var(--engineering-primary), var(--engineering-secondary)); color: #fff; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.engineering-vmv article { border: 1px solid rgba(255,255,255,.14); border-radius: 28px; background: rgba(255,255,255,.09); padding: 26px; }
+.engineering-vmv span { color: var(--engineering-accent-2); font-size: 12px; font-weight: 950; letter-spacing: .08em; text-transform: uppercase; }
+.engineering-vmv p, .engineering-vmv li { color: rgba(255,255,255,.82); line-height: 1.7; font-weight: 650; }
+
+.engineering-industries { background: linear-gradient(180deg, #fff, var(--engineering-surface)); }
+.engineering-industries-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+.engineering-industries-grid article { min-height: 118px; border: 1px solid var(--engineering-line); border-radius: 22px; background: #fff; display: grid; place-items: center; padding: 16px; text-align: center; font-weight: 950; color: var(--engineering-secondary); box-shadow: 0 10px 26px rgba(15,23,42,.06); }
+.engineering-solution-list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.engineering-solution-list article { border-radius: 24px; background: var(--engineering-primary); color: #fff; padding: 22px; min-height: 150px; display: grid; align-content: space-between; }
+.engineering-solution-list span { color: var(--engineering-accent-2); font-weight: 950; }
+.engineering-solution-list strong { font-size: 18px; }
+
+.engineering-package-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.engineering-package-grid article { border-radius: 30px; background: #fff; border: 1px solid var(--engineering-line); padding: 26px; box-shadow: 0 16px 42px rgba(15,23,42,.09); }
+.engineering-package-grid h3 { margin: 0 0 10px; font-size: 22px; }
+.engineering-package-grid button { margin-top: 14px; }
+.engineering-process { background: var(--engineering-surface); }
+.engineering-process-list { display: grid; gap: 13px; }
+.engineering-process-list article { border-left: 5px solid var(--engineering-accent); border-radius: 20px; background: #fff; padding: 18px 20px; display: grid; grid-template-columns: 76px minmax(0, 1fr); align-items: center; box-shadow: 0 10px 26px rgba(15,23,42,.06); }
+.engineering-process-list strong { color: var(--engineering-accent); font-size: 20px; font-weight: 950; }
+
+.engineering-gallery { display: grid; grid-template-columns: 1.1fr .9fr 1fr; gap: 14px; background: #fff; }
+.engineering-gallery img { width: 100%; height: 360px; object-fit: cover; border-radius: 28px; box-shadow: 0 16px 42px rgba(15,23,42,.10); }
+.engineering-gallery img:nth-child(2) { margin-top: 40px; }
+.engineering-testimonials { background: #fff; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.engineering-testimonials blockquote { margin: 0; border-radius: 30px; background: var(--engineering-surface); border: 1px solid var(--engineering-line); padding: 30px; }
+.engineering-testimonials cite { color: var(--engineering-text); font-style: normal; font-weight: 950; }
+.engineering-cta-band { margin: 0 clamp(16px, 5vw, 82px) clamp(54px, 6vw, 96px); border-radius: 34px; background: linear-gradient(135deg, var(--engineering-primary), var(--engineering-secondary)); color: #fff; display: flex; justify-content: space-between; gap: 24px; align-items: center; }
+.engineering-cta-band p { color: rgba(255,255,255,.76); }
+.engineering-cta-band h2 { color: #fff; }
+
+.engineering-contact { display: grid; grid-template-columns: minmax(0, .82fr) minmax(330px, 1.18fr); gap: 30px; background: linear-gradient(135deg, #fff, var(--engineering-surface)); }
+.engineering-contact-details { margin-top: 20px; display: grid; gap: 10px; }
+.engineering-contact-details a, .engineering-contact-details span { border-radius: 16px; background: #fff; border: 1px solid var(--engineering-line); padding: 13px 14px; text-decoration: none; font-weight: 850; color: var(--engineering-secondary); }
+.engineering-contact-panel { display: grid; grid-template-columns: 1fr; gap: 14px; }
+.engineering-contact-form { border: 1px solid var(--engineering-line); border-radius: 30px; background: #fff; padding: 22px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; box-shadow: var(--engineering-shadow); }
+.engineering-contact-form textarea, .engineering-contact-form button, .engineering-contact-form select[name="consultation_type"], .engineering-contact-form select[name="monitoring_needed"] { grid-column: 1 / -1; }
+.engineering-contact-form input, .engineering-contact-form textarea, .engineering-contact-form select { width: 100%; border: 1px solid rgba(148,163,184,.44); border-radius: 16px; padding: 14px 15px; background: #fff; color: var(--engineering-text); outline: none; }
+.engineering-contact-form input:focus, .engineering-contact-form textarea:focus, .engineering-contact-form select:focus { border-color: var(--engineering-accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--engineering-accent) 14%, transparent); }
+.engineering-map { width: 100%; min-height: 260px; border: 0; border-radius: 28px; box-shadow: 0 14px 36px rgba(15,23,42,.10); background: #e2e8f0; }
+
+.engineering-footer { background: var(--engineering-primary); color: #fff; padding: 46px clamp(16px, 5vw, 82px) 24px; }
+.engineering-footer-main { display: grid; grid-template-columns: 1.5fr .8fr 1fr 1fr; gap: 28px; }
+.engineering-footer strong { display: block; font-size: 22px; font-weight: 950; margin-bottom: 10px; }
+.engineering-footer p, .engineering-footer small, .engineering-footer span, .engineering-footer a { color: rgba(255,255,255,.74); }
+.engineering-footer a, .engineering-footer span, .engineering-footer button { display: block; text-decoration: none; margin: 7px 0; text-align: left; padding: 0; }
+.engineering-footer h4 { margin: 0 0 14px; color: #fff; }
+.engineering-footer-bottom { border-top: 1px solid rgba(255,255,255,.12); margin-top: 28px; padding-top: 18px; display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.engineering-footer-social { display: flex; gap: 8px; margin-top: 16px; }
+
+.engineering-shell--surveillance .engineering-hero-panel { box-shadow: 0 0 0 1px rgba(20,184,166,.3), 0 0 70px rgba(20,184,166,.18); }
+.engineering-shell--surveillance .engineering-card { background: linear-gradient(180deg, #fff, #ecfeff); }
+.engineering-shell--executive .engineering-hero { grid-template-columns: minmax(0, .82fr) minmax(360px, .78fr); }
+.engineering-shell--executive .engineering-card { background: #fffdf8; border-color: rgba(184,137,46,.28); }
+.engineering-shell--executive .engineering-nav-cta, .engineering-shell--executive .engineering-hero-actions button { border-radius: 12px; }
+.engineering-shell--event .engineering-hero { min-height: 640px; }
+.engineering-shell--event .engineering-card-index { border-radius: 999px; }
+.engineering-shell--event .engineering-card::before { width: 100%; height: 4px; inset: 0 0 auto 0; }
+
+@media (max-width: 1120px) {
+  .engineering-navbar { grid-template-columns: 1fr auto; }
+  .engineering-menu-toggle { display: inline-block; justify-self: end; }
+  .engineering-nav-links { grid-column: 1 / -1; display: none; width: 100%; border: 1px solid rgba(148,163,184,.24); border-radius: 20px; background: rgba(255,255,255,.12); padding: 10px; }
+  .engineering-nav-links.is-open { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .engineering-nav-cta { display: none; }
+  .engineering-hero, .engineering-shell--executive .engineering-hero, .engineering-about, .engineering-contact { grid-template-columns: 1fr; }
+  .engineering-cards, .engineering-package-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .engineering-industries-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .engineering-solution-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .engineering-footer-main { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 760px) {
+  .engineering-topbar { align-items: flex-start; flex-direction: column; }
+  .engineering-navbar { padding: 12px 14px; }
+  .engineering-brand strong { font-size: 14px; }
+  .engineering-brand small { display: none; }
+  .engineering-nav-links.is-open { grid-template-columns: 1fr; }
+  .engineering-hero { min-height: 620px; padding: 52px 15px 92px; }
+  .engineering-hero h1, .engineering-page-header h1 { font-size: clamp(34px, 12vw, 52px); }
+  .engineering-hero-panel, .engineering-trust-strip, .engineering-vmv, .engineering-cards, .engineering-package-grid, .engineering-industries-grid, .engineering-solution-list, .engineering-testimonials, .engineering-gallery, .engineering-footer-main { grid-template-columns: 1fr; }
+  .engineering-trust-strip { margin-top: 0; width: 100%; border-radius: 0; }
+  .engineering-section, .engineering-vmv, .engineering-testimonials, .engineering-contact, .engineering-gallery, .engineering-cta-band { padding-left: 15px; padding-right: 15px; }
+  .engineering-cta-band { margin-left: 15px; margin-right: 15px; display: grid; }
+  .engineering-image-card img, .engineering-gallery img { height: 320px; }
+  .engineering-gallery img:nth-child(2) { margin-top: 0; }
+  .engineering-contact-form { grid-template-columns: 1fr; }
+  .engineering-footer-bottom { display: grid; }
+}
+
+/* SECURITY FOOTER/TOPBAR SOCIALS MATCH SCHOOL TEMPLATE STYLE */
+.engineering-topbar-social,
+.engineering-footer-social {
+  display: flex !important;
+  gap: 6px !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+}
+
+.engineering-social-icons,
+.engineering-social-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #000000 !important;
+  border-radius: 8px !important;
+  padding: 2px !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
+  box-shadow: 0 6px 14px rgba(2, 6, 23, 0.14) !important;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease !important;
+}
+
+.engineering-social-icons {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+.engineering-social-icon {
+  width: 26px !important;
+  height: 26px !important;
+}
+
+.engineering-social-icons svg,
+.engineering-social-icon svg {
+  width: 24px !important;
+  height: 24px !important;
+  display: block !important;
+}
+
+.engineering-social-icons:hover,
+.engineering-social-icons:focus,
+.engineering-social-icon:hover,
+.engineering-social-icon:focus {
+  transform: translateY(-3px) scale(1.03) !important;
+  background: #160f64 !important;
+  box-shadow: 0 8px 18px rgba(2, 6, 23, 0.18) !important;
+  outline: none !important;
+}
+
+.engineering-powered-by {
+  font-size: 0.85rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  color: #ffffff !important;
+  margin-top: 0 !important;
+}
+
+.engineering-ulterspace-link {
+  display: flex !important;
+  align-items: center !important;
+  color: #0da8d3 !important;
+  text-decoration: none !important;
+  gap: 6px !important;
+  font-weight: bold !important;
+  margin: 0 !important;
+}
+
+.engineering-ulterspace-logo {
+  width: 20px !important;
+  height: 20px !important;
+  object-fit: contain !important;
+  border-radius: 5px !important;
+  vertical-align: middle !important;
+}
+
+.engineering-footer-bottom .engineering-powered-by span,
+.engineering-footer-bottom .engineering-ulterspace-link span {
+  display: inline-flex !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.engineering-copyright.small {
+  color: rgba(255, 255, 255, 0.74) !important;
+}
+
+@media (max-width: 760px) {
+  .engineering-topbar-social {
+    justify-content: flex-start !important;
+  }
+
+  .engineering-powered-by {
+    justify-content: flex-start !important;
+  }
+}
+
+
+/* SECURITY ICON ENHANCEMENTS - targeted update */
+.engineering-brand-mark svg {
+  width: 22px;
+  height: 22px;
+}
+
+.engineering-topbar-left a,
+.engineering-topbar-hours {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.engineering-topbar-left svg {
+  width: 13px;
+  height: 13px;
+  color: var(--engineering-accent-2);
+}
+
+.engineering-panel-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.engineering-panel-label svg {
+  width: 14px;
+  height: 14px;
+}
+
+.engineering-hero-panel article {
+  position: relative;
+  overflow: hidden;
+}
+
+.engineering-snapshot-icon {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 10px;
+  color: var(--engineering-accent-2);
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.22));
+}
+
+.engineering-hero-panel--guarding {
+  border-radius: 28px;
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.74), rgba(30, 64, 175, 0.48)),
+    rgba(15, 23, 42, 0.54);
+  border-left: 5px solid var(--engineering-accent);
+}
+
+.engineering-hero-panel--guarding article {
+  border: 1px solid rgba(96, 165, 250, 0.22);
+  background: rgba(15, 23, 42, 0.42);
+}
+
+.engineering-hero-panel--surveillance {
+  border-radius: 18px;
+  background:
+    linear-gradient(rgba(20, 184, 166, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20, 184, 166, 0.09) 1px, transparent 1px),
+    rgba(2, 6, 23, 0.72);
+  background-size: 22px 22px, 22px 22px, auto;
+  border-color: rgba(20, 184, 166, 0.38);
+  box-shadow:
+    0 0 0 1px rgba(20, 184, 166, 0.16),
+    0 0 58px rgba(20, 184, 166, 0.18);
+}
+
+.engineering-hero-panel--surveillance article {
+  border: 1px solid rgba(20, 184, 166, 0.24);
+  background: rgba(6, 78, 59, 0.36);
+}
+
+.engineering-hero-panel--executive {
+  border-radius: 36px 18px 36px 18px;
+  background:
+    linear-gradient(135deg, rgba(17, 17, 17, 0.82), rgba(42, 33, 24, 0.66)),
+    rgba(17, 17, 17, 0.56);
+  border-color: rgba(184, 137, 46, 0.42);
+  box-shadow: 0 30px 90px rgba(88, 61, 18, 0.22);
+}
+
+.engineering-hero-panel--executive article {
+  background: linear-gradient(180deg, rgba(255, 253, 248, 0.13), rgba(255, 255, 255, 0.05));
+  border: 1px solid rgba(184, 137, 46, 0.24);
+}
+
+.engineering-hero-panel--event {
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(249, 115, 22, 0.28), transparent 34%),
+    linear-gradient(135deg, rgba(127, 29, 29, 0.78), rgba(31, 16, 16, 0.68));
+  border-color: rgba(239, 68, 68, 0.42);
+}
+
+.engineering-hero-panel--event article {
+  background: rgba(255, 247, 237, 0.12);
+  border: 1px solid rgba(254, 215, 170, 0.22);
+}
+
+.engineering-trust-strip article {
+  display: grid;
+  gap: 8px;
+}
+
+.engineering-trust-strip article svg {
+  width: 20px;
+  height: 20px;
+  color: var(--engineering-accent-2);
+}
+
+.engineering-card-index svg,
+.engineering-package-icon,
+.engineering-solution-icon,
+.engineering-process-icon svg,
+.engineering-industries-grid article svg,
+.engineering-contact-details svg {
+  display: block;
+  flex: 0 0 auto;
+}
+
+.engineering-card-index svg {
+  width: 21px;
+  height: 21px;
+}
+
+.engineering-industries-grid article {
+  align-content: center;
+  gap: 10px;
+}
+
+.engineering-industries-grid article svg {
+  width: 24px;
+  height: 24px;
+  color: var(--engineering-accent);
+}
+
+.engineering-industries-grid article span {
+  color: var(--engineering-secondary);
+}
+
+.engineering-package-icon {
+  width: 28px;
+  height: 28px;
+  margin-bottom: 14px;
+  color: var(--engineering-accent);
+}
+
+.engineering-solution-list article {
+  position: relative;
+}
+
+.engineering-solution-icon {
+  width: 25px;
+  height: 25px;
+  color: var(--engineering-accent-2);
+}
+
+.engineering-process-list article {
+  grid-template-columns: 54px 76px minmax(0, 1fr);
+}
+
+.engineering-process-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--engineering-accent) 14%, #ffffff);
+  color: var(--engineering-accent);
+  display: grid;
+  place-items: center;
+}
+
+.engineering-process-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.engineering-contact-details a,
+.engineering-contact-details > span {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.engineering-contact-details svg {
+  width: 16px;
+  height: 16px;
+  color: var(--engineering-accent);
+}
+
+/* DIFFERENT OPERATIONS SECTION FEEL PER TEMPLATE */
+.engineering-process--guarding .engineering-process-list article {
+  border-left-color: var(--engineering-accent);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--engineering-accent) 7%, #ffffff), #ffffff);
+}
+
+.engineering-process--surveillance .engineering-process-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.engineering-process--surveillance .engineering-process-list article {
+  border-left: 0;
+  border-top: 4px solid var(--engineering-accent);
+  background:
+    linear-gradient(rgba(20, 184, 166, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20, 184, 166, 0.06) 1px, transparent 1px),
+    #ffffff;
+  background-size: 20px 20px;
+}
+
+.engineering-process--executive .engineering-process-list article {
+  border-left-color: #b8892e;
+  border-radius: 30px 14px 30px 14px;
+  background: #fffdf8;
+  box-shadow: 0 18px 46px rgba(88, 61, 18, 0.12);
+}
+
+.engineering-process--event .engineering-process-list {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.engineering-process--event .engineering-process-list article {
+  border-left: 0;
+  border-bottom: 5px solid var(--engineering-accent);
+  grid-template-columns: 1fr;
+  align-content: start;
+  min-height: 210px;
+  background: linear-gradient(180deg, #ffffff, #fff7ed);
+}
+
+.engineering-process--event .engineering-process-icon {
+  margin-bottom: 6px;
+}
+
+/* DIFFERENT SCROLL-TO-TOP BUTTON PER SECURITY TEMPLATE */
+.engineering-scroll-top {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 120;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--engineering-accent);
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px) scale(0.94);
+  box-shadow: 0 18px 42px color-mix(in srgb, var(--engineering-accent) 38%, transparent);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.engineering-scroll-top.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.engineering-scroll-top svg {
+  width: 20px;
+  height: 20px;
+}
+
+.engineering-scroll-top--guarding {
+  border-radius: 16px;
+  background: linear-gradient(135deg, #1d4ed8, #0f3b78);
+}
+
+.engineering-scroll-top--surveillance {
+  border: 1px solid rgba(20, 184, 166, 0.44);
+  border-radius: 14px;
+  background: #020617;
+  color: #14b8a6;
+  box-shadow:
+    0 0 0 1px rgba(20, 184, 166, 0.22),
+    0 0 34px rgba(20, 184, 166, 0.26);
+}
+
+.engineering-scroll-top--executive {
+  border-radius: 999px;
+  background: linear-gradient(135deg, #111111, #b8892e);
+  color: #fff8e1;
+}
+
+.engineering-scroll-top--event {
+  width: 54px;
+  height: 46px;
+  border-radius: 18px 18px 8px 18px;
+  background: linear-gradient(135deg, #7f1d1d, #ef4444);
+  color: #ffffff;
+}
+
+.engineering-scroll-top:hover,
+.engineering-scroll-top:focus-visible {
+  transform: translateY(-3px) scale(1.04);
+  outline: none;
+  box-shadow: 0 22px 54px color-mix(in srgb, var(--engineering-accent) 46%, transparent);
+}
+
+@media (max-width: 1120px) {
+  .engineering-process--surveillance .engineering-process-list,
+  .engineering-process--event .engineering-process-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .engineering-process-list article,
+  .engineering-process--event .engineering-process-list article {
+    grid-template-columns: 1fr;
+  }
+
+  .engineering-process--surveillance .engineering-process-list,
+  .engineering-process--event .engineering-process-list {
+    grid-template-columns: 1fr;
+  }
+
+  .engineering-scroll-top {
+    right: 15px;
+    bottom: 15px;
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* DISTINCT ENTERPRISE HOME HERO STRUCTURES ONLY */
+.engineering-shell--guarding .engineering-hero {
+  min-height: 720px;
+  grid-template-columns: minmax(0, 0.92fr) minmax(360px, 0.58fr);
+  align-items: center;
+}
+
+.engineering-shell--guarding .engineering-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(59, 130, 246, 0.16) 1px, transparent 1px),
+    linear-gradient(rgba(59, 130, 246, 0.10) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(90deg, #000 0%, transparent 74%);
+}
+
+.engineering-shell--guarding .engineering-hero-content {
+  max-width: 760px;
+  padding: clamp(22px, 3vw, 34px);
+  border-left: 5px solid var(--engineering-accent);
+  border-radius: 0 34px 34px 0;
+  background: linear-gradient(90deg, rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.30));
+  box-shadow: 0 28px 90px rgba(2, 6, 23, 0.32);
+}
+
+.engineering-shell--guarding .engineering-hero-panel {
+  align-self: center;
+  min-height: 390px;
+  border-radius: 34px;
+  transform: translateY(18px);
+}
+
+.engineering-shell--surveillance .engineering-hero {
+  min-height: 760px;
+  grid-template-columns: 1fr;
+  align-content: center;
+  padding-bottom: 138px;
+}
+
+.engineering-shell--surveillance .engineering-hero-overlay {
+  background:
+    radial-gradient(circle at 74% 22%, rgba(20, 184, 166, 0.30), transparent 34%),
+    linear-gradient(180deg, rgba(2, 6, 23, 0.92), rgba(2, 6, 23, 0.70) 52%, rgba(2, 6, 23, 0.96));
+}
+
+.engineering-shell--surveillance .engineering-hero-content {
+  width: min(900px, 100%);
+  text-align: left;
+}
+
+.engineering-shell--surveillance .engineering-hero-content h1 {
+  max-width: 760px;
+}
+
+.engineering-shell--surveillance .engineering-hero-panel {
+  position: absolute;
+  left: clamp(16px, 5vw, 82px);
+  right: clamp(16px, 5vw, 82px);
+  bottom: 58px;
+  grid-template-columns: auto repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+  border-radius: 24px;
+  background:
+    linear-gradient(rgba(20, 184, 166, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20, 184, 166, 0.09) 1px, transparent 1px),
+    rgba(2, 6, 23, 0.82);
+  background-size: 18px 18px;
+}
+
+.engineering-shell--surveillance .engineering-hero-panel .engineering-panel-label {
+  grid-column: auto;
+  display: flex;
+  align-items: center;
+  min-width: 220px;
+  padding-right: 14px;
+  border-right: 1px solid rgba(20, 184, 166, 0.24);
+}
+
+.engineering-shell--surveillance .engineering-hero-panel article {
+  min-height: 96px;
+  border: 1px solid rgba(20, 184, 166, 0.18);
+  background: rgba(20, 184, 166, 0.08);
+}
+
+.engineering-shell--surveillance .engineering-slider-controls {
+  left: auto;
+  right: clamp(16px, 5vw, 82px);
+  bottom: 14px;
+}
+
+.engineering-shell--executive .engineering-hero {
+  min-height: 720px;
+  grid-template-columns: minmax(330px, 0.62fr) minmax(0, 0.88fr);
+  align-items: center;
+}
+
+.engineering-shell--executive .engineering-hero-overlay {
+  background:
+    linear-gradient(90deg, rgba(17, 17, 17, 0.80), rgba(17, 17, 17, 0.28) 44%, rgba(17, 17, 17, 0.86)),
+    radial-gradient(circle at 24% 70%, rgba(184, 137, 46, 0.24), transparent 36%);
+}
+
+.engineering-shell--executive .engineering-hero-content {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+  max-width: 740px;
+  padding: clamp(24px, 4vw, 44px);
+  border: 1px solid rgba(184, 137, 46, 0.30);
+  border-radius: 42px 10px 42px 10px;
+  background: rgba(10, 10, 10, 0.56);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.engineering-shell--executive .engineering-hero-panel {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: start;
+  align-self: end;
+  width: min(420px, 100%);
+  grid-template-columns: 1fr;
+  border-radius: 10px 38px 10px 38px;
+  background: linear-gradient(135deg, rgba(184, 137, 46, 0.22), rgba(17, 17, 17, 0.76));
+}
+
+.engineering-shell--executive .engineering-hero-panel article {
+  min-height: 82px;
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  column-gap: 10px;
+  align-items: center;
+}
+
+.engineering-shell--executive .engineering-hero-panel article span:not(.engineering-panel-label) {
+  grid-column: 2;
+}
+
+.engineering-shell--executive .engineering-snapshot-icon {
+  grid-row: 1 / span 2;
+}
+
+.engineering-shell--executive .engineering-slider-controls {
+  left: clamp(16px, 5vw, 82px);
+  bottom: 36px;
+}
+
+.engineering-shell--event .engineering-hero {
+  min-height: 720px;
+  grid-template-columns: 1fr;
+  place-items: center;
+  text-align: center;
+  padding-bottom: 210px;
+}
+
+.engineering-shell--event .engineering-hero-overlay {
+  background:
+    radial-gradient(circle at 50% 26%, rgba(239, 68, 68, 0.28), transparent 38%),
+    linear-gradient(180deg, rgba(31, 16, 16, 0.66), rgba(31, 16, 16, 0.88));
+}
+
+.engineering-shell--event .engineering-hero-content {
+  width: min(940px, 100%);
+  margin: 0 auto;
+}
+
+.engineering-shell--event .engineering-hero-content .engineering-kicker,
+.engineering-shell--event .engineering-hero-actions {
+  margin-left: auto;
+  margin-right: auto;
+  justify-content: center;
+}
+
+.engineering-shell--event .engineering-hero-content h1,
+.engineering-shell--event .engineering-hero-content p {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.engineering-shell--event .engineering-hero-panel {
+  position: absolute;
+  left: 50%;
+  bottom: 56px;
+  width: min(1080px, calc(100% - 32px));
+  transform: translateX(-50%);
+  grid-template-columns: auto repeat(4, minmax(0, 1fr));
+  border-radius: 28px;
+  background: rgba(127, 29, 29, 0.72);
+}
+
+.engineering-shell--event .engineering-hero-panel .engineering-panel-label {
+  grid-column: auto;
+  display: flex;
+  align-items: center;
+  min-width: 210px;
+  text-align: left;
+}
+
+.engineering-shell--event .engineering-hero-panel article {
+  min-height: 96px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.13);
+}
+
+.engineering-shell--event .engineering-slider-controls {
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+}
+
+@media (max-width: 1120px) {
+  .engineering-shell--surveillance .engineering-hero-panel,
+  .engineering-shell--event .engineering-hero-panel {
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    width: 100%;
+    transform: none;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .engineering-shell--surveillance .engineering-hero-panel .engineering-panel-label,
+  .engineering-shell--event .engineering-hero-panel .engineering-panel-label {
+    grid-column: 1 / -1;
+    min-width: 0;
+    border-right: 0;
+  }
+
+  .engineering-shell--executive .engineering-hero,
+  .engineering-shell--executive .engineering-hero-content,
+  .engineering-shell--executive .engineering-hero-panel {
+    grid-column: auto;
+    grid-row: auto;
+    justify-self: stretch;
+  }
+
+  .engineering-shell--event .engineering-hero,
+  .engineering-shell--surveillance .engineering-hero {
+    padding-bottom: 92px;
+  }
+
+  .engineering-shell--surveillance .engineering-slider-controls,
+  .engineering-shell--event .engineering-slider-controls,
+  .engineering-shell--executive .engineering-slider-controls {
+    left: clamp(16px, 5vw, 82px);
+    right: auto;
+    bottom: 28px;
+    transform: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .engineering-shell--guarding .engineering-hero,
+  .engineering-shell--surveillance .engineering-hero,
+  .engineering-shell--executive .engineering-hero,
+  .engineering-shell--event .engineering-hero {
+    min-height: 660px;
+    grid-template-columns: 1fr;
+    padding: 52px 15px 98px;
+    text-align: left;
+  }
+
+  .engineering-shell--guarding .engineering-hero-content,
+  .engineering-shell--executive .engineering-hero-content {
+    padding: 20px;
+    border-radius: 24px;
+  }
+
+  .engineering-shell--event .engineering-hero-content,
+  .engineering-shell--event .engineering-hero-content h1,
+  .engineering-shell--event .engineering-hero-content p,
+  .engineering-shell--event .engineering-hero-content .engineering-kicker {
+    margin-left: 0;
+    margin-right: 0;
+    text-align: left;
+  }
+
+  .engineering-shell--event .engineering-hero-actions {
+    justify-content: flex-start;
+  }
+
+  .engineering-shell--surveillance .engineering-hero-panel,
+  .engineering-shell--event .engineering-hero-panel,
+  .engineering-shell--executive .engineering-hero-panel {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+}
+
+
+/* SIX ADDITIONAL SECURITY TEMPLATE STRUCTURES - additive only */
+.engineering-navbar--patrol-stripe {
+  background: linear-gradient(90deg, #07111f 0 18%, rgba(255,255,255,.96) 18% 100%);
+  color: #0f172a;
+  border-bottom: 3px solid var(--engineering-accent);
+}
+.engineering-navbar--patrol-stripe .engineering-brand { color: #ffffff; }
+.engineering-navbar--alarm-pulse {
+  background: linear-gradient(135deg, #18110a, #92400e);
+  color: #fff;
+  border-bottom: 4px solid #f59e0b;
+}
+.engineering-navbar--industrial-steel {
+  background: repeating-linear-gradient(135deg, #0f172a 0 16px, #111827 16px 32px);
+  color: #fff;
+  border-bottom: 4px solid #f97316;
+}
+.engineering-navbar--estate-clean {
+  background: rgba(255,255,255,.96);
+  color: #064e3b;
+  border-bottom: 3px solid #10b981;
+}
+.engineering-navbar--systems-blueprint {
+  background:
+    linear-gradient(rgba(96,165,250,.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(96,165,250,.10) 1px, transparent 1px),
+    #020617;
+  background-size: 22px 22px;
+  color: #fff;
+  border-bottom-color: rgba(96,165,250,.36);
+}
+.engineering-navbar--retail-polished {
+  background: linear-gradient(135deg, #ffffff, #faf5ff);
+  color: #1e122d;
+  border-bottom: 3px solid #a855f7;
+}
+
+.engineering-shell--patrol .engineering-hero {
+  min-height: 720px;
+  grid-template-columns: minmax(0, .76fr) minmax(380px, .74fr);
+  align-items: end;
+  padding-bottom: 70px;
+}
+.engineering-shell--patrol .engineering-hero-overlay {
+  background:
+    linear-gradient(90deg, rgba(7,17,31,.90), rgba(7,17,31,.42)),
+    radial-gradient(circle at 82% 18%, rgba(6,182,212,.28), transparent 34%);
+}
+.engineering-shell--patrol .engineering-hero-content {
+  padding: 28px;
+  border-radius: 34px;
+  background: rgba(7,17,31,.62);
+  border: 1px solid rgba(6,182,212,.24);
+  backdrop-filter: blur(14px);
+}
+.engineering-shell--patrol .engineering-hero-panel {
+  grid-template-columns: 1fr 1fr;
+  border-radius: 42px 42px 10px 42px;
+  background: linear-gradient(135deg, rgba(6,182,212,.28), rgba(7,17,31,.78));
+  border-color: rgba(6,182,212,.34);
+}
+.engineering-shell--patrol .engineering-hero-panel .engineering-panel-label { grid-column: 1 / -1; }
+.engineering-shell--patrol .engineering-card::before { width: 100%; height: 4px; inset: 0 0 auto 0; }
+.engineering-process--patrol .engineering-process-list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.engineering-process--patrol .engineering-process-list article { grid-template-columns: 1fr; border-left: 0; border-top: 5px solid var(--engineering-accent); min-height: 210px; }
+.engineering-scroll-top--patrol { border-radius: 16px 999px 999px 16px; background: linear-gradient(135deg, #07111f, #06b6d4); }
+
+.engineering-shell--alarm .engineering-hero {
+  min-height: 720px;
+  grid-template-columns: minmax(360px, .66fr) minmax(0, .84fr);
+  align-items: center;
+}
+.engineering-shell--alarm .engineering-hero-overlay {
+  background:
+    radial-gradient(circle at 20% 22%, rgba(245,158,11,.36), transparent 34%),
+    radial-gradient(circle at 80% 70%, rgba(239,68,68,.24), transparent 34%),
+    linear-gradient(90deg, rgba(24,17,10,.92), rgba(24,17,10,.56));
+}
+.engineering-shell--alarm .engineering-hero-content { grid-column: 2; padding: 30px; border-radius: 22px; background: rgba(24,17,10,.58); border: 1px solid rgba(245,158,11,.28); }
+.engineering-shell--alarm .engineering-hero-panel { grid-column: 1; grid-row: 1; border-radius: 999px 28px 28px 999px; background: linear-gradient(135deg, rgba(146,64,14,.72), rgba(24,17,10,.76)); }
+.engineering-shell--alarm .engineering-hero-panel article { border-radius: 18px; background: rgba(255,251,235,.12); }
+.engineering-shell--alarm .engineering-card-index { border-radius: 999px; }
+.engineering-process--alarm .engineering-process-list article { border-left-color: #f59e0b; background: linear-gradient(90deg, #fffbeb, #ffffff); }
+.engineering-scroll-top--alarm { width: 54px; height: 54px; background: conic-gradient(from 180deg, #ef4444, #f59e0b, #ef4444); }
+
+.engineering-shell--industrial .engineering-hero {
+  min-height: 720px;
+  grid-template-columns: minmax(0, .92fr) minmax(360px, .58fr);
+  align-items: stretch;
+}
+.engineering-shell--industrial .engineering-hero-overlay {
+  background:
+    linear-gradient(90deg, rgba(15,23,42,.92), rgba(15,23,42,.38)),
+    repeating-linear-gradient(45deg, rgba(249,115,22,.10) 0 8px, transparent 8px 22px);
+}
+.engineering-shell--industrial .engineering-hero-content { align-self: center; border-left: 7px solid #f97316; padding-left: 30px; }
+.engineering-shell--industrial .engineering-hero-panel { align-self: stretch; border-radius: 0; background: rgba(15,23,42,.72); border-left: 4px solid #f97316; }
+.engineering-shell--industrial .engineering-hero-panel article { border-radius: 4px; }
+.engineering-shell--industrial .engineering-card { border-radius: 10px; }
+.engineering-process--industrial .engineering-process-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.engineering-process--industrial .engineering-process-list article { border-radius: 10px; background: #f8fafc; }
+.engineering-scroll-top--industrial { border-radius: 8px; background: repeating-linear-gradient(135deg, #0f172a 0 10px, #f97316 10px 20px); }
+
+.engineering-shell--estate .engineering-hero {
+  min-height: 720px;
+  grid-template-columns: 1fr;
+  place-items: center;
+  text-align: center;
+  padding-bottom: 190px;
+}
+.engineering-shell--estate .engineering-hero-overlay {
+  background: linear-gradient(180deg, rgba(5,46,43,.52), rgba(5,46,43,.86));
+}
+.engineering-shell--estate .engineering-hero-content { width: min(900px, 100%); margin: 0 auto; }
+.engineering-shell--estate .engineering-hero-content h1,
+.engineering-shell--estate .engineering-hero-content p { margin-left: auto; margin-right: auto; }
+.engineering-shell--estate .engineering-hero-actions { justify-content: center; }
+.engineering-shell--estate .engineering-hero-panel { position: absolute; left: 50%; bottom: 56px; width: min(1040px, calc(100% - 32px)); transform: translateX(-50%); grid-template-columns: auto repeat(4, minmax(0,1fr)); border-radius: 999px; background: rgba(5,46,43,.72); }
+.engineering-shell--estate .engineering-hero-panel .engineering-panel-label { grid-column: auto; align-self: center; min-width: 220px; }
+.engineering-shell--estate .engineering-card { border-radius: 34px; }
+.engineering-process--estate .engineering-process-list article { border-left-color: #10b981; background: linear-gradient(90deg, #ecfdf5, #fff); }
+.engineering-scroll-top--estate { border-radius: 999px; background: linear-gradient(135deg, #052e2b, #10b981); }
+
+.engineering-shell--systems .engineering-hero {
+  min-height: 760px;
+  grid-template-columns: minmax(0, .72fr) minmax(360px, .78fr);
+  align-items: center;
+}
+.engineering-shell--systems .engineering-hero-overlay {
+  background:
+    linear-gradient(rgba(96,165,250,.11) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(96,165,250,.11) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(2,6,23,.94), rgba(2,6,23,.58));
+  background-size: 28px 28px, 28px 28px, auto;
+}
+.engineering-shell--systems .engineering-hero-content { max-width: 820px; }
+.engineering-shell--systems .engineering-hero-panel { border-radius: 20px; background: rgba(2,6,23,.76); box-shadow: 0 0 0 1px rgba(96,165,250,.22), 0 0 70px rgba(96,165,250,.18); }
+.engineering-shell--systems .engineering-hero-panel article { background: rgba(37,99,235,.13); border: 1px solid rgba(96,165,250,.20); }
+.engineering-shell--systems .engineering-card { background: linear-gradient(180deg, #fff, #eff6ff); }
+.engineering-process--systems .engineering-process-list { grid-template-columns: repeat(2, minmax(0,1fr)); }
+.engineering-process--systems .engineering-process-list article { border-left: 0; border-top: 4px solid #60a5fa; background: #fff; }
+.engineering-scroll-top--systems { border-radius: 12px; background: #020617; color: #60a5fa; box-shadow: 0 0 38px rgba(96,165,250,.36); }
+
+.engineering-shell--retail .engineering-hero {
+  min-height: 720px;
+  grid-template-columns: minmax(0,.86fr) minmax(360px,.64fr);
+  align-items: center;
+}
+.engineering-shell--retail .engineering-hero-overlay {
+  background:
+    radial-gradient(circle at 80% 20%, rgba(168,85,247,.34), transparent 34%),
+    linear-gradient(90deg, rgba(30,18,45,.88), rgba(30,18,45,.36));
+}
+.engineering-shell--retail .engineering-hero-content { padding: 32px; border-radius: 46px; background: rgba(30,18,45,.52); backdrop-filter: blur(16px); border: 1px solid rgba(240,171,252,.22); }
+.engineering-shell--retail .engineering-hero-panel { border-radius: 46px; background: linear-gradient(135deg, rgba(109,40,217,.68), rgba(30,18,45,.68)); }
+.engineering-shell--retail .engineering-card { border-radius: 36px; }
+.engineering-shell--retail .engineering-card::before { width: 0; }
+.engineering-process--retail .engineering-process-list article { border-left-color: #a855f7; border-radius: 28px; background: linear-gradient(90deg, #faf5ff, #fff); }
+.engineering-scroll-top--retail { border-radius: 999px 999px 999px 10px; background: linear-gradient(135deg, #6d28d9, #a855f7); }
+
+.engineering-hero-panel--patrol,
+.engineering-hero-panel--alarm,
+.engineering-hero-panel--industrial,
+.engineering-hero-panel--estate,
+.engineering-hero-panel--systems,
+.engineering-hero-panel--retail {
+  border-color: color-mix(in srgb, var(--engineering-accent) 34%, rgba(255,255,255,.14));
+}
+
+@media (max-width: 1120px) {
+  .engineering-navbar--patrol-stripe { background: rgba(255,255,255,.96); color: #0f172a; }
+  .engineering-navbar--patrol-stripe .engineering-brand { color: inherit; }
+  .engineering-shell--alarm .engineering-hero-content,
+  .engineering-shell--alarm .engineering-hero-panel,
+  .engineering-shell--executive .engineering-hero-content,
+  .engineering-shell--executive .engineering-hero-panel { grid-column: auto; grid-row: auto; }
+  .engineering-shell--estate .engineering-hero-panel { position: relative; left: auto; bottom: auto; transform: none; width: 100%; grid-template-columns: repeat(2, minmax(0,1fr)); border-radius: 28px; }
+  .engineering-shell--estate .engineering-hero-panel .engineering-panel-label { grid-column: 1 / -1; }
+  .engineering-process--patrol .engineering-process-list,
+  .engineering-process--industrial .engineering-process-list,
+  .engineering-process--systems .engineering-process-list { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+
+@media (max-width: 760px) {
+  .engineering-shell--patrol .engineering-hero,
+  .engineering-shell--alarm .engineering-hero,
+  .engineering-shell--industrial .engineering-hero,
+  .engineering-shell--estate .engineering-hero,
+  .engineering-shell--systems .engineering-hero,
+  .engineering-shell--retail .engineering-hero { min-height: 660px; grid-template-columns: 1fr; padding: 52px 15px 98px; text-align: left; }
+  .engineering-shell--estate .engineering-hero-content,
+  .engineering-shell--estate .engineering-hero-content h1,
+  .engineering-shell--estate .engineering-hero-content p { text-align: left; margin-left: 0; margin-right: 0; }
+  .engineering-shell--estate .engineering-hero-actions { justify-content: flex-start; }
+  .engineering-shell--estate .engineering-hero-panel,
+  .engineering-process--patrol .engineering-process-list,
+  .engineering-process--industrial .engineering-process-list,
+  .engineering-process--systems .engineering-process-list { grid-template-columns: 1fr; }
+}
+
+
+/* Engineering enterprise template variant polish */
+.engineering-navbar--boardroom,
+.engineering-navbar--advisor-bar,
+.engineering-navbar--creative-lab,
+.engineering-navbar--capital-strip,
+.engineering-navbar--executive-dark,
+.engineering-navbar--saas-glass,
+.engineering-navbar--logistics-route,
+.engineering-navbar--property-clean,
+.engineering-navbar--engineeringcare-calm,
+.engineering-navbar--legal-crest {
+  backdrop-filter: blur(16px);
+}
+.engineering-navbar--boardroom { border-bottom: 1px solid rgba(15, 23, 42, 0.12); }
+.engineering-navbar--advisor-bar { border-bottom: 3px solid var(--engineering-accent); }
+.engineering-navbar--creative-lab { border-radius: 0 0 28px 28px; box-shadow: 0 18px 48px rgba(0,0,0,.12); }
+.engineering-navbar--capital-strip { box-shadow: inset 0 -3px 0 var(--engineering-accent); }
+.engineering-navbar--executive-dark { background: rgba(17, 17, 17, .94); color: white; }
+.engineering-navbar--executive-dark .engineering-brand,
+.engineering-navbar--executive-dark .engineering-nav-links button,
+.engineering-navbar--executive-dark .engineering-menu-toggle { color: white; }
+.engineering-navbar--saas-glass { background: rgba(255,255,255,.82); box-shadow: 0 20px 50px rgba(37, 99, 235, .12); }
+.engineering-navbar--logistics-route { border-bottom: 2px dashed rgba(249, 115, 22, .55); }
+.engineering-navbar--property-clean { background: rgba(255,255,255,.98); }
+.engineering-navbar--engineeringcare-calm { background: linear-gradient(90deg, rgba(236,253,245,.96), rgba(255,255,255,.96)); }
+.engineering-navbar--legal-crest { background: linear-gradient(90deg, var(--engineering-primary), var(--engineering-secondary)); color: white; }
+.engineering-navbar--legal-crest .engineering-brand,
+.engineering-navbar--legal-crest .engineering-nav-links button,
+.engineering-navbar--legal-crest .engineering-menu-toggle { color: white; }
+
+.engineering-hero--boardroom-split .engineering-hero-content { max-width: 720px; }
+.engineering-hero--advisor-panel .engineering-hero-panel { border-radius: 30px 8px 30px 8px; }
+.engineering-hero--campaign-mosaic .engineering-hero-content { text-align: center; margin: 0 auto; }
+.engineering-hero--capital-dashboard .engineering-hero-panel { box-shadow: 0 24px 70px rgba(15, 23, 42, .22); }
+.engineering-hero--executive-suite .engineering-hero-content { border-left: 5px solid var(--engineering-accent); padding-left: clamp(1rem, 3vw, 2rem); }
+.engineering-hero--product-cloud .engineering-hero-panel { border-radius: 999px 28px 28px 999px; }
+.engineering-hero--route-command .engineering-hero-panel { border-top: 4px solid var(--engineering-accent-2); }
+.engineering-hero--property-showcase .engineering-hero-content { background: rgba(255,255,255,.12); padding: clamp(1rem,3vw,2rem); border-radius: 28px; }
+.engineering-hero--care-trust .engineering-hero-overlay { background: linear-gradient(90deg, rgba(6, 78, 59, .72), rgba(20, 184, 166, .18)); }
+.engineering-hero--legal-authority .engineering-hero-overlay { background: linear-gradient(90deg, rgba(17, 24, 39, .9), rgba(120, 53, 15, .32)); }
+
+.engineering-template--engineering-executive-v1 .engineering-topbar,
+.engineering-template--engineering-legal-v1 .engineering-topbar { background: var(--engineering-primary); color: white; }
+.engineering-template--engineering-agency-v1 .engineering-service-card { transform: translateY(0); }
+.engineering-template--engineering-agency-v1 .engineering-service-card:hover { transform: translateY(-6px) rotate(-.4deg); }
+.engineering-template--engineering-saas-v1 .engineering-service-card,
+.engineering-template--engineering-finance-v1 .engineering-package-card { border: 1px solid rgba(37,99,235,.16); }
+.engineering-template--engineering-engineeringcare-v1 .engineering-contact { background: linear-gradient(135deg, #ecfdf5, #ffffff); }
+.engineering-template--engineering-logistics-v1 .engineering-process-step { border-left: 4px solid var(--engineering-accent); }
+
+
+/* ENGINEERING ENTERPRISE NAVBAR + HERO VARIANTS - targeted update */
+.engineering-navbar {
+  grid-template-columns: minmax(230px, 0.95fr) minmax(360px, 1.35fr) minmax(210px, auto);
+}
+
+.engineering-nav-center {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.engineering-nav-eyebrow {
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--engineering-accent);
+}
+
+.engineering-nav-actions {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.engineering-nav-support {
+  font-size: 11px;
+  font-weight: 950;
+  color: var(--engineering-muted);
+  white-space: nowrap;
+}
+
+.engineering-navbar--boardroom {
+  background: rgba(255, 255, 255, 0.96);
+  border-bottom: 4px solid var(--engineering-accent);
+}
+
+.engineering-navbar--boardroom .engineering-brand-mark {
+  border-radius: 18px;
+}
+
+.engineering-navbar--advisor-bar {
+  min-height: 72px;
+  background: linear-gradient(90deg, #ffffff 0%, color-mix(in srgb, var(--engineering-accent) 7%, #ffffff) 100%);
+  border-bottom: 1px solid color-mix(in srgb, var(--engineering-accent) 28%, transparent);
+}
+
+.engineering-navbar--advisor-bar .engineering-nav-links {
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 5px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--engineering-accent) 16%, transparent);
+}
+
+.engineering-navbar--creative-lab {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(236, 72, 153, 0.22), transparent 28%),
+    radial-gradient(circle at 88% 18%, rgba(249, 115, 22, 0.18), transparent 34%),
+    rgba(46, 16, 101, 0.96);
+  color: #ffffff;
+  border-bottom: 0;
+}
+
+.engineering-navbar--creative-lab .engineering-nav-links button.active,
+.engineering-navbar--creative-lab .engineering-nav-links button:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.engineering-navbar--capital-strip {
+  background: #052e16;
+  color: #ffffff;
+  border-bottom: 1px solid rgba(234, 179, 8, 0.36);
+}
+
+.engineering-navbar--capital-strip .engineering-brand-mark,
+.engineering-navbar--capital-strip .engineering-nav-cta {
+  background: linear-gradient(135deg, var(--engineering-accent), var(--engineering-accent-2));
+}
+
+.engineering-navbar--executive-dark {
+  min-height: 86px;
+  background: linear-gradient(135deg, #090909, #1f1a13 58%, #2a2118);
+  color: #ffffff;
+  border-bottom: 1px solid rgba(184, 137, 46, 0.44);
+}
+
+.engineering-navbar--executive-dark .engineering-brand-mark,
+.engineering-navbar--executive-dark .engineering-nav-cta,
+.engineering-hero--executive-suite .engineering-hero-actions button,
+.engineering-hero--executive-suite .engineering-executive-card button {
+  border-radius: 10px;
+  background: linear-gradient(135deg, #b8892e, #e2c166);
+  color: #111111;
+}
+
+.engineering-navbar--saas-glass {
+  background: rgba(2, 6, 23, 0.86);
+  color: #ffffff;
+  border-bottom: 1px solid rgba(6, 182, 212, 0.26);
+  backdrop-filter: blur(22px);
+}
+
+.engineering-navbar--saas-glass .engineering-brand-mark {
+  border-radius: 999px;
+}
+
+.engineering-navbar--logistics-route {
+  background:
+    linear-gradient(90deg, rgba(124, 45, 18, 0.95), rgba(15, 23, 42, 0.98)),
+    linear-gradient(90deg, transparent 0 48%, rgba(249, 115, 22, 0.36) 48% 52%, transparent 52% 100%);
+  color: #ffffff;
+  border-bottom: 0;
+}
+
+.engineering-navbar--logistics-route .engineering-brand-mark {
+  border-radius: 8px 18px 8px 18px;
+}
+
+.engineering-navbar--property-clean {
+  background: rgba(255, 255, 255, 0.98);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.12);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+}
+
+.engineering-navbar--property-clean .engineering-nav-links {
+  gap: 0;
+  border: 1px solid var(--engineering-line);
+  border-radius: 999px;
+  padding: 4px;
+}
+
+.engineering-navbar--engineeringcare-calm {
+  background: linear-gradient(90deg, #f0fdfa, #ffffff);
+  border-bottom: 1px solid rgba(20, 184, 166, 0.22);
+}
+
+.engineering-navbar--engineeringcare-calm .engineering-brand-mark {
+  border-radius: 999px 999px 999px 16px;
+}
+
+.engineering-navbar--legal-crest {
+  background: linear-gradient(90deg, #111827, #1f2937);
+  color: #ffffff;
+  border-bottom: 3px double rgba(96, 165, 250, 0.38);
+}
+
+.engineering-navbar--legal-crest .engineering-brand-mark {
+  border-radius: 4px;
+  outline: 1px solid rgba(255, 255, 255, 0.28);
+  outline-offset: 4px;
+}
+
+.engineering-hero-visual {
+  position: relative;
+  z-index: 2;
+  min-height: 420px;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 32px;
+  background: rgba(15, 23, 42, 0.62);
+  color: #ffffff;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 28px 80px rgba(2, 6, 23, 0.28);
+}
+
+.engineering-hero-visual button {
+  width: fit-content;
+  border: 0;
+  border-radius: 999px;
+  background: var(--engineering-accent);
+  color: #ffffff;
+  padding: 11px 15px;
+  font-size: 12px;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.engineering-boardroom-grid,
+.engineering-metric-ledger,
+.engineering-care-services,
+.engineering-executive-values,
+.engineering-integration-cloud,
+.engineering-floating-tags {
+  display: grid;
+  gap: 12px;
+}
+
+.engineering-hero-visual--boardroom-split {
+  display: grid;
+  align-content: center;
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.82), rgba(30, 64, 175, 0.44)),
+    rgba(15, 23, 42, 0.62);
+  border-left: 6px solid var(--engineering-accent);
+}
+
+.engineering-boardroom-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 16px;
+}
+
+.engineering-boardroom-grid article {
+  min-height: 118px;
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.engineering-boardroom-grid strong,
+.engineering-metric-ledger strong {
+  display: block;
+  font-size: 30px;
+  font-weight: 950;
+}
+
+.engineering-hero-visual--advisor-panel {
+  display: grid;
+  align-content: start;
+  gap: 18px;
+  border-radius: 18px 42px 18px 42px;
+  background: linear-gradient(135deg, rgba(15, 118, 110, 0.82), rgba(15, 23, 42, 0.72));
+}
+
+.engineering-advisor-brief {
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.engineering-advisor-brief strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+.engineering-advisor-brief p,
+.engineering-executive-card p,
+.engineering-property-card p,
+.engineering-care-trust p {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.engineering-hero-timeline {
+  display: grid;
+  gap: 10px;
+}
+
+.engineering-hero-timeline article {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.engineering-hero-timeline span,
+.engineering-route-line span {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: var(--engineering-accent-2);
+  color: #111827;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.engineering-hero-visual--campaign-mosaic {
+  display: grid;
+  gap: 14px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top right, rgba(236, 72, 153, 0.38), transparent 36%),
+    rgba(46, 16, 101, 0.7);
+  transform: rotate(-1deg);
+}
+
+.engineering-mosaic-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-rows: 170px 170px;
+  gap: 12px;
+}
+
+.engineering-mosaic-grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 24px;
+}
+
+.engineering-mosaic-grid img:first-child {
+  grid-row: 1 / 3;
+}
+
+.engineering-floating-tags {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.engineering-floating-tags span,
+.engineering-integration-cloud span,
+.engineering-executive-values span,
+.engineering-care-services span {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  padding: 9px 11px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.engineering-hero-visual--capital-dashboard {
+  display: grid;
+  gap: 14px;
+  border-radius: 12px;
+  background:
+    linear-gradient(rgba(16, 185, 129, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 185, 129, 0.08) 1px, transparent 1px),
+    rgba(5, 46, 22, 0.78);
+  background-size: 22px 22px;
+}
+
+.engineering-ledger-card {
+  border: 1px solid rgba(234, 179, 8, 0.28);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 18px;
+}
+
+.engineering-ledger-card strong {
+  display: block;
+  font-size: 22px;
+}
+
+.engineering-metric-ledger article {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 11px 0;
+}
+
+.engineering-hero-visual--executive-suite {
+  display: grid;
+  align-content: end;
+  gap: 18px;
+  border-radius: 48px 18px 48px 18px;
+  background:
+    linear-gradient(180deg, rgba(17, 17, 17, 0.26), rgba(17, 17, 17, 0.88)),
+    rgba(42, 33, 24, 0.72);
+  border-color: rgba(184, 137, 46, 0.38);
+}
+
+.engineering-executive-card {
+  padding: 22px;
+  border-radius: 32px 14px 32px 14px;
+  background: rgba(255, 253, 248, 0.12);
+}
+
+.engineering-executive-card strong {
+  display: block;
+  margin: 12px 0;
+  font-size: 28px;
+}
+
+.engineering-executive-values {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.engineering-hero-visual--product-cloud {
+  display: grid;
+  gap: 16px;
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(34, 211, 238, 0.24), transparent 32%),
+    radial-gradient(circle at 82% 12%, rgba(99, 102, 241, 0.22), transparent 34%),
+    rgba(2, 6, 23, 0.76);
+}
+
+.engineering-product-window {
+  overflow: hidden;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.11);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  padding: 18px;
+}
+
+.engineering-window-dots {
+  display: flex;
+  gap: 7px;
+  margin-bottom: 14px;
+}
+
+.engineering-window-dots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--engineering-accent-2);
+}
+
+.engineering-product-window p {
+  margin: 9px 0;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.engineering-integration-cloud {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.engineering-hero-visual--route-command {
+  display: grid;
+  align-content: center;
+  background:
+    linear-gradient(135deg, rgba(124, 45, 18, 0.78), rgba(15, 23, 42, 0.84));
+  border-radius: 18px;
+}
+
+.engineering-route-line {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.engineering-route-line::before {
+  content: "";
+  position: absolute;
+  left: 17px;
+  top: 20px;
+  bottom: 20px;
+  width: 3px;
+  border-radius: 999px;
+  background: var(--engineering-accent);
+}
+
+.engineering-route-line article {
+  position: relative;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.engineering-route-line p,
+.engineering-hero-timeline p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 800;
+}
+
+.engineering-hero-visual--property-showcase {
+  padding: 0;
+  overflow: hidden;
+  display: grid;
+  align-content: end;
+  background: rgba(15, 23, 42, 0.34);
+}
+
+.engineering-hero-visual--property-showcase > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
+.engineering-property-card {
+  margin: 24px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--engineering-text);
+  padding: 22px;
+}
+
+.engineering-property-card .engineering-panel-label {
+  color: var(--engineering-accent);
+}
+
+.engineering-property-card p {
+  margin: 10px 0;
+  color: var(--engineering-secondary);
+  font-weight: 900;
+}
+
+.engineering-hero-visual--care-trust {
+  display: grid;
+  align-content: center;
+  gap: 16px;
+  border-radius: 36px;
+  background: linear-gradient(135deg, rgba(6, 95, 70, 0.78), rgba(255, 255, 255, 0.12));
+}
+
+.engineering-hero-visual--care-trust strong {
+  font-size: 32px;
+}
+
+.engineering-care-services {
+  grid-template-columns: 1fr;
+}
+
+.engineering-hero-visual--legal-authority {
+  display: grid;
+  align-content: center;
+  gap: 16px;
+  border-radius: 4px;
+  background:
+    linear-gradient(135deg, rgba(17, 24, 39, 0.9), rgba(30, 41, 59, 0.76));
+  outline: 1px solid rgba(255, 255, 255, 0.26);
+  outline-offset: -12px;
+}
+
+.engineering-docket-list {
+  display: grid;
+  gap: 10px;
+}
+
+.engineering-docket-list article {
+  border-left: 3px solid var(--engineering-accent);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 14px 16px;
+}
+
+.engineering-docket-list span {
+  display: block;
+  margin-bottom: 4px;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.engineering-docket-list strong {
+  font-size: 16px;
+}
+
+.engineering-hero--advisor-panel {
+  grid-template-columns: minmax(0, 0.82fr) minmax(360px, 0.92fr);
+}
+
+.engineering-hero--campaign-mosaic {
+  grid-template-columns: minmax(0, 0.8fr) minmax(380px, 0.9fr);
+}
+
+.engineering-hero--capital-dashboard {
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.72fr);
+}
+
+.engineering-hero--executive-suite {
+  grid-template-columns: minmax(0, 0.78fr) minmax(380px, 0.72fr);
+  min-height: 720px;
+}
+
+.engineering-hero--product-cloud {
+  grid-template-columns: minmax(0, 0.86fr) minmax(380px, 0.88fr);
+}
+
+.engineering-hero--route-command {
+  grid-template-columns: minmax(0, 0.9fr) minmax(360px, 0.74fr);
+}
+
+.engineering-hero--property-showcase {
+  grid-template-columns: minmax(0, 0.78fr) minmax(390px, 0.84fr);
+}
+
+.engineering-hero--care-trust {
+  grid-template-columns: minmax(0, 0.86fr) minmax(340px, 0.72fr);
+}
+
+.engineering-hero--legal-authority {
+  grid-template-columns: minmax(0, 0.8fr) minmax(360px, 0.72fr);
+}
+
+.engineering-hero--campaign-mosaic .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(46, 16, 101, 0.92), rgba(46, 16, 101, 0.58), rgba(236, 72, 153, 0.28));
+}
+
+.engineering-hero--capital-dashboard .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(5, 46, 22, 0.94), rgba(5, 95, 70, 0.62), rgba(234, 179, 8, 0.16));
+}
+
+.engineering-hero--executive-suite .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(17, 17, 17, 0.96), rgba(17, 17, 17, 0.68), rgba(184, 137, 46, 0.22));
+}
+
+.engineering-hero--product-cloud .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(2, 6, 23, 0.94), rgba(30, 41, 59, 0.62), rgba(6, 182, 212, 0.18));
+}
+
+.engineering-hero--route-command .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(15, 23, 42, 0.94), rgba(124, 45, 18, 0.62), rgba(249, 115, 22, 0.18));
+}
+
+.engineering-hero--property-showcase .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.44), rgba(255, 255, 255, 0.08));
+}
+
+.engineering-hero--care-trust .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(6, 78, 59, 0.92), rgba(20, 184, 166, 0.42), rgba(255, 255, 255, 0.1));
+}
+
+.engineering-hero--legal-authority .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(17, 24, 39, 0.95), rgba(17, 24, 39, 0.58), rgba(30, 64, 175, 0.18));
+}
+
+@media (max-width: 1120px) {
+  .engineering-navbar {
+    grid-template-columns: 1fr auto;
+  }
+
+  .engineering-nav-center,
+  .engineering-nav-actions {
+    display: contents;
+  }
+
+  .engineering-nav-eyebrow,
+  .engineering-nav-support,
+  .engineering-nav-cta {
+    display: none;
+  }
+
+  .engineering-nav-links {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+  }
+
+  .engineering-hero,
+  .engineering-hero--advisor-panel,
+  .engineering-hero--campaign-mosaic,
+  .engineering-hero--capital-dashboard,
+  .engineering-hero--executive-suite,
+  .engineering-hero--product-cloud,
+  .engineering-hero--route-command,
+  .engineering-hero--property-showcase,
+  .engineering-hero--care-trust,
+  .engineering-hero--legal-authority {
+    grid-template-columns: 1fr;
+  }
+
+  .engineering-hero-visual {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .engineering-hero-visual {
+    padding: 18px;
+    border-radius: 24px;
+  }
+
+  .engineering-boardroom-grid,
+  .engineering-metric-ledger,
+  .engineering-floating-tags,
+  .engineering-executive-values,
+  .engineering-integration-cloud {
+    grid-template-columns: 1fr;
+  }
+
+  .engineering-mosaic-grid {
+    grid-template-rows: 180px 180px 180px;
+    grid-template-columns: 1fr;
+  }
+
+  .engineering-mosaic-grid img:first-child {
+    grid-row: auto;
+  }
+}
+
+
+/* Engineering enterprise template variants */
+.engineering-navbar--engineering-command { background: rgba(255,255,255,.96); border-bottom: 1px solid rgba(14, 165, 233, .20); }
+.engineering-navbar--organic-market { background: linear-gradient(90deg, rgba(236,253,245,.96), rgba(240,249,255,.96)); border-bottom: 3px solid var(--engineering-accent); }
+.engineering-navbar--engineertech-console { background: rgba(15,23,42,.96); color: #fff; box-shadow: 0 16px 44px rgba(15,23,42,.22); }
+.engineering-navbar--engineertech-console .engineering-brand,
+.engineering-navbar--engineertech-console .engineering-nav-links button,
+.engineering-navbar--engineertech-console .engineering-menu-toggle { color: #fff; }
+.engineering-navbar--livestock-ranch { border-bottom: 2px dashed rgba(20,184,166,.6); background: rgba(255,255,255,.94); }
+.engineering-navbar--greenhouse-control { background: linear-gradient(90deg, rgba(253,244,255,.96), rgba(240,253,250,.96)); border-radius: 0 0 30px 30px; }
+.engineering-navbar--vineyard-estate { background: #fff; border-bottom: 4px solid rgba(251,191,36,.55); }
+.engineering-navbar--irrigation-projects { background: linear-gradient(90deg, #082f49, #0f766e); color: #fff; }
+.engineering-navbar--irrigation-projects .engineering-brand,
+.engineering-navbar--irrigation-projects .engineering-nav-links button,
+.engineering-navbar--irrigation-projects .engineering-menu-toggle { color: #fff; }
+.engineering-navbar--coop-network { background: rgba(2,6,23,.90); color: #fff; border-bottom: 1px solid rgba(56,189,248,.35); }
+.engineering-navbar--coop-network .engineering-brand,
+.engineering-navbar--coop-network .engineering-nav-links button,
+.engineering-navbar--coop-network .engineering-menu-toggle { color: #fff; }
+.engineering-navbar--export-desk { background: linear-gradient(90deg, rgba(238,242,255,.96), rgba(255,255,255,.96)); box-shadow: 0 20px 60px rgba(99,102,241,.12); }
+.engineering-navbar--equipment-yard { background: linear-gradient(90deg, var(--engineering-primary), var(--engineering-secondary)); color: #fff; }
+.engineering-navbar--equipment-yard .engineering-brand,
+.engineering-navbar--equipment-yard .engineering-nav-links button,
+.engineering-navbar--equipment-yard .engineering-menu-toggle { color: #fff; }
+
+.engineering-hero--care-split .engineering-hero-overlay { background: linear-gradient(90deg, rgba(8,47,73,.76), rgba(14,165,233,.20)); }
+.engineering-hero--smile-panel .engineering-hero-panel { border-radius: 40px 10px 40px 10px; }
+.engineering-hero--consultant-card .engineering-hero-content { border-left: 6px solid var(--engineering-accent); padding-left: clamp(1rem, 3vw, 2.2rem); }
+.engineering-hero--recovery-flow .engineering-hero-panel { border-top: 5px solid var(--engineering-accent-2); transform: translateY(10px); }
+.engineering-hero--wellness-retreat .engineering-hero-content { text-align: center; margin: 0 auto; background: rgba(255,255,255,.14); padding: clamp(1rem, 3vw, 2rem); border-radius: 36px; }
+.engineering-hero--family-care .engineering-hero-panel { border-radius: 999px 32px 32px 999px; }
+.engineering-hero--hospital-network .engineering-hero-overlay { background: linear-gradient(90deg, rgba(2,6,23,.88), rgba(8,145,178,.22)); }
+.engineering-hero--lab-dashboard .engineering-hero-panel { background: rgba(2,6,23,.78); box-shadow: 0 0 0 1px rgba(56,189,248,.22), 0 0 70px rgba(56,189,248,.18); }
+.engineering-hero--calm-space .engineering-hero-overlay { background: linear-gradient(90deg, rgba(49,46,129,.68), rgba(20,184,166,.14)); }
+.engineering-hero--resource-hub .engineering-hero-content { border-radius: 42px; background: rgba(6,78,59,.56); padding: clamp(1rem, 3vw, 2rem); }
+
+
+/* ENGINEERING TEMPLATE DISTINCT HERO STRUCTURES - additive only */
+.engineering-hero--care-split {
+  grid-template-columns: minmax(0, .92fr) minmax(360px, .72fr);
+}
+.engineering-hero--care-split .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(8,47,73,.88), rgba(14,165,233,.34), rgba(16,185,129,.10));
+}
+.engineering-hero-visual--care-split {
+  display: grid;
+  align-content: center;
+  gap: 16px;
+  border-radius: 34px;
+  background: linear-gradient(135deg, rgba(8,47,73,.82), rgba(14,116,144,.64));
+}
+.engineering-care-split-header strong { display: block; margin: 10px 0 7px; font-size: 30px; }
+.engineering-care-split-header p { color: rgba(255,255,255,.78); }
+.engineering-care-split-grid { display: grid; gap: 12px; }
+.engineering-care-split-grid article {
+  border-radius: 22px;
+  background: rgba(255,255,255,.12);
+  padding: 15px;
+  border: 1px solid rgba(255,255,255,.12);
+}
+.engineering-care-split-grid article span { color: var(--engineering-accent-2); font-weight: 950; }
+.engineering-care-split-grid article strong { display: block; margin: 5px 0; }
+.engineering-care-split-grid article p { margin: 0; color: rgba(255,255,255,.76); font-size: 13px; line-height: 1.5; }
+
+.engineering-hero--smile-panel {
+  grid-template-columns: minmax(340px, .66fr) minmax(0, .94fr);
+}
+.engineering-hero--smile-panel .engineering-hero-content { grid-column: 2; text-align: left; }
+.engineering-hero--smile-panel .engineering-hero-visual { grid-column: 1; grid-row: 1; }
+.engineering-hero--smile-panel .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(6,78,59,.76), rgba(20,184,166,.18));
+}
+.engineering-hero-visual--smile-panel {
+  display: grid;
+  gap: 14px;
+  border-radius: 999px 36px 36px 999px;
+  background: linear-gradient(135deg, rgba(6,78,59,.78), rgba(255,255,255,.12));
+}
+.engineering-smile-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.engineering-smile-gallery img { width: 100%; height: 210px; object-fit: cover; border-radius: 26px; }
+.engineering-smile-gallery img:first-child { border-radius: 999px 26px 26px 999px; }
+.engineering-smile-services { display: flex; flex-wrap: wrap; gap: 8px; }
+.engineering-smile-services span { border-radius: 999px; background: rgba(255,255,255,.15); padding: 9px 12px; font-size: 12px; font-weight: 900; }
+
+.engineering-hero--consultant-card {
+  grid-template-columns: minmax(0, .78fr) minmax(380px, .78fr);
+}
+.engineering-hero--consultant-card .engineering-hero-content {
+  border-left: 6px solid var(--engineering-accent);
+  padding-left: clamp(1rem, 3vw, 2rem);
+}
+.engineering-hero--consultant-card .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(15,23,42,.94), rgba(30,58,138,.55), rgba(37,99,235,.14));
+}
+.engineering-hero-visual--consultant-card {
+  display: grid;
+  align-content: space-between;
+  gap: 18px;
+  min-height: 470px;
+  border-radius: 18px 52px 18px 52px;
+  background: linear-gradient(145deg, rgba(15,23,42,.86), rgba(30,58,138,.62));
+}
+.engineering-specialist-card-main { border-radius: 28px; background: rgba(255,255,255,.10); padding: 22px; }
+.engineering-specialist-card-main strong { display: block; margin: 10px 0; font-size: 28px; }
+.engineering-specialist-card-main p { color: rgba(255,255,255,.78); }
+.engineering-specialist-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.engineering-specialist-stats article { border-radius: 18px; background: rgba(255,255,255,.12); padding: 14px; }
+.engineering-specialist-stats strong { display: block; font-size: 26px; }
+.engineering-specialist-stats span { color: rgba(255,255,255,.74); font-size: 12px; font-weight: 900; }
+
+.engineering-hero--recovery-flow {
+  grid-template-columns: minmax(0, .82fr) minmax(380px, .82fr);
+  align-items: stretch;
+}
+.engineering-hero--recovery-flow .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(4,47,46,.90), rgba(15,118,110,.44), rgba(245,158,11,.10));
+}
+.engineering-hero-visual--recovery-flow {
+  display: grid;
+  align-content: center;
+  border-radius: 10px 46px 46px 10px;
+  background: linear-gradient(135deg, rgba(4,47,46,.78), rgba(15,118,110,.60));
+  border-top: 6px solid var(--engineering-accent-2);
+}
+.engineering-recovery-track { position: relative; display: grid; gap: 15px; margin-top: 20px; }
+.engineering-recovery-track::before { content: ""; position: absolute; left: 18px; top: 18px; bottom: 18px; width: 4px; border-radius: 999px; background: var(--engineering-accent-2); }
+.engineering-recovery-track article { position: relative; display: grid; grid-template-columns: 50px 1fr; align-items: center; gap: 12px; }
+.engineering-recovery-track span { width: 40px; height: 40px; border-radius: 999px; display: grid; place-items: center; background: #fff; color: var(--engineering-primary); font-weight: 950; }
+.engineering-recovery-track p { margin: 0; color: rgba(255,255,255,.82); font-weight: 850; }
+
+.engineering-hero--wellness-retreat {
+  grid-template-columns: 1fr;
+  place-items: center;
+  text-align: center;
+}
+.engineering-hero--wellness-retreat .engineering-hero-content { width: min(940px, 100%); margin: 0 auto; }
+.engineering-hero--wellness-retreat .engineering-hero-content h1,
+.engineering-hero--wellness-retreat .engineering-hero-content p { margin-left: auto; margin-right: auto; }
+.engineering-hero--wellness-retreat .engineering-hero-actions { justify-content: center; }
+.engineering-hero--wellness-retreat .engineering-hero-visual { width: min(920px, 100%); }
+.engineering-hero--wellness-retreat .engineering-hero-overlay {
+  background: radial-gradient(circle at 50% 18%, rgba(236,72,153,.34), transparent 32%), linear-gradient(180deg, rgba(59,7,100,.62), rgba(15,23,42,.84));
+}
+.engineering-hero-visual--wellness-retreat {
+  min-height: auto;
+  display: grid;
+  gap: 18px;
+  border-radius: 46px;
+  background: rgba(255,255,255,.14);
+  text-align: center;
+}
+.engineering-wellness-orbit { width: min(560px, 100%); margin: 0 auto; border-radius: 999px; padding: 30px; border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.10); }
+.engineering-wellness-orbit strong { display: block; font-size: 28px; }
+.engineering-wellness-orbit p { color: rgba(255,255,255,.78); }
+.engineering-wellness-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; }
+.engineering-wellness-tags span { border-radius: 999px; background: rgba(255,255,255,.14); padding: 10px 13px; font-size: 12px; font-weight: 900; }
+
+.engineering-hero--family-care {
+  grid-template-columns: minmax(0, .82fr) minmax(390px, .78fr);
+}
+.engineering-hero--family-care .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(12,74,110,.84), rgba(251,191,36,.18), rgba(34,197,94,.12));
+}
+.engineering-hero-visual--family-care {
+  display: grid;
+  gap: 14px;
+  border-radius: 44px 44px 12px 44px;
+  background: linear-gradient(135deg, rgba(3,105,161,.66), rgba(255,255,255,.15));
+}
+.engineering-family-card { overflow: hidden; border-radius: 30px; background: rgba(255,255,255,.94); color: var(--engineering-text); }
+.engineering-family-card img { width: 100%; height: 250px; object-fit: cover; display: block; }
+.engineering-family-card div { padding: 18px; }
+.engineering-family-card strong { display: block; font-size: 23px; }
+.engineering-family-card p { color: var(--engineering-muted); }
+.engineering-family-pills { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.engineering-family-pills span { border-radius: 18px; background: rgba(255,255,255,.13); padding: 10px; font-size: 12px; font-weight: 900; }
+
+.engineering-hero--hospital-network {
+  grid-template-columns: minmax(0, .72fr) minmax(390px, .88fr);
+}
+.engineering-hero--hospital-network .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(2,6,23,.94), rgba(8,145,178,.36), rgba(34,197,94,.12));
+}
+.engineering-hero-visual--hospital-network {
+  display: grid;
+  align-content: center;
+  gap: 16px;
+  border-radius: 0 42px 0 42px;
+  background: rgba(2,6,23,.76);
+  box-shadow: inset 0 0 0 1px rgba(56,189,248,.22), 0 0 70px rgba(56,189,248,.18);
+}
+.engineering-hospital-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; }
+.engineering-hospital-grid article { border-radius: 18px; background: rgba(255,255,255,.11); padding: 16px; }
+.engineering-hospital-grid strong { display: block; font-size: 30px; }
+.engineering-hospital-grid span { color: rgba(255,255,255,.74); font-size: 12px; font-weight: 900; }
+.engineering-hospital-alert { display: flex; align-items: center; gap: 12px; border-radius: 18px; background: rgba(34,197,94,.16); padding: 15px; font-weight: 950; }
+.engineering-hospital-alert p { margin: 0; color: rgba(255,255,255,.84); }
+
+.engineering-hero--lab-dashboard {
+  grid-template-columns: minmax(0, .78fr) minmax(390px, .86fr);
+}
+.engineering-hero--lab-dashboard .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(17,24,39,.95), rgba(29,78,216,.45), rgba(139,92,246,.16));
+}
+.engineering-hero-visual--lab-dashboard {
+  display: grid;
+  gap: 14px;
+  border-radius: 18px;
+  background: linear-gradient(rgba(56,189,248,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,.08) 1px, transparent 1px), rgba(2,6,23,.78);
+  background-size: 24px 24px;
+}
+.engineering-lab-window { border-radius: 24px; background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.14); padding: 18px; }
+.engineering-lab-window article { display: grid; grid-template-columns: 26px 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.12); }
+.engineering-lab-window article:last-child { border-bottom: 0; }
+.engineering-lab-window svg { color: var(--engineering-accent-2); margin-top: 3px; }
+.engineering-lab-window strong { display: block; }
+.engineering-lab-window p { margin: 4px 0 0; color: rgba(255,255,255,.74); font-size: 13px; line-height: 1.5; }
+
+.engineering-hero--calm-space {
+  grid-template-columns: minmax(390px, .74fr) minmax(0, .86fr);
+}
+.engineering-hero--calm-space .engineering-hero-content { grid-column: 2; }
+.engineering-hero--calm-space .engineering-hero-visual { grid-column: 1; grid-row: 1; }
+.engineering-hero--calm-space .engineering-hero-overlay {
+  background: radial-gradient(circle at 18% 30%, rgba(129,140,248,.34), transparent 34%), linear-gradient(90deg, rgba(30,27,75,.86), rgba(20,184,166,.12));
+}
+.engineering-hero-visual--calm-space {
+  display: grid;
+  gap: 16px;
+  min-height: 480px;
+  border-radius: 999px 999px 40px 40px;
+  background: linear-gradient(180deg, rgba(49,46,129,.62), rgba(255,255,255,.13));
+}
+.engineering-calm-card { margin-top: 16px; padding: 24px; border-radius: 34px; background: rgba(255,255,255,.12); }
+.engineering-calm-card strong { display: block; font-size: 25px; }
+.engineering-calm-card p { color: rgba(255,255,255,.76); }
+.engineering-calm-steps { display: grid; gap: 10px; }
+.engineering-calm-steps article { display: grid; grid-template-columns: 38px 1fr; gap: 10px; align-items: center; }
+.engineering-calm-steps span { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 999px; background: #fff; color: var(--engineering-primary); font-weight: 950; }
+.engineering-calm-steps p { margin: 0; color: rgba(255,255,255,.80); font-weight: 850; }
+
+.engineering-hero--resource-hub {
+  grid-template-columns: minmax(0, .86fr) minmax(360px, .78fr);
+}
+.engineering-hero--resource-hub .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(6,78,59,.92), rgba(21,128,61,.42), rgba(56,189,248,.12));
+}
+.engineering-hero-visual--resource-hub {
+  display: grid;
+  gap: 15px;
+  border-radius: 18px 18px 48px 18px;
+  background: linear-gradient(135deg, rgba(6,78,59,.80), rgba(21,128,61,.58));
+}
+.engineering-resource-hub-grid { display: grid; gap: 11px; }
+.engineering-resource-hub-grid article { border-radius: 20px; background: rgba(255,255,255,.12); padding: 15px; }
+.engineering-resource-hub-grid svg { color: var(--engineering-accent-2); }
+.engineering-resource-hub-grid strong { display: block; margin: 8px 0 4px; }
+.engineering-resource-hub-grid p { margin: 0; color: rgba(255,255,255,.76); font-size: 13px; line-height: 1.5; }
+
+@media (max-width: 1120px) {
+  .engineering-hero--care-split,
+  .engineering-hero--smile-panel,
+  .engineering-hero--consultant-card,
+  .engineering-hero--recovery-flow,
+  .engineering-hero--wellness-retreat,
+  .engineering-hero--family-care,
+  .engineering-hero--hospital-network,
+  .engineering-hero--lab-dashboard,
+  .engineering-hero--calm-space,
+  .engineering-hero--resource-hub {
+    grid-template-columns: 1fr;
+  }
+
+  .engineering-hero--smile-panel .engineering-hero-content,
+  .engineering-hero--smile-panel .engineering-hero-visual,
+  .engineering-hero--calm-space .engineering-hero-content,
+  .engineering-hero--calm-space .engineering-hero-visual {
+    grid-column: auto;
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .engineering-hero-visual--care-split,
+  .engineering-hero-visual--smile-panel,
+  .engineering-hero-visual--consultant-card,
+  .engineering-hero-visual--recovery-flow,
+  .engineering-hero-visual--wellness-retreat,
+  .engineering-hero-visual--family-care,
+  .engineering-hero-visual--hospital-network,
+  .engineering-hero-visual--lab-dashboard,
+  .engineering-hero-visual--calm-space,
+  .engineering-hero-visual--resource-hub {
+    min-height: auto;
+    border-radius: 24px;
+  }
+
+  .engineering-specialist-stats,
+  .engineering-hospital-grid,
+  .engineering-family-pills,
+  .engineering-smile-gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .engineering-smile-gallery img,
+  .engineering-family-card img {
+    height: 190px;
+  }
+
+  .engineering-hero--wellness-retreat,
+  .engineering-hero--wellness-retreat .engineering-hero-content,
+  .engineering-hero--wellness-retreat .engineering-hero-content h1,
+  .engineering-hero--wellness-retreat .engineering-hero-content p {
+    text-align: left;
+  }
+
+  .engineering-hero--wellness-retreat .engineering-hero-actions,
+  .engineering-wellness-tags {
+    justify-content: flex-start;
+  }
+}
+
+
+/* Engineering category aliases: keeps the Health/Security shared logic while giving each template a distinct enterprise feel. */
+.engineering-navbar--structure-general { box-shadow: 0 14px 40px rgba(17,24,39,.10); }
+.engineering-navbar--structure-civil { border-bottom-style: solid; }
+.engineering-navbar--structure-architecture { letter-spacing: .01em; }
+.engineering-navbar--structure-residential { border-radius: 0 0 24px 24px; }
+.engineering-navbar--structure-commercial { box-shadow: 0 18px 52px rgba(15,23,42,.16); }
+.engineering-navbar--structure-renovation { border-bottom: 2px solid var(--engineering-accent); }
+.engineering-navbar--structure-roofing { background: linear-gradient(90deg, rgba(255,255,255,.96), rgba(255,251,235,.96)); }
+.engineering-navbar--structure-engineering { background: rgba(2,6,23,.94); color: #fff; }
+.engineering-navbar--structure-engineering .engineering-brand,
+.engineering-navbar--structure-engineering .engineering-nav-links button,
+.engineering-navbar--structure-engineering .engineering-menu-toggle { color: #fff; }
+.engineering-navbar--structure-materials { background: linear-gradient(90deg, var(--engineering-primary), var(--engineering-secondary)); color: #fff; }
+.engineering-navbar--structure-materials .engineering-brand,
+.engineering-navbar--structure-materials .engineering-nav-links button,
+.engineering-navbar--structure-materials .engineering-menu-toggle { color: #fff; }
+.engineering-navbar--structure-management { border-bottom: 1px solid rgba(37,99,235,.22); }
+.engineering-hero--structure-general .engineering-hero-content { border-left: 6px solid var(--engineering-accent); padding-left: clamp(1rem,3vw,2rem); }
+.engineering-hero--structure-civil .engineering-hero-overlay { background: linear-gradient(90deg, rgba(12,74,110,.82), rgba(251,191,36,.18)); }
+.engineering-hero--structure-architecture .engineering-hero-content { background: rgba(255,255,255,.14); padding: clamp(1rem,3vw,2rem); border-radius: 32px; }
+.engineering-hero--structure-residential .engineering-hero-panel { border-radius: 999px 32px 32px 999px; }
+.engineering-hero--structure-commercial .engineering-hero-visual { box-shadow: 0 30px 80px rgba(15,23,42,.28); }
+.engineering-hero--structure-renovation .engineering-hero-overlay { background: linear-gradient(90deg, rgba(120,53,15,.76), rgba(249,115,22,.18)); }
+.engineering-hero--structure-roofing .engineering-hero-content { max-width: 780px; }
+.engineering-hero--structure-engineering .engineering-hero-overlay { background: linear-gradient(90deg, rgba(2,6,23,.9), rgba(14,165,233,.16)); }
+.engineering-hero--structure-materials .engineering-hero-content { background: rgba(31,41,55,.62); padding: clamp(1rem,3vw,2rem); border-radius: 34px; }
+.engineering-hero--structure-management .engineering-hero-content { text-align: center; margin: 0 auto; }
+
+
+/* ENGINEERING CATEGORY: professional hero/navbar structures and arrow scroll-top only */
+.engineering-navbar--engineer-solid {
+  background: rgba(255, 255, 255, 0.97);
+  border-bottom: 4px solid var(--engineering-accent);
+  box-shadow: 0 16px 46px rgba(17, 24, 39, 0.12);
+}
+.engineering-navbar--civil-mega {
+  background: linear-gradient(90deg, rgba(12, 74, 110, 0.98), rgba(3, 105, 161, 0.94));
+  color: #fff;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.35);
+}
+.engineering-navbar--blueprint-studio {
+  background: rgba(239, 246, 255, 0.96);
+  border-bottom: 1px solid rgba(29, 78, 216, 0.24);
+  box-shadow: inset 0 -3px 0 rgba(96, 165, 250, 0.32);
+}
+.engineering-navbar--residential-warm {
+  background: linear-gradient(90deg, rgba(255, 251, 235, 0.98), rgba(255, 255, 255, 0.96));
+  border-radius: 0 0 28px 28px;
+  border-bottom: 3px solid rgba(245, 158, 11, 0.38);
+}
+.engineering-navbar--commercial-steel {
+  background: rgba(2, 6, 23, 0.96);
+  color: #fff;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.32);
+  box-shadow: 0 18px 52px rgba(2, 6, 23, 0.22);
+}
+.engineering-navbar--renovation-copper {
+  background: linear-gradient(90deg, rgba(124, 45, 18, 0.98), rgba(194, 65, 12, 0.94));
+  color: #fff;
+  border-bottom: 1px solid rgba(251, 146, 60, 0.38);
+}
+.engineering-navbar--roofing-safety {
+  background: linear-gradient(90deg, rgba(31, 41, 55, 0.98), rgba(75, 85, 99, 0.94));
+  color: #fff;
+  border-bottom: 4px solid #eab308;
+}
+.engineering-navbar--engineering-dark {
+  background: linear-gradient(90deg, #020617, #0e7490);
+  color: #fff;
+  border-bottom: 1px solid rgba(6, 182, 212, 0.4);
+}
+.engineering-navbar--materials-yard {
+  background: linear-gradient(90deg, rgba(63, 63, 70, 0.98), rgba(113, 113, 122, 0.94));
+  color: #fff;
+  border-bottom: 4px solid var(--engineering-accent);
+}
+.engineering-navbar--pmo-executive {
+  background: linear-gradient(90deg, rgba(49, 46, 129, 0.98), rgba(67, 56, 202, 0.94));
+  color: #fff;
+  box-shadow: 0 18px 56px rgba(49, 46, 129, 0.24);
+}
+.engineering-navbar--civil-mega .engineering-brand,
+.engineering-navbar--civil-mega .engineering-nav-links button,
+.engineering-navbar--civil-mega .engineering-menu-toggle,
+.engineering-navbar--commercial-steel .engineering-brand,
+.engineering-navbar--commercial-steel .engineering-nav-links button,
+.engineering-navbar--commercial-steel .engineering-menu-toggle,
+.engineering-navbar--renovation-copper .engineering-brand,
+.engineering-navbar--renovation-copper .engineering-nav-links button,
+.engineering-navbar--renovation-copper .engineering-menu-toggle,
+.engineering-navbar--roofing-safety .engineering-brand,
+.engineering-navbar--roofing-safety .engineering-nav-links button,
+.engineering-navbar--roofing-safety .engineering-menu-toggle,
+.engineering-navbar--engineering-dark .engineering-brand,
+.engineering-navbar--engineering-dark .engineering-nav-links button,
+.engineering-navbar--engineering-dark .engineering-menu-toggle,
+.engineering-navbar--materials-yard .engineering-brand,
+.engineering-navbar--materials-yard .engineering-nav-links button,
+.engineering-navbar--materials-yard .engineering-menu-toggle,
+.engineering-navbar--pmo-executive .engineering-brand,
+.engineering-navbar--pmo-executive .engineering-nav-links button,
+.engineering-navbar--pmo-executive .engineering-menu-toggle {
+  color: #fff;
+}
+
+.engineering-hero--engineer-command {
+  grid-template-columns: minmax(0, 0.96fr) minmax(360px, 0.74fr);
+  min-height: 720px;
+}
+.engineering-hero--engineer-command .engineering-hero-content {
+  border-left: 6px solid var(--engineering-accent);
+  padding-left: clamp(1rem, 3vw, 2.25rem);
+}
+.engineering-hero--engineer-command .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(17, 24, 39, 0.94), rgba(55, 65, 81, 0.60), rgba(245, 158, 11, 0.16));
+}
+.engineering-hero--engineer-command .engineering-hero-visual--care-split {
+  border-radius: 34px 8px 34px 8px;
+  background: linear-gradient(135deg, rgba(17, 24, 39, 0.86), rgba(245, 158, 11, 0.26));
+  border-top: 6px solid var(--engineering-accent);
+}
+
+.engineering-hero--infrastructure-grid {
+  grid-template-columns: minmax(360px, 0.76fr) minmax(0, 0.92fr);
+}
+.engineering-hero--infrastructure-grid .engineering-hero-content {
+  grid-column: 2;
+}
+.engineering-hero--infrastructure-grid .engineering-hero-visual {
+  grid-column: 1;
+  grid-row: 1;
+}
+.engineering-hero--infrastructure-grid .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(12, 74, 110, 0.92), rgba(3, 105, 161, 0.48), rgba(56, 189, 248, 0.14));
+}
+.engineering-hero--infrastructure-grid .engineering-hero-visual--smile-panel {
+  border-radius: 0 42px 42px 0;
+  background: linear-gradient(135deg, rgba(12, 74, 110, 0.84), rgba(56, 189, 248, 0.22));
+  border-left: 7px solid var(--engineering-accent-2);
+}
+
+.engineering-hero--blueprint-studio {
+  grid-template-columns: minmax(0, 0.78fr) minmax(390px, 0.82fr);
+}
+.engineering-hero--blueprint-studio .engineering-hero-content {
+  background: rgba(15, 23, 42, 0.60);
+  border-radius: 28px;
+  padding: clamp(1.2rem, 3vw, 2.4rem);
+  backdrop-filter: blur(16px);
+}
+.engineering-hero--blueprint-studio .engineering-hero-overlay {
+  background:
+    linear-gradient(rgba(96, 165, 250, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(96, 165, 250, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(23, 37, 84, 0.94), rgba(29, 78, 216, 0.44), rgba(96, 165, 250, 0.10));
+  background-size: 32px 32px, 32px 32px, auto;
+}
+.engineering-hero--blueprint-studio .engineering-hero-visual--consultant-card {
+  border-radius: 8px;
+  outline: 1px solid rgba(147, 197, 253, 0.34);
+  outline-offset: -12px;
+}
+
+.engineering-hero--residential-showcase {
+  grid-template-columns: minmax(0, 0.82fr) minmax(380px, 0.78fr);
+}
+.engineering-hero--residential-showcase .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(66, 32, 6, 0.90), rgba(146, 64, 14, 0.48), rgba(245, 158, 11, 0.16));
+}
+.engineering-hero--residential-showcase .engineering-hero-visual--recovery-flow {
+  border-radius: 999px 36px 36px 999px;
+  background: linear-gradient(135deg, rgba(146, 64, 14, 0.76), rgba(255, 255, 255, 0.13));
+}
+
+.engineering-hero--commercial-tower {
+  grid-template-columns: 1fr;
+  place-items: center;
+  text-align: center;
+  min-height: 740px;
+}
+.engineering-hero--commercial-tower .engineering-hero-content,
+.engineering-hero--commercial-tower .engineering-hero-visual {
+  width: min(1000px, 100%);
+  margin-left: auto;
+  margin-right: auto;
+}
+.engineering-hero--commercial-tower .engineering-hero-content h1,
+.engineering-hero--commercial-tower .engineering-hero-content p {
+  margin-left: auto;
+  margin-right: auto;
+}
+.engineering-hero--commercial-tower .engineering-hero-actions {
+  justify-content: center;
+}
+.engineering-hero--commercial-tower .engineering-hero-overlay {
+  background: radial-gradient(circle at 50% 18%, rgba(148, 163, 184, 0.34), transparent 32%), linear-gradient(180deg, rgba(2, 6, 23, 0.62), rgba(2, 6, 23, 0.92));
+}
+.engineering-hero--commercial-tower .engineering-hero-visual--wellness-retreat {
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.68);
+  border-top: 6px solid var(--engineering-accent-2);
+}
+
+.engineering-hero--renovation-before-after {
+  grid-template-columns: minmax(390px, 0.78fr) minmax(0, 0.84fr);
+}
+.engineering-hero--renovation-before-after .engineering-hero-content {
+  grid-column: 2;
+}
+.engineering-hero--renovation-before-after .engineering-hero-visual {
+  grid-column: 1;
+  grid-row: 1;
+}
+.engineering-hero--renovation-before-after .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(67, 20, 7, 0.92), rgba(194, 65, 12, 0.42), rgba(250, 204, 21, 0.12));
+}
+.engineering-hero--renovation-before-after .engineering-hero-visual--family-care {
+  border-radius: 46px 46px 10px 10px;
+  background: linear-gradient(180deg, rgba(124, 45, 18, 0.76), rgba(249, 115, 22, 0.28));
+}
+
+.engineering-hero--roofing-elevation {
+  grid-template-columns: minmax(0, 0.74fr) minmax(390px, 0.9fr);
+}
+.engineering-hero--roofing-elevation .engineering-hero-content {
+  border-top: 6px solid #eab308;
+  padding-top: clamp(1rem, 3vw, 2rem);
+}
+.engineering-hero--roofing-elevation .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(31, 41, 55, 0.94), rgba(75, 85, 99, 0.48), rgba(234, 179, 8, 0.16));
+}
+.engineering-hero--roofing-elevation .engineering-hero-visual--hospital-network {
+  border-radius: 0 0 46px 46px;
+  border-top: 7px solid #eab308;
+}
+
+.engineering-hero--engineering-control {
+  grid-template-columns: minmax(0, 0.78fr) minmax(390px, 0.88fr);
+}
+.engineering-hero--engineering-control .engineering-hero-content {
+  border-left: 6px solid var(--engineering-accent);
+  padding-left: clamp(1rem, 3vw, 2.2rem);
+}
+.engineering-hero--engineering-control .engineering-hero-overlay {
+  background:
+    linear-gradient(rgba(6, 182, 212, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(6, 182, 212, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(2, 6, 23, 0.96), rgba(14, 116, 144, 0.46), rgba(34, 197, 94, 0.12));
+  background-size: 26px 26px, 26px 26px, auto;
+}
+.engineering-hero--engineering-control .engineering-hero-visual--lab-dashboard {
+  border-radius: 18px 54px 18px 54px;
+}
+
+.engineering-hero--materials-yard {
+  grid-template-columns: minmax(390px, 0.76fr) minmax(0, 0.86fr);
+}
+.engineering-hero--materials-yard .engineering-hero-content {
+  grid-column: 2;
+  background: rgba(24, 24, 27, 0.66);
+  border-radius: 34px;
+  padding: clamp(1.2rem, 3vw, 2.4rem);
+}
+.engineering-hero--materials-yard .engineering-hero-visual {
+  grid-column: 1;
+  grid-row: 1;
+}
+.engineering-hero--materials-yard .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(24, 24, 27, 0.92), rgba(113, 113, 122, 0.42), rgba(249, 115, 22, 0.13));
+}
+.engineering-hero--materials-yard .engineering-hero-visual--calm-space {
+  border-radius: 10px 999px 999px 10px;
+  background: linear-gradient(90deg, rgba(63, 63, 70, 0.78), rgba(249, 115, 22, 0.22));
+}
+
+.engineering-hero--pmo-dashboard {
+  grid-template-columns: minmax(0, 0.86fr) minmax(360px, 0.78fr);
+}
+.engineering-hero--pmo-dashboard .engineering-hero-content {
+  text-align: left;
+  border-bottom: 6px solid var(--engineering-accent-2);
+  padding-bottom: clamp(1rem, 3vw, 2rem);
+}
+.engineering-hero--pmo-dashboard .engineering-hero-overlay {
+  background: linear-gradient(90deg, rgba(30, 27, 75, 0.94), rgba(67, 56, 202, 0.44), rgba(245, 158, 11, 0.14));
+}
+.engineering-hero--pmo-dashboard .engineering-hero-visual--resource-hub {
+  border-radius: 48px 18px 48px 18px;
+  background: linear-gradient(135deg, rgba(49, 46, 129, 0.80), rgba(245, 158, 11, 0.18));
+}
+
+.engineering-scroll-top svg {
+  display: block;
+}
+
+@media (max-width: 1120px) {
+  .engineering-hero--engineer-command,
+  .engineering-hero--infrastructure-grid,
+  .engineering-hero--blueprint-studio,
+  .engineering-hero--residential-showcase,
+  .engineering-hero--commercial-tower,
+  .engineering-hero--renovation-before-after,
+  .engineering-hero--roofing-elevation,
+  .engineering-hero--engineering-control,
+  .engineering-hero--materials-yard,
+  .engineering-hero--pmo-dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .engineering-hero--infrastructure-grid .engineering-hero-content,
+  .engineering-hero--infrastructure-grid .engineering-hero-visual,
+  .engineering-hero--renovation-before-after .engineering-hero-content,
+  .engineering-hero--renovation-before-after .engineering-hero-visual,
+  .engineering-hero--materials-yard .engineering-hero-content,
+  .engineering-hero--materials-yard .engineering-hero-visual {
+    grid-column: auto;
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .engineering-hero--commercial-tower,
+  .engineering-hero--commercial-tower .engineering-hero-content,
+  .engineering-hero--commercial-tower .engineering-hero-content h1,
+  .engineering-hero--commercial-tower .engineering-hero-content p {
+    text-align: left;
+  }
+
+  .engineering-hero--commercial-tower .engineering-hero-actions {
+    justify-content: flex-start;
+  }
+}
+
+
+/* Engineering category: discipline-specific enterprise hero and navbar structures */
+.engineering-navbar--consulting-command { backdrop-filter: blur(18px); border-bottom: 1px solid rgba(56, 189, 248, 0.22); }
+.engineering-navbar--civil-infrastructure { box-shadow: inset 0 -3px 0 var(--engineering-accent); }
+.engineering-navbar--mechanical-lab .engineering-brand-mark { border-radius: 12px 24px 12px 24px; }
+.engineering-navbar--electrical-grid { background-image: linear-gradient(90deg, rgba(2,6,23,.96), rgba(30,64,175,.94)); }
+.engineering-navbar--structural-blueprint .engineering-nav-center { border: 1px solid rgba(147,197,253,.25); }
+.engineering-navbar--industrial-ops { border-bottom: 4px solid var(--engineering-accent); }
+.engineering-navbar--automation-network { background: radial-gradient(circle at top left, rgba(45,212,191,.25), transparent 35%), rgba(2,6,23,.95); }
+.engineering-navbar--energy-distribution { background: linear-gradient(90deg, #064e3b, #047857); }
+.engineering-navbar--environmental-model { background: linear-gradient(90deg, #134e4a, #0f766e); }
+.engineering-navbar--telecom-topology { background: linear-gradient(90deg, #312e81, #6d28d9); }
+
+.engineering-hero--systems-console { grid-template-columns: minmax(0, 1.08fr) minmax(340px, .92fr); min-height: 720px; }
+.engineering-hero--systems-console .engineering-hero-content { border-left: 6px solid var(--engineering-accent); background: linear-gradient(135deg, rgba(2,6,23,.72), rgba(15,23,42,.32)); }
+.engineering-hero--bridge-analysis { grid-template-columns: minmax(0, .92fr) minmax(360px, 1.08fr); }
+.engineering-hero--bridge-analysis .engineering-hero-content { order: 2; border-radius: 36px 0 36px 36px; }
+.engineering-hero--mechanical-assembly { grid-template-columns: minmax(0, 1fr) 420px; }
+.engineering-hero--mechanical-assembly .engineering-hero-content { clip-path: polygon(0 0, 94% 0, 100% 100%, 0 100%); }
+.engineering-hero--electrical-grid { grid-template-columns: minmax(0, 1fr) 380px; }
+.engineering-hero--electrical-grid .engineering-hero-overlay { background-image: linear-gradient(90deg, rgba(2,6,23,.88), rgba(30,64,175,.45)), repeating-linear-gradient(90deg, rgba(251,191,36,.18) 0 1px, transparent 1px 80px); }
+.engineering-hero--structural-blueprint { grid-template-columns: minmax(0, .95fr) minmax(380px, 1.05fr); }
+.engineering-hero--structural-blueprint .engineering-hero-content { border: 1px solid rgba(147,197,253,.35); box-shadow: 0 30px 80px rgba(29,78,216,.22); }
+.engineering-hero--industrial-control { grid-template-columns: minmax(0, 1.15fr) minmax(320px, .85fr); }
+.engineering-hero--industrial-control .engineering-hero-content { background: rgba(24,24,27,.78); border-bottom: 6px solid var(--engineering-accent); }
+.engineering-hero--automation-network { grid-template-columns: minmax(0, 1fr) minmax(360px, 1fr); }
+.engineering-hero--automation-network .engineering-hero-overlay { background: radial-gradient(circle at 80% 20%, rgba(45,212,191,.35), transparent 28%), linear-gradient(135deg, rgba(2,6,23,.9), rgba(15,118,110,.48)); }
+.engineering-hero--energy-distribution { grid-template-columns: minmax(0, 1fr) 400px; }
+.engineering-hero--energy-distribution .engineering-hero-content { border-radius: 999px 48px 48px 999px; padding-left: clamp(2rem, 6vw, 5rem); }
+.engineering-hero--environmental-model { grid-template-columns: minmax(0, .9fr) minmax(380px, 1.1fr); }
+.engineering-hero--environmental-model .engineering-hero-content { background: linear-gradient(160deg, rgba(19,78,74,.78), rgba(20,184,166,.22)); }
+.engineering-hero--telecom-topology { grid-template-columns: minmax(0, 1fr) minmax(350px, .9fr); }
+.engineering-hero--telecom-topology .engineering-hero-overlay { background-image: radial-gradient(circle at 30% 35%, rgba(167,139,250,.35), transparent 24%), linear-gradient(135deg, rgba(49,46,129,.9), rgba(2,6,23,.68)); }
+
+.engineering-hero-visual--care-split,
+.engineering-hero-visual--smile-panel,
+.engineering-hero-visual--consultant-card,
+.engineering-hero-visual--recovery-flow,
+.engineering-hero-visual--wellness-retreat,
+.engineering-hero-visual--family-care,
+.engineering-hero-visual--hospital-network,
+.engineering-hero-visual--lab-dashboard,
+.engineering-hero-visual--calm-space,
+.engineering-hero-visual--resource-hub {
+  border: 1px solid rgba(255,255,255,.22);
+  box-shadow: 0 34px 90px rgba(2,6,23,.28);
+}
+.engineering-hero-visual--smile-panel { transform: skewY(-2deg); }
+.engineering-hero-visual--smile-panel > * { transform: skewY(2deg); }
+.engineering-hero-visual--consultant-card { border-radius: 28px 80px 28px 28px; }
+.engineering-hero-visual--recovery-flow { border-radius: 999px 32px 32px 999px; }
+.engineering-hero-visual--wellness-retreat { clip-path: polygon(8% 0, 100% 0, 92% 100%, 0 100%); }
+.engineering-hero-visual--family-care { border-left: 8px solid var(--engineering-accent); }
+.engineering-hero-visual--hospital-network { background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px); background-size: 36px 36px; }
+.engineering-hero-visual--lab-dashboard { border-radius: 16px; }
+.engineering-hero-visual--calm-space { border-radius: 42px 42px 8px 42px; }
+.engineering-hero-visual--resource-hub { border-radius: 24px 24px 80px 24px; }
+
+.engineering-scroll-top svg { width: 1.05rem; height: 1.05rem; }
+
+@media (max-width: 980px) {
+  .engineering-hero--systems-console,
+  .engineering-hero--bridge-analysis,
+  .engineering-hero--mechanical-assembly,
+  .engineering-hero--electrical-grid,
+  .engineering-hero--structural-blueprint,
+  .engineering-hero--industrial-control,
+  .engineering-hero--automation-network,
+  .engineering-hero--energy-distribution,
+  .engineering-hero--environmental-model,
+  .engineering-hero--telecom-topology { grid-template-columns: 1fr; min-height: auto; }
+  .engineering-hero--bridge-analysis .engineering-hero-content { order: 0; }
+  .engineering-hero--mechanical-assembly .engineering-hero-content,
+  .engineering-hero--wellness-retreat .engineering-hero-content { clip-path: none; }
+  .engineering-hero--energy-distribution .engineering-hero-content { border-radius: 28px; padding-left: clamp(1.25rem, 5vw, 2rem); }
+}
+
+
+/* ENGINEERING ENTERPRISE REFINEMENT - visibility, professional headings, mobile topbar and clean hero layouts */
+.engineering-template .engineering-hero-content {
+  max-width: 780px;
+  min-width: 0;
+}
+
+.engineering-template .engineering-hero h1,
+.engineering-template .engineering-page-header h1 {
+  max-width: 760px;
+  font-size: clamp(2.15rem, 4.6vw, 4.75rem) !important;
+  line-height: 1.03 !important;
+  letter-spacing: -0.045em !important;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+
+.engineering-template .engineering-hero p,
+.engineering-template .engineering-page-header p {
+  max-width: 640px;
+  font-size: clamp(0.98rem, 1.35vw, 1.16rem) !important;
+  line-height: 1.62 !important;
+}
+
+.engineering-navbar--consulting-command,
+.engineering-navbar--electrical-grid,
+.engineering-navbar--automation-network,
+.engineering-navbar--energy-distribution,
+.engineering-navbar--environmental-model,
+.engineering-navbar--telecom-topology,
+.engineering-navbar--industrial-ops {
+  color: #ffffff;
+}
+
+.engineering-navbar--consulting-command .engineering-brand,
+.engineering-navbar--electrical-grid .engineering-brand,
+.engineering-navbar--automation-network .engineering-brand,
+.engineering-navbar--energy-distribution .engineering-brand,
+.engineering-navbar--environmental-model .engineering-brand,
+.engineering-navbar--telecom-topology .engineering-brand,
+.engineering-navbar--industrial-ops .engineering-brand,
+.engineering-navbar--consulting-command .engineering-nav-links button,
+.engineering-navbar--electrical-grid .engineering-nav-links button,
+.engineering-navbar--automation-network .engineering-nav-links button,
+.engineering-navbar--energy-distribution .engineering-nav-links button,
+.engineering-navbar--environmental-model .engineering-nav-links button,
+.engineering-navbar--telecom-topology .engineering-nav-links button,
+.engineering-navbar--industrial-ops .engineering-nav-links button,
+.engineering-navbar--consulting-command .engineering-nav-support,
+.engineering-navbar--electrical-grid .engineering-nav-support,
+.engineering-navbar--automation-network .engineering-nav-support,
+.engineering-navbar--energy-distribution .engineering-nav-support,
+.engineering-navbar--environmental-model .engineering-nav-support,
+.engineering-navbar--telecom-topology .engineering-nav-support,
+.engineering-navbar--industrial-ops .engineering-nav-support,
+.engineering-navbar--consulting-command .engineering-nav-eyebrow,
+.engineering-navbar--electrical-grid .engineering-nav-eyebrow,
+.engineering-navbar--automation-network .engineering-nav-eyebrow,
+.engineering-navbar--energy-distribution .engineering-nav-eyebrow,
+.engineering-navbar--environmental-model .engineering-nav-eyebrow,
+.engineering-navbar--telecom-topology .engineering-nav-eyebrow,
+.engineering-navbar--industrial-ops .engineering-nav-eyebrow {
+  color: #ffffff !important;
+}
+
+.engineering-navbar--consulting-command .engineering-menu-toggle,
+.engineering-navbar--electrical-grid .engineering-menu-toggle,
+.engineering-navbar--automation-network .engineering-menu-toggle,
+.engineering-navbar--energy-distribution .engineering-menu-toggle,
+.engineering-navbar--environmental-model .engineering-menu-toggle,
+.engineering-navbar--telecom-topology .engineering-menu-toggle,
+.engineering-navbar--industrial-ops .engineering-menu-toggle {
+  color: #ffffff;
+  border-color: rgba(255,255,255,0.32);
+  background: rgba(255,255,255,0.12);
+}
+
+.engineering-navbar--consulting-command .engineering-nav-links button.active,
+.engineering-navbar--electrical-grid .engineering-nav-links button.active,
+.engineering-navbar--automation-network .engineering-nav-links button.active,
+.engineering-navbar--energy-distribution .engineering-nav-links button.active,
+.engineering-navbar--environmental-model .engineering-nav-links button.active,
+.engineering-navbar--telecom-topology .engineering-nav-links button.active,
+.engineering-navbar--industrial-ops .engineering-nav-links button.active {
+  background: rgba(255,255,255,0.20) !important;
+}
+
+.engineering-hero-visual--engineering-command,
+.engineering-hero-visual--infrastructure-studio,
+.engineering-hero-visual--mechanical-lab,
+.engineering-hero-visual--power-grid,
+.engineering-hero-visual--blueprint-review,
+.engineering-hero-visual--operations-control,
+.engineering-hero-visual--controls-network,
+.engineering-hero-visual--energy-dashboard,
+.engineering-hero-visual--environmental-model,
+.engineering-hero-visual--telecom-topology {
+  position: relative;
+  z-index: 2;
+  border: 1px solid rgba(255,255,255,.24);
+  box-shadow: 0 30px 80px rgba(2,6,23,.30);
+  background: linear-gradient(145deg, rgba(15,23,42,.72), rgba(255,255,255,.12));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.engineering-hero-visual--engineering-command { border-radius: 28px; border-left: 6px solid var(--engineering-accent); }
+.engineering-hero-visual--infrastructure-studio { border-radius: 42px 12px 42px 12px; }
+.engineering-hero-visual--mechanical-lab { border-radius: 14px 48px 14px 48px; }
+.engineering-hero-visual--power-grid { border-radius: 28px; background-image: linear-gradient(rgba(251,191,36,.10) 1px, transparent 1px), linear-gradient(90deg, rgba(251,191,36,.10) 1px, transparent 1px), linear-gradient(145deg, rgba(2,6,23,.76), rgba(30,64,175,.30)); background-size: 32px 32px, 32px 32px, auto; }
+.engineering-hero-visual--blueprint-review { border-radius: 12px; background-image: linear-gradient(rgba(147,197,253,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(147,197,253,.12) 1px, transparent 1px), linear-gradient(145deg, rgba(23,37,84,.72), rgba(29,78,216,.22)); background-size: 28px 28px, 28px 28px, auto; }
+.engineering-hero-visual--operations-control { border-radius: 8px 32px 8px 32px; border-bottom: 6px solid var(--engineering-accent); }
+.engineering-hero-visual--controls-network { border-radius: 28px 28px 80px 28px; box-shadow: 0 0 0 1px rgba(45,212,191,.18), 0 30px 90px rgba(45,212,191,.14); }
+.engineering-hero-visual--energy-dashboard { border-radius: 999px 42px 42px 999px; }
+.engineering-hero-visual--environmental-model { border-radius: 42px; background: linear-gradient(145deg, rgba(19,78,74,.74), rgba(132,204,22,.16)); }
+.engineering-hero-visual--telecom-topology { border-radius: 24px 80px 24px 24px; }
+
+@media (max-width: 1120px) {
+  .engineering-nav-center {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .engineering-nav-links.is-open {
+    width: 100%;
+    background: color-mix(in srgb, var(--engineering-primary) 88%, #ffffff 12%);
+    color: #ffffff;
+  }
+}
+
+@media (max-width: 760px) {
+  .engineering-topbar {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    gap: 8px !important;
+    padding: 10px 14px !important;
+  }
+
+  .engineering-topbar-left,
+  .engineering-topbar-social {
+    width: 100%;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .engineering-topbar-sep {
+    display: none !important;
+  }
+
+  .engineering-topbar-left a,
+  .engineering-topbar-hours {
+    justify-content: center !important;
+    min-width: 100%;
+  }
+
+  .engineering-brand {
+    min-width: 0;
+    max-width: calc(100vw - 92px);
+  }
+
+  .engineering-brand strong {
+    max-width: 220px;
+    color: inherit !important;
+  }
+
+  .engineering-hero {
+    min-height: auto !important;
+    padding: 48px 15px 82px !important;
+    gap: 24px !important;
+  }
+
+  .engineering-hero-content {
+    padding: 0 !important;
+    border-left-width: 0 !important;
+    background: transparent !important;
+  }
+
+  .engineering-template .engineering-hero h1,
+  .engineering-template .engineering-page-header h1 {
+    font-size: clamp(2.05rem, 9vw, 3.05rem) !important;
+    line-height: 1.06 !important;
+    letter-spacing: -0.035em !important;
+    max-width: 100% !important;
+  }
+
+  .engineering-template .engineering-hero p,
+  .engineering-template .engineering-page-header p {
+    font-size: 0.98rem !important;
+    line-height: 1.55 !important;
+  }
+
+  .engineering-kicker {
+    font-size: 0.68rem !important;
+    padding: 7px 10px !important;
+  }
+
+  .engineering-hero-actions {
+    margin-top: 22px !important;
+  }
+
+  .engineering-hero-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .engineering-hero-visual {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .engineering-slider-controls {
+    left: 15px !important;
+    bottom: 22px !important;
+  }
+}
+
+/* ENGINEERING NAVBAR VISIBILITY FIX - consulting/industrial/structural only */
+.engineering-navbar--consulting-command {
+  background:
+    linear-gradient(90deg, rgba(2, 6, 23, 0.98), rgba(15, 23, 42, 0.96) 48%, rgba(30, 58, 138, 0.92));
+  color: #ffffff;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.36);
+  box-shadow: 0 18px 44px rgba(2, 6, 23, 0.20);
+}
+
+.engineering-navbar--industrial-ops {
+  background:
+    linear-gradient(90deg, rgba(24, 24, 27, 0.98), rgba(39, 39, 42, 0.96) 50%, rgba(120, 53, 15, 0.92));
+  color: #ffffff;
+  border-bottom: 4px solid #d97706;
+  box-shadow: 0 18px 44px rgba(24, 24, 27, 0.18);
+}
+
+.engineering-navbar--consulting-command .engineering-brand,
+.engineering-navbar--industrial-ops .engineering-brand,
+.engineering-navbar--consulting-command .engineering-brand strong,
+.engineering-navbar--industrial-ops .engineering-brand strong,
+.engineering-navbar--consulting-command .engineering-brand small,
+.engineering-navbar--industrial-ops .engineering-brand small,
+.engineering-navbar--consulting-command .engineering-nav-links button,
+.engineering-navbar--industrial-ops .engineering-nav-links button,
+.engineering-navbar--consulting-command .engineering-nav-support,
+.engineering-navbar--industrial-ops .engineering-nav-support,
+.engineering-navbar--consulting-command .engineering-nav-eyebrow,
+.engineering-navbar--industrial-ops .engineering-nav-eyebrow {
+  color: #ffffff !important;
+  opacity: 1 !important;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.28);
+}
+
+.engineering-navbar--consulting-command .engineering-brand small,
+.engineering-navbar--industrial-ops .engineering-brand small,
+.engineering-navbar--consulting-command .engineering-nav-support,
+.engineering-navbar--industrial-ops .engineering-nav-support {
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+
+.engineering-navbar--consulting-command .engineering-nav-links,
+.engineering-navbar--industrial-ops .engineering-nav-links {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  padding: 4px;
+}
+
+.engineering-navbar--consulting-command .engineering-nav-links button.active,
+.engineering-navbar--industrial-ops .engineering-nav-links button.active,
+.engineering-navbar--consulting-command .engineering-nav-links button:hover,
+.engineering-navbar--industrial-ops .engineering-nav-links button:hover {
+  background: rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+}
+
+.engineering-navbar--consulting-command .engineering-menu-toggle,
+.engineering-navbar--industrial-ops .engineering-menu-toggle {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.34) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+
+.engineering-navbar--structural-blueprint {
+  background: rgba(255, 255, 255, 0.98);
+  color: #172554;
+  border-bottom: 1px solid rgba(37, 99, 235, 0.20);
+  box-shadow: 0 16px 42px rgba(30, 64, 175, 0.10);
+}
+
+.engineering-navbar--structural-blueprint .engineering-brand-mark,
+.engineering-navbar--structural-blueprint .engineering-nav-cta,
+.engineering-template--engineering-structural-v1 .engineering-hero-actions button:first-child {
+  background: linear-gradient(135deg, #2563eb, #1e40af) !important;
+  color: #ffffff !important;
+  box-shadow: 0 18px 42px rgba(37, 99, 235, 0.24) !important;
+}
+
+.engineering-navbar--structural-blueprint .engineering-nav-center {
+  border: 1px solid rgba(37, 99, 235, 0.22) !important;
+  background: rgba(239, 246, 255, 0.76);
+}
+
+.engineering-navbar--structural-blueprint .engineering-nav-eyebrow {
+  color: #2563eb !important;
+}
+
+.engineering-navbar--structural-blueprint .engineering-nav-links button,
+.engineering-navbar--structural-blueprint .engineering-brand,
+.engineering-navbar--structural-blueprint .engineering-nav-support {
+  color: #172554 !important;
+  opacity: 1 !important;
+}
+
+.engineering-navbar--structural-blueprint .engineering-nav-links button.active,
+.engineering-navbar--structural-blueprint .engineering-nav-links button:hover {
+  background: rgba(37, 99, 235, 0.12) !important;
+  color: #172554 !important;
+}
+
+.engineering-template--engineering-structural-v1 .engineering-kicker,
+.engineering-template--engineering-structural-v1 .engineering-hero-visual .engineering-panel-label {
+  color: #bfdbfe !important;
+}
+
+@media (max-width: 1120px) {
+  .engineering-navbar--consulting-command .engineering-nav-links.is-open,
+  .engineering-navbar--industrial-ops .engineering-nav-links.is-open {
+    background: rgba(2, 6, 23, 0.96) !important;
+    border-radius: 18px !important;
+  }
+
+  .engineering-navbar--structural-blueprint .engineering-nav-links.is-open {
+    background: #eff6ff !important;
+    color: #172554 !important;
+    border-radius: 18px !important;
+  }
+}
+
