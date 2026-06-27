@@ -77,40 +77,40 @@ const BASE_ENGINEERING_FALLBACKS = {
     }
   ],
   "stats": [
-    [
-      "10",
-      "Engineering templates"
+      [
+        "Assessment",
+        "Technical intake"
+      ],
+      [
+        "Design",
+        "Review pathway"
+      ],
+      [
+        "Compliance",
+        "Standard checks"
+      ],
+      [
+        "Handover",
+        "Delivery support"
+      ]
     ],
-    [
-      "24/7",
-      "Online enquiries"
-    ],
-    [
-      "100%",
-      "Responsive"
-    ],
-    [
-      "1",
-      "Shared renderer"
-    ]
-  ],
-  "process": [
+    "process": [
     "Define the technical challenge",
     "Share drawings, site data or system requirements",
     "Receive a recommended engineering pathway",
     "Continue with assessment, design review or implementation support"
   ],
   "testimonials": [
-    {
-      "quote": "The engineering structure helped clients understand our capabilities and submit useful technical enquiries.",
-      "author": "Engineering Director"
-    },
-    {
-      "quote": "The form flow and map made it easier to qualify project leads and site requirements.",
-      "author": "Technical Operations Manager"
-    }
-  ],
-  "contactTitle": "Start an engineering enquiry or technical assessment.",
+      {
+        "title": "Technical enquiry flow",
+        "text": "Clients can send scope, site, document and discipline details before the first call."
+      },
+      {
+        "title": "Capability presentation",
+        "text": "Services, sectors and methodology are presented around engineering decisions instead of generic website features."
+      }
+    ],
+    "contactTitle": "Start an engineering enquiry or technical assessment.",
   "contactIntro": "Tell us what engineering support you need and the team will respond with the recommended next step."
 };
 
@@ -195,20 +195,20 @@ const ENGINEERING_TEMPLATE_CONTENT = {
     ],
     "stats": [
       [
-        "10",
-        "Engineering templates"
+        "Assessment",
+        "Technical intake"
       ],
       [
-        "24/7",
-        "Online enquiries"
+        "Design",
+        "Review pathway"
       ],
       [
-        "100%",
-        "Responsive"
+        "Compliance",
+        "Standard checks"
       ],
       [
-        "1",
-        "Shared renderer"
+        "Handover",
+        "Delivery support"
       ]
     ],
     "process": [
@@ -219,12 +219,12 @@ const ENGINEERING_TEMPLATE_CONTENT = {
     ],
     "testimonials": [
       {
-        "quote": "The engineering structure helped clients understand our capabilities and submit useful technical enquiries.",
-        "author": "Engineering Director"
+        "title": "Technical enquiry flow",
+        "text": "Clients can send scope, site, document and discipline details before the first call."
       },
       {
-        "quote": "The form flow and map made it easier to qualify project leads and site requirements.",
-        "author": "Technical Operations Manager"
+        "title": "Capability presentation",
+        "text": "Services, sectors and methodology are presented around engineering decisions instead of generic website features."
       }
     ],
     "contactTitle": "Start an engineering enquiry or technical assessment.",
@@ -314,20 +314,20 @@ const ENGINEERING_TEMPLATE_CONTENT = {
     ],
     "stats": [
       [
-        "10",
-        "Template structures"
+        "Feasibility",
+        "Studies"
       ],
       [
-        "4+",
-        "Default socials"
+        "Design",
+        "Review"
       ],
       [
-        "100%",
-        "Mobile ready"
+        "Advisory",
+        "Decision support"
       ],
       [
-        "Map",
-        "Contact ready"
+        "Assurance",
+        "Reporting"
       ]
     ],
     "process": [
@@ -338,12 +338,12 @@ const ENGINEERING_TEMPLATE_CONTENT = {
     ],
     "testimonials": [
       {
-        "quote": "The engineering structure helped clients understand our capabilities and submit useful technical enquiries.",
-        "author": "Engineering Director"
+        "title": "Feasibility studies",
+        "text": "Project owners can submit options, risks, cost drivers and delivery constraints for review."
       },
       {
-        "quote": "The form flow and map made it easier to qualify project leads and site requirements.",
-        "author": "Technical Operations Manager"
+        "title": "Design review",
+        "text": "Drawings, calculations and assumptions can be framed clearly for technical assessment."
       }
     ],
     "contactTitle": "Start a consulting engineering enquiry.",
@@ -433,20 +433,20 @@ const ENGINEERING_TEMPLATE_CONTENT = {
     ],
     "stats": [
       [
-        "10",
-        "Template structures"
+        "Roads",
+        "Access design"
       ],
       [
-        "4+",
-        "Default socials"
+        "Stormwater",
+        "Drainage"
       ],
       [
-        "100%",
-        "Mobile ready"
+        "Bulk",
+        "Services"
       ],
       [
-        "Map",
-        "Contact ready"
+        "Site",
+        "Feasibility"
       ]
     ],
     "process": [
@@ -457,12 +457,12 @@ const ENGINEERING_TEMPLATE_CONTENT = {
     ],
     "testimonials": [
       {
-        "quote": "The engineering structure helped clients understand our capabilities and submit useful technical enquiries.",
-        "author": "Engineering Director"
+        "title": "Infrastructure scope",
+        "text": "Civil enquiries can be organised around roads, stormwater, bulk services and authority context."
       },
       {
-        "quote": "The form flow and map made it easier to qualify project leads and site requirements.",
-        "author": "Technical Operations Manager"
+        "title": "Site-ready intake",
+        "text": "The form flow helps collect project location, service requirements and delivery stage."
       }
     ],
     "contactTitle": "Start a civil engineering enquiry.",
@@ -552,20 +552,20 @@ const ENGINEERING_TEMPLATE_CONTENT = {
     ],
     "stats": [
       [
-        "10",
-        "Template structures"
+        "Equipment",
+        "Design"
       ],
       [
-        "4+",
-        "Default socials"
+        "Plant",
+        "Layouts"
       ],
       [
-        "100%",
-        "Mobile ready"
+        "Reliability",
+        "Review"
       ],
       [
-        "Map",
-        "Contact ready"
+        "Specs",
+        "Documentation"
       ]
     ],
     "process": [
@@ -576,12 +576,12 @@ const ENGINEERING_TEMPLATE_CONTENT = {
     ],
     "testimonials": [
       {
-        "quote": "The engineering structure helped clients understand our capabilities and submit useful technical enquiries.",
-        "author": "Engineering Director"
+        "title": "Mechanical design support",
+        "text": "Equipment duty, plant constraints and documentation requirements can be captured from the start."
       },
       {
-        "quote": "The form flow and map made it easier to qualify project leads and site requirements.",
-        "author": "Technical Operations Manager"
+        "title": "Reliability focus",
+        "text": "Clients can request reviews for performance, maintainability and operational improvement."
       }
     ],
     "contactTitle": "Start a mechanical engineering enquiry.",
@@ -671,20 +671,20 @@ const ENGINEERING_TEMPLATE_CONTENT = {
     ],
     "stats": [
       [
-        "10",
-        "Template structures"
+        "Load",
+        "Studies"
       ],
       [
-        "4+",
-        "Default socials"
+        "Reticulation",
+        "Design"
       ],
       [
-        "100%",
-        "Mobile ready"
+        "Backup",
+        "Power"
       ],
       [
-        "Map",
-        "Contact ready"
+        "Audit",
+        "Compliance"
       ]
     ],
     "process": [
@@ -695,12 +695,12 @@ const ENGINEERING_TEMPLATE_CONTENT = {
     ],
     "testimonials": [
       {
-        "quote": "The engineering structure helped clients understand our capabilities and submit useful technical enquiries.",
-        "author": "Engineering Director"
+        "title": "Electrical audit flow",
+        "text": "Sites can submit supply details, loads, urgency and compliance needs for assessment."
       },
       {
-        "quote": "The form flow and map made it easier to qualify project leads and site requirements.",
-        "author": "Technical Operations Manager"
+        "title": "Grid-ready presentation",
+        "text": "Electrical services are organised around reticulation, load analysis, backup power and panels."
       }
     ],
     "contactTitle": "Start a electrical engineering enquiry.",
@@ -790,20 +790,20 @@ const ENGINEERING_TEMPLATE_CONTENT = {
     ],
     "stats": [
       [
-        "10",
-        "Template structures"
+        "Inspection",
+        "Assessment"
       ],
       [
-        "4+",
-        "Default socials"
+        "Steel",
+        "Review"
       ],
       [
-        "100%",
-        "Mobile ready"
+        "Concrete",
+        "Support"
       ],
       [
-        "Map",
-        "Contact ready"
+        "Alteration",
+        "Checks"
       ]
     ],
     "process": [
@@ -814,12 +814,12 @@ const ENGINEERING_TEMPLATE_CONTENT = {
     ],
     "testimonials": [
       {
-        "quote": "The engineering structure helped clients understand our capabilities and submit useful technical enquiries.",
-        "author": "Engineering Director"
+        "title": "Structural review",
+        "text": "Building type, drawings, photos and concern areas can be captured before inspection."
       },
       {
-        "quote": "The form flow and map made it easier to qualify project leads and site requirements.",
-        "author": "Technical Operations Manager"
+        "title": "Clear safety pathway",
+        "text": "The template presents inspection, alteration review and load-path concerns professionally."
       }
     ],
     "contactTitle": "Start a structural engineering enquiry.",
@@ -909,20 +909,20 @@ const ENGINEERING_TEMPLATE_CONTENT = {
     ],
     "stats": [
       [
-        "10",
-        "Template structures"
+        "Flow",
+        "Mapping"
       ],
       [
-        "4+",
-        "Default socials"
+        "Layout",
+        "Optimisation"
       ],
       [
-        "100%",
-        "Mobile ready"
+        "Labour",
+        "Productivity"
       ],
       [
-        "Map",
-        "Contact ready"
+        "Operations",
+        "Review"
       ]
     ],
     "process": [
@@ -933,12 +933,12 @@ const ENGINEERING_TEMPLATE_CONTENT = {
     ],
     "testimonials": [
       {
-        "quote": "The engineering structure helped clients understand our capabilities and submit useful technical enquiries.",
-        "author": "Engineering Director"
+        "title": "Operations review",
+        "text": "Factories can describe process pain points, volumes, bottlenecks and improvement goals."
       },
       {
-        "quote": "The form flow and map made it easier to qualify project leads and site requirements.",
-        "author": "Technical Operations Manager"
+        "title": "Industrial clarity",
+        "text": "Service sections focus on layouts, workflow, productivity and measurable operational change."
       }
     ],
     "contactTitle": "Start a industrial engineering enquiry.",
@@ -1028,20 +1028,20 @@ const ENGINEERING_TEMPLATE_CONTENT = {
     ],
     "stats": [
       [
-        "10",
-        "Template structures"
+        "PLC",
+        "Logic"
       ],
       [
-        "4+",
-        "Default socials"
+        "SCADA",
+        "Monitoring"
       ],
       [
-        "100%",
-        "Mobile ready"
+        "Panels",
+        "Integration"
       ],
       [
-        "Map",
-        "Contact ready"
+        "Signals",
+        "Commissioning"
       ]
     ],
     "process": [
@@ -1052,12 +1052,12 @@ const ENGINEERING_TEMPLATE_CONTENT = {
     ],
     "testimonials": [
       {
-        "quote": "The engineering structure helped clients understand our capabilities and submit useful technical enquiries.",
-        "author": "Engineering Director"
+        "title": "Automation support",
+        "text": "Clients can submit process, controls, signal list and downtime constraints in one flow."
       },
       {
-        "quote": "The form flow and map made it easier to qualify project leads and site requirements.",
-        "author": "Technical Operations Manager"
+        "title": "Controls capability",
+        "text": "PLC, SCADA, HMI, alarms and instrumentation services are presented with technical clarity."
       }
     ],
     "contactTitle": "Start a automation engineering enquiry.",
@@ -1147,20 +1147,20 @@ const ENGINEERING_TEMPLATE_CONTENT = {
     ],
     "stats": [
       [
-        "10",
-        "Template structures"
+        "Audit",
+        "Energy use"
       ],
       [
-        "4+",
-        "Default socials"
+        "Solar",
+        "Feasibility"
       ],
       [
-        "100%",
-        "Mobile ready"
+        "Backup",
+        "Reliability"
       ],
       [
-        "Map",
-        "Contact ready"
+        "Metering",
+        "Insights"
       ]
     ],
     "process": [
@@ -1171,12 +1171,12 @@ const ENGINEERING_TEMPLATE_CONTENT = {
     ],
     "testimonials": [
       {
-        "quote": "The engineering structure helped clients understand our capabilities and submit useful technical enquiries.",
-        "author": "Engineering Director"
+        "title": "Energy study intake",
+        "text": "Consumption data, bills, loads and reliability goals can be requested in a structured way."
       },
       {
-        "quote": "The form flow and map made it easier to qualify project leads and site requirements.",
-        "author": "Technical Operations Manager"
+        "title": "Savings pathway",
+        "text": "Energy services are grouped around audits, solar, backup power, metering and efficiency."
       }
     ],
     "contactTitle": "Start a energy engineering enquiry.",
@@ -1266,20 +1266,20 @@ const ENGINEERING_TEMPLATE_CONTENT = {
     ],
     "stats": [
       [
-        "10",
-        "Template structures"
+        "Water",
+        "Systems"
       ],
       [
-        "4+",
-        "Default socials"
+        "Waste",
+        "Treatment"
       ],
       [
-        "100%",
-        "Mobile ready"
+        "Compliance",
+        "Reporting"
       ],
       [
-        "Map",
-        "Contact ready"
+        "Sustainability",
+        "Support"
       ]
     ],
     "process": [
@@ -1290,12 +1290,12 @@ const ENGINEERING_TEMPLATE_CONTENT = {
     ],
     "testimonials": [
       {
-        "quote": "The engineering structure helped clients understand our capabilities and submit useful technical enquiries.",
-        "author": "Engineering Director"
+        "title": "Environmental assessment",
+        "text": "Site context, process details and existing reports can be collected before technical review."
       },
       {
-        "quote": "The form flow and map made it easier to qualify project leads and site requirements.",
-        "author": "Technical Operations Manager"
+        "title": "Compliance clarity",
+        "text": "Water, waste, treatment and sustainability services are shown as clear professional pathways."
       }
     ],
     "contactTitle": "Start a environmental engineering enquiry.",
@@ -1385,20 +1385,20 @@ const ENGINEERING_TEMPLATE_CONTENT = {
     ],
     "stats": [
       [
-        "10",
-        "Template structures"
+        "Fibre",
+        "Planning"
       ],
       [
-        "4+",
-        "Default socials"
+        "Wireless",
+        "Coverage"
       ],
       [
-        "100%",
-        "Mobile ready"
+        "Tower",
+        "Support"
       ],
       [
-        "Map",
-        "Contact ready"
+        "Network",
+        "Review"
       ]
     ],
     "process": [
@@ -1409,12 +1409,12 @@ const ENGINEERING_TEMPLATE_CONTENT = {
     ],
     "testimonials": [
       {
-        "quote": "The engineering structure helped clients understand our capabilities and submit useful technical enquiries.",
-        "author": "Engineering Director"
+        "title": "Network review",
+        "text": "Clients can share location, service goal, coverage issue and timeline for telecom assessment."
       },
       {
-        "quote": "The form flow and map made it easier to qualify project leads and site requirements.",
-        "author": "Technical Operations Manager"
+        "title": "Field delivery focus",
+        "text": "Fibre, wireless, towers, routes and capacity planning are presented as practical service paths."
       }
     ],
     "contactTitle": "Start a telecom engineering enquiry.",
@@ -1472,6 +1472,17 @@ function cleanEngineeringSiteName(value) {
   return text;
 }
 
+function cleanEngineeringDisplayText(value) {
+  const text = String(value || "").trim();
+  const normalized = text.toLowerCase();
+
+  if (!text || normalized === "website preview" || normalized === "live template preview") {
+    return "";
+  }
+
+  return text;
+}
+
 export function normalizeEngineeringContent(settings = {}, preset = {}) {
   const organization = settings.organization || {};
   const contentKey = preset.contentKey || "base";
@@ -1492,7 +1503,7 @@ export function normalizeEngineeringContent(settings = {}, preset = {}) {
       cleanEngineeringSiteName(settings.website_name) ||
       cleanEngineeringSiteName(organization.name) ||
       merged.businessName,
-    tagline: settings.tagline || merged.tagline,
+    tagline: cleanEngineeringDisplayText(settings.tagline) || cleanEngineeringDisplayText(merged.tagline) || templateContent.tagline,
     motto: settings.motto || merged.motto,
     services: normalizeList(savedContent.services, merged.services),
     solutions: normalizeList(savedContent.solutions, merged.solutions),

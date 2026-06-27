@@ -842,6 +842,14 @@ function TrustStrip({ content, preset }) {
   );
 }
 
+
+const DUPLICATE_TRUST_STRIP_HERO_VARIANTS = new Set(["boardroom-split", "capital-dashboard"]);
+
+function shouldShowTrustStrip(preset, config = {}) {
+  const variant = config?.heroVariant || preset?.heroVariant || "";
+  return !DUPLICATE_TRUST_STRIP_HERO_VARIANTS.has(variant);
+}
+
 function AboutSection({ content, images, preset }) {
   return (
     <section className={`business-section business-about business-about--${preset.structure}`}>
@@ -1310,7 +1318,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <BusinessHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
+        {shouldShowTrustStrip(preset, config) && <TrustStrip content={content} preset={preset} />}
         <AboutSection content={content} images={images} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
         <SolutionsSection content={content} preset={preset} />
@@ -1353,7 +1361,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <BusinessHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
+        {shouldShowTrustStrip(preset, config) && <TrustStrip content={content} preset={preset} />}
         <ServicesSection content={content} config={config} preset={preset} />
         <VisionMissionValues content={content} config={config} />
         <OperationsSection content={content} preset={preset} />
@@ -1384,7 +1392,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
         <BusinessHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
         <SolutionsSection content={content} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
-        <TrustStrip content={content} preset={preset} />
+        {shouldShowTrustStrip(preset, config) && <TrustStrip content={content} preset={preset} />}
         <OperationsSection content={content} preset={preset} />
         <GallerySection images={images} />
         <ContactSection content={content} config={config} />
@@ -1396,7 +1404,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <BusinessHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
+        {shouldShowTrustStrip(preset, config) && <TrustStrip content={content} preset={preset} />}
         <OperationsSection content={content} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
         <IndustriesSection content={content} />
@@ -1424,7 +1432,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <BusinessHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
+        {shouldShowTrustStrip(preset, config) && <TrustStrip content={content} preset={preset} />}
         <AboutSection content={content} images={images} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
         <VisionMissionValues content={content} config={config} />
@@ -1451,7 +1459,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
   return (
     <>
       <BusinessHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-      <TrustStrip content={content} preset={preset} />
+      {shouldShowTrustStrip(preset, config) && <TrustStrip content={content} preset={preset} />}
       <AboutSection content={content} images={images} preset={preset} />
       <ServicesSection content={content} config={config} preset={preset} />
       <VisionMissionValues content={content} config={config} />
@@ -1498,7 +1506,7 @@ function PageContent({ currentPage, content, images, config, preset, onPageChang
       {currentPage === "operations" && (
         <>
           <OperationsSection content={content} preset={preset} />
-          <TrustStrip content={content} preset={preset} />
+          {shouldShowTrustStrip(preset, config) && <TrustStrip content={content} preset={preset} />}
           <VisionMissionValues content={content} config={config} />
         </>
       )}
@@ -1510,7 +1518,7 @@ function PageContent({ currentPage, content, images, config, preset, onPageChang
 
 function BusinessScrollTopButton({ preset }) {
   const [visible, setVisible] = useState(false);
-  const TopIcon = BUSINESS_TOP_SCROLL_ICONS[preset.structure] || FaArrowUp;
+  const TopIcon = FaArrowUp;
 
   useEffect(() => {
     if (typeof window === "undefined") return undefined;

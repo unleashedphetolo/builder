@@ -1693,7 +1693,7 @@ export default function TemplateSelector({
                     </span>
                   </div>
 
-                  <p>{t.description || "Professional website template."}</p>
+                  {/* <p>{t.description || "Professional website template."}</p> */}
 
                   <div className="template-tags">
                     <span className="tag">

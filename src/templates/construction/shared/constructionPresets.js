@@ -299,7 +299,7 @@ export const CONSTRUCTION_IMAGE_PACKS = {
       },
       {
         "type": "video",
-        "video": "https://cdn.pixabay.com/video/2020/05/08/38285-417928464_large.mp4",
+        "video": "https://www.pexels.com/download/video/35650013/",
         "image": "https://images.unsplash.com/photo-1590959651373-a3db0f38a961?auto=format&fit=crop&w=1900&q=80",
         "title": "Live project delivery",
         "subtitle": "Video slide for active construction operations."
@@ -494,7 +494,7 @@ export const CONSTRUCTION_IMAGE_PACKS = {
   },
   "engineering": {
     "hero": "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=1900&q=80",
-    "about": "https://images.unsplash.com/photo-1581093458791-9d2cc1f8e389?auto=format&fit=crop&w=1900&q=80",
+    "about": "https://plus.unsplash.com/premium_photo-1754341305519-b9fb39ff1bc5?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "page": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1900&q=80",
     "gallery": [
       "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=1900&q=80",

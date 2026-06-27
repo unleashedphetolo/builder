@@ -143,12 +143,20 @@
 .health-page-header div { position: relative; z-index: 2; }
 .health-page-header h1 { font-size: clamp(34px, 5vw, 62px); }
 
-.health-trust-strip { margin: -36px auto 0; position: relative; z-index: 5; width: min(1180px, calc(100% - 32px)); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; border-radius: 26px; background: var(--health-primary); overflow: hidden; box-shadow: var(--health-shadow); }
-.health-trust-strip article { padding: 22px; background: color-mix(in srgb, var(--health-primary) 92%, #fff); color: #fff; }
+.health-trust-strip { margin: clamp(20px, 2.6vw, 36px) auto clamp(16px, 2.4vw, 28px); position: relative; z-index: 4; width: min(1180px, calc(100% - 32px)); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; border-radius: 26px; background: var(--health-primary); overflow: hidden; box-shadow: var(--health-shadow); }
+.health-trust-strip article { padding: clamp(18px, 2vw, 22px); background: color-mix(in srgb, var(--health-primary) 92%, #fff); color: #fff; }
 .health-trust-strip strong { display: block; font-size: 24px; font-weight: 950; }
 .health-trust-strip span { color: rgba(255,255,255,.72); font-size: 12px; font-weight: 800; }
 
 .health-section, .health-vmv, .health-testimonials, .health-contact, .health-gallery, .health-cta-band { padding: clamp(54px, 6vw, 96px) clamp(16px, 5vw, 82px); }
+.health-trust-strip + .health-section,
+.health-trust-strip + .health-about,
+.health-trust-strip + .health-process,
+.health-trust-strip + .health-vmv,
+.health-trust-strip + .health-contact {
+  padding-top: clamp(36px, 4.5vw, 68px);
+}
+
 .health-section-heading { max-width: 860px; margin-bottom: 26px; }
 .health-section h2, .health-contact h2, .health-cta-band h2 { margin: 12px 0 14px; font-size: clamp(30px, 4.4vw, 56px); line-height: 1; letter-spacing: -.05em; font-weight: 950; }
 .health-section-heading p, .health-section-copy p, .health-card p, .health-package-grid p, .health-process-list p, .health-testimonials p, .health-contact p, .health-cta-band p { color: var(--health-muted); line-height: 1.7; font-weight: 560; }
@@ -246,12 +254,24 @@
   .health-hero { min-height: 620px; padding: 52px 15px 92px; }
   .health-hero h1, .health-page-header h1 { font-size: clamp(34px, 12vw, 52px); }
   .health-hero-panel, .health-trust-strip, .health-vmv, .health-cards, .health-package-grid, .health-industries-grid, .health-solution-list, .health-testimonials, .health-gallery, .health-footer-main { grid-template-columns: 1fr; }
-  .health-trust-strip { margin-top: 0; width: 100%; border-radius: 0; }
+  .health-trust-strip { margin: 18px auto 26px; width: calc(100% - 30px); border-radius: 22px; }
   .health-section, .health-vmv, .health-testimonials, .health-contact, .health-gallery, .health-cta-band { padding-left: 15px; padding-right: 15px; }
   .health-cta-band { margin-left: 15px; margin-right: 15px; display: grid; }
   .health-image-card img, .health-gallery img { height: 320px; }
   .health-gallery img:nth-child(2) { margin-top: 0; }
   .health-contact-form { grid-template-columns: 1fr; }
+
+  .health-trust-strip article {
+    padding: 18px;
+  }
+
+  .health-trust-strip + .health-section,
+  .health-trust-strip + .health-about,
+  .health-trust-strip + .health-process,
+  .health-trust-strip + .health-vmv,
+  .health-trust-strip + .health-contact {
+    padding-top: 34px;
+  }
   .health-footer-bottom { display: grid; }
 }
 
@@ -2233,5 +2253,472 @@
   .health-hero--wellness-retreat .health-hero-actions,
   .health-wellness-tags {
     justify-content: flex-start;
+  }
+}
+
+/* =========================================================
+   Health Gallery + Zoom + Service Proof
+   Clean final version - no repeated lightbox rules
+   Add at the bottom of health/shared/health-shared.css
+   ========================================================= */
+
+/* Gallery section button */
+.health-section-heading--action {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 22px;
+}
+
+.health-section-gallery-btn {
+  border: 1px solid rgba(37, 99, 235, 0.24);
+  background: linear-gradient(135deg, var(--health-primary), var(--health-accent));
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.16);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+}
+
+.health-section-gallery-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 42px rgba(15, 23, 42, 0.22);
+}
+
+/* Gallery layout */
+.health-gallery-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.health-gallery-board {
+  position: relative;
+  margin: 28px auto 0;
+  max-width: 1080px;
+  border-radius: 34px;
+  padding: 18px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(241, 248, 255, 0.9)),
+    var(--health-card);
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.12);
+  overflow: hidden;
+}
+
+.health-gallery-feature {
+  position: relative;
+  width: 100%;
+  height: clamp(420px, 56vw, 680px);
+  border: 0;
+  border-radius: 26px;
+  overflow: hidden;
+  padding: 0;
+  background: #0f172a;
+  cursor: zoom-in;
+  display: block;
+}
+
+.health-gallery-feature img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 0.45s ease, filter 0.45s ease;
+}
+
+.health-gallery-feature:hover img {
+  transform: scale(1.035);
+  filter: saturate(1.06) contrast(1.04);
+}
+
+.health-gallery-feature span {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: rgba(15, 23, 42, 0.82);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.86rem;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.24);
+}
+
+/* Gallery arrows */
+.health-gallery-chevron {
+  position: absolute;
+  top: 50%;
+  z-index: 4;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: rgba(15, 23, 42, 0.78);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.26);
+  backdrop-filter: blur(12px);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.health-gallery-chevron:hover {
+  background: var(--health-primary);
+  transform: translateY(-50%) scale(1.06);
+}
+
+.health-gallery-chevron--left {
+  left: 34px;
+}
+
+.health-gallery-chevron--right {
+  right: 34px;
+}
+
+.health-gallery-chevron svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Thumbnails */
+.health-gallery-thumbs {
+  margin: 16px auto 0;
+  max-width: 1080px;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.health-gallery-thumbs button {
+  border: 2px solid transparent;
+  border-radius: 18px;
+  overflow: hidden;
+  padding: 0;
+  height: 96px;
+  background: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+  opacity: 0.74;
+  transition: transform 0.2s ease, opacity 0.2s ease, border-color 0.2s ease;
+}
+
+.health-gallery-thumbs button:hover,
+.health-gallery-thumbs button.is-active {
+  opacity: 1;
+  transform: translateY(-2px);
+  border-color: var(--health-accent);
+}
+
+.health-gallery-thumbs img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Service proof cards */
+.health-service-proof {
+  padding: clamp(42px, 6vw, 78px) clamp(18px, 5vw, 72px);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+  background:
+    linear-gradient(180deg, rgba(248, 252, 255, 0.96), rgba(255, 255, 255, 1));
+}
+
+.health-service-proof article {
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 28px;
+  padding: 26px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 20px 54px rgba(15, 23, 42, 0.08);
+}
+
+.health-service-proof span {
+  display: inline-flex;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 7px 11px;
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--health-primary);
+  font-weight: 900;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.health-service-proof h3 {
+  margin: 14px 0 8px;
+  color: var(--health-text);
+  font-size: clamp(1.25rem, 2vw, 1.65rem);
+}
+
+.health-service-proof p {
+  margin: 0;
+  color: var(--health-muted);
+  line-height: 1.75;
+}
+
+.health-service-proof small {
+  display: block;
+  margin-top: 14px;
+  color: var(--health-primary);
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   Zoom lightbox - clean enterprise version
+   ========================================================= */
+
+.health-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2, 6, 23, 0.86);
+}
+
+.health-lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-out;
+}
+
+.health-lightbox-stage {
+  position: relative;
+  z-index: 2;
+  width: min(94vw, 1280px);
+  height: min(88vh, 820px);
+  border-radius: 28px;
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.48);
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.health-lightbox-stage img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 20px;
+  display: block;
+}
+
+/* Zoom controls */
+.health-lightbox-close,
+.health-lightbox-nav {
+  position: absolute;
+  z-index: 5;
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  background: rgba(15, 23, 42, 0.9);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(12px);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.health-lightbox-close:hover,
+.health-lightbox-nav:hover {
+  background: var(--health-primary);
+  transform: scale(1.06);
+}
+
+.health-lightbox-close {
+  top: 18px;
+  right: 18px;
+}
+
+.health-lightbox-nav {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.health-lightbox-nav:hover {
+  transform: translateY(-50%) scale(1.06);
+}
+
+.health-lightbox-nav--left {
+  left: 18px;
+}
+
+.health-lightbox-nav--right {
+  right: 18px;
+}
+
+.health-lightbox-close svg,
+.health-lightbox-nav svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .health-section-heading--action {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .health-gallery-feature {
+    height: 430px;
+  }
+
+  .health-gallery-thumbs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .health-service-proof {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile gallery */
+@media (max-width: 620px) {
+  .health-gallery-board {
+    border-radius: 24px;
+    padding: 10px;
+  }
+
+  .health-gallery-feature {
+    height: 310px;
+    border-radius: 20px;
+  }
+
+  .health-gallery-feature span {
+    left: 12px;
+    bottom: 12px;
+    padding: 8px 11px;
+    font-size: 0.76rem;
+  }
+
+  .health-gallery-chevron {
+    width: 40px;
+    height: 40px;
+  }
+
+  .health-gallery-chevron--left {
+    left: 18px;
+  }
+
+  .health-gallery-chevron--right {
+    right: 18px;
+  }
+
+  .health-gallery-thumbs {
+    gap: 8px;
+  }
+
+  .health-gallery-thumbs button {
+    height: 74px;
+    border-radius: 14px;
+  }
+
+  .health-section-gallery-btn {
+    width: 100%;
+  }
+}
+
+/* Mobile zoom: like Agriculture style */
+@media (max-width: 700px) {
+  .health-lightbox {
+    padding: 16px 10px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(2, 6, 23, 0.78) !important;
+  }
+
+  .health-lightbox-stage {
+    width: 100% !important;
+    max-width: 420px !important;
+    height: auto !important;
+    max-height: none !important;
+    padding: 0 !important;
+    border-radius: 18px !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  .health-lightbox-stage img {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 72vh !important;
+    object-fit: contain !important;
+    border-radius: 16px !important;
+    display: block !important;
+  }
+
+  .health-lightbox-close {
+    top: -50px !important;
+    right: -2px !important;
+    width: 46px !important;
+    height: 46px !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: 0 !important;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.25) !important;
+    z-index: 20 !important;
+  }
+
+  .health-lightbox-nav {
+    top: auto !important;
+    bottom: -50px !important;
+    transform: none !important;
+    width: 42px !important;
+    height: 42px !important;
+    background: rgba(15, 23, 42, 0.92) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35) !important;
+    z-index: 20 !important;
+  }
+
+  .health-lightbox-nav--left {
+    left: calc(50% - 52px) !important;
+  }
+
+  .health-lightbox-nav--right {
+    right: calc(50% - 52px) !important;
+  }
+
+  .health-lightbox-nav:hover {
+    transform: translateY(-2px) !important;
   }
 }

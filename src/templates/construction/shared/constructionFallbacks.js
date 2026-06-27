@@ -5,7 +5,7 @@ const BASE_CONSTRUCTION_FALLBACKS = {
   "heroTitle": "Enterprise construction website with project-ready pages, service pathways and quote forms.",
   "heroSubtitle": "A flexible construction template system for companies that need professional presentation, responsive navigation, hero slideshow, video support, forms and Google map access.",
   "heroCta": "Request Construction Quote",
-  "heroSecondaryCta": "View Services",
+  "heroSecondaryCta": "View Project Gallery",
   "aboutTitle": "Built for construction teams that need credibility, scope clarity and simple project enquiries.",
   "aboutText": "This construction template structure presents services, sectors, project process, trust features, contact options and map access in a professional responsive website.",
   "vision": "To deliver enterprise construction group projects with clear planning, safe execution and professional handover.",
@@ -102,11 +102,11 @@ const BASE_CONSTRUCTION_FALLBACKS = {
   ],
   "testimonials": [
     {
-      "quote": "The site structure made our services, quote process and project credentials easy for clients to understand.",
+      "quote": "Service capability, scope and project process are presented clearly for construction enquiries.",
       "author": "Construction Director"
     },
     {
-      "quote": "The forms and map gave prospects a clear path to request site inspections and project pricing.",
+      "quote": "Contact forms, map access and project details help qualify construction requests.",
       "author": "Operations Coordinator"
     }
   ],
@@ -122,7 +122,7 @@ const CONSTRUCTION_TEMPLATE_CONTENT = {
     "heroTitle": "Enterprise construction website with project-ready pages, service pathways and quote forms.",
     "heroSubtitle": "A flexible construction template system for companies that need professional presentation, responsive navigation, hero slideshow, video support, forms and Google map access.",
     "heroCta": "Request Construction Quote",
-    "heroSecondaryCta": "View Services",
+    "heroSecondaryCta": "View Project Gallery",
     "aboutTitle": "Built for construction teams that need credibility, scope clarity and simple project enquiries.",
     "aboutText": "This construction template structure presents services, sectors, project process, trust features, contact options and map access in a professional responsive website.",
     "vision": "To deliver enterprise construction group projects with clear planning, safe execution and professional handover.",
@@ -219,11 +219,11 @@ const CONSTRUCTION_TEMPLATE_CONTENT = {
     ],
     "testimonials": [
       {
-        "quote": "The site structure made our services, quote process and project credentials easy for clients to understand.",
+        "quote": "Service capability, scope and project process are presented clearly for construction enquiries.",
         "author": "Construction Director"
       },
       {
-        "quote": "The forms and map gave prospects a clear path to request site inspections and project pricing.",
+        "quote": "Contact forms, map access and project details help qualify construction requests.",
         "author": "Operations Coordinator"
       }
     ],
@@ -237,7 +237,7 @@ const CONSTRUCTION_TEMPLATE_CONTENT = {
     "heroTitle": "General contractor website with a strong project command hero and enterprise enquiry flow.",
     "heroSubtitle": "Present construction services, credentials, site process and quote paths with a bold contractor layout.",
     "heroCta": "Request Project Quote",
-    "heroSecondaryCta": "View Services",
+    "heroSecondaryCta": "View Project Gallery",
     "aboutTitle": "A contractor website built for trust, safety and project clarity.",
     "aboutText": "BuildCore Construction Group presents general construction services, delivery process, project sectors and contact paths for clients who need reliable execution.",
     "vision": "To deliver buildcore construction group projects with clear planning, safe execution and professional handover.",
@@ -333,11 +333,11 @@ const CONSTRUCTION_TEMPLATE_CONTENT = {
     ],
     "testimonials": [
       {
-        "quote": "The site structure made our services, quote process and project credentials easy for clients to understand.",
+        "quote": "Service capability, scope and project process are presented clearly for construction enquiries.",
         "author": "Construction Director"
       },
       {
-        "quote": "The forms and map gave prospects a clear path to request site inspections and project pricing.",
+        "quote": "Contact forms, map access and project details help qualify construction requests.",
         "author": "Operations Coordinator"
       }
     ],
@@ -351,7 +351,7 @@ const CONSTRUCTION_TEMPLATE_CONTENT = {
     "heroTitle": "Civil infrastructure website with roadworks, earthworks and tender-ready structure.",
     "heroSubtitle": "Show civil capabilities, tender support, site logistics and project forms with an enterprise infrastructure layout.",
     "heroCta": "Send Civil Tender Enquiry",
-    "heroSecondaryCta": "View Services",
+    "heroSecondaryCta": "View Project Gallery",
     "aboutTitle": "Infrastructure communication for civil works and public/private development teams.",
     "aboutText": "Civitas Infrastructure Group supports roadworks, bulk earthworks, stormwater, paving and infrastructure maintenance enquiries.",
     "vision": "To deliver civitas infrastructure group projects with clear planning, safe execution and professional handover.",
@@ -447,11 +447,11 @@ const CONSTRUCTION_TEMPLATE_CONTENT = {
     ],
     "testimonials": [
       {
-        "quote": "The site structure made our services, quote process and project credentials easy for clients to understand.",
+        "quote": "Service capability, scope and project process are presented clearly for construction enquiries.",
         "author": "Construction Director"
       },
       {
-        "quote": "The forms and map gave prospects a clear path to request site inspections and project pricing.",
+        "quote": "Contact forms, map access and project details help qualify construction requests.",
         "author": "Operations Coordinator"
       }
     ],
@@ -465,7 +465,7 @@ const CONSTRUCTION_TEMPLATE_CONTENT = {
     "heroTitle": "Design-and-build website with a blueprint hero and professional project intake.",
     "heroSubtitle": "Present concept, plans, finishes and build pathways with a premium architecture and construction layout.",
     "heroCta": "Start Design Build Enquiry",
-    "heroSecondaryCta": "View Services",
+    "heroSecondaryCta": "View Project Gallery",
     "aboutTitle": "A design-and-build website for clients moving from idea to construction.",
     "aboutText": "Blueprint Design Build Studio connects architectural planning, documentation and construction delivery in a single professional client pathway.",
     "vision": "To deliver blueprint design build studio projects with clear planning, safe execution and professional handover.",
@@ -561,11 +561,11 @@ const CONSTRUCTION_TEMPLATE_CONTENT = {
     ],
     "testimonials": [
       {
-        "quote": "The site structure made our services, quote process and project credentials easy for clients to understand.",
+        "quote": "Service capability, scope and project process are presented clearly for construction enquiries.",
         "author": "Construction Director"
       },
       {
-        "quote": "The forms and map gave prospects a clear path to request site inspections and project pricing.",
+        "quote": "Contact forms, map access and project details help qualify construction requests.",
         "author": "Operations Coordinator"
       }
     ],
@@ -579,7 +579,7 @@ const CONSTRUCTION_TEMPLATE_CONTENT = {
     "heroTitle": "Residential construction website for homes, estates, extensions and luxury finishes.",
     "heroSubtitle": "Show home-building services, finish standards, homeowner process and easy enquiry forms with an elegant residential layout.",
     "heroCta": "Plan My Home Build",
-    "heroSecondaryCta": "View Services",
+    "heroSecondaryCta": "View Project Gallery",
     "aboutTitle": "A professional home-building website for clients who want clarity before construction.",
     "aboutText": "Prestige Residential Builders presents home builds, additions, estate construction and finish coordination in a calm client-friendly structure.",
     "vision": "To deliver prestige residential builders projects with clear planning, safe execution and professional handover.",
@@ -675,11 +675,11 @@ const CONSTRUCTION_TEMPLATE_CONTENT = {
     ],
     "testimonials": [
       {
-        "quote": "The site structure made our services, quote process and project credentials easy for clients to understand.",
+        "quote": "Service capability, scope and project process are presented clearly for construction enquiries.",
         "author": "Construction Director"
       },
       {
-        "quote": "The forms and map gave prospects a clear path to request site inspections and project pricing.",
+        "quote": "Contact forms, map access and project details help qualify construction requests.",
         "author": "Operations Coordinator"
       }
     ],
@@ -693,7 +693,7 @@ const CONSTRUCTION_TEMPLATE_CONTENT = {
     "heroTitle": "Commercial construction website with boardroom-level structure and project deadlines.",
     "heroSubtitle": "Present office, retail, warehouse and tenant improvement services with enterprise navigation, forms and clear sector pages.",
     "heroCta": "Request Commercial Quote",
-    "heroSecondaryCta": "View Services",
+    "heroSecondaryCta": "View Project Gallery",
     "aboutTitle": "A commercial construction website built for deadlines, operations and handover.",
     "aboutText": "Metro Commercial Contractors supports office fit-outs, retail builds, industrial construction and tenant improvements with professional scope intake.",
     "vision": "To deliver metro commercial contractors projects with clear planning, safe execution and professional handover.",
@@ -789,11 +789,11 @@ const CONSTRUCTION_TEMPLATE_CONTENT = {
     ],
     "testimonials": [
       {
-        "quote": "The site structure made our services, quote process and project credentials easy for clients to understand.",
+        "quote": "Service capability, scope and project process are presented clearly for construction enquiries.",
         "author": "Construction Director"
       },
       {
-        "quote": "The forms and map gave prospects a clear path to request site inspections and project pricing.",
+        "quote": "Contact forms, map access and project details help qualify construction requests.",
         "author": "Operations Coordinator"
       }
     ],
@@ -807,7 +807,7 @@ const CONSTRUCTION_TEMPLATE_CONTENT = {
     "heroTitle": "Renovation website with visual upgrade flow, repair paths and quote forms.",
     "heroSubtitle": "Show renovation categories, refurbishment process, interior upgrades and repair enquiries with a distinct studio-style hero.",
     "heroCta": "Request Renovation Quote",
-    "heroSecondaryCta": "View Services",
+    "heroSecondaryCta": "View Project Gallery",
     "aboutTitle": "A renovation website for upgrade, repair and remodel enquiries.",
     "aboutText": "Urban Renovation Studio presents interior upgrades, property refurbishments, repair works and client-friendly renovation process sections.",
     "vision": "To deliver urban renovation studio projects with clear planning, safe execution and professional handover.",
@@ -903,11 +903,11 @@ const CONSTRUCTION_TEMPLATE_CONTENT = {
     ],
     "testimonials": [
       {
-        "quote": "The site structure made our services, quote process and project credentials easy for clients to understand.",
+        "quote": "Service capability, scope and project process are presented clearly for construction enquiries.",
         "author": "Construction Director"
       },
       {
-        "quote": "The forms and map gave prospects a clear path to request site inspections and project pricing.",
+        "quote": "Contact forms, map access and project details help qualify construction requests.",
         "author": "Operations Coordinator"
       }
     ],
@@ -921,7 +921,7 @@ const CONSTRUCTION_TEMPLATE_CONTENT = {
     "heroTitle": "Roofing and steel website with inspection flow and strong industrial hero structure.",
     "heroSubtitle": "Present roofing services, roof repair paths, waterproofing, structural steel and quote forms with a robust enterprise layout.",
     "heroCta": "Request Roofing Quote",
-    "heroSecondaryCta": "View Services",
+    "heroSecondaryCta": "View Project Gallery",
     "aboutTitle": "A roofing and steel website for inspections, repairs and installations.",
     "aboutText": "Apex Roofing & Steel Works supports new roof installations, repairs, waterproofing, sheeting, cladding and structural steel enquiries.",
     "vision": "To deliver apex roofing & steel works projects with clear planning, safe execution and professional handover.",
@@ -1017,11 +1017,11 @@ const CONSTRUCTION_TEMPLATE_CONTENT = {
     ],
     "testimonials": [
       {
-        "quote": "The site structure made our services, quote process and project credentials easy for clients to understand.",
+        "quote": "Service capability, scope and project process are presented clearly for construction enquiries.",
         "author": "Construction Director"
       },
       {
-        "quote": "The forms and map gave prospects a clear path to request site inspections and project pricing.",
+        "quote": "Contact forms, map access and project details help qualify construction requests.",
         "author": "Operations Coordinator"
       }
     ],
@@ -1035,7 +1035,7 @@ const CONSTRUCTION_TEMPLATE_CONTENT = {
     "heroTitle": "Construction engineering website with technical dashboard structure and compliance-ready forms.",
     "heroSubtitle": "Show engineering assessments, quantity surveying, QA checks and construction methodology support with a high-authority layout.",
     "heroCta": "Request Technical Support",
-    "heroSecondaryCta": "View Services",
+    "heroSecondaryCta": "View Project Gallery",
     "aboutTitle": "A technical support website for engineering-led construction decisions.",
     "aboutText": "Strata Construction Engineering supports structural reviews, quantity surveying, QA inspections and method statement support for construction clients.",
     "vision": "To deliver strata construction engineering projects with clear planning, safe execution and professional handover.",
@@ -1131,11 +1131,11 @@ const CONSTRUCTION_TEMPLATE_CONTENT = {
     ],
     "testimonials": [
       {
-        "quote": "The site structure made our services, quote process and project credentials easy for clients to understand.",
+        "quote": "Service capability, scope and project process are presented clearly for construction enquiries.",
         "author": "Construction Director"
       },
       {
-        "quote": "The forms and map gave prospects a clear path to request site inspections and project pricing.",
+        "quote": "Contact forms, map access and project details help qualify construction requests.",
         "author": "Operations Coordinator"
       }
     ],
@@ -1149,7 +1149,7 @@ const CONSTRUCTION_TEMPLATE_CONTENT = {
     "heroTitle": "Materials and plant supply website with yard-style hero and delivery-ready quote flow.",
     "heroSubtitle": "Present materials, plant hire, delivery logistics and supplier support with professional construction procurement sections.",
     "heroCta": "Request Materials Quote",
-    "heroSecondaryCta": "View Services",
+    "heroSecondaryCta": "View Project Gallery",
     "aboutTitle": "A construction supply website for plant, materials and delivery enquiries.",
     "aboutText": "BuildSupply Materials & Plant helps sites request material pricing, plant hire, aggregate, concrete and delivery coordination support.",
     "vision": "To deliver buildsupply materials & plant projects with clear planning, safe execution and professional handover.",
@@ -1245,11 +1245,11 @@ const CONSTRUCTION_TEMPLATE_CONTENT = {
     ],
     "testimonials": [
       {
-        "quote": "The site structure made our services, quote process and project credentials easy for clients to understand.",
+        "quote": "Service capability, scope and project process are presented clearly for construction enquiries.",
         "author": "Construction Director"
       },
       {
-        "quote": "The forms and map gave prospects a clear path to request site inspections and project pricing.",
+        "quote": "Contact forms, map access and project details help qualify construction requests.",
         "author": "Operations Coordinator"
       }
     ],
@@ -1263,7 +1263,7 @@ const CONSTRUCTION_TEMPLATE_CONTENT = {
     "heroTitle": "Construction project management website with executive PMO structure and owner-ready forms.",
     "heroSubtitle": "Show project planning, programme control, cost tracking and coordination services with a professional management layout.",
     "heroCta": "Request PMO Support",
-    "heroSecondaryCta": "View Services",
+    "heroSecondaryCta": "View Project Gallery",
     "aboutTitle": "A project management website for clients who need control across construction delivery.",
     "aboutText": "BuildPMO Project Management supports owners and developers with planning, cost control, risk tracking, coordination and reporting.",
     "vision": "To deliver buildpmo project management projects with clear planning, safe execution and professional handover.",
@@ -1359,11 +1359,11 @@ const CONSTRUCTION_TEMPLATE_CONTENT = {
     ],
     "testimonials": [
       {
-        "quote": "The site structure made our services, quote process and project credentials easy for clients to understand.",
+        "quote": "Service capability, scope and project process are presented clearly for construction enquiries.",
         "author": "Construction Director"
       },
       {
-        "quote": "The forms and map gave prospects a clear path to request site inspections and project pricing.",
+        "quote": "Contact forms, map access and project details help qualify construction requests.",
         "author": "Operations Coordinator"
       }
     ],

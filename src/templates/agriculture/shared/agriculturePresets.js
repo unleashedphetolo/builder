@@ -276,11 +276,11 @@ export const AGRICULTURE_SOCIAL_DEFAULTS = {
 
 export const AGRICULTURE_IMAGE_PACKS = {
   "farm": {
-    "hero": "https://images.unsplash.com/photo-1500382017468-9049fedc747d?auto=format&fit=crop&w=1900&q=82",
+    "hero": "https://images.unsplash.com/photo-1719559521262-773f39dbee87?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "about": "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1900&q=82",
     "page": "https://images.unsplash.com/photo-1471194402529-8e0f5a675de6?auto=format&fit=crop&w=1900&q=82",
     "gallery": [
-      "https://images.unsplash.com/photo-1500382017468-9049fedc747d?auto=format&fit=crop&w=1300&q=82",
+      "https://plus.unsplash.com/premium_photo-1661848578845-2c23ab61587e?q=80&w=1172&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1300&q=82",
       "https://images.unsplash.com/photo-1471194402529-8e0f5a675de6?auto=format&fit=crop&w=1300&q=82"
     ],
@@ -289,7 +289,7 @@ export const AGRICULTURE_IMAGE_PACKS = {
         "type": "image",
         "title": "Commercial-scale crop production",
         "subtitle": "A distinct enterprise agriculture layout with clear navigation and buyer-ready content.",
-        "image": "https://images.unsplash.com/photo-1500382017468-9049fedc747d?auto=format&fit=crop&w=1900&q=82"
+        "image": "https://images.unsplash.com/photo-1719559521262-773f39dbee87?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
       },
       {
         "type": "image",
@@ -495,11 +495,11 @@ export const AGRICULTURE_IMAGE_PACKS = {
   "cooperative": {
     "hero": "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1900&q=82",
     "about": "https://images.unsplash.com/photo-1523741543316-beb7fc7023d8?auto=format&fit=crop&w=1900&q=82",
-    "page": "https://images.unsplash.com/photo-1500382017468-9049fedc747d?auto=format&fit=crop&w=1900&q=82",
+    "page": "https://images.unsplash.com/photo-1719559521262-773f39dbee87?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "gallery": [
       "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1300&q=82",
       "https://images.unsplash.com/photo-1523741543316-beb7fc7023d8?auto=format&fit=crop&w=1300&q=82",
-      "https://images.unsplash.com/photo-1500382017468-9049fedc747d?auto=format&fit=crop&w=1300&q=82"
+      "https://plus.unsplash.com/premium_photo-1661848578845-2c23ab61587e?q=80&w=1172&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     ],
     "slides": [
       {
@@ -518,7 +518,7 @@ export const AGRICULTURE_IMAGE_PACKS = {
         "type": "video",
         "title": "Community agriculture with enterprise discipline",
         "subtitle": "Video slide support adds professional movement while preserving fast responsive page logic.",
-        "image": "https://images.unsplash.com/photo-1500382017468-9049fedc747d?auto=format&fit=crop&w=1900&q=82",
+        "image": "https://images.unsplash.com/photo-1719559521262-773f39dbee87?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "video": "https://videos.pexels.com/video-files/4434242/4434242-hd_1920_1080_25fps.mp4"
       }
     ]
@@ -526,7 +526,7 @@ export const AGRICULTURE_IMAGE_PACKS = {
   "export": {
     "hero": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1900&q=82",
     "about": "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=1900&q=82",
-    "page": "https://images.unsplash.com/photo-1589923188900-85dae523342b?auto=format&fit=crop&w=1900&q=82",
+    "page": "https://images.unsplash.com/photo-1719559521262-773f39dbee87?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "gallery": [
       "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1300&q=82",
       "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=1300&q=82",

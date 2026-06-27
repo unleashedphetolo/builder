@@ -1528,3 +1528,20 @@
     transform: none !important;
   }
 }
+
+/* Enterprise card preview height */
+.template-preview {
+  height: 340px !important;
+}
+
+@media (max-width: 720px) {
+  .template-preview {
+    height: 290px !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .template-preview {
+    height: 310px !important;
+  }
+}

@@ -201,6 +201,33 @@ const ENGINEERING_SOCIAL_ORDER = [
   "phone",
 ];
 
+const ENGINEERING_GALLERY_FALLBACK_IMAGES = [
+  "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1800&q=80",
+  "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1800&q=80",
+  "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1800&q=80",
+  "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=1800&q=80",
+];
+
+function getGalleryImageFallback(index = 0) {
+  return ENGINEERING_GALLERY_FALLBACK_IMAGES[index % ENGINEERING_GALLERY_FALLBACK_IMAGES.length];
+}
+
+function getCleanGalleryImages(images = {}) {
+  const gallery = Array.isArray(images.gallery) ? images.gallery : [];
+  const candidates = [...gallery, images.about, images.page, images.hero, ...ENGINEERING_GALLERY_FALLBACK_IMAGES];
+  const seen = new Set();
+
+  return candidates
+    .filter((image) => typeof image === "string" && image.trim())
+    .filter((image) => {
+      if (seen.has(image)) return false;
+      seen.add(image);
+      return true;
+    })
+    .slice(0, 8);
+}
+
+
 const ENGINEERING_BRAND_ICONS = {
   consulting: FaChartLine,
   civil: FaRoute,
@@ -823,6 +850,19 @@ function EngineeringHero({ content, images, config, preset, onPageChange }) {
     });
   };
 
+  const handleHeroGalleryClick = () => {
+    const galleryNode = document.querySelector(".engineering-gallery--enterprise");
+
+    if (galleryNode) {
+      galleryNode.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+
+    if (typeof onPageChange === "function") {
+      onPageChange("home");
+    }
+  };
+
   return (
     <section className={`engineering-hero engineering-hero--${variant} engineering-hero--structure-${preset.structure}`}>
       <div className="engineering-hero-media" aria-hidden="true">
@@ -842,7 +882,7 @@ function EngineeringHero({ content, images, config, preset, onPageChange }) {
         <p>{activeSlide?.subtitle || content.heroSubtitle}</p>
         <div className="engineering-hero-actions">
           <button type="button" onClick={() => onPageChange("contact")}>{content.heroCta}</button>
-          <button type="button" className="ghost" onClick={() => onPageChange("services")}>{content.heroSecondaryCta}</button>
+          <button type="button" className="ghost" onClick={handleHeroGalleryClick}>View Project Gallery</button>
         </div>
       </div>
 
@@ -888,6 +928,14 @@ function EngineeringPageHeader({ title, subtitle, images, preset }) {
       </div>
     </section>
   );
+}
+
+function templateHeroAlreadyShowsStats(config = {}, preset = {}) {
+  const variant = resolveEngineeringHeroVariant(
+    config.heroVariant || preset.heroVariant || "",
+  );
+
+  return ["mechanical-lab", "controls-network"].includes(variant);
 }
 
 function TrustStrip({ content, preset }) {
@@ -1038,12 +1086,30 @@ function OperationsSection({ content, preset }) {
   );
 }
 
-function SolutionsSection({ content, preset }) {
+function SolutionsSection({ content, preset, onPageChange }) {
+  const handleGalleryClick = () => {
+    const galleryNode = document.querySelector(".engineering-gallery--enterprise");
+
+    if (galleryNode) {
+      galleryNode.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+
+    if (typeof onPageChange === "function") {
+      onPageChange("industries");
+    }
+  };
+
   return (
     <section className={`engineering-section engineering-solutions engineering-solutions--${preset.structure}`}>
-      <div className="engineering-section-heading">
-        <span className="engineering-kicker">Solutions</span>
-        <h2>Focused solutions for common engineering advisory, design and support requests.</h2>
+      <div className="engineering-section-heading engineering-section-heading--with-action">
+        <div>
+          <span className="engineering-kicker">Solutions</span>
+          <h2>Focused engineering support for technical decisions, reviews and delivery.</h2>
+        </div>
+        <button type="button" className="engineering-gallery-link-btn" onClick={handleGalleryClick}>
+          View Project Gallery
+        </button>
       </div>
       <div className="engineering-solution-list">
         {content.solutions.map((item, index) => (
@@ -1058,25 +1124,184 @@ function SolutionsSection({ content, preset }) {
   );
 }
 
-function GallerySection({ images }) {
+function GallerySection({ images, content }) {
+  const galleryImages = useMemo(() => getCleanGalleryImages(images), [images]);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [zoomIndex, setZoomIndex] = useState(null);
+
+  useEffect(() => {
+    setActiveIndex(0);
+    setZoomIndex(null);
+  }, [galleryImages.join("|")]);
+
+  if (!galleryImages.length) return null;
+
+  const activeImage = galleryImages[activeIndex] || galleryImages[0];
+  const zoomImage = zoomIndex === null ? null : galleryImages[zoomIndex] || galleryImages[0];
+  const galleryTitle = content?.businessName
+    ? `${content.businessName} project gallery`
+    : "Engineering project gallery";
+
+  const showPrevious = () => {
+    setActiveIndex((current) =>
+      current === 0 ? galleryImages.length - 1 : current - 1,
+    );
+  };
+
+  const showNext = () => {
+    setActiveIndex((current) =>
+      current === galleryImages.length - 1 ? 0 : current + 1,
+    );
+  };
+
+  const showZoomPrevious = () => {
+    setZoomIndex((current) => {
+      const safeIndex = current ?? activeIndex;
+      return safeIndex === 0 ? galleryImages.length - 1 : safeIndex - 1;
+    });
+  };
+
+  const showZoomNext = () => {
+    setZoomIndex((current) => {
+      const safeIndex = current ?? activeIndex;
+      return safeIndex === galleryImages.length - 1 ? 0 : safeIndex + 1;
+    });
+  };
+
+  const handleImageError = (event, index) => {
+    event.currentTarget.onerror = null;
+    event.currentTarget.src = getGalleryImageFallback(index);
+  };
+
   return (
-    <section className="engineering-gallery">
-      {images.gallery.map((image, index) => (
-        <img key={`${image}-${index}`} src={image} alt="Engineering company visual" />
-      ))}
+    <section className="engineering-gallery engineering-gallery--enterprise" aria-label={galleryTitle}>
+      <div className="engineering-section-heading engineering-gallery-heading">
+        <span className="engineering-kicker">Project Gallery</span>
+        <h2>Project visuals from real engineering service environments.</h2>
+      </div>
+
+      <div className="engineering-gallery-stage">
+        <button
+          type="button"
+          className="engineering-gallery-arrow engineering-gallery-arrow--left"
+          onClick={showPrevious}
+          aria-label="Previous gallery image"
+        >
+          ‹
+        </button>
+
+        <figure className="engineering-gallery-featured">
+          <button
+            type="button"
+            className="engineering-gallery-zoom-trigger"
+            onClick={() => setZoomIndex(activeIndex)}
+            aria-label={`Zoom gallery image ${activeIndex + 1}`}
+          >
+            <img
+              src={activeImage}
+              alt={`${galleryTitle} ${activeIndex + 1}`}
+              onError={(event) => handleImageError(event, activeIndex)}
+            />
+            <span>Zoom</span>
+          </button>
+          <figcaption>
+            <span>{String(activeIndex + 1).padStart(2, "0")}</span>
+            <strong>{content?.tagline || "Engineering delivery visual"}</strong>
+          </figcaption>
+        </figure>
+
+        <button
+          type="button"
+          className="engineering-gallery-arrow engineering-gallery-arrow--right"
+          onClick={showNext}
+          aria-label="Next gallery image"
+        >
+          ›
+        </button>
+      </div>
+
+      <div className="engineering-gallery-thumbs" aria-label="Gallery thumbnails">
+        {galleryImages.slice(0, 6).map((image, index) => (
+          <button
+            key={`${image}-${index}`}
+            type="button"
+            className={index === activeIndex ? "active" : ""}
+            onClick={() => setActiveIndex(index)}
+            onDoubleClick={() => setZoomIndex(index)}
+            aria-label={`Show gallery image ${index + 1}`}
+          >
+            <img
+              src={image}
+              alt=""
+              aria-hidden="true"
+              onError={(event) => handleImageError(event, index)}
+            />
+          </button>
+        ))}
+      </div>
+
+      {zoomImage && (
+        <div className="engineering-gallery-lightbox" role="dialog" aria-modal="true" aria-label="Gallery image preview">
+          <button
+            type="button"
+            className="engineering-gallery-lightbox-close"
+            onClick={() => setZoomIndex(null)}
+            aria-label="Close gallery preview"
+          >
+            ×
+          </button>
+          <button
+            type="button"
+            className="engineering-gallery-lightbox-arrow engineering-gallery-lightbox-arrow--left"
+            onClick={showZoomPrevious}
+            aria-label="Previous gallery image"
+          >
+            ‹
+          </button>
+          <img
+            src={zoomImage}
+            alt={`${galleryTitle} ${(zoomIndex ?? activeIndex) + 1}`}
+            onError={(event) => handleImageError(event, zoomIndex ?? activeIndex)}
+          />
+          <button
+            type="button"
+            className="engineering-gallery-lightbox-arrow engineering-gallery-lightbox-arrow--right"
+            onClick={showZoomNext}
+            aria-label="Next gallery image"
+          >
+            ›
+          </button>
+        </div>
+      )}
     </section>
   );
 }
 
 function TestimonialsSection({ content }) {
+  const proofItems = Array.isArray(content.testimonials) && content.testimonials.length
+    ? content.testimonials
+    : content.services.slice(0, 2).map((service) => ({
+        title: service.title,
+        text: service.text,
+      }));
+
+  if (!proofItems.length) return null;
+
   return (
-    <section className="engineering-testimonials">
-      {content.testimonials.map((item) => (
-        <blockquote key={item.quote}>
-          <p>“{item.quote}”</p>
-          <cite>{item.author}</cite>
-        </blockquote>
-      ))}
+    <section className="engineering-testimonials engineering-proof-section" aria-label="Technical service proof points">
+      <div className="engineering-section-heading">
+        <span className="engineering-kicker">Service Proof</span>
+        <h2>Practical engineering support connected to real service enquiries.</h2>
+      </div>
+      <div className="engineering-proof-grid">
+        {proofItems.slice(0, 3).map((item, index) => (
+          <article key={`${item.title || item.author || index}-${index}`}>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <h3>{item.title || item.author || "Engineering service"}</h3>
+            <p>{item.text || item.quote}</p>
+          </article>
+        ))}
+      </div>
     </section>
   );
 }
@@ -1406,14 +1631,17 @@ function EngineeringFooter({ content, config, onPageChange, preset }) {
 }
 
 function HomePage({ content, images, config, preset, onPageChange }) {
+  const showTrustStrip = !templateHeroAlreadyShowsStats(config, preset);
+
   if (preset.structure === "corporate") {
     return (
       <>
         <EngineeringHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
+        {showTrustStrip && <TrustStrip content={content} preset={preset} />}
         <AboutSection content={content} images={images} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
-        <SolutionsSection content={content} preset={preset} />
+        <SolutionsSection content={content} preset={preset} onPageChange={onPageChange} />
+        <GallerySection images={images} content={content} />
         <IndustriesSection content={content} />
         <OperationsSection content={content} preset={preset} />
         <ContactSection content={content} config={config} />
@@ -1425,9 +1653,10 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <EngineeringHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <SolutionsSection content={content} preset={preset} />
+        <SolutionsSection content={content} preset={preset} onPageChange={onPageChange} />
         <ServicesSection content={content} config={config} preset={preset} />
         <OperationsSection content={content} preset={preset} />
+        <GallerySection images={images} content={content} />
         <TestimonialsSection content={content} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
         <CTASection content={content} onPageChange={onPageChange} />
@@ -1439,9 +1668,9 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <EngineeringHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <GallerySection images={images} />
+        <GallerySection images={images} content={content} />
         <ServicesSection content={content} config={config} preset={preset} />
-        <SolutionsSection content={content} preset={preset} />
+        <SolutionsSection content={content} preset={preset} onPageChange={onPageChange} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
         <TestimonialsSection content={content} />
         <ContactSection content={content} config={config} />
@@ -1453,10 +1682,11 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <EngineeringHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
+        {showTrustStrip && <TrustStrip content={content} preset={preset} />}
         <ServicesSection content={content} config={config} preset={preset} />
         <VisionMissionValues content={content} config={config} />
         <OperationsSection content={content} preset={preset} />
+        <GallerySection images={images} content={content} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
         <ContactSection content={content} config={config} />
       </>
@@ -1469,6 +1699,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
         <EngineeringHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
         <AboutSection content={content} images={images} preset={preset} />
         <VisionMissionValues content={content} config={config} />
+        <GallerySection images={images} content={content} />
         <ServicesSection content={content} config={config} preset={preset} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
         <OperationsSection content={content} preset={preset} />
@@ -1482,11 +1713,11 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <EngineeringHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <SolutionsSection content={content} preset={preset} />
+        <SolutionsSection content={content} preset={preset} onPageChange={onPageChange} />
         <ServicesSection content={content} config={config} preset={preset} />
-        <TrustStrip content={content} preset={preset} />
+        {showTrustStrip && <TrustStrip content={content} preset={preset} />}
         <OperationsSection content={content} preset={preset} />
-        <GallerySection images={images} />
+        <GallerySection images={images} content={content} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1496,7 +1727,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <EngineeringHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
+        {showTrustStrip && <TrustStrip content={content} preset={preset} />}
         <OperationsSection content={content} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
         <IndustriesSection content={content} />
@@ -1510,7 +1741,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <EngineeringHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <GallerySection images={images} />
+        <GallerySection images={images} content={content} />
         <ServicesSection content={content} config={config} preset={preset} />
         <AboutSection content={content} images={images} preset={preset} />
         <IndustriesSection content={content} />
@@ -1524,7 +1755,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <EngineeringHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
+        {showTrustStrip && <TrustStrip content={content} preset={preset} />}
         <AboutSection content={content} images={images} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
         <VisionMissionValues content={content} config={config} />
@@ -1540,7 +1771,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
         <EngineeringHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
         <AboutSection content={content} images={images} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
-        <SolutionsSection content={content} preset={preset} />
+        <SolutionsSection content={content} preset={preset} onPageChange={onPageChange} />
         <OperationsSection content={content} preset={preset} />
         <TestimonialsSection content={content} />
         <ContactSection content={content} config={config} />
@@ -1551,13 +1782,14 @@ function HomePage({ content, images, config, preset, onPageChange }) {
   return (
     <>
       <EngineeringHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-      <TrustStrip content={content} preset={preset} />
+      {showTrustStrip && <TrustStrip content={content} preset={preset} />}
       <AboutSection content={content} images={images} preset={preset} />
       <ServicesSection content={content} config={config} preset={preset} />
       <VisionMissionValues content={content} config={config} />
-      <SolutionsSection content={content} preset={preset} />
+      <SolutionsSection content={content} preset={preset} onPageChange={onPageChange} />
       <IndustriesSection content={content} />
       <OperationsSection content={content} preset={preset} />
+      <GallerySection images={images} content={content} />
       <TestimonialsSection content={content} />
       <ContactSection content={content} config={config} />
     </>
@@ -1591,8 +1823,8 @@ function PageContent({ currentPage, content, images, config, preset, onPageChang
       {currentPage === "industries" && (
         <>
           <IndustriesSection content={content} />
-          <SolutionsSection content={content} preset={preset} />
-          <GallerySection images={images} />
+          <SolutionsSection content={content} preset={preset} onPageChange={onPageChange} />
+          <GallerySection images={images} content={content} />
         </>
       )}
       {currentPage === "operations" && (

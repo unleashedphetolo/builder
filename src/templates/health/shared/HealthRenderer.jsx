@@ -81,7 +81,7 @@ const NAV_ITEMS = [
 ];
 
 
-const HEALTH_PAGE_KEYS = new Set(NAV_ITEMS.map((item) => item.key));
+const HEALTH_PAGE_KEYS = new Set([...NAV_ITEMS.map((item) => item.key), "gallery"]);
 
 
 const HEALTH_SOCIAL_ICONS = {
@@ -359,6 +359,35 @@ const scrollPageTop = () => {
   if (typeof window !== "undefined") {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
+};
+
+const scrollToHealthGallery = () => {
+  if (typeof window === "undefined") return;
+
+  window.setTimeout(() => {
+    const target = document.getElementById("health-gallery");
+
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, 80);
+};
+
+const cleanHealthText = (value) =>
+  String(value || "")
+    .replace(/live\s+template\s+preview/gi, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+
+const getHealthTemplateHighlights = (content = {}) => {
+  const services = Array.isArray(content.services) ? content.services.map((item) => item?.title) : [];
+  const industries = Array.isArray(content.industries) ? content.industries : [];
+  const process = Array.isArray(content.process) ? content.process : [];
+
+  return [...services, ...industries, ...process]
+    .filter(Boolean)
+    .filter((item, index, list) => list.indexOf(item) === index)
+    .slice(0, 6);
 };
 
 const getSocialIconColor = (data = {}) => {
@@ -665,7 +694,7 @@ function HealthHeroVisual({ content, images, activeSlide, config, preset, onPage
       <aside className="health-hero-visual health-hero-visual--wellness-retreat" aria-label="Wellness programme preview">
         <div className="health-wellness-orbit">
           <span className="health-panel-label"><FaHeartbeat /> Wellness Circle</span>
-          <strong>{content.tagline}</strong>
+          <strong>{cleanHealthText(content.tagline) || content.businessName}</strong>
           <p>{content.vision}</p>
         </div>
         <div className="health-wellness-tags">
@@ -822,11 +851,11 @@ function HealthHero({ content, images, config, preset, onPageChange }) {
 
       <div className="health-hero-content">
         <span className="health-kicker">{preset.name}</span>
-        <h1>{activeSlide?.title || content.heroTitle}</h1>
-        <p>{activeSlide?.subtitle || content.heroSubtitle}</p>
+        <h1>{cleanHealthText(activeSlide?.title || content.heroTitle) || content.heroTitle}</h1>
+        <p>{cleanHealthText(activeSlide?.subtitle || content.heroSubtitle) || content.heroSubtitle}</p>
         <div className="health-hero-actions">
           <button type="button" onClick={() => onPageChange("contact")}>{content.heroCta}</button>
-          <button type="button" className="ghost" onClick={() => onPageChange("services")}>{content.heroSecondaryCta}</button>
+          <button type="button" className="ghost" onClick={() => onPageChange("gallery")}>View Practice Gallery</button>
         </div>
       </div>
 
@@ -892,6 +921,21 @@ function TrustStrip({ content, preset }) {
   );
 }
 
+const HEALTH_HERO_VARIANTS_WITH_SNAPSHOT_STATS = new Set([
+  "consultant-card",
+  "hospital-network",
+]);
+
+function HomeTrustStrip({ content, preset, config }) {
+  const heroVariant = config?.heroVariant || preset?.heroVariant || "care-split";
+
+  if (HEALTH_HERO_VARIANTS_WITH_SNAPSHOT_STATS.has(heroVariant)) {
+    return null;
+  }
+
+  return <TrustStrip content={content} preset={preset} />;
+}
+
 function AboutSection({ content, images, preset }) {
   return (
     <section className={`health-section health-about health-about--${preset.structure}`}>
@@ -900,7 +944,7 @@ function AboutSection({ content, images, preset }) {
         <h2>{content.aboutTitle}</h2>
         <p>{content.aboutText}</p>
         <div className="health-feature-cloud">
-          {content.features.slice(0, 6).map((feature) => <span key={feature}>{feature}</span>)}
+          {getHealthTemplateHighlights(content).map((feature) => <span key={feature}>{feature}</span>)}
         </div>
       </div>
       <div className="health-image-card">
@@ -1042,23 +1086,127 @@ function SolutionsSection({ content, preset }) {
   );
 }
 
-function GallerySection({ images }) {
+function GallerySection({ images, content }) {
+  const galleryImages = useMemo(() => {
+    const sourceImages = [
+      ...(Array.isArray(images.gallery) ? images.gallery : []),
+      images.hero,
+      images.about,
+      images.page,
+    ];
+
+    return sourceImages
+      .filter(Boolean)
+      .filter((image, index, list) => list.indexOf(image) === index)
+      .slice(0, 8);
+  }, [images]);
+
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [zoomIndex, setZoomIndex] = useState(null);
+
+  if (!galleryImages.length) return null;
+
+  const activeImage = galleryImages[activeIndex] || galleryImages[0];
+  const zoomImage = zoomIndex === null ? null : galleryImages[zoomIndex] || galleryImages[0];
+
+  const move = (direction) => {
+    setActiveIndex((current) => {
+      if (direction === "prev") return current === 0 ? galleryImages.length - 1 : current - 1;
+      return current === galleryImages.length - 1 ? 0 : current + 1;
+    });
+  };
+
+  const moveZoom = (direction) => {
+    setZoomIndex((current) => {
+      const safeIndex = current ?? activeIndex;
+      if (direction === "prev") return safeIndex === 0 ? galleryImages.length - 1 : safeIndex - 1;
+      return safeIndex === galleryImages.length - 1 ? 0 : safeIndex + 1;
+    });
+  };
+
   return (
-    <section className="health-gallery">
-      {images.gallery.map((image, index) => (
-        <img key={`${image}-${index}`} src={image} alt="Health company visual" />
-      ))}
+    <section id="health-gallery" className="health-gallery health-gallery-section">
+      <div className="health-section-heading">
+        <span className="health-kicker">Practice Gallery</span>
+        <h2>{content?.businessName || "Healthcare"} visuals and patient-care presentation.</h2>
+        <p>Browse practice visuals, treatment rooms, care areas and service presentation images.</p>
+      </div>
+
+      <div className="health-gallery-board">
+        <button
+          type="button"
+          className="health-gallery-chevron health-gallery-chevron--left"
+          onClick={() => move("prev")}
+          aria-label="Previous gallery image"
+        >
+          ‹
+        </button>
+
+        <button
+          type="button"
+          className="health-gallery-feature"
+          onClick={() => setZoomIndex(activeIndex)}
+          aria-label="Zoom selected gallery image"
+        >
+          <img src={activeImage} alt="Healthcare practice visual" />
+          <span>⌕ Zoom image</span>
+        </button>
+
+        <button
+          type="button"
+          className="health-gallery-chevron health-gallery-chevron--right"
+          onClick={() => move("next")}
+          aria-label="Next gallery image"
+        >
+          ›
+        </button>
+      </div>
+
+      <div className="health-gallery-thumbs" aria-label="Gallery thumbnails">
+        {galleryImages.slice(0, 6).map((image, index) => (
+          <button
+            type="button"
+            key={`${image}-${index}`}
+            className={index === activeIndex ? "is-active" : ""}
+            onClick={() => setActiveIndex(index)}
+            aria-label={`Show gallery image ${index + 1}`}
+          >
+            <img src={image} alt="" />
+          </button>
+        ))}
+      </div>
+
+      {zoomImage && (
+        <div className="health-lightbox" role="dialog" aria-modal="true" aria-label="Healthcare image preview">
+          <button type="button" className="health-lightbox-backdrop" onClick={() => setZoomIndex(null)} aria-label="Close image preview" />
+          <div className="health-lightbox-stage">
+            <button type="button" className="health-lightbox-close" onClick={() => setZoomIndex(null)} aria-label="Close image preview">×</button>
+            <button type="button" className="health-lightbox-nav health-lightbox-nav--left" onClick={() => moveZoom("prev")} aria-label="Previous image">‹</button>
+            <img src={zoomImage} alt="Healthcare practice zoom" />
+            <button type="button" className="health-lightbox-nav health-lightbox-nav--right" onClick={() => moveZoom("next")} aria-label="Next image">›</button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
 
 function TestimonialsSection({ content }) {
+  const proofItems = content.services.slice(0, 2).map((service, index) => ({
+    title: service.title,
+    text: service.text,
+    detail: content.process[index] || content.solutions[index] || "Clear patient enquiry path.",
+  }));
+
+  if (!proofItems.length) return null;
+
   return (
-    <section className="health-testimonials">
-      {content.testimonials.map((item) => (
-        <blockquote key={item.quote}>
-          <p>“{item.quote}”</p>
-          <cite>{item.author}</cite>
+    <section className="health-testimonials health-service-proof">
+      {proofItems.map((item) => (
+        <blockquote key={item.title}>
+          <p><strong>{item.title}</strong></p>
+          <p>{item.text}</p>
+          <cite>{item.detail}</cite>
         </blockquote>
       ))}
     </section>
@@ -1285,7 +1433,7 @@ function CTASection({ content, onPageChange }) {
       <div>
         <span className="health-kicker">Next Step</span>
         <h2>Ready to help patients contact your healthcare practice?</h2>
-        <p>{content.tagline}</p>
+        <p>{cleanHealthText(content.tagline) || content.businessName}</p>
       </div>
       <button type="button" onClick={() => onPageChange("contact")}>Book Appointment</button>
     </section>
@@ -1308,7 +1456,7 @@ function HealthFooter({ content, config, onPageChange, preset }) {
       <div className="health-footer-main">
         <div>
           <strong>{content.businessName}</strong>
-          <p>{content.tagline}</p>
+          <p>{cleanHealthText(content.tagline) || content.businessName}</p>
           {showSocials && socials.length > 0 && (
             <div className="health-footer-social">
               {socials.map(({ key, label, url, Icon, color }) => (
@@ -1371,12 +1519,13 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <HealthHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
+        <HomeTrustStrip content={content} preset={preset} config={config} />
         <AboutSection content={content} images={images} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
         <SolutionsSection content={content} preset={preset} />
         <IndustriesSection content={content} />
         <OperationsSection content={content} preset={preset} />
+        <GallerySection images={images} content={content} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1391,6 +1540,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
         <OperationsSection content={content} preset={preset} />
         <TestimonialsSection content={content} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
+        <GallerySection images={images} content={content} />
         <CTASection content={content} onPageChange={onPageChange} />
       </>
     );
@@ -1400,11 +1550,11 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <HealthHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <GallerySection images={images} />
         <ServicesSection content={content} config={config} preset={preset} />
         <SolutionsSection content={content} preset={preset} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
         <TestimonialsSection content={content} />
+        <GallerySection images={images} content={content} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1414,11 +1564,12 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <HealthHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
+        <HomeTrustStrip content={content} preset={preset} config={config} />
         <ServicesSection content={content} config={config} preset={preset} />
         <VisionMissionValues content={content} config={config} />
         <OperationsSection content={content} preset={preset} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
+        <GallerySection images={images} content={content} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1434,6 +1585,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
         <OperationsSection content={content} preset={preset} />
         <TestimonialsSection content={content} />
+        <GallerySection images={images} content={content} />
         <CTASection content={content} onPageChange={onPageChange} />
       </>
     );
@@ -1445,9 +1597,9 @@ function HomePage({ content, images, config, preset, onPageChange }) {
         <HealthHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
         <SolutionsSection content={content} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
-        <TrustStrip content={content} preset={preset} />
+        <HomeTrustStrip content={content} preset={preset} config={config} />
         <OperationsSection content={content} preset={preset} />
-        <GallerySection images={images} />
+        <GallerySection images={images} content={content} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1457,11 +1609,12 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <HealthHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
+        <HomeTrustStrip content={content} preset={preset} config={config} />
         <OperationsSection content={content} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
         <IndustriesSection content={content} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
+        <GallerySection images={images} content={content} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1471,11 +1624,11 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <HealthHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <GallerySection images={images} />
         <ServicesSection content={content} config={config} preset={preset} />
         <AboutSection content={content} images={images} preset={preset} />
         <IndustriesSection content={content} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
+        <GallerySection images={images} content={content} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1485,11 +1638,12 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <HealthHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
+        <HomeTrustStrip content={content} preset={preset} config={config} />
         <AboutSection content={content} images={images} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
         <VisionMissionValues content={content} config={config} />
         <TestimonialsSection content={content} />
+        <GallerySection images={images} content={content} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1504,6 +1658,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
         <SolutionsSection content={content} preset={preset} />
         <OperationsSection content={content} preset={preset} />
         <TestimonialsSection content={content} />
+        <GallerySection images={images} content={content} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1512,7 +1667,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
   return (
     <>
       <HealthHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-      <TrustStrip content={content} preset={preset} />
+      <HomeTrustStrip content={content} preset={preset} config={config} />
       <AboutSection content={content} images={images} preset={preset} />
       <ServicesSection content={content} config={config} preset={preset} />
       <VisionMissionValues content={content} config={config} />
@@ -1520,6 +1675,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
       <IndustriesSection content={content} />
       <OperationsSection content={content} preset={preset} />
       <TestimonialsSection content={content} />
+      <GallerySection images={images} content={content} />
       <ContactSection content={content} config={config} />
     </>
   );
@@ -1532,9 +1688,19 @@ function PageContent({ currentPage, content, images, config, preset, onPageChang
     return <HomePage content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />;
   }
 
+  if (currentPage === "gallery") {
+    return (
+      <>
+        <HealthPageHeader title="Practice Gallery" subtitle={cleanHealthText(content.tagline) || content.businessName} images={images} preset={preset} />
+        <GallerySection images={images} content={content} />
+        <CTASection content={content} onPageChange={onPageChange} />
+      </>
+    );
+  }
+
   return (
     <>
-      <HealthPageHeader title={title} subtitle={content.tagline} images={images} preset={preset} />
+      <HealthPageHeader title={title} subtitle={cleanHealthText(content.tagline) || content.businessName} images={images} preset={preset} />
       {currentPage === "about" && (
         <>
           <AboutSection content={content} images={images} preset={preset} />
@@ -1546,6 +1712,7 @@ function PageContent({ currentPage, content, images, config, preset, onPageChang
         <>
           <ServicesSection content={content} config={config} preset={preset} />
           <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
+          <GallerySection images={images} content={content} />
           <CTASection content={content} onPageChange={onPageChange} />
         </>
       )}
@@ -1553,7 +1720,7 @@ function PageContent({ currentPage, content, images, config, preset, onPageChang
         <>
           <IndustriesSection content={content} />
           <SolutionsSection content={content} preset={preset} />
-          <GallerySection images={images} />
+          <GallerySection images={images} content={content} />
         </>
       )}
       {currentPage === "operations" && (
@@ -1612,6 +1779,12 @@ export default function HealthRenderer({ settings = {}, preset = HEALTH_PRESETS[
   }, [page, initialPage]);
 
   const onPageChange = (nextPage) => {
+    if (nextPage === "gallery") {
+      setInternalPage("home");
+      scrollToHealthGallery();
+      return;
+    }
+
     setInternalPage(nextPage);
     scrollPageTop();
   };

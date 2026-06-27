@@ -361,6 +361,18 @@ const scrollPageTop = () => {
   }
 };
 
+const scrollToAgricultureGallery = () => {
+  if (typeof window === "undefined") return;
+
+  window.setTimeout(() => {
+    const target = document.getElementById("agriculture-gallery");
+
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, 80);
+};
+
 const getSocialIconColor = (data = {}) => {
   const mode = data.colorMode || "original";
 
@@ -826,7 +838,7 @@ function AgricultureHero({ content, images, config, preset, onPageChange }) {
         <p>{activeSlide?.subtitle || content.heroSubtitle}</p>
         <div className="agriculture-hero-actions">
           <button type="button" onClick={() => onPageChange("contact")}>{content.heroCta}</button>
-          <button type="button" className="ghost" onClick={() => onPageChange("services")}>{content.heroSecondaryCta}</button>
+          <button type="button" className="ghost" onClick={() => onPageChange("gallery")}>View Project Gallery</button>
         </div>
       </div>
 
@@ -892,7 +904,49 @@ function TrustStrip({ content, preset }) {
   );
 }
 
+
+const AGRICULTURE_HERO_VARIANTS_WITH_STATS_PANEL = new Set([
+  "consultant-card",
+  "hospital-network",
+]);
+
+function hasAgricultureHeroStatsPanel(config, preset) {
+  const variant = config?.heroVariant || preset?.heroVariant || "";
+  return AGRICULTURE_HERO_VARIANTS_WITH_STATS_PANEL.has(variant);
+}
+
+const AGRICULTURE_GENERIC_FEATURE_LABELS = new Set([
+  "responsive navigation",
+  "hero slideshow",
+  "video slide support",
+  "template-specific content",
+  "autocomplete forms",
+  "google map",
+]);
+
+const getAgricultureUsefulFeatureChips = (content = {}) => {
+  const serviceTitles = Array.isArray(content.services)
+    ? content.services.map((service) => service?.title).filter(Boolean)
+    : [];
+  const markets = Array.isArray(content.industries) ? content.industries.filter(Boolean) : [];
+  const processItems = Array.isArray(content.process) ? content.process.filter(Boolean) : [];
+  const fallbackFeatures = Array.isArray(content.features)
+    ? content.features.filter((feature) => !AGRICULTURE_GENERIC_FEATURE_LABELS.has(String(feature || "").toLowerCase()))
+    : [];
+
+  return Array.from(
+    new Set([
+      ...serviceTitles.slice(0, 3),
+      ...markets.slice(0, 2),
+      ...processItems.slice(0, 2),
+      ...fallbackFeatures,
+    ].filter(Boolean)),
+  ).slice(0, 6);
+};
+
 function AboutSection({ content, images, preset }) {
+  const usefulFeatures = getAgricultureUsefulFeatureChips(content);
+
   return (
     <section className={`agriculture-section agriculture-about agriculture-about--${preset.structure}`}>
       <div className="agriculture-section-copy">
@@ -900,7 +954,7 @@ function AboutSection({ content, images, preset }) {
         <h2>{content.aboutTitle}</h2>
         <p>{content.aboutText}</p>
         <div className="agriculture-feature-cloud">
-          {content.features.slice(0, 6).map((feature) => <span key={feature}>{feature}</span>)}
+          {usefulFeatures.map((feature) => <span key={feature}>{feature}</span>)}
         </div>
       </div>
       <div className="agriculture-image-card">
@@ -935,7 +989,7 @@ function ServicesSection({ content, config, preset }) {
       <div className="agriculture-section-heading">
         <span className="agriculture-kicker">Agriculture Services</span>
         <h2>Professional services configured around the client’s goals, sector and growth stage.</h2>
-        <p>Each service card can be edited through the same builder fields and fallback system.</p>
+        <p>Use these services to show real farm support, buyer enquiries and operational solutions.</p>
       </div>
       <div className={`agriculture-cards agriculture-cards--${config.cardVariant}`}>
         {content.services.map((service) => {
@@ -1042,23 +1096,126 @@ function SolutionsSection({ content, preset }) {
   );
 }
 
-function GallerySection({ images }) {
+function GallerySection({ images, content }) {
+  const galleryImages = useMemo(() => {
+    const sourceImages = [
+      ...(Array.isArray(images.gallery) ? images.gallery : []),
+      images.hero,
+      images.about,
+      images.page,
+    ];
+
+    return sourceImages
+      .filter(Boolean)
+      .filter((image, index, list) => list.indexOf(image) === index)
+      .slice(0, 8);
+  }, [images]);
+
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [zoomIndex, setZoomIndex] = useState(null);
+
+  if (!galleryImages.length) return null;
+
+  const activeImage = galleryImages[activeIndex] || galleryImages[0];
+  const zoomImage = zoomIndex === null ? null : galleryImages[zoomIndex] || galleryImages[0];
+
+  const move = (direction) => {
+    setActiveIndex((current) => {
+      if (direction === "prev") return current === 0 ? galleryImages.length - 1 : current - 1;
+      return current === galleryImages.length - 1 ? 0 : current + 1;
+    });
+  };
+
+  const moveZoom = (direction) => {
+    setZoomIndex((current) => {
+      const safeIndex = current ?? activeIndex;
+      if (direction === "prev") return safeIndex === 0 ? galleryImages.length - 1 : safeIndex - 1;
+      return safeIndex === galleryImages.length - 1 ? 0 : safeIndex + 1;
+    });
+  };
+
   return (
-    <section className="agriculture-gallery">
-      {images.gallery.map((image, index) => (
-        <img key={`${image}-${index}`} src={image} alt="Agriculture company visual" />
-      ))}
+    <section id="agriculture-gallery" className="agriculture-section agriculture-gallery-section">
+      <div className="agriculture-section-heading">
+        <span className="agriculture-kicker">Project Gallery</span>
+        <h2>{content?.businessName || "Agriculture"} visuals and farm presentation.</h2>
+        <p>Browse farm visuals, produce, livestock and agriculture service images.</p>
+      </div>
+
+      <div className="agriculture-gallery-board">
+        <button
+          type="button"
+          className="agriculture-gallery-chevron agriculture-gallery-chevron--left"
+          onClick={() => move("prev")}
+          aria-label="Previous gallery image"
+        >
+          ‹
+        </button>
+
+        <button
+          type="button"
+          className="agriculture-gallery-feature"
+          onClick={() => setZoomIndex(activeIndex)}
+          aria-label="Zoom selected gallery image"
+        >
+          <img src={activeImage} alt="Agriculture project visual" />
+          <span>⌕ Zoom image</span>
+        </button>
+
+        <button
+          type="button"
+          className="agriculture-gallery-chevron agriculture-gallery-chevron--right"
+          onClick={() => move("next")}
+          aria-label="Next gallery image"
+        >
+          ›
+        </button>
+      </div>
+
+      <div className="agriculture-gallery-thumbs" aria-label="Gallery thumbnails">
+        {galleryImages.slice(0, 6).map((image, index) => (
+          <button
+            type="button"
+            key={`${image}-${index}`}
+            className={index === activeIndex ? "is-active" : ""}
+            onClick={() => setActiveIndex(index)}
+            aria-label={`Show gallery image ${index + 1}`}
+          >
+            <img src={image} alt="" />
+          </button>
+        ))}
+      </div>
+
+      {zoomImage && (
+        <div className="agriculture-lightbox" role="dialog" aria-modal="true" aria-label="Agriculture image preview">
+          <button type="button" className="agriculture-lightbox-backdrop" onClick={() => setZoomIndex(null)} aria-label="Close image preview" />
+          <div className="agriculture-lightbox-stage">
+            <button type="button" className="agriculture-lightbox-close" onClick={() => setZoomIndex(null)} aria-label="Close image preview">×</button>
+            <button type="button" className="agriculture-lightbox-nav agriculture-lightbox-nav--left" onClick={() => moveZoom("prev")} aria-label="Previous image">‹</button>
+            <img src={zoomImage} alt="Agriculture project zoom" />
+            <button type="button" className="agriculture-lightbox-nav agriculture-lightbox-nav--right" onClick={() => moveZoom("next")} aria-label="Next image">›</button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
 
 function TestimonialsSection({ content }) {
+  const proofItems = content.services.slice(0, 2).map((service, index) => ({
+    title: service.title,
+    text: service.text,
+    detail: content.process[index] || content.solutions[index] || content.industries[index] || "Clear agriculture enquiry path.",
+  }));
+
+  if (!proofItems.length) return null;
+
   return (
     <section className="agriculture-testimonials">
-      {content.testimonials.map((item) => (
-        <blockquote key={item.quote}>
-          <p>“{item.quote}”</p>
-          <cite>{item.author}</cite>
+      {proofItems.map((item) => (
+        <blockquote key={item.title}>
+          <p>{item.text}</p>
+          <cite>{item.title} · {item.detail}</cite>
         </blockquote>
       ))}
     </section>
@@ -1285,7 +1442,7 @@ function CTASection({ content, onPageChange }) {
     <section className="agriculture-cta-band">
       <div>
         <span className="agriculture-kicker">Next Step</span>
-        <h2>Ready to help clients contact your agriculturecare enterprise?</h2>
+        <h2>Ready to help clients contact your agriculture operation?</h2>
         <p>{content.tagline}</p>
       </div>
       <button type="button" onClick={() => onPageChange("contact")}>Request Quote</button>
@@ -1368,16 +1525,19 @@ function AgricultureFooter({ content, config, onPageChange, preset }) {
 }
 
 function HomePage({ content, images, config, preset, onPageChange }) {
+  const showHomeTrustStrip = !hasAgricultureHeroStatsPanel(config, preset);
+
   if (preset.structure === "corporate") {
     return (
       <>
         <AgricultureHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
+        {showHomeTrustStrip && <TrustStrip content={content} preset={preset} />}
         <AboutSection content={content} images={images} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
         <SolutionsSection content={content} preset={preset} />
         <IndustriesSection content={content} />
         <OperationsSection content={content} preset={preset} />
+        <GallerySection images={images} content={content} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1401,11 +1561,11 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <AgricultureHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <GallerySection images={images} />
         <ServicesSection content={content} config={config} preset={preset} />
         <SolutionsSection content={content} preset={preset} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
         <TestimonialsSection content={content} />
+        <GallerySection images={images} content={content} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1415,11 +1575,12 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <AgricultureHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
+        {showHomeTrustStrip && <TrustStrip content={content} preset={preset} />}
         <ServicesSection content={content} config={config} preset={preset} />
         <VisionMissionValues content={content} config={config} />
         <OperationsSection content={content} preset={preset} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
+        <GallerySection images={images} content={content} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1446,9 +1607,9 @@ function HomePage({ content, images, config, preset, onPageChange }) {
         <AgricultureHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
         <SolutionsSection content={content} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
-        <TrustStrip content={content} preset={preset} />
+        {showHomeTrustStrip && <TrustStrip content={content} preset={preset} />}
         <OperationsSection content={content} preset={preset} />
-        <GallerySection images={images} />
+        <GallerySection images={images} content={content} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1458,11 +1619,12 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <AgricultureHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
+        {showHomeTrustStrip && <TrustStrip content={content} preset={preset} />}
         <OperationsSection content={content} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
         <IndustriesSection content={content} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
+        <GallerySection images={images} content={content} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1472,11 +1634,11 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <AgricultureHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <GallerySection images={images} />
         <ServicesSection content={content} config={config} preset={preset} />
         <AboutSection content={content} images={images} preset={preset} />
         <IndustriesSection content={content} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
+        <GallerySection images={images} content={content} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1486,11 +1648,12 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <AgricultureHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
+        {showHomeTrustStrip && <TrustStrip content={content} preset={preset} />}
         <AboutSection content={content} images={images} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
         <VisionMissionValues content={content} config={config} />
         <TestimonialsSection content={content} />
+        <GallerySection images={images} content={content} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1505,6 +1668,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
         <SolutionsSection content={content} preset={preset} />
         <OperationsSection content={content} preset={preset} />
         <TestimonialsSection content={content} />
+        <GallerySection images={images} content={content} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1513,7 +1677,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
   return (
     <>
       <AgricultureHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-      <TrustStrip content={content} preset={preset} />
+      {showHomeTrustStrip && <TrustStrip content={content} preset={preset} />}
       <AboutSection content={content} images={images} preset={preset} />
       <ServicesSection content={content} config={config} preset={preset} />
       <VisionMissionValues content={content} config={config} />
@@ -1521,6 +1685,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
       <IndustriesSection content={content} />
       <OperationsSection content={content} preset={preset} />
       <TestimonialsSection content={content} />
+      <GallerySection images={images} content={content} />
       <ContactSection content={content} config={config} />
     </>
   );
@@ -1530,7 +1695,9 @@ function PageContent({ currentPage, content, images, config, preset, onPageChang
   const title = NAV_ITEMS.find((item) => item.key === currentPage)?.label || "Agriculture";
 
   if (currentPage === "home") {
-    return <HomePage content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />;
+    return (
+      <HomePage content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
+    );
   }
 
   return (
@@ -1554,7 +1721,7 @@ function PageContent({ currentPage, content, images, config, preset, onPageChang
         <>
           <IndustriesSection content={content} />
           <SolutionsSection content={content} preset={preset} />
-          <GallerySection images={images} />
+          <GallerySection images={images} content={content} />
         </>
       )}
       {currentPage === "operations" && (
@@ -1572,7 +1739,7 @@ function PageContent({ currentPage, content, images, config, preset, onPageChang
 
 function AgricultureScrollTopButton({ preset }) {
   const [visible, setVisible] = useState(false);
-  const TopIcon = AGRICULTURE_TOP_SCROLL_ICONS[preset.structure] || FaArrowUp;
+  const TopIcon = FaArrowUp;
 
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
@@ -1613,6 +1780,12 @@ export default function AgricultureRenderer({ settings = {}, preset = AGRICULTUR
   }, [page, initialPage]);
 
   const onPageChange = (nextPage) => {
+    if (nextPage === "gallery") {
+      setInternalPage("home");
+      scrollToAgricultureGallery();
+      return;
+    }
+
     setInternalPage(nextPage);
     scrollPageTop();
   };

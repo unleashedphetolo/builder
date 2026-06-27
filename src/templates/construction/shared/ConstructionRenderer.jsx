@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   FaArrowUp,
+  FaChevronLeft,
+  FaChevronRight,
+  FaImages,
+  FaSearchPlus,
+  FaTimes,
   FaBehance,
   FaDiscord,
   FaDribbble,
@@ -77,6 +82,7 @@ const NAV_ITEMS = [
   { key: "services", label: "Services" },
   { key: "industries", label: "Sectors" },
   { key: "operations", label: "Project Process" },
+  { key: "gallery", label: "Gallery" },
   { key: "contact", label: "Contact" },
 ];
 
@@ -584,7 +590,7 @@ function ConstructionNavbar({ content, config, currentPage, onPageChange, preset
       </div>
 
       <div className="construction-nav-actions">
-        <span className="construction-nav-support">{content.contact.phone}</span>
+        {/* <span className="construction-nav-support">{content.contact.phone}</span> */}
         <button type="button" className="construction-nav-cta" onClick={() => handleNavigate("contact")}>
           {content.heroCta || "Request Project Quote"}
         </button>
@@ -839,12 +845,12 @@ function ConstructionHero({ content, images, config, preset, onPageChange }) {
       </div>
 
       <div className="construction-hero-content">
-        <span className="construction-kicker">{preset.name}</span>
-        <h1>{activeSlide?.title || content.heroTitle}</h1>
-        <p>{activeSlide?.subtitle || content.heroSubtitle}</p>
+        <span className="construction-kicker">{cleanConstructionText(preset.name) || preset.name}</span>
+        <h1>{cleanConstructionText(activeSlide?.title || content.heroTitle) || content.heroTitle}</h1>
+        <p>{cleanConstructionText(activeSlide?.subtitle || content.heroSubtitle) || content.heroSubtitle}</p>
         <div className="construction-hero-actions">
           <button type="button" onClick={() => onPageChange("contact")}>{content.heroCta}</button>
-          <button type="button" className="ghost" onClick={() => onPageChange("services")}>{content.heroSecondaryCta}</button>
+          <button type="button" className="ghost" onClick={() => onPageChange("gallery")}>View Project Gallery</button>
         </div>
       </div>
 
@@ -884,12 +890,91 @@ function ConstructionPageHeader({ title, subtitle, images, preset }) {
       <img src={images.page} alt="" aria-hidden="true" />
       <span className="construction-page-overlay" />
       <div>
-        <span className="construction-kicker">{preset.name}</span>
+        <span className="construction-kicker">{cleanConstructionText(preset.name) || preset.name}</span>
         <h1>{title}</h1>
         <p>{subtitle}</p>
       </div>
     </section>
   );
+}
+
+
+const CONSTRUCTION_HERO_STAT_PANEL_VARIANTS = new Set([
+  "consultant-card",
+  "hospital-network",
+]);
+
+function constructionHeroHasBuiltInStats(config = {}, preset = {}) {
+  const variant = resolveConstructionHeroVariant(
+    config?.heroVariant || preset?.heroVariant || "care-split",
+  );
+
+  return CONSTRUCTION_HERO_STAT_PANEL_VARIANTS.has(variant);
+}
+
+
+const CONSTRUCTION_GALLERY_FALLBACK_IMAGES = [
+  "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1900&q=80",
+  "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=1900&q=80",
+  "https://images.unsplash.com/photo-1590959651373-a3db0f38a961?auto=format&fit=crop&w=1900&q=80",
+  "https://images.unsplash.com/photo-1565008447742-97f6f38c985c?auto=format&fit=crop&w=1900&q=80",
+  "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=1900&q=80",
+  "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1900&q=80",
+];
+
+const cleanConstructionText = (value) =>
+  String(value || "")
+    .replace(/live\s+template\s+preview/gi, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+
+const cleanConstructionContentText = (value) => {
+  if (typeof value === "string") return cleanConstructionText(value);
+
+  if (Array.isArray(value)) {
+    return value.map((item) => cleanConstructionContentText(item));
+  }
+
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [key, cleanConstructionContentText(item)]),
+    );
+  }
+
+  return value;
+};
+
+const getConstructionGalleryImages = (images = {}) => {
+  const sourceImages = [
+    ...(Array.isArray(images.gallery) ? images.gallery : []),
+    images.hero,
+    images.about,
+    images.page,
+    ...CONSTRUCTION_GALLERY_FALLBACK_IMAGES,
+  ];
+
+  return sourceImages
+    .filter(Boolean)
+    .filter((image, index, list) => list.indexOf(image) === index)
+    .slice(0, 8);
+};
+
+const scrollToConstructionGallery = () => {
+  if (typeof window === "undefined") return;
+
+  window.setTimeout(() => {
+    const target = document.getElementById("construction-gallery");
+
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, 80);
+};
+
+function HomeTrustStrip({ content, preset, config }) {
+  if (constructionHeroHasBuiltInStats(config, preset)) return null;
+
+  return <TrustStrip content={content} preset={preset} />;
 }
 
 function TrustStrip({ content, preset }) {
@@ -1040,12 +1125,17 @@ function OperationsSection({ content, preset }) {
   );
 }
 
-function SolutionsSection({ content, preset }) {
+function SolutionsSection({ content, preset, onPageChange }) {
   return (
     <section className={`construction-section construction-solutions construction-solutions--${preset.structure}`}>
-      <div className="construction-section-heading">
-        <span className="construction-kicker">Solutions</span>
-        <h2>Focused solutions for the most common construction requests.</h2>
+      <div className="construction-section-heading construction-section-heading--action">
+        <div>
+          <span className="construction-kicker">Solutions</span>
+          <h2>Focused solutions for real construction requests.</h2>
+        </div>
+        <button type="button" className="construction-section-gallery-btn" onClick={() => onPageChange?.("gallery")}>
+          <FaImages /> View Project Gallery
+        </button>
       </div>
       <div className="construction-solution-list">
         {content.solutions.map((item, index) => (
@@ -1060,26 +1150,133 @@ function SolutionsSection({ content, preset }) {
   );
 }
 
-function GallerySection({ images }) {
+function GallerySection({ images, content, preset, onImageZoom }) {
+  const galleryImages = getConstructionGalleryImages(images);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeImage = galleryImages[activeIndex] || galleryImages[0];
+  const structureLabel = cleanConstructionText(preset?.name) || cleanConstructionText(content?.businessName) || "Construction Gallery";
+
+  const move = (direction) => {
+    setActiveIndex((current) => {
+      if (!galleryImages.length) return 0;
+      if (direction === "prev") return current === 0 ? galleryImages.length - 1 : current - 1;
+      return (current + 1) % galleryImages.length;
+    });
+  };
+
+  if (!galleryImages.length) return null;
+
   return (
-    <section className="construction-gallery">
-      {images.gallery.map((image, index) => (
-        <img key={`${image}-${index}`} src={image} alt="Construction company visual" />
+    <section id="construction-gallery" className={`construction-section construction-gallery-section construction-gallery-section--${preset?.structure || "general"}`}>
+      <div className="construction-section-heading construction-section-heading--action">
+        <div>
+          <span className="construction-kicker">Project Gallery</span>
+          <h2>{structureLabel} visuals and project presentation.</h2>
+          <p>Browse site visuals, delivery details and construction presentation images.</p>
+        </div>
+      </div>
+
+      <div className="construction-gallery-board">
+        <button type="button" className="construction-gallery-chevron construction-gallery-chevron--left" onClick={() => move("prev")} aria-label="Previous gallery image">
+          <FaChevronLeft />
+        </button>
+
+        <button
+          type="button"
+          className="construction-gallery-feature"
+          onClick={() => onImageZoom?.(galleryImages, activeIndex)}
+          aria-label="Zoom selected gallery image"
+        >
+          <img
+            src={activeImage}
+            alt={`${structureLabel} project visual`}
+            onError={(event) => {
+              event.currentTarget.src = CONSTRUCTION_GALLERY_FALLBACK_IMAGES[activeIndex % CONSTRUCTION_GALLERY_FALLBACK_IMAGES.length];
+            }}
+          />
+          <span><FaSearchPlus /> Zoom image</span>
+        </button>
+
+        <button type="button" className="construction-gallery-chevron construction-gallery-chevron--right" onClick={() => move("next")} aria-label="Next gallery image">
+          <FaChevronRight />
+        </button>
+      </div>
+
+      <div className="construction-gallery-thumbs" aria-label="Gallery thumbnails">
+        {galleryImages.slice(0, 6).map((image, index) => (
+          <button
+            type="button"
+            key={`${image}-${index}`}
+            className={index === activeIndex ? "is-active" : ""}
+            onClick={() => setActiveIndex(index)}
+            aria-label={`Show gallery image ${index + 1}`}
+          >
+            <img
+              src={image}
+              alt=""
+              onError={(event) => {
+                event.currentTarget.src = CONSTRUCTION_GALLERY_FALLBACK_IMAGES[index % CONSTRUCTION_GALLERY_FALLBACK_IMAGES.length];
+              }}
+            />
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function TestimonialsSection({ content, preset }) {
+  const proofItems = content.services.slice(0, 2).map((service, index) => ({
+    title: service.title,
+    text: service.text,
+    detail: content.process[index] || content.solutions[index] || "Clear construction enquiry path.",
+  }));
+
+  if (!proofItems.length) return null;
+
+  return (
+    <section className={`construction-service-proof construction-service-proof--${preset?.structure || "general"}`}>
+      {proofItems.map((item) => (
+        <article key={item.title}>
+          <span>Service Proof</span>
+          <h3>{item.title}</h3>
+          <p>{item.text}</p>
+          <small>{item.detail}</small>
+        </article>
       ))}
     </section>
   );
 }
 
-function TestimonialsSection({ content }) {
+function ConstructionImageLightbox({ lightbox, onClose, onMove }) {
+  const images = Array.isArray(lightbox?.images) ? lightbox.images : [];
+  const image = images[lightbox?.index || 0];
+
+  useEffect(() => {
+    if (!image || typeof window === "undefined") return undefined;
+
+    const handleKey = (event) => {
+      if (event.key === "Escape") onClose?.();
+      if (event.key === "ArrowLeft") onMove?.("prev");
+      if (event.key === "ArrowRight") onMove?.("next");
+    };
+
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [image, onClose, onMove]);
+
+  if (!image) return null;
+
   return (
-    <section className="construction-testimonials">
-      {content.testimonials.map((item) => (
-        <blockquote key={item.quote}>
-          <p>“{item.quote}”</p>
-          <cite>{item.author}</cite>
-        </blockquote>
-      ))}
-    </section>
+    <div className="construction-lightbox" role="dialog" aria-modal="true" aria-label="Project image preview">
+      <button type="button" className="construction-lightbox-backdrop" onClick={onClose} aria-label="Close image preview" />
+      <div className="construction-lightbox-stage">
+        <button type="button" className="construction-lightbox-close" onClick={onClose} aria-label="Close image preview"><FaTimes /></button>
+        <button type="button" className="construction-lightbox-nav construction-lightbox-nav--left" onClick={() => onMove?.("prev")} aria-label="Previous image"><FaChevronLeft /></button>
+        <img src={image} alt="Construction project zoom" />
+        <button type="button" className="construction-lightbox-nav construction-lightbox-nav--right" onClick={() => onMove?.("next")} aria-label="Next image"><FaChevronRight /></button>
+      </div>
+    </div>
   );
 }
 
@@ -1385,17 +1582,22 @@ function ConstructionFooter({ content, config, onPageChange, preset }) {
   );
 }
 
-function HomePage({ content, images, config, preset, onPageChange }) {
+function HomePage({ content, images, config, preset, onPageChange, onImageZoom }) {
+  const renderGallery = () => (
+    <GallerySection images={images} content={content} preset={preset} onImageZoom={onImageZoom} />
+  );
+
   if (preset.structure === "corporate") {
     return (
       <>
         <ConstructionHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
+        <HomeTrustStrip content={content} preset={preset} config={config} />
         <AboutSection content={content} images={images} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
-        <SolutionsSection content={content} preset={preset} />
+        <SolutionsSection content={content} preset={preset} onPageChange={onPageChange} />
         <IndustriesSection content={content} />
         <OperationsSection content={content} preset={preset} />
+        {renderGallery()}
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1405,11 +1607,12 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <ConstructionHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <SolutionsSection content={content} preset={preset} />
+        <SolutionsSection content={content} preset={preset} onPageChange={onPageChange} />
         <ServicesSection content={content} config={config} preset={preset} />
         <OperationsSection content={content} preset={preset} />
-        <TestimonialsSection content={content} />
+        <TestimonialsSection content={content} preset={preset} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
+        {renderGallery()}
         <CTASection content={content} onPageChange={onPageChange} />
       </>
     );
@@ -1419,11 +1622,11 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <ConstructionHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <GallerySection images={images} />
         <ServicesSection content={content} config={config} preset={preset} />
-        <SolutionsSection content={content} preset={preset} />
+        <SolutionsSection content={content} preset={preset} onPageChange={onPageChange} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
-        <TestimonialsSection content={content} />
+        <TestimonialsSection content={content} preset={preset} />
+        {renderGallery()}
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1433,11 +1636,12 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <ConstructionHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
+        <HomeTrustStrip content={content} preset={preset} config={config} />
         <ServicesSection content={content} config={config} preset={preset} />
         <VisionMissionValues content={content} config={config} />
         <OperationsSection content={content} preset={preset} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
+        {renderGallery()}
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1452,7 +1656,8 @@ function HomePage({ content, images, config, preset, onPageChange }) {
         <ServicesSection content={content} config={config} preset={preset} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
         <OperationsSection content={content} preset={preset} />
-        <TestimonialsSection content={content} />
+        <TestimonialsSection content={content} preset={preset} />
+        {renderGallery()}
         <CTASection content={content} onPageChange={onPageChange} />
       </>
     );
@@ -1462,11 +1667,11 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <ConstructionHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <SolutionsSection content={content} preset={preset} />
+        <SolutionsSection content={content} preset={preset} onPageChange={onPageChange} />
         <ServicesSection content={content} config={config} preset={preset} />
-        <TrustStrip content={content} preset={preset} />
+        <HomeTrustStrip content={content} preset={preset} config={config} />
         <OperationsSection content={content} preset={preset} />
-        <GallerySection images={images} />
+        {renderGallery()}
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1476,11 +1681,12 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <ConstructionHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
+        <HomeTrustStrip content={content} preset={preset} config={config} />
         <OperationsSection content={content} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
         <IndustriesSection content={content} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
+        {renderGallery()}
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1490,11 +1696,11 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <ConstructionHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <GallerySection images={images} />
         <ServicesSection content={content} config={config} preset={preset} />
         <AboutSection content={content} images={images} preset={preset} />
         <IndustriesSection content={content} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
+        {renderGallery()}
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1504,11 +1710,12 @@ function HomePage({ content, images, config, preset, onPageChange }) {
     return (
       <>
         <ConstructionHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <TrustStrip content={content} preset={preset} />
+        <HomeTrustStrip content={content} preset={preset} config={config} />
         <AboutSection content={content} images={images} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
         <VisionMissionValues content={content} config={config} />
-        <TestimonialsSection content={content} />
+        <TestimonialsSection content={content} preset={preset} />
+        {renderGallery()}
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1520,9 +1727,10 @@ function HomePage({ content, images, config, preset, onPageChange }) {
         <ConstructionHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
         <AboutSection content={content} images={images} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
-        <SolutionsSection content={content} preset={preset} />
+        <SolutionsSection content={content} preset={preset} onPageChange={onPageChange} />
         <OperationsSection content={content} preset={preset} />
-        <TestimonialsSection content={content} />
+        <TestimonialsSection content={content} preset={preset} />
+        {renderGallery()}
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1531,24 +1739,29 @@ function HomePage({ content, images, config, preset, onPageChange }) {
   return (
     <>
       <ConstructionHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-      <TrustStrip content={content} preset={preset} />
+      <HomeTrustStrip content={content} preset={preset} config={config} />
       <AboutSection content={content} images={images} preset={preset} />
       <ServicesSection content={content} config={config} preset={preset} />
       <VisionMissionValues content={content} config={config} />
-      <SolutionsSection content={content} preset={preset} />
+      <SolutionsSection content={content} preset={preset} onPageChange={onPageChange} />
       <IndustriesSection content={content} />
       <OperationsSection content={content} preset={preset} />
-      <TestimonialsSection content={content} />
+      <TestimonialsSection content={content} preset={preset} />
+      {renderGallery()}
       <ContactSection content={content} config={config} />
     </>
   );
 }
 
-function PageContent({ currentPage, content, images, config, preset, onPageChange }) {
+function PageContent({ currentPage, content, images, config, preset, onPageChange, onImageZoom }) {
   const title = NAV_ITEMS.find((item) => item.key === currentPage)?.label || "Construction";
 
   if (currentPage === "home") {
-    return <HomePage content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />;
+    return (
+      <>
+        <HomePage content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} onImageZoom={onImageZoom} />
+      </>
+    );
   }
 
   return (
@@ -1558,7 +1771,7 @@ function PageContent({ currentPage, content, images, config, preset, onPageChang
         <>
           <AboutSection content={content} images={images} preset={preset} />
           <VisionMissionValues content={content} config={config} />
-          <TestimonialsSection content={content} />
+          <TestimonialsSection content={content} preset={preset} />
         </>
       )}
       {currentPage === "services" && (
@@ -1571,8 +1784,8 @@ function PageContent({ currentPage, content, images, config, preset, onPageChang
       {currentPage === "industries" && (
         <>
           <IndustriesSection content={content} />
-          <SolutionsSection content={content} preset={preset} />
-          <GallerySection images={images} />
+          <SolutionsSection content={content} preset={preset} onPageChange={onPageChange} />
+          <GallerySection images={images} content={content} preset={preset} onImageZoom={onImageZoom} />
         </>
       )}
       {currentPage === "operations" && (
@@ -1581,6 +1794,9 @@ function PageContent({ currentPage, content, images, config, preset, onPageChang
           <TrustStrip content={content} preset={preset} />
           <VisionMissionValues content={content} config={config} />
         </>
+      )}
+      {currentPage === "gallery" && (
+        <GallerySection images={images} content={content} preset={preset} onImageZoom={onImageZoom} />
       )}
       {currentPage === "contact" && <ContactSection content={content} config={config} />}
     </>
@@ -1619,11 +1835,12 @@ function ConstructionScrollTopButton({ preset }) {
 }
 
 export default function ConstructionRenderer({ settings = {}, preset = CONSTRUCTION_PRESETS["construction-general-v1"], page }) {
-  const content = useMemo(() => normalizeConstructionContent(settings, preset), [settings, preset]);
+  const content = useMemo(() => cleanConstructionContentText(normalizeConstructionContent(settings, preset)), [settings, preset]);
   const config = useMemo(() => getSavedConstructionConfig(settings, preset), [settings, preset]);
   const images = useMemo(() => getImagePack(config), [config]);
   const initialPage = pageKeyFromPage(page);
   const [internalPage, setInternalPage] = useState(initialPage || "home");
+  const [imageLightbox, setImageLightbox] = useState(null);
   const currentPage = internalPage;
 
   useEffect(() => {
@@ -1631,8 +1848,31 @@ export default function ConstructionRenderer({ settings = {}, preset = CONSTRUCT
   }, [page, initialPage]);
 
   const onPageChange = (nextPage) => {
+    if (nextPage === "gallery") {
+      setInternalPage("home");
+      scrollToConstructionGallery();
+      return;
+    }
+
     setInternalPage(nextPage);
     scrollPageTop();
+  };
+
+  const openImageZoom = (imagesList, index = 0) => {
+    const galleryImages = Array.isArray(imagesList) && imagesList.length ? imagesList : getConstructionGalleryImages(images);
+    setImageLightbox({ images: galleryImages, index });
+  };
+
+  const moveImageZoom = (direction) => {
+    setImageLightbox((current) => {
+      if (!current?.images?.length) return current;
+      const lastIndex = current.images.length - 1;
+      const nextIndex = direction === "prev"
+        ? current.index === 0 ? lastIndex : current.index - 1
+        : current.index === lastIndex ? 0 : current.index + 1;
+
+      return { ...current, index: nextIndex };
+    });
   };
 
   return (
@@ -1640,10 +1880,11 @@ export default function ConstructionRenderer({ settings = {}, preset = CONSTRUCT
       <ConstructionTopbar content={content} preset={preset} />
       <ConstructionNavbar content={content} config={config} currentPage={currentPage} onPageChange={onPageChange} preset={preset} />
       <main>
-        <PageContent currentPage={currentPage} content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
+        <PageContent currentPage={currentPage} content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} onImageZoom={openImageZoom} />
       </main>
       <ConstructionFooter content={content} config={config} onPageChange={onPageChange} preset={preset} />
       <ConstructionScrollTopButton preset={preset} />
+      <ConstructionImageLightbox lightbox={imageLightbox} onClose={() => setImageLightbox(null)} onMove={moveImageZoom} />
     </div>
   );
 }
