@@ -30,7 +30,7 @@ export const templateConfig = {
     "Classic academic school design with warm earthy tweed-style texture, formal cards and premium page styling.",
 
   defaults: {
-    site_name: "School Name",
+    site_name: "Academic Tweed",
     tagline: "Excellence in Learning",
     motto: "Discipline • Respect • Success",
 

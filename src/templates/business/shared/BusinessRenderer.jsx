@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   FaArrowUp,
+  FaChevronLeft,
+  FaChevronRight,
+  FaSearchPlus,
+  FaTimes,
   FaBehance,
   FaDiscord,
   FaDribbble,
@@ -68,7 +72,7 @@ const NAV_ITEMS = [
 ];
 
 
-const BUSINESS_PAGE_KEYS = new Set(NAV_ITEMS.map((item) => item.key));
+const BUSINESS_PAGE_KEYS = new Set([...NAV_ITEMS.map((item) => item.key), "gallery"]);
 
 
 const BUSINESS_SOCIAL_ICONS = {
@@ -344,6 +348,18 @@ const scrollPageTop = () => {
   if (typeof window !== "undefined") {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
+};
+
+const scrollToBusinessGallery = () => {
+  if (typeof window === "undefined") return;
+
+  window.setTimeout(() => {
+    const target = document.getElementById("business-gallery");
+
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, 80);
 };
 
 const getSocialIconColor = (data = {}) => {
@@ -776,7 +792,7 @@ function BusinessHero({ content, images, config, preset, onPageChange }) {
         <p>{activeSlide?.subtitle || content.heroSubtitle}</p>
         <div className="business-hero-actions">
           <button type="button" onClick={() => onPageChange("contact")}>{content.heroCta}</button>
-          <button type="button" className="ghost" onClick={() => onPageChange("services")}>{content.heroSecondaryCta}</button>
+          <button type="button" className="ghost" onClick={() => onPageChange("gallery")}>View Business Gallery</button>
         </div>
       </div>
 
@@ -1000,12 +1016,115 @@ function SolutionsSection({ content, preset }) {
   );
 }
 
-function GallerySection({ images }) {
+function getBusinessGalleryImages(images = {}) {
+  const sourceImages = [
+    ...(Array.isArray(images.gallery) ? images.gallery : []),
+    images.hero,
+    images.about,
+    images.page,
+  ];
+
+  return sourceImages
+    .filter(Boolean)
+    .filter((image, index, list) => list.indexOf(image) === index)
+    .slice(0, 8);
+}
+
+function GallerySection({ images, content, preset }) {
+  const galleryImages = getBusinessGalleryImages(images);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [zoomIndex, setZoomIndex] = useState(null);
+  const activeImage = galleryImages[activeIndex] || galleryImages[0];
+  const zoomImage = zoomIndex === null ? null : galleryImages[zoomIndex] || galleryImages[0];
+  const galleryTitle = content?.businessName || preset?.name || "Business Gallery";
+
+  const move = (direction) => {
+    setActiveIndex((current) => {
+      if (!galleryImages.length) return 0;
+      if (direction === "prev") return current === 0 ? galleryImages.length - 1 : current - 1;
+      return current === galleryImages.length - 1 ? 0 : current + 1;
+    });
+  };
+
+  const moveZoom = (direction) => {
+    setZoomIndex((current) => {
+      const safeIndex = current ?? activeIndex;
+      if (!galleryImages.length) return 0;
+      if (direction === "prev") return safeIndex === 0 ? galleryImages.length - 1 : safeIndex - 1;
+      return safeIndex === galleryImages.length - 1 ? 0 : safeIndex + 1;
+    });
+  };
+
+  useEffect(() => {
+    if (zoomIndex === null || typeof window === "undefined") return undefined;
+
+    const handleKey = (event) => {
+      if (event.key === "Escape") setZoomIndex(null);
+      if (event.key === "ArrowLeft") moveZoom("prev");
+      if (event.key === "ArrowRight") moveZoom("next");
+    };
+
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [zoomIndex, galleryImages.length]);
+
+  if (!galleryImages.length) return null;
+
   return (
-    <section className="business-gallery">
-      {images.gallery.map((image, index) => (
-        <img key={`${image}-${index}`} src={image} alt="Business company visual" />
-      ))}
+    <section id="business-gallery" className={`business-section business-gallery-section business-gallery-section--${preset?.structure || "corporate"}`}>
+      <div className="business-section-heading business-section-heading--action">
+        <div>
+          <span className="business-kicker">Business Gallery</span>
+          <h2>{galleryTitle} visuals and service presentation.</h2>
+          <p>Browse workspace visuals, client service moments and business presentation images.</p>
+        </div>
+      </div>
+
+      <div className="business-gallery-board">
+        <button type="button" className="business-gallery-chevron business-gallery-chevron--left" onClick={() => move("prev")} aria-label="Previous gallery image">
+          <FaChevronLeft />
+        </button>
+
+        <button
+          type="button"
+          className="business-gallery-feature"
+          onClick={() => setZoomIndex(activeIndex)}
+          aria-label="Zoom selected gallery image"
+        >
+          <img src={activeImage} alt={`${galleryTitle} visual`} />
+          <span><FaSearchPlus /> Zoom image</span>
+        </button>
+
+        <button type="button" className="business-gallery-chevron business-gallery-chevron--right" onClick={() => move("next")} aria-label="Next gallery image">
+          <FaChevronRight />
+        </button>
+      </div>
+
+      <div className="business-gallery-thumbs" aria-label="Gallery thumbnails">
+        {galleryImages.slice(0, 6).map((image, index) => (
+          <button
+            type="button"
+            key={`${image}-${index}`}
+            className={index === activeIndex ? "is-active" : ""}
+            onClick={() => setActiveIndex(index)}
+            aria-label={`Show gallery image ${index + 1}`}
+          >
+            <img src={image} alt="" />
+          </button>
+        ))}
+      </div>
+
+      {zoomImage && (
+        <div className="business-lightbox" role="dialog" aria-modal="true" aria-label="Business image preview">
+          <button type="button" className="business-lightbox-backdrop" onClick={() => setZoomIndex(null)} aria-label="Close image preview" />
+          <div className="business-lightbox-stage">
+            <button type="button" className="business-lightbox-close" onClick={() => setZoomIndex(null)} aria-label="Close image preview"><FaTimes /></button>
+            <button type="button" className="business-lightbox-nav business-lightbox-nav--left" onClick={() => moveZoom("prev")} aria-label="Previous image"><FaChevronLeft /></button>
+            <img src={zoomImage} alt="Business gallery zoom" />
+            <button type="button" className="business-lightbox-nav business-lightbox-nav--right" onClick={() => moveZoom("next")} aria-label="Next image"><FaChevronRight /></button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
@@ -1313,11 +1432,20 @@ function BusinessFooter({ content, config, onPageChange, preset }) {
   );
 }
 
+function BusinessHeroWithGallery({ content, images, config, preset, onPageChange }) {
+  return (
+    <>
+      <BusinessHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
+      <GallerySection images={images} content={content} preset={preset} />
+    </>
+  );
+}
+
 function HomePage({ content, images, config, preset, onPageChange }) {
   if (preset.structure === "corporate") {
     return (
       <>
-        <BusinessHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
+        <BusinessHeroWithGallery content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
         {shouldShowTrustStrip(preset, config) && <TrustStrip content={content} preset={preset} />}
         <AboutSection content={content} images={images} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
@@ -1332,11 +1460,10 @@ function HomePage({ content, images, config, preset, onPageChange }) {
   if (preset.structure === "consulting") {
     return (
       <>
-        <BusinessHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
+        <BusinessHeroWithGallery content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
         <SolutionsSection content={content} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
         <OperationsSection content={content} preset={preset} />
-        <TestimonialsSection content={content} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
         <CTASection content={content} onPageChange={onPageChange} />
       </>
@@ -1346,12 +1473,10 @@ function HomePage({ content, images, config, preset, onPageChange }) {
   if (preset.structure === "agency") {
     return (
       <>
-        <BusinessHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <GallerySection images={images} />
+        <BusinessHeroWithGallery content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
         <ServicesSection content={content} config={config} preset={preset} />
         <SolutionsSection content={content} preset={preset} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
-        <TestimonialsSection content={content} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1360,7 +1485,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
   if (preset.structure === "finance") {
     return (
       <>
-        <BusinessHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
+        <BusinessHeroWithGallery content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
         {shouldShowTrustStrip(preset, config) && <TrustStrip content={content} preset={preset} />}
         <ServicesSection content={content} config={config} preset={preset} />
         <VisionMissionValues content={content} config={config} />
@@ -1374,13 +1499,12 @@ function HomePage({ content, images, config, preset, onPageChange }) {
   if (preset.structure === "executive") {
     return (
       <>
-        <BusinessHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
+        <BusinessHeroWithGallery content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
         <AboutSection content={content} images={images} preset={preset} />
         <VisionMissionValues content={content} config={config} />
         <ServicesSection content={content} config={config} preset={preset} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
         <OperationsSection content={content} preset={preset} />
-        <TestimonialsSection content={content} />
         <CTASection content={content} onPageChange={onPageChange} />
       </>
     );
@@ -1389,12 +1513,11 @@ function HomePage({ content, images, config, preset, onPageChange }) {
   if (preset.structure === "saas") {
     return (
       <>
-        <BusinessHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
+        <BusinessHeroWithGallery content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
         <SolutionsSection content={content} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
         {shouldShowTrustStrip(preset, config) && <TrustStrip content={content} preset={preset} />}
         <OperationsSection content={content} preset={preset} />
-        <GallerySection images={images} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1403,7 +1526,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
   if (preset.structure === "logistics") {
     return (
       <>
-        <BusinessHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
+        <BusinessHeroWithGallery content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
         {shouldShowTrustStrip(preset, config) && <TrustStrip content={content} preset={preset} />}
         <OperationsSection content={content} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
@@ -1417,8 +1540,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
   if (preset.structure === "realestate") {
     return (
       <>
-        <BusinessHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
-        <GallerySection images={images} />
+        <BusinessHeroWithGallery content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
         <ServicesSection content={content} config={config} preset={preset} />
         <AboutSection content={content} images={images} preset={preset} />
         <IndustriesSection content={content} />
@@ -1431,12 +1553,11 @@ function HomePage({ content, images, config, preset, onPageChange }) {
   if (preset.structure === "healthcare") {
     return (
       <>
-        <BusinessHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
+        <BusinessHeroWithGallery content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
         {shouldShowTrustStrip(preset, config) && <TrustStrip content={content} preset={preset} />}
         <AboutSection content={content} images={images} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
         <VisionMissionValues content={content} config={config} />
-        <TestimonialsSection content={content} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1445,12 +1566,11 @@ function HomePage({ content, images, config, preset, onPageChange }) {
   if (preset.structure === "legal") {
     return (
       <>
-        <BusinessHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
+        <BusinessHeroWithGallery content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
         <AboutSection content={content} images={images} preset={preset} />
         <ServicesSection content={content} config={config} preset={preset} />
         <SolutionsSection content={content} preset={preset} />
         <OperationsSection content={content} preset={preset} />
-        <TestimonialsSection content={content} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1458,7 +1578,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
 
   return (
     <>
-      <BusinessHero content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
+      <BusinessHeroWithGallery content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />
       {shouldShowTrustStrip(preset, config) && <TrustStrip content={content} preset={preset} />}
       <AboutSection content={content} images={images} preset={preset} />
       <ServicesSection content={content} config={config} preset={preset} />
@@ -1466,7 +1586,6 @@ function HomePage({ content, images, config, preset, onPageChange }) {
       <SolutionsSection content={content} preset={preset} />
       <IndustriesSection content={content} />
       <OperationsSection content={content} preset={preset} />
-      <TestimonialsSection content={content} />
       <ContactSection content={content} config={config} />
     </>
   );
@@ -1477,6 +1596,15 @@ function PageContent({ currentPage, content, images, config, preset, onPageChang
 
   if (currentPage === "home") {
     return <HomePage content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />;
+  }
+
+  if (currentPage === "gallery") {
+    return (
+      <>
+        <BusinessPageHeader title="Business Gallery" subtitle={content.tagline} images={images} preset={preset} />
+        <GallerySection images={images} content={content} preset={preset} />
+      </>
+    );
   }
 
   return (
@@ -1500,7 +1628,7 @@ function PageContent({ currentPage, content, images, config, preset, onPageChang
         <>
           <IndustriesSection content={content} />
           <SolutionsSection content={content} preset={preset} />
-          <GallerySection images={images} />
+          <GallerySection images={images} content={content} preset={preset} />
         </>
       )}
       {currentPage === "operations" && (
@@ -1559,6 +1687,12 @@ export default function BusinessRenderer({ settings = {}, preset = BUSINESS_PRES
   }, [page, initialPage]);
 
   const onPageChange = (nextPage) => {
+    if (nextPage === "gallery") {
+      setInternalPage("home");
+      scrollToBusinessGallery();
+      return;
+    }
+
     setInternalPage(nextPage);
     scrollPageTop();
   };

@@ -25,12 +25,12 @@ function editableSection(sectionKey, type, content = {}, options = {}) {
 export const templateConfig = {
   templateKey: "school-modern-v1",
   layoutKey: "school",
-  name: "School Modern Enterprise",
+  name: "Modern Academy",
   description:
     "A polished modern campus-style school website with a premium hero, glass navigation, admissions, resources, governance, gallery, news, notices and live builder section editing.",
 
   defaults: {
-    site_name: "School Name",
+    site_name: "Modern Academy",
     tagline: "Excellence in every learner",
     motto: "Learn • Lead • Achieve",
 

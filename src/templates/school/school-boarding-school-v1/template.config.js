@@ -30,7 +30,7 @@ export const templateConfig = {
     "Formal boarding school design with navy, gold and strong residential-school page styling.",
 
   defaults: {
-    site_name: "School Name",
+    site_name: "Boarding School",
     tagline: "Excellence in Learning",
     motto: "Excellence • Character • Leadership",
 

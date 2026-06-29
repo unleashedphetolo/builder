@@ -25,12 +25,12 @@ function editableSection(sectionKey, type, content = {}, options = {}) {
 export const templateConfig = {
   templateKey: "school-institutional-v1",
   layoutKey: "school",
-  name: "Institutional School",
+  name: "Institutional Classic",
   description:
     "A full institutional school website template with admissions, resources, governance, gallery, news, notices and contact.",
 
   defaults: {
-    site_name: "School Name",
+    site_name: "Institutional Classic",
     tagline: "Excellence in Learning",
     motto: "Discipline • Respect • Success",
 

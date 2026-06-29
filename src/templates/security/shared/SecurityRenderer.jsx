@@ -68,7 +68,7 @@ const NAV_ITEMS = [
 ];
 
 
-const SECURITY_PAGE_KEYS = new Set(NAV_ITEMS.map((item) => item.key));
+const SECURITY_PAGE_KEYS = new Set([...NAV_ITEMS.map((item) => item.key), "gallery"]);
 
 
 const SECURITY_SOCIAL_ICONS = {
@@ -346,6 +346,18 @@ const scrollPageTop = () => {
   }
 };
 
+const scrollToSecurityGallery = () => {
+  if (typeof window === "undefined") return;
+
+  window.setTimeout(() => {
+    const target = document.getElementById("security-gallery");
+
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, 80);
+};
+
 const getSocialIconColor = (data = {}) => {
   const mode = data.colorMode || "original";
 
@@ -580,7 +592,7 @@ function SecurityHero({ content, images, config, preset, onPageChange }) {
         <p>{activeSlide?.subtitle || content.heroSubtitle}</p>
         <div className="security-hero-actions">
           <button type="button" onClick={() => onPageChange("contact")}>{content.heroCta}</button>
-          <button type="button" className="ghost" onClick={() => onPageChange("services")}>{content.heroSecondaryCta}</button>
+          <button type="button" className="ghost" onClick={() => onPageChange("gallery")}>View Security Gallery</button>
         </div>
       </div>
 
@@ -802,12 +814,97 @@ function SolutionsSection({ content, preset }) {
   );
 }
 
-function GallerySection({ images }) {
+function GallerySection({ images, content, preset }) {
+  const galleryImages = [
+    ...(Array.isArray(images.gallery) ? images.gallery : []),
+    images.hero,
+    images.about,
+    images.page,
+  ]
+    .filter(Boolean)
+    .filter((image, index, list) => list.indexOf(image) === index)
+    .slice(0, 8);
+
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [zoomIndex, setZoomIndex] = useState(null);
+  const activeImage = galleryImages[activeIndex] || galleryImages[0];
+  const zoomImage = zoomIndex === null ? null : galleryImages[zoomIndex] || galleryImages[0];
+  const title = preset?.name || content?.businessName || "Security Gallery";
+
+  const move = (direction) => {
+    setActiveIndex((current) => {
+      if (!galleryImages.length) return 0;
+      if (direction === "prev") return current === 0 ? galleryImages.length - 1 : current - 1;
+      return current === galleryImages.length - 1 ? 0 : current + 1;
+    });
+  };
+
+  const moveZoom = (direction) => {
+    setZoomIndex((current) => {
+      const safeIndex = current ?? activeIndex;
+      if (!galleryImages.length) return 0;
+      if (direction === "prev") return safeIndex === 0 ? galleryImages.length - 1 : safeIndex - 1;
+      return safeIndex === galleryImages.length - 1 ? 0 : safeIndex + 1;
+    });
+  };
+
+  if (!galleryImages.length) return null;
+
   return (
-    <section className="security-gallery">
-      {images.gallery.map((image, index) => (
-        <img key={`${image}-${index}`} src={image} alt="Security company visual" />
-      ))}
+    <section id="security-gallery" className={`security-section security-gallery security-gallery--${preset?.structure || "guarding"}`}>
+      <div className="security-section-heading security-section-heading--action">
+        <div>
+          <span className="security-kicker">Security Gallery</span>
+          <h2>{title} visuals and operations presentation.</h2>
+          <p>Browse site coverage, guarding operations, access control and security service visuals.</p>
+        </div>
+      </div>
+
+      <div className="security-gallery-board">
+        <button type="button" className="security-gallery-chevron security-gallery-chevron--left" onClick={() => move("prev")} aria-label="Previous gallery image">
+          ‹
+        </button>
+
+        <button
+          type="button"
+          className="security-gallery-feature"
+          onClick={() => setZoomIndex(activeIndex)}
+          aria-label="Zoom selected security gallery image"
+        >
+          <img src={activeImage} alt={`${title} visual`} />
+          <span>⌕ Zoom image</span>
+        </button>
+
+        <button type="button" className="security-gallery-chevron security-gallery-chevron--right" onClick={() => move("next")} aria-label="Next gallery image">
+          ›
+        </button>
+      </div>
+
+      <div className="security-gallery-thumbs" aria-label="Gallery thumbnails">
+        {galleryImages.slice(0, 6).map((image, index) => (
+          <button
+            type="button"
+            key={`${image}-${index}`}
+            className={index === activeIndex ? "is-active" : ""}
+            onClick={() => setActiveIndex(index)}
+            aria-label={`Show gallery image ${index + 1}`}
+          >
+            <img src={image} alt="" />
+          </button>
+        ))}
+      </div>
+
+      {zoomImage && (
+        <div className="security-lightbox" role="dialog" aria-modal="true" aria-label="Security image preview">
+          <button type="button" className="security-lightbox-backdrop" onClick={() => setZoomIndex(null)} aria-label="Close image preview" />
+          <div className="security-lightbox-stage">
+            <button type="button" className="security-lightbox-close" onClick={() => setZoomIndex(null)} aria-label="Close image preview">×</button>
+            <button type="button" className="security-lightbox-nav security-lightbox-nav--left" onClick={() => moveZoom("prev")} aria-label="Previous image">‹</button>
+            <img src={zoomImage} alt="Security project zoom" />
+            <button type="button" className="security-lightbox-nav security-lightbox-nav--right" onClick={() => moveZoom("next")} aria-label="Next image">›</button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
@@ -1102,7 +1199,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
         <ServicesSection content={content} config={config} preset={preset} />
         <OperationsSection content={content} preset={preset} />
         <IndustriesSection content={content} />
-        <GallerySection images={images} />
+        <GallerySection images={images} content={content} preset={preset} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1117,7 +1214,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
         <ServicesSection content={content} config={config} preset={preset} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
         <OperationsSection content={content} preset={preset} />
-        <TestimonialsSection content={content} />
+        <GallerySection images={images} content={content} preset={preset} />
         <CTASection content={content} onPageChange={onPageChange} />
       </>
     );
@@ -1131,7 +1228,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
         <IndustriesSection content={content} />
         <OperationsSection content={content} preset={preset} />
-        <GallerySection images={images} />
+        <GallerySection images={images} content={content} preset={preset} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1147,6 +1244,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
         <SolutionsSection content={content} preset={preset} />
         <IndustriesSection content={content} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
+        <GallerySection images={images} content={content} preset={preset} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1159,7 +1257,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
         <ServicesSection content={content} config={config} preset={preset} />
         <OperationsSection content={content} preset={preset} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
-        <TestimonialsSection content={content} />
+        <GallerySection images={images} content={content} preset={preset} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1174,7 +1272,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
         <IndustriesSection content={content} />
         <OperationsSection content={content} preset={preset} />
         <SolutionsSection content={content} preset={preset} />
-        <GallerySection images={images} />
+        <GallerySection images={images} content={content} preset={preset} />
         <CTASection content={content} onPageChange={onPageChange} />
       </>
     );
@@ -1188,7 +1286,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
         <VisionMissionValues content={content} config={config} />
         <ServicesSection content={content} config={config} preset={preset} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
-        <TestimonialsSection content={content} />
+        <GallerySection images={images} content={content} preset={preset} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1202,7 +1300,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
         <ServicesSection content={content} config={config} preset={preset} />
         <OperationsSection content={content} preset={preset} />
         <IndustriesSection content={content} />
-        <GallerySection images={images} />
+        <GallerySection images={images} content={content} preset={preset} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1216,6 +1314,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
         <AboutSection content={content} images={images} preset={preset} />
         <IndustriesSection content={content} />
         <PackagesSection content={content} preset={preset} onPageChange={onPageChange} />
+        <GallerySection images={images} content={content} preset={preset} />
         <ContactSection content={content} config={config} />
       </>
     );
@@ -1230,7 +1329,7 @@ function HomePage({ content, images, config, preset, onPageChange }) {
       <SolutionsSection content={content} preset={preset} />
       <IndustriesSection content={content} />
       <OperationsSection content={content} preset={preset} />
-      <TestimonialsSection content={content} />
+      <GallerySection images={images} content={content} preset={preset} />
       <ContactSection content={content} config={config} />
     </>
   );
@@ -1241,6 +1340,10 @@ function PageContent({ currentPage, content, images, config, preset, onPageChang
 
   if (currentPage === "home") {
     return <HomePage content={content} images={images} config={config} preset={preset} onPageChange={onPageChange} />;
+  }
+
+  if (currentPage === "gallery") {
+    return <GallerySection images={images} content={content} preset={preset} />;
   }
 
   return (
@@ -1264,7 +1367,7 @@ function PageContent({ currentPage, content, images, config, preset, onPageChang
         <>
           <IndustriesSection content={content} />
           <SolutionsSection content={content} preset={preset} />
-          <GallerySection images={images} />
+          <GallerySection images={images} content={content} preset={preset} />
         </>
       )}
       {currentPage === "operations" && (
@@ -1323,6 +1426,12 @@ export default function SecurityRenderer({ settings = {}, preset = SECURITY_PRES
   }, [page, initialPage]);
 
   const onPageChange = (nextPage) => {
+    if (nextPage === "gallery") {
+      setInternalPage("home");
+      scrollToSecurityGallery();
+      return;
+    }
+
     setInternalPage(nextPage);
     scrollPageTop();
   };

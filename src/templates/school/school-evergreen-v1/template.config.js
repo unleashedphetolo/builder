@@ -30,7 +30,7 @@ export const templateConfig = {
     "A premium green school website with a floating campus-style navigation, strong hero presentation, admissions, resources, governance, gallery, news, notices and live builder section editing.",
 
   defaults: {
-    site_name: "School Name",
+    site_name: "Evergreen Academy",
     tagline: "Excellence in every learner",
     motto: "Learn • Lead • Achieve",
 

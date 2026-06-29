@@ -30,7 +30,7 @@ export const templateConfig = {
     "Heritage school design with green, gold and tartan-inspired accents for traditional academic presentation.",
 
   defaults: {
-    site_name: "School Name",
+    site_name: "Heritage Tartan",
     tagline: "Excellence in every learner",
     motto: "Learn • Lead • Achieve",
 

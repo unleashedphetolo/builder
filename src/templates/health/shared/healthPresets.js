@@ -435,11 +435,11 @@ export const HEALTH_IMAGE_PACKS = {
   "pediatric": {
     "hero": "https://images.unsplash.com/photo-1581056771107-24ca5f033842?auto=format&fit=crop&w=1900&q=82",
     "about": "https://images.unsplash.com/photo-1603398938378-e54eab446dde?auto=format&fit=crop&w=1900&q=82",
-    "page": "https://images.unsplash.com/photo-1576765607924-8fd670c590bf?auto=format&fit=crop&w=1900&q=82",
+    "page": "https://plus.unsplash.com/premium_photo-1661306540580-1e6e374ecf9d?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "gallery": [
       "https://images.unsplash.com/photo-1581056771107-24ca5f033842?auto=format&fit=crop&w=1300&q=82",
       "https://images.unsplash.com/photo-1603398938378-e54eab446dde?auto=format&fit=crop&w=1300&q=82",
-      "https://images.unsplash.com/photo-1576765607924-8fd670c590bf?auto=format&fit=crop&w=1300&q=82"
+      "https://plus.unsplash.com/premium_photo-1661284939722-6b56894c4ab6?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     ],
     "slides": [
       {
@@ -458,7 +458,7 @@ export const HEALTH_IMAGE_PACKS = {
         "type": "video",
         "title": "Appointment-ready family website",
         "subtitle": "Video slide support adds professional movement to the homepage while preserving a calm healthcare feel.",
-        "image": "https://images.unsplash.com/photo-1576765607924-8fd670c590bf?auto=format&fit=crop&w=1900&q=82",
+        "image": "https://plus.unsplash.com/premium_photo-1661306540580-1e6e374ecf9d?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         "video": "https://videos.pexels.com/video-files/4121314/4121314-uhd_2560_1440_25fps.mp4"
       }
     ]
