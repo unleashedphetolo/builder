@@ -11,6 +11,10 @@ import ConstructionLayout from "../layouts/ConstructionLayout";
 import EngineeringLayout from "../layouts/EngineeringLayout";
 import TechnologyLayout from "../layouts/TechnologyLayout";
 import EcommerceLayout from "../layouts/EcommerceLayout";
+import RealEstateLayout from "../layouts/RealEstateLayout";
+import AccommodationLayout from "../layouts/AccommodationLayout";
+import RestaurantLayout from "../layouts/RestaurantLayout";
+import BeautyLayout from "../layouts/BeautyLayout";
 
 
 const templateConfigs = import.meta.glob(
@@ -458,6 +462,22 @@ export default function TemplateLivePreview() {
 
       if (layoutKey === "ecommerce") {
         return <EcommerceLayout {...sharedProps} />;
+      }
+
+      if (layoutKey === "real-estate") {
+        return <RealEstateLayout {...sharedProps} />;
+      }
+
+      if (layoutKey === "accommodation") {
+        return <AccommodationLayout {...sharedProps} />;
+      }
+
+      if (layoutKey === "restaurant") {
+        return <RestaurantLayout {...sharedProps} />;
+      }
+
+      if (layoutKey === "beauty") {
+        return <BeautyLayout {...sharedProps} />;
       }
 
   return <SchoolLayout {...sharedProps} />;

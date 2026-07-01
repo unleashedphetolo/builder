@@ -1,0 +1,9 @@
+/* MorningVale B&B — accommodation template theme */
+.accommodation-enterprise--accommodation-bed-breakfast-v1 {
+  --accommodation-primary: #312e81;
+  --accommodation-secondary: #7c3aed;
+  --accommodation-accent: #f472b6;
+  --accommodation-surface: #faf5ff;
+  --accommodation-text: #18181b;
+  --accommodation-muted: #71717a;
+}

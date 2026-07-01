@@ -1,0 +1,10 @@
+import { REAL_ESTATE_PRESETS, REAL_ESTATE_TEMPLATE_KEYS } from "./realEstatePresets";
+
+export const REAL_ESTATE_DEFAULT_TEMPLATE = REAL_ESTATE_TEMPLATE_KEYS[0];
+export const REAL_ESTATE_DEFAULT_PRESET = REAL_ESTATE_PRESETS[REAL_ESTATE_DEFAULT_TEMPLATE];
+
+export const getRealEstateFallback = (templateKey) => {
+  return REAL_ESTATE_PRESETS[templateKey] || REAL_ESTATE_DEFAULT_PRESET;
+};
+
+export default REAL_ESTATE_DEFAULT_PRESET;

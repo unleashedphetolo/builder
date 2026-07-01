@@ -11,12 +11,12 @@ import { ENGINEERING_TEMPLATE_REGISTRY } from "./engineering/engineering.registr
 import { SCHOOL_TEMPLATE_REGISTRY } from "./school/school.registry";
 import { TECHNOLOGY_TEMPLATE_REGISTRY } from "./technology/technology.registry";
 import { ECOMMERCE_TEMPLATE_REGISTRY } from "./ecommerce/ecommerce.registry";
+import { REAL_ESTATE_TEMPLATE_REGISTRY } from "./real-estate/real-estate.registry";
+import { ACCOMMODATION_TEMPLATE_REGISTRY } from "./accommodation/accommodation.registry";
+import { RESTAURANT_TEMPLATE_REGISTRY } from "./restaurant/restaurant.registry";
+import { BEAUTY_TEMPLATE_REGISTRY } from "./beauty/beauty.registry";
 
-// const TECHNOLOGY_TEMPLATE_REGISTRY = [];
-const REAL_ESTATE_TEMPLATE_REGISTRY = [];
-const ACCOMMODATION_TEMPLATE_REGISTRY = [];
-const RESTAURANT_TEMPLATE_REGISTRY = [];
-const BEAUTY_TEMPLATE_REGISTRY = [];
+
 const LEGAL_TEMPLATE_REGISTRY = [];
 const RELIGION_TEMPLATE_REGISTRY = [];
 const CULTURE_TEMPLATE_REGISTRY = [];
