@@ -1,0 +1,12 @@
+:root {
+  --ecommerce-template-primary: #0f172a;
+  --ecommerce-template-secondary: #0ea5e9;
+  --ecommerce-template-accent: #14b8a6;
+}
+.ecommerce-enterprise--commerce-spectacles-v1 .ecommerce-product-card {
+  background: linear-gradient(180deg, #fff, #f8fafc);
+}
+.ecommerce-enterprise--commerce-spectacles-v1 .ecommerce-product-image span,
+.ecommerce-enterprise--commerce-spectacles-v1 .ecommerce-product-badges span {
+  color: #0f172a;
+}

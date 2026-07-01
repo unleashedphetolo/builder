@@ -1,0 +1,6 @@
+:root {
+  --ecommerce-template-primary: #0f0f12;
+  --ecommerce-template-secondary: #b08968;
+  --ecommerce-template-accent: #d4a373;
+}
+.ecommerce-hero-copy { max-width: 620px; }

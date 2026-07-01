@@ -9,9 +9,10 @@ import { AGRICULTURE_TEMPLATE_REGISTRY } from "./agriculture/agriculture.registr
 import { CONSTRUCTION_TEMPLATE_REGISTRY } from "./construction/construction.registry";
 import { ENGINEERING_TEMPLATE_REGISTRY } from "./engineering/engineering.registry";
 import { SCHOOL_TEMPLATE_REGISTRY } from "./school/school.registry";
+import { TECHNOLOGY_TEMPLATE_REGISTRY } from "./technology/technology.registry";
+import { ECOMMERCE_TEMPLATE_REGISTRY } from "./ecommerce/ecommerce.registry";
 
-const TECHNOLOGY_TEMPLATE_REGISTRY = [];
-const ECOMMERCE_TEMPLATE_REGISTRY = [];
+// const TECHNOLOGY_TEMPLATE_REGISTRY = [];
 const REAL_ESTATE_TEMPLATE_REGISTRY = [];
 const ACCOMMODATION_TEMPLATE_REGISTRY = [];
 const RESTAURANT_TEMPLATE_REGISTRY = [];

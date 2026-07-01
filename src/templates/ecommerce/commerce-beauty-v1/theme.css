@@ -1,0 +1,6 @@
+:root {
+  --ecommerce-template-primary: #4a044e;
+  --ecommerce-template-secondary: #db2777;
+  --ecommerce-template-accent: #f9a8d4;
+}
+.ecommerce-product-image span { color: #4a044e; }

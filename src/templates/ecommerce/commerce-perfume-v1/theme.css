@@ -1,0 +1,7 @@
+:root {
+  --ecommerce-template-primary: #1f1020;
+  --ecommerce-template-secondary: #a855f7;
+  --ecommerce-template-accent: #f5c542;
+}
+.ecommerce-enterprise--commerce-perfume-v1 .ecommerce-product-image span,
+.ecommerce-enterprise--commerce-perfume-v1 .ecommerce-product-badges span { color: #1f1020; }

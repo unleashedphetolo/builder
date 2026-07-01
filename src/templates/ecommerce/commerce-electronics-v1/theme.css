@@ -1,0 +1,6 @@
+:root {
+  --ecommerce-template-primary: #020617;
+  --ecommerce-template-secondary: #2563eb;
+  --ecommerce-template-accent: #22d3ee;
+}
+.ecommerce-product-card { background: linear-gradient(180deg, #fff, #f8fafc); }

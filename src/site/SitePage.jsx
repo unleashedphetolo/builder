@@ -12,6 +12,8 @@ import HealthLayout from "../layouts/HealthLayout";
 import AgricultureLayout from "../layouts/AgricultureLayout";
 import ConstructionLayout from "../layouts/ConstructionLayout";
 import EngineeringLayout from "../layouts/EngineeringLayout";
+import TechnologyLayout from "../layouts/TechnologyLayout";
+import EcommerceLayout from "../layouts/EcommerceLayout";
 
 function normalizePageSlug(slug = "/") {
   const raw = String(slug || "/").trim();
@@ -739,6 +741,14 @@ export default function SitePage() {
 
   if (layoutKey === "engineering") {
     return <EngineeringLayout {...sharedProps} />;
+  }
+
+  if (layoutKey === "technology") {
+    return <TechnologyLayout {...sharedProps} />;
+  }
+
+  if (layoutKey === "ecommerce") {
+    return <EcommerceLayout {...sharedProps} />;
   }
 
   return (

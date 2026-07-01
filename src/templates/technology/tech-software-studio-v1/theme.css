@@ -1,0 +1,7 @@
+.technology-enterprise--tech-software-studio-v1 .technology-hero {
+  background:
+    radial-gradient(circle at 78% 18%, rgba(6, 182, 212, .22), transparent 28%),
+    radial-gradient(circle at 20% 10%, rgba(124, 58, 237, .26), transparent 34%),
+    #0f1020;
+}
+.technology-enterprise--tech-software-studio-v1 .technology-product-card { transform: rotate(-1deg); }

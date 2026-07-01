@@ -1,0 +1,6 @@
+:root {
+  --ecommerce-template-primary: #064e3b;
+  --ecommerce-template-secondary: #16a34a;
+  --ecommerce-template-accent: #f59e0b;
+}
+.ecommerce-kicker { color: #064e3b; }

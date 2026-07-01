@@ -1,6 +1,6 @@
 const CONTENT = {
   "portfolio-developer-v1": {
-    name: "Phetolo Mpe",
+    name: "Mark Augusto",
     headline: "Full-stack developer building reliable web platforms.",
     subtitle: "I design, build and maintain modern applications with clean interfaces, secure data flows and production-ready architecture.",
     bioTitle: "Engineering practical software from idea to launch.",
