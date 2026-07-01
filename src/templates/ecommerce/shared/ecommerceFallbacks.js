@@ -267,7 +267,7 @@ const REAL_ECOMMERCE_COPY = {
     ],
   },
   "commerce-perfume-v1": {
-    brandName: "Aurevia Fragrance House",
+    brandName: "Aurevia Fragrance",
     brandLabel: "Premium Fragrances · Discovery Sets",
     mission: "To make premium fragrances easy to discover, compare and order with clear scent notes, discount offers and gift-ready product pages.",
     vision: "To become a trusted online fragrance boutique for signature perfumes, discovery sets and elegant gift boxes.",
@@ -285,8 +285,8 @@ const REAL_ECOMMERCE_COPY = {
     ],
   },
   "commerce-spectacles-v1": {
-    brandName: "Lensora Spectacles Store",
-    brandLabel: "Prescription Frames · Blue-Light · Sunglasses",
+    brandName: "Lensora Spectacles",
+    brandLabel: "Prescription Frames · Sunglasses",
     mission: "To make stylish eyewear easier to browse, compare and order with clear frame details, lens options and simple quote-ready checkout.",
     vision: "To become a trusted online optical storefront for everyday spectacles, office eyewear, reading glasses and premium sunglasses.",
     aboutHeadline: "Lensora Spectacles Store is built for clear eyewear discovery and professional optical ordering.",

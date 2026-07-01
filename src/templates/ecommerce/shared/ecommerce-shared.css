@@ -31,7 +31,7 @@
 .ecommerce-nav-links button:hover { background:rgba(15,23,42,.06); }
 .ecommerce-nav-links button.active { background:var(--ecommerce-text); color:#fff; }
 .ecommerce-navbar-actions { display:inline-flex; align-items:center; gap:10px; margin-left:auto; }
-.ecommerce-cart-nav { position:relative; border:1px solid color-mix(in srgb,var(--ecommerce-accent) 38%,transparent); background:#fff; border-radius:999px; padding:10px 14px; min-height:42px; display:inline-flex; align-items:center; gap:8px; font-weight:900; cursor:pointer; box-shadow:var(--ecommerce-shadow-sm); }
+.ecommerce-cart-nav { position:relative; border:1px solid color-mix(in srgb,var(--ecommerce-accent) 38%,transparent); background:#fff; border-radius:999px; padding:10px 14px !important; min-height:42px; display:inline-flex; align-items:center; gap:8px; font-weight:900; cursor:pointer; box-shadow:var(--ecommerce-shadow-sm); }
 .ecommerce-cart-nav svg { color:var(--ecommerce-accent); }
 .ecommerce-cart-nav em { position:absolute; top:-9px; right:-7px; min-width:22px; height:22px; padding:0 6px; border-radius:999px; background:var(--ecommerce-accent); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:11px; font-style:normal; }
 .ecommerce-menu-toggle { display:none; width:42px; height:42px; border:1px solid var(--ecommerce-border); border-radius:12px; background:#fff; flex-direction:column; align-items:center; justify-content:center; gap:5px; cursor:pointer; }
@@ -1399,4 +1399,252 @@
     height: 72px;
     font-size: 14px;
   }
+}
+/* =====================================================================
+   Proof/stat bar differentiation per ecommerce template
+   Only changes the attached proof cards so each template does not look the same.
+   ===================================================================== */
+.ecommerce-proof {
+  overflow: hidden;
+}
+
+.ecommerce-style--fashion .ecommerce-proof {
+  background: #111;
+  border-radius: 0;
+  border: 0;
+  box-shadow: none;
+  color: #fff;
+}
+.ecommerce-style--fashion .ecommerce-proof article {
+  text-align: left;
+  border-left: 1px solid rgba(255, 255, 255, .16);
+  padding-left: 18px;
+}
+.ecommerce-style--fashion .ecommerce-proof strong { color: var(--ecommerce-accent); }
+.ecommerce-style--fashion .ecommerce-proof span { color: rgba(255, 255, 255, .72); }
+
+.ecommerce-style--electronics .ecommerce-proof {
+  background: rgba(15, 23, 42, .78);
+  border: 1px solid rgba(34, 211, 238, .18);
+  border-radius: 24px;
+  backdrop-filter: blur(18px);
+}
+.ecommerce-style--electronics .ecommerce-proof article {
+  border: 1px solid rgba(34, 211, 238, .14);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .05);
+}
+.ecommerce-style--electronics .ecommerce-proof strong { color: var(--ecommerce-accent); }
+.ecommerce-style--electronics .ecommerce-proof span { color: rgba(255, 255, 255, .74); }
+
+.ecommerce-style--grocery .ecommerce-proof {
+  background: #fff;
+  border-radius: 999px;
+  border: 1px solid rgba(22, 163, 74, .16);
+  box-shadow: 0 22px 60px -34px rgba(6, 78, 59, .38);
+}
+.ecommerce-style--grocery .ecommerce-proof article {
+  border-right: 1px solid rgba(6, 78, 59, .1);
+}
+.ecommerce-style--grocery .ecommerce-proof article:last-child { border-right: 0; }
+.ecommerce-style--grocery .ecommerce-proof strong { color: var(--ecommerce-primary); }
+
+.ecommerce-style--furniture .ecommerce-proof {
+  background: #2f251f;
+  border: 0;
+  border-radius: 28px 28px 6px 28px;
+  box-shadow: 0 28px 70px -36px rgba(47, 37, 31, .48);
+}
+.ecommerce-style--furniture .ecommerce-proof article {
+  text-align: left;
+  padding: 14px 18px;
+}
+.ecommerce-style--furniture .ecommerce-proof strong { color: var(--ecommerce-accent); }
+.ecommerce-style--furniture .ecommerce-proof span { color: rgba(255, 255, 255, .72); }
+
+.ecommerce-style--beauty .ecommerce-proof {
+  background: linear-gradient(135deg, #fff, color-mix(in srgb, var(--ecommerce-accent) 24%, #fff));
+  border-radius: 34px;
+  border: 1px solid rgba(219, 39, 119, .14);
+}
+.ecommerce-style--beauty .ecommerce-proof article {
+  border-radius: 22px;
+  background: rgba(255, 255, 255, .62);
+}
+.ecommerce-style--beauty .ecommerce-proof strong { color: var(--ecommerce-secondary); }
+
+.ecommerce-style--sneakers .ecommerce-proof {
+  background: #050505;
+  border: 1px solid rgba(250, 204, 21, .22);
+  border-radius: 0 42px 0 42px;
+  transform: rotate(-.4deg);
+}
+.ecommerce-style--sneakers .ecommerce-proof article {
+  transform: rotate(.4deg);
+  text-align: left;
+  border-left: 4px solid var(--ecommerce-accent);
+  padding-left: 16px;
+}
+.ecommerce-style--sneakers .ecommerce-proof strong { color: var(--ecommerce-accent); }
+.ecommerce-style--sneakers .ecommerce-proof span { color: rgba(255, 255, 255, .72); }
+
+.ecommerce-style--autoparts .ecommerce-proof {
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid rgba(220, 38, 38, .18);
+  box-shadow: none;
+}
+.ecommerce-style--autoparts .ecommerce-proof article {
+  text-align: left;
+  border-left: 4px solid var(--ecommerce-accent);
+  padding-left: 14px;
+}
+.ecommerce-style--autoparts .ecommerce-proof strong { color: var(--ecommerce-primary); }
+
+.ecommerce-style--kids .ecommerce-proof {
+  background: linear-gradient(135deg, #fff7ed, #eff6ff);
+  border: 0;
+  border-radius: 32px;
+  box-shadow: 0 24px 70px -42px rgba(51, 65, 85, .42);
+}
+.ecommerce-style--kids .ecommerce-proof article {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .72);
+}
+.ecommerce-style--kids .ecommerce-proof strong { color: var(--ecommerce-secondary); }
+
+.ecommerce-style--books .ecommerce-proof {
+  background: #fffbeb;
+  border-radius: 12px;
+  border: 1px solid rgba(124, 45, 18, .18);
+  box-shadow: 0 20px 50px -34px rgba(124, 45, 18, .4);
+}
+.ecommerce-style--books .ecommerce-proof article {
+  text-align: left;
+  border-bottom: 1px dashed rgba(124, 45, 18, .18);
+}
+.ecommerce-style--books .ecommerce-proof article:last-child { border-bottom: 0; }
+.ecommerce-style--books .ecommerce-proof strong { color: var(--ecommerce-secondary); }
+
+.ecommerce-style--digital .ecommerce-proof {
+  background: rgba(2, 6, 23, .72);
+  border: 1px solid rgba(6, 182, 212, .2);
+  border-radius: 22px;
+  backdrop-filter: blur(18px);
+}
+.ecommerce-style--digital .ecommerce-proof article {
+  text-align: left;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(124, 58, 237, .22), rgba(6, 182, 212, .12));
+}
+.ecommerce-style--digital .ecommerce-proof strong { color: var(--ecommerce-accent); }
+.ecommerce-style--digital .ecommerce-proof span { color: rgba(255, 255, 255, .74); }
+
+.ecommerce-style--perfume .ecommerce-proof {
+  background: rgba(255, 255, 255, .76);
+  border: 1px solid rgba(168, 85, 247, .16);
+  border-radius: 28px;
+  box-shadow: 0 28px 80px -42px rgba(31, 16, 32, .38);
+  backdrop-filter: blur(14px);
+}
+.ecommerce-style--perfume .ecommerce-proof article {
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .76), rgba(245, 197, 66, .12));
+}
+.ecommerce-style--perfume .ecommerce-proof strong { color: var(--ecommerce-primary); }
+
+.ecommerce-style--spectacles .ecommerce-proof {
+  background: rgba(255, 255, 255, .78);
+  border: 1px solid rgba(14, 165, 233, .18);
+  border-radius: 18px;
+  box-shadow: 0 24px 70px -40px rgba(14, 165, 233, .35);
+  backdrop-filter: blur(14px);
+}
+.ecommerce-style--spectacles .ecommerce-proof article {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 10px;
+  align-items: center;
+  text-align: left;
+}
+.ecommerce-style--spectacles .ecommerce-proof article::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--ecommerce-accent);
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--ecommerce-accent) 16%, transparent);
+  grid-row: 1 / span 2;
+}
+.ecommerce-style--spectacles .ecommerce-proof strong { color: var(--ecommerce-primary); }
+
+@media (max-width: 980px) {
+  .ecommerce-style--grocery .ecommerce-proof {
+    border-radius: 26px;
+  }
+  .ecommerce-style--grocery .ecommerce-proof article {
+    border-right: 0;
+    border-bottom: 1px solid rgba(6, 78, 59, .1);
+  }
+  .ecommerce-style--grocery .ecommerce-proof article:nth-last-child(-n + 2) {
+    border-bottom: 0;
+  }
+  .ecommerce-style--sneakers .ecommerce-proof {
+    transform: none;
+  }
+  .ecommerce-style--sneakers .ecommerce-proof article {
+    transform: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .ecommerce-proof {
+    gap: 10px;
+  }
+  .ecommerce-style--fashion .ecommerce-proof article,
+  .ecommerce-style--furniture .ecommerce-proof article,
+  .ecommerce-style--sneakers .ecommerce-proof article,
+  .ecommerce-style--autoparts .ecommerce-proof article,
+  .ecommerce-style--books .ecommerce-proof article,
+  .ecommerce-style--digital .ecommerce-proof article,
+  .ecommerce-style--spectacles .ecommerce-proof article {
+    text-align: center;
+  }
+  .ecommerce-style--fashion .ecommerce-proof article,
+  .ecommerce-style--sneakers .ecommerce-proof article,
+  .ecommerce-style--autoparts .ecommerce-proof article {
+    border-left: 0;
+    padding-left: 8px;
+  }
+  .ecommerce-style--spectacles .ecommerce-proof article {
+    display: block;
+  }
+  .ecommerce-style--spectacles .ecommerce-proof article::before {
+    display: none;
+  }
+}
+
+/* Reduce navbar slogan / tagline */
+.ecommerce-brand small {
+  font-size: 9px !important;
+  letter-spacing: 0.06em !important;
+  line-height: 1.2 !important;
+  max-width: 200px;
+}
+
+@media (max-width: 640px) {
+  .ecommerce-brand small {
+    font-size: 8px !important;
+    max-width: 160px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Reduce hero slogan / subtitle */
+.ecommerce-hero-copy p {
+  font-size: 15px !important;
+  line-height: 1.55 !important;
+  max-width: 520px;
 }

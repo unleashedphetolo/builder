@@ -1365,7 +1365,7 @@ export const ECOMMERCE_PRESETS = {
           "category": "Brakes",
           "description": "Front brake pad set for selected vehicles.",
           "badge": "Safety",
-          "image": "https://images.unsplash.com/photo-1632823471565-1ecdf5c045d0?auto=format&fit=crop&w=900&q=80"
+          "image": "https://images.unsplash.com/photo-1760317890322-364a810cd4da?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
         },
         {
           "id": "commerce-auto-parts-v1-product-3",
@@ -2083,7 +2083,7 @@ export const ECOMMERCE_PRESETS = {
             "Corporate gifting option",
             "20% off example offer"
           ],
-          "image": "https://images.unsplash.com/photo-1590736969955-71cc94901144?auto=format&fit=crop&w=900&q=80"
+          "image": "https://images.unsplash.com/photo-1759563876829-47c081a2afd9?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8THV4dXJ5JTIwRnJhZ3JhbmNlJTIwR2lmdCUyMEJveHxlbnwwfHwwfHx8MA%3D%3D"
         }
       ],
       "collections": [
@@ -2171,7 +2171,7 @@ export const ECOMMERCE_PRESETS = {
     },
     "content": {
       "brandName": "Lensora Spectacles Store",
-      "brandLabel": "Prescription Frames · Blue-Light · Sunglasses",
+      "brandLabel": "Prescription Frames · Sunglasses",
       "topbar": "20% OFF SELECT FRAMES · LENS OPTIONS AVAILABLE · ORDER BY EMAIL",
       "role": "Premium eyewear ecommerce",
       "headline": "Stylish spectacles, sunglasses and lens-ready frames for everyday vision.",
